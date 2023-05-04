@@ -1,0 +1,182 @@
+/* Permet de changer la police */
+@font-face {
+    font-family: 'virgo_01regular';
+    src: url('Fonts/virgo-webfont.eot');
+    src: url('Fonts/virgo-webfont.eot?#iefix') format('embedded-opentype'),
+         url('Fonts/virgo-webfont.woff2') format('woff2'),
+         url('Fonts/virgo-webfont.woff') format('woff'),
+         url('Fonts/virgo-webfont.ttf') format('truetype'),
+         url('Fonts/virgo-webfont.svg#virgo_01regular') format('svg');
+    font-weight: normal;
+    font-style: normal;
+
+}
+
+/* Concerne tout les textes p */
+p
+{
+    color: black;
+    font-size: 1.5em;
+    font-family: Arial, sans-serif;
+}
+
+/* Concerne tout les textes dans le body */
+body
+{
+	
+	text-align: center;
+	line-height: 0.5em;
+	background-image:url(images/stars.png);
+	font-family: Arial, sans-serif;
+}
+
+/* Concerne uniquement la page d'Accueil */
+#home
+{
+	width: 1200px;
+	height:1400px;
+	margin:0 auto;
+	background-color: white;
+	text-align: center;
+	align-content: auto;
+	padding: 40px;
+}
+
+/* Concerne uniquement la page Articles */
+#Articlespage
+{
+	width: 1200px;
+	height:1300px;
+	margin:0 auto;
+	background-color: white;
+	text-align: center;
+	align-content: auto;
+	padding: 40px;
+}
+
+/* Concerne le tableau de l'accueil et info sur l'article */
+#tab1
+{
+border-collapse: collapse;
+    text-align: left;
+	align-content: center;
+	border: 3px solid black;
+}
+
+/* Concerne uniquement la page Info */
+#info
+{
+	width: 1200px;
+	height:1200px;
+	margin:0 auto;
+	background-color: white;
+	text-align: center;
+	align-content: center;
+	padding: 40px;
+}
+
+/* Concerne uniquement l'article du Starship */
+#starship
+{
+	width: 1200px;
+	height:3700px;
+	margin:0 auto;
+	background-color: white;
+	text-align: center;
+	align-content: center;
+	padding: 40px;
+}
+
+/* Concerne uniquement la barre des menu */
+h1
+{
+	text-align: left;
+	align-content: left;
+	font-family: 'virgo_01regular',Arial, sans-serif;
+	color: black;
+	border-radius: 10;
+	
+}
+
+/* Concerne le tableau de l'accueil */
+#hometable
+{
+	border: none;
+	border-collapse: collapse;
+    text-align: left;
+	align-content: center;
+}
+
+/* Concerne les liens */
+a:active {color: black; }
+a:visited { color: black; }
+a:hover { color: rgb(46,103,222); }
+
+/* Concerne certains textes de l'article starship */
+#texte
+{
+	width: 1200px;
+	height:50px;
+	line-height: 30px;
+	margin:0 auto;
+	background-color: white;
+	text-align: center;
+	align-content: center;
+	padding: 0px;
+}
+
+/* Un bloc pour le bandeau du bas */
+footer
+{
+	width: 1200px;
+	height:200px;
+	margin:0 auto;
+	background-color: #797979;
+	text-align: center;
+	align-content: center;
+	padding: 40px;
+	
+
+}
+
+/* Un bloc pour le bandeau du bas */
+#bas
+{
+	bottom: 0;
+	width: 1200px;
+	color:white;
+	text-align: center;
+	line-height: 1em;
+}
+
+/* Un bloc pour le bandeau du bas */
+#btm
+{
+	border-spacing: 250px 0px;
+	margin: auto;
+	margin-left: -800px; /* - moitié de la largeur */
+    position: absolute;
+    left: 50%;
+{
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
