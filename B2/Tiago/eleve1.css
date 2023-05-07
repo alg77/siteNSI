@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <!--
-	Daraz by TEMPLATE STOCK
-	templatestock.co @templatestock
-	Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+  Daraz by TEMPLATE STOCK
+  templatestock.co @templatestock
+  Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
 -->
 
 <html lang="en">
@@ -190,17 +190,15 @@
 
     <section id="about" class="light">
       <header class="title">
-        <h2>À <span>Propos</span></h2>
-        <p>Nous présentons ici les <strong>projets</strong> et les <strong>élèves</strong> de la <strong>Spécialité NSI
-            (Numérique et Sciences de l'Informatique)</strong>
-          au Lycée St Laurent en classe de Première.</p>
+        <h2>Prénom <span>NOM</span></h2>
+        <p>Présentation de l'élève et de ses <strong>projets</strong> cette année en <strong>NSI</strong></p>
       </header>
 
       <div class="container">
         <div class="row table-row">
           <div class="col-sm-6 hidden-xs">
             <div class="section-content">
-              <div class="big-image" style="background-image:url(Images/1.png)"></div>
+              <div class="big-image" style="background-image:url(Images/Ken_NH_1.png)"></div>
             </div>
           </div>
 
@@ -209,23 +207,25 @@
               <div class="about-content left animated" data-animate="fadeInLeft">
                 <div class="about-icon"><i class="fa fa-code"></i></div>
                 <div class="about-detail">
-                  <h4>Langages utilisés</h4>
-                  <p>Nous travaillons sur le langage Python principalement, nous avons également appris le HTML, le CSS et un peu de JavaScript, notamment pour ce magnifique site !</p>
+                  <h4>Projet HTML</h4>
+                  <p>Lorem ipsum Ea quis sint sint aliquip qui exercitation commodo non cupidatat do reprehenderit
+                    dolor. Lorem ipsum Non et minim incididunt sed labore in amet ea est pariatur.</p>
                 </div>
               </div>
 
               <div class="about-content left animated" data-animate="fadeInLeft">
                 <div class="about-icon"><i class="fa fa-desktop"></i></div>
                 <div class="about-detail">
-                  <h4>Responsive</h4>
-                  <p>Ce site est responsive, vous pouvez surfer sur ordinateur, tablette ou smartphone librement.</p>
+                  <h4>Projets Python</h4>
+                  <p>Lorem ipsum Ea quis sint sint aliquip qui exercitation commodo non cupidatat do reprehenderit
+                    dolor. Lorem ipsum Non et minim incididunt sed labore in amet ea est pariatur.</p>
                 </div>
               </div>
 
               <div class="about-content left animated" data-animate="fadeInLeft">
                 <div class="about-icon"><i class="fa fa-cube"></i></div>
                 <div class="about-detail">
-                  <h4>Multipurpose Design</h4>
+                  <h4>Autre ?</h4>
                   <p>Lorem ipsum Ea quis sint sint aliquip qui exercitation commodo non cupidatat do reprehenderit
                     dolor. Lorem ipsum Non et minim incididunt sed labore in amet ea est pariatur.</p>
                 </div>
@@ -339,10 +339,10 @@
           <div class="col-md-3 col-sm-6 text-center">
             <div class="wrap animated" data-animate="fadeInDown">
               <div class="img-team">
-                <img src="Images/Ramen-Shiba.jpg" alt="" class="img-circle">
+                <img src="Images/ALG-avatar.jpg" alt="" class="img-circle">
               </div>
 
-              <h3>Mme L.</h3>
+              <h3>Mme L</h3>
               <h5>CEO</h5>
 
               <p>La prof de NSI fan de shiba</p>
@@ -362,13 +362,13 @@
           <div class="col-md-3 col-sm-6 text-center">
             <div class="wrap animated" data-animate="fadeInDown">
               <div class="img-team">
-                <img src="Images/incorgnito-teeturtle-884.png" alt="" class="img-circle">
+                <img src="Images/Chuck_NH_1-1.png" alt="" class="img-circle">
               </div>
 
-              <h3>Mr M.</h3>
+              <h3>Mr M</h3>
               <h5>CEO</h5>
 
-              <p>Le prof de NSI</p>
+              <p>Le prof de NSI fan de ??? </p>
 
               <div class="team-social">
                 <ul class="list-inline social-list">
@@ -393,13 +393,12 @@
       </header>
 
      <div class="container">
-        <div class="row">
-          <div class="col-md-3 col-sm-6 text-center">
+        <div class="row">          <div class="col-md-3 col-sm-6 text-center">
             <div class="wrap animated" data-animate="fadeInDown">
               <div class="img-team">
                 <img src="Images/Ken_NH_1.png" alt="" class="img-circle">
               </div>
-              <h3><a href="B2/Tiago/eleve.html" target="_blank">Tiago</a></h3>
+              <h3>Tiago</h3>
               <h5>Développeur</h5>
               <p>Présentation de Tiago</p>
               <div class="team-social">
@@ -826,23 +825,17 @@
                 </ul>
               </div>
             </div>
-          </div>
-        </div>
+          </div>        </div>
       </div> <!-- /.container -->
-    </section>
 
 
 
       <!-- Groupe B3 -->
-    <section id="team" class="light">
       <header class="title" id="b3">
         <h2>Les <span>élèves</span> du Groupe <span>B3</span></h2>
         <p>Lorem ipsum Dolor et reprehenderit laborum deserunt aliquip incididunt tempor id non. Lorem ipsum Fugiat anim
           labore cupidatat consequat non in sit dolore anim anim consequat nisi.</p>
       </header>
-
-     <div class="container">
-        <div class="row">
             <div class="container">
         <div class="row">
           <div class="col-md-3 col-sm-6 text-center">
@@ -936,8 +929,9 @@
               </div>
             </div>
           </div>
-        </div>
-      </div> <!-- /.container -->
+
+
+
     </section>
 
     <!-- INFO -->
