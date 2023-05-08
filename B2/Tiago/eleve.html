@@ -13,18 +13,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>St Laurent - Spécialité NSI</title>
 
-  <link rel="stylesheet" href="../../css/bootstrap.min.css" />
-  <link rel="stylesheet" href="../../css/fontawesome.min.css" />
-  <link rel="stylesheet" href="../../css/animate.css" />
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/fontawesome.min.css" />
+  <link rel="stylesheet" href="css/animate.css" />
 
-  <link rel="stylesheet" href="../../css/style.css" />
+  <link rel="stylesheet" href="css/style.css" />
   <link rel="stylesheet" href="./eleve.css" />
 
-  <script type="text/javascript" src="../../js/jquery-1.11.2.min.js"></script>
-  <script type="text/javascript" src="../../js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
   <script type="text/javascript"
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCZXJBVDf7R4JqmSpopVPoduIGWx1IwpBM"></script>
-  <script type="text/javascript" src="../../js/plugins.js"></script>
+  <script type="text/javascript" src="js/plugins.js"></script>
   <!-- Font Awesome v5 -->
   <script src="https://kit.fontawesome.com/bef258002f.js" crossorigin="anonymous"></script>
 
@@ -71,17 +71,17 @@
               <span class="icon-bar"></span>
               <span class="icon-bar"></span>
             </button>
-            <a class="navbar-brand" href="#header"><img src="../../Images/StLaurentlaPaix.png" width="20%"></a>
+            <a class="navbar-brand" href="#header"><img src="Images/StLaurentlaPaix.png" width="20%"></a>
           </div><!-- /.navbar-header -->
 
           <div class="collapse navbar-collapse" id="menu">
             <ul class="nav navbar-nav navbar-right">
-              <li><a href="../../index.html"><i class="fas fa-home"></i> Home</a></li>
-              <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li>
-              <li><a href="#cv"><i class="fas fa-user-ninja"></i> Resume</a></li>
-              <li><a href="#portfolio"><i class="fas fa-camera"></i> Portfolio</a></li>
-              <li><a href="#info"><i class="fas fa-dice-d20"></i> Skills</a></li>
-              <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+              <li><a href="#"><i class="fas fa-home fa-2x"></i> Home</a></li>
+              <li><a href="#about"><i class="fas fa-info-circle fa-2x"></i> About</a></li>
+              <li><a href="#cv"><i class="fas fa-user-ninja fa-2x"></i> Resume</a></li>
+              <li><a href="#portfolio"><i class="fas fa-camera fa-2x"></i> Portfolio</a></li>
+              <li><a href="#info"><i class="fas fa-dice-d20 fa-2x"></i> Skills</a></li>
+              <li><a href="#contact"><i class="fas fa-envelope fa-2x"></i> Contact</a></li>
             </ul>
           </div> <!-- /.navbar-collapse -->
         </div> <!-- /.container -->
@@ -147,23 +147,46 @@
         <script type="text/javascript">
           var dataHeader = [
             {
-              bigImage: "../../Images/slide-1.jpg",
+              bigImage: "Images/slide-1.jpg",
               title: "Spécialité NSI",
               author: "Templatestock"
             },
             {
-              bigImage: "../../Images/slide-2.jpg",
-              title: "Présentation de la spécialité",
+              bigImage: "Images/slide-2.jpg",
+              title: "Portfolio",
               author: "Templatestock"
             },
             {
-              bigImage: "../../Images/slide-3.jpg",
-              title: "Achieve Success",
-              author: "Templatestock"
+              bigImage: "Images/slide-team-unsplash.jpg",
+              title: "Team Spirit",
+              author: "Unsplash"
             }
           ],
             loaderSVG = new SVGLoader(document.getElementById('loader'), { speedIn: 600, speedOut: 600, easingIn: mina.easeinout });
           loaderSVG.show()
+
+          // Update the slider content with the correct information
+          function updateSliderContent(index) {
+            var slide = dataHeader[index];
+            document.querySelector(".slider-content h1").innerHTML = slide.title;
+            document.querySelector(".nav-slide .prev h3").innerHTML = dataHeader[index === 0 ? dataHeader.length - 1 : index - 1].title;
+            document.querySelector(".nav-slide .next h3").innerHTML = dataHeader[index === dataHeader.length - 1 ? 0 : index + 1].title;
+          }
+          
+          // Initial update of the slider content
+          updateSliderContent(0);
+          
+          // Add event listeners for previous and next slide navigation
+          document.querySelector(".nav-slide .prev").addEventListener("click", function() {
+            var index = dataHeader.findIndex(slide => slide.title === document.querySelector(".slider-content h1").innerHTML);
+            updateSliderContent(index === 0 ? dataHeader.length - 1 : index - 1);
+          });
+          
+          document.querySelector(".nav-slide .next").addEventListener("click", function() {
+            var index = dataHeader.findIndex(slide => slide.title === document.querySelector(".slider-content h1").innerHTML);
+            updateSliderContent(index === dataHeader.length - 1 ? 0 : index + 1);
+          });
+
           /* When the user clicks on the button, toggle between hiding and showing the dropdown content */
           function clicDrop() {
             document.getElementById("myDropdown").classList.toggle("show");
@@ -199,7 +222,7 @@
         <div class="row table-row">
           <div class="col-sm-6 hidden-xs">
             <div class="section-content">
-              <div class="big-image" style="background-image:url(../../Images/Ken_NH_1.png)"></div>
+              <div class="big-image" style="background-image:url(Images/Ken_NH_1.png)"></div>
             </div>
           </div>
 
@@ -226,7 +249,7 @@
               <div class="about-content left animated" data-animate="fadeInLeft">
                 <div class="about-icon"><i class="fa fa-code"></i></div>
                 <div class="about-detail">
-                  <h4>Autre ?</h4>
+                  <h4>Autres</h4>
                   <p>Lorem ipsum Ea quis sint sint aliquip qui exercitation commodo non cupidatat do reprehenderit
                     dolor. Lorem ipsum Non et minim incididunt sed labore in amet ea est pariatur.</p>
                 </div>
@@ -239,8 +262,11 @@
 
     <!--CV -->
     <section id="cv" class="light">
+      <header class="title">
+        <h2>Mon <span>CV</span></h2>
+        <p>About me (again...)</p>
+      </header>
         <div class="container">
-            <h2 class="mb-5"><span class="text-danger">Mon</span> CV</h2>
             <div class="row">
                 <div class="col-md-6 col-lg-4">
                     <div class="card">
@@ -366,7 +392,7 @@
             <li data-filter=".python" class="filter"><i class="fab fa-python"></i> Python</li>
             <li data-filter=".cool-websites" class="filter"><i class="fab fa-html5"></i> HTML</li>
             <li data-filter=".sites-js" class="filter"><i class="fab fa-js-square"></i> JS</li>
-            <li data-filter=".video" class="filter">Video</li>
+            <li data-filter=".video" class="filter"><i class="fas fa-video"></i> Video</li>
           </ul>
         </div>
 
@@ -377,14 +403,14 @@
               var portfolio = [
                 {
                   category: "cool-websites",
-                  image: "../../Images/SpaceInfo_001.jpeg",
+                  image: "Images/SpaceInfo_001.jpeg",
                   title: "<span>Space</span> Info",
                   link: "../Space info/SpaceInfoHome.html",
                   text: "Un site sur l'espace"
                 },
                 {
                   category: "cool-websites",
-                  image: "../../Images/Pot_Py_logocolor32.jpg",
+                  image: "Images/Pot_Py_logocolor32.jpg",
                   title: "Pot <span>Py</span>",
                   onclick: "onClick(this)",
                   link: "#none",
@@ -392,21 +418,21 @@
                 },
                 {
                   category: "video",
-                  image: "../../Images/p-4.png",
-                  title: "Angkor <span>Wat</span>",
+                  image: "Images/p-4.png",
+                  title: "Magnifique <span>vidéo</span>",
                   link: "#none",
                   text: "Lorem ipsum Dolor in minim fugiat ut nisi occaecat fugiat. Lorem ipsum Quis tempor Ut enim officia deserunt consectetur."
                 },
                 {
                   category: "python",
-                  image: "../../Images/zeldo_logo2-32.png",
+                  image: "Images/zeldo_logo2-32.png",
                   title: "The Legend of <span>Zeldo</span>",
                   link: "#none",
                   text: "Le meilleur MMORPG de tous les temps"
                 },
                 {
                   category: "sites-js",
-                  image: "../../Images/JavaScript-logo.png",
+                  image: "Images/JavaScript-logo.png",
                   title: "Exemple <span>JS</span>",
                   link: "#none",
                   text: "Lorem ipsum Dolor in minim fugiat ut nisi occaecat fugiat. Lorem ipsum Quis tempor Ut enim officia deserunt consectetur."
@@ -570,7 +596,7 @@
   </div><!-- /.container-fluid -->
 
   <!-- SCRIPT -->
-  <script type="text/javascript" src="../../js/main.js">
+  <script type="text/javascript" src="js/main.js">
     // Modal Image Gallery
     function onClick(element) {
       document.getElementById("img01").src = element.src;

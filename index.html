@@ -152,17 +152,40 @@
             },
             {
               bigImage: "Images/slide-2.jpg",
-              title: "Présentation de la spécialité",
+              title: "Portfolio",
               author: "Templatestock"
             },
             {
-              bigImage: "Images/slide-3.jpg",
-              title: "Achieve Success",
-              author: "Templatestock"
+              bigImage: "Images/slide-team-unsplash.jpg",
+              title: "Team Spirit",
+              author: "Unsplash"
             }
           ],
             loaderSVG = new SVGLoader(document.getElementById('loader'), { speedIn: 600, speedOut: 600, easingIn: mina.easeinout });
           loaderSVG.show()
+
+          // Update the slider content with the correct information
+          function updateSliderContent(index) {
+            var slide = dataHeader[index];
+            document.querySelector(".slider-content h1").innerHTML = slide.title;
+            document.querySelector(".nav-slide .prev h3").innerHTML = dataHeader[index === 0 ? dataHeader.length - 1 : index - 1].title;
+            document.querySelector(".nav-slide .next h3").innerHTML = dataHeader[index === dataHeader.length - 1 ? 0 : index + 1].title;
+          }
+          
+          // Initial update of the slider content
+          updateSliderContent(0);
+          
+          // Add event listeners for previous and next slide navigation
+          document.querySelector(".nav-slide .prev").addEventListener("click", function() {
+            var index = dataHeader.findIndex(slide => slide.title === document.querySelector(".slider-content h1").innerHTML);
+            updateSliderContent(index === 0 ? dataHeader.length - 1 : index - 1);
+          });
+          
+          document.querySelector(".nav-slide .next").addEventListener("click", function() {
+            var index = dataHeader.findIndex(slide => slide.title === document.querySelector(".slider-content h1").innerHTML);
+            updateSliderContent(index === dataHeader.length - 1 ? 0 : index + 1);
+          });
+
           /* When the user clicks on the button, toggle between hiding and showing the dropdown content */
           function clicDrop() {
             document.getElementById("myDropdown").classList.toggle("show");
@@ -225,9 +248,8 @@
               <div class="about-content left animated" data-animate="fadeInLeft">
                 <div class="about-icon"><i class="fa fa-cube"></i></div>
                 <div class="about-detail">
-                  <h4>Multipurpose Design</h4>
-                  <p>Lorem ipsum Ea quis sint sint aliquip qui exercitation commodo non cupidatat do reprehenderit
-                    dolor. Lorem ipsum Non et minim incididunt sed labore in amet ea est pariatur.</p>
+                  <h4>Environnements de programmation</h4>
+                  <p>En NSI, nous utilisons des environnements de programmation variés tels que EduPython et Thonny pour Python, Visual Studio Code et SublimeText pour le développement web, et des plateformes en ligne comme Replit pour travailler sur des projets collaboratifs.</p>
                 </div>
               </div>
             </div>
@@ -252,7 +274,7 @@
             <li data-filter=".python" class="filter"><i class="fab fa-python"></i> Python</li>
             <li data-filter=".cool-websites" class="filter"><i class="fab fa-html5"></i> HTML</li>
             <li data-filter=".sites-js" class="filter"><i class="fab fa-js-square"></i> JS</li>
-            <li data-filter=".video" class="filter">Video</li>
+            <li data-filter=".video" class="filter"><i class="fas fa-video"></i> Video</li>
           </ul>
         </div>
 
@@ -263,8 +285,8 @@
               var portfolio = [
                 {
                   category: "python",
-                  image: "Images/p-1.png",
-                  title: "Un <span>Bingo</span>",
+                  image: "Images/p-4.png",
+                  title: "Un jeu <span>Python</span>",
                   link: "#none",
                   text: "Lorem ipsum Dolor in minim fugiat ut nisi occaecat fugiat. Lorem ipsum Quis tempor Ut enim officia deserunt consectetur."
                 },
@@ -292,8 +314,8 @@
                 },
                 {
                   category: "video",
-                  image: "Images/p-4.png",
-                  title: "Angkor <span>Wat</span>",
+                  image: "Images/okami-4-3.png",
+                  title: "Video",
                   link: "#none",
                   text: "Lorem ipsum Dolor in minim fugiat ut nisi occaecat fugiat. Lorem ipsum Quis tempor Ut enim officia deserunt consectetur."
                 },
@@ -417,7 +439,7 @@
               <div class="img-team">
                 <img src="Images/Victor_NH_1.png" alt="" class="img-circle">
               </div>
-              <h3>Samuel</h3>
+              <h3><a href="B2/Tiago/eleve.html" target="_blank">Samuel</a></h3>
               <h5>Développeur</h5>
               <p>Présentation de Samuel</p>
               <div class="team-social">
