@@ -1,0 +1,244 @@
+/* ==============================================
+   FEUILLE DE STYLES DES GABARITS HTML/CSS
+   © Elephorm & Alsacreations.com
+   Conditions d'utilisation:
+   http://creativecommons.org/licenses/by/2.0/fr/
+   ============================================== */
+
+
+/* --- STYLES DE BASE POUR LE TEXTE ET LES PRINCIPAUX ÉLÉMENTS --- */
+
+/* Page */
+html {
+	font-size: 100%;
+}
+body {
+	margin: 0;
+	padding: 10px 20px; 
+	font-family: Verdana, "Bitstream Vera Sans", "Lucida Grande", sans-serif; /* 3 */
+	font-size: .8em; 
+	line-height: 1.25; 
+	color: black;
+	background: white;
+}
+
+/* Titres */
+h1, h2, h3, h4, h5, h6 {
+	margin: 1em 0 .5em 0; 
+}
+h1, h2 {
+	font-family: Georgia, "Bitstream Vera Serif", Norasi, serif;
+	font-weight: normal; 
+}
+h1 {
+	font-size: 3em; 
+	font-style: bold;
+	text-align: center;
+}
+h2 {font-size: 1.8em;}
+h3 {font-size: 1.2em;}
+h4 {font-size: 1em;}
+
+/* Listes */
+ul, ol {
+	margin: .75em 0 .75em 24px;
+	padding: 0; 
+}
+ul {
+	list-style: square;
+}
+li {
+	margin: 0;
+	padding: 0;
+}
+
+/* Paragraphes */
+p {
+	margin: .75em 0;
+}
+li p, blockquote p {
+	margin: .5em 0;
+}
+
+/* Citations */
+blockquote, q {
+	font-size: 1.1em;
+	font-style: italic;
+	font-family: Georgia, "Bitstream Vera Serif", Norasi, serif;
+}
+blockquote {
+	margin: .75em 0 .75em 24px;
+}
+cite {
+	font-style: italic;
+}
+
+/* Liens */
+a {
+	color: mediumblue;
+	text-decoration: underline;
+}
+a:hover, a:focus {
+	color: crimson;
+}
+a img {
+	border: none; 
+}
+
+/* Divers éléments de type en-ligne */
+em {
+	font-style: italic;
+}
+strong {
+	font-weight: bold;
+	color: dimgray;
+}
+
+
+/* --- COULEURS --- */
+
+/* Note: vous pouvez modifier simplement l'aspect de ce gabarit en modifiant
+   uniquement les couleurs de fond (propriétés background) et les couleurs
+   du texte (propriété color).
+   Pour modifier la disposition des blocs, voir plus bas dans la feuille de
+   styles la partie «positionnement». */
+
+/* Général */
+body {
+	color:  #6B8BC7;
+	background: #6B8BC7; 
+}
+a {
+	color: #FF6533;
+}
+a:hover, a:focus {
+	color: #FF4C00;
+}
+strong {
+	color: #A1B55D;
+}
+
+/* Contenu principal */
+#contenu {
+	color: #363B29;
+	background: #ffffff; 
+}
+#contenu a {
+	color: #332510;
+}
+#contenu a:hover, #contenu a:focus {
+	color: #FF5733;
+	text-decoration: none;
+}
+#contenu strong {
+	color: #181A12;
+}
+
+
+/* --- POSITIONNEMENT --- */
+
+/* Page */
+body {
+	padding: 20px 50px; 
+}
+
+/* En-tête */
+#entete {
+	padding: 20px 0;
+}
+#entete h1 {
+	margin: 0;
+}
+#entete h1 img {
+	float: left;
+	margin: 7px 20px 10px 0;
+}
+#entete .sous-titre {
+	margin: 4px 0 15px 0;
+}
+
+
+
+/* Contenu */
+#contenu { 
+	margin-bottom: 20px;
+	padding: 10px 20px;
+	font-size: 1.25em;
+}
+#contenu > :first-child {
+	margin-top: 10px;
+}
+#contenu p, #contenu li {
+	line-height: 1.5;
+}
+
+#sous_menu{
+height:60px;
+margin-bottom:20px;
+text-align:center;
+
+line-height:60px;
+}
+#case_1{
+	color:black;
+	width:23%;
+	float:left;
+}
+
+#case_2{
+	color:black;
+	width:23%;
+	float:left;
+}
+#case_3{
+	color:black;
+	width:23%;
+	float:left;
+}
+#case_4{
+	color:black;
+	width:23%;
+	float:left;
+}
+
+#case_5{
+	color:black;
+	width:8%;
+	float:left;
+	text-align: right;
+}
+#case_5 img{
+	height:60px;
+	
+}
+
+/* --- STYLES POUR CERTAINS CONTENUS DES GABARITS --- */
+
+pre, code {
+	font-size: 100%;
+	font-family: "Bitstream Vera Mono", "Lucida Console", "Courier New", monospace;
+}
+pre {
+	width: 90%;
+	overflow: auto;
+	overflow-y: hidden;
+	margin: .75em 0;
+	padding: 12px;
+	background: #eee;
+	color: #555;
+}
+#sous_menu {
+	background: #e1a94c; 
+}
+#sous_menu a {
+	color: #363B29;
+height: 1%;
+    padding: 19px 90px 22px 80px;
+    line-height: 1.5;
+    font-size: 1.25em;
+    text-decoration: none;	
+}
+#sous_menu a:hover, #sous_menu a:focus {
+	background: #c13434;
+	color: #ffffff;
+}

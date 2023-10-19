@@ -1,0 +1,46 @@
+# Créé par samouzou, le 23/03/2023 en Python 3.7
+
+
+from random import *
+mois=('Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre', 'Décembre')
+months=("January","February","March","April","May","June","July","August","September","October","November","December")
+
+
+
+def EnglishtoFrench(m):
+    assert m in months,"Vérifiez l'orthographe du mois"
+    index_valeur_months = months.index(m)
+    return mois[index_valeur_months]
+
+m=choice(months)
+print(EnglishtoFrench(m))
+
+
+
+
+def FrenchtoEnglish(m):
+    index_valeur_mois = mois.index(m)
+    return months[index_valeur_mois]
+
+
+m=choice(mois)
+print(FrenchtoEnglish(m))
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

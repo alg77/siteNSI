@@ -1,0 +1,179 @@
+
+
+
+<SCRIPT LANGUAGE="JavaScript">
+
+ function test(nom,n) {
+  var rep=true;
+  for (i=0; i<n; i++) { 
+   if (nom[i].value==1 && nom[i].checked==false) rep=false;
+   if (nom[i].value==0 && nom[i].checked==true) rep=false;
+  }
+  return rep;
+ }
+ </SCRIPT>
+
+
+
+
+<HEAD>
+ <TITLE>Question pour un champion </TITLE>
+<link rel="stylesheet" href="styleq.css" />
+</HEAD>
+
+<BODY>
+
+<p>Ps: pour les questions 6,7 et 10 il ne faudra selectionner que 2 reponses maximum.  </p>
+<FORM NAME="qcm1">
+<h1>Question 1 :</h1><BR>
+quel est l'element avec le numero 107 ? <BR>
+<h1>=> </h1>
+<INPUT TYPE=RADIO NAME="choix">Berilium</INPUT>
+<INPUT TYPE=RADIO NAME="choix">Bore</INPUT>
+<INPUT TYPE=RADIO NAME="choix">Azote</INPUT>
+<INPUT TYPE=RADIO NAME="choix">Bohrium</INPUT>
+<BR><BR>
+<INPUT TYPE=BUTTON NAME="bouton" VALUE="Vérifier"
+ ONCLICK="if (document.qcm1.choix[3].checked) {alert('BONNE REPONSE.')} 
+          else {alert('MAUVAISE REPONSE !!!!.')}"> </INPUT>
+<BR><BR><BR>
+<h1>Question 2:</h1><BR>
+quel est le numero de l'azote ? <BR>
+<B>=> </B>
+<INPUT TYPE=RADIO NAME="choix">5</INPUT>
+<INPUT TYPE=RADIO NAME="choix">10</INPUT>
+<INPUT TYPE=RADIO NAME="choix">7</INPUT>
+<INPUT TYPE=RADIO NAME="choix">6</INPUT>
+<BR><BR>
+<INPUT TYPE=BUTTON NAME="bouton" VALUE="Vérifier"
+ ONCLICK="if (document.qcm1.choix[7].checked) {alert('BONNE REPONSE .')} 
+          else {alert('MAUVAISE REPONSE !!!!')}"> </INPUT>
+		  
+
+<BR><BR><BR>
+<h1>Question 3 :</h1><BR>
+Quelles sont les gazs nobles parmis : <BR>
+<B>=> </B>
+<INPUT TYPE=RADIO NAME="choix">Helium</INPUT>
+<INPUT TYPE=RADIO NAME="choix">Fer</INPUT>
+<INPUT TYPE=RADIO NAME="choix">Hydrogene</INPUT>
+<INPUT TYPE=RADIO NAME="choix">Lithium</INPUT>
+<BR><BR>
+<INPUT TYPE=BUTTON NAME="bouton" VALUE="Vérifier"
+ ONCLICK="if (document.qcm1.choix[8].checked) {alert('BONNE REPONSE .')} 
+          else {alert('MAUVAISE REPONSE !!!!')}"></INPUT>
+		  
+		  
+<BR><BR><BR>
+<h1>Question 4 :</h1><BR>
+Quelle est la famille du chlore : <BR>
+<B>=> </B>
+<INPUT TYPE=RADIO NAME="choix">les non-metaux</INPUT>
+<INPUT TYPE=RADIO NAME="choix">Les alcalins</INPUT>
+<INPUT TYPE=RADIO NAME="choix">actinides</INPUT>
+<INPUT TYPE=RADIO NAME="choix">Halogènes</INPUT>
+<BR><BR>
+<INPUT TYPE=BUTTON NAME="bouton" VALUE="Vérifier"
+ ONCLICK="if (document.qcm1.choix[15].checked) {alert('BONNE REPONSE .')} 
+          else {alert('MAUVAISE REPONSE !!!!')}"></INPUT>
+		  
+
+<BR><BR><BR>
+<h1>Question 5 :</h1><BR>
+Dans la classification périodique, les éléments sont classés : <BR>
+<B>=> </B> </B><BR>
+<INPUT TYPE=RADIO NAME="choix">par famille chimique.</INPUT>
+</B><BR>
+<INPUT TYPE=RADIO NAME="choix">par numéro atomique croissant.</INPUT>
+</B><BR>
+<INPUT TYPE=RADIO NAME="choix">par masse atomique croissante.</INPUT>
+<BR><BR>
+<INPUT TYPE=BUTTON NAME="bouton" VALUE="Vérifier"
+ ONCLICK="if (document.qcm1.choix[17].checked) {alert('BONNE REPONSE.')} 
+          else {alert('MAUVAISE REPONSE !!!!')}"></INPUT>
+		  
+
+<BR><BR><BR>
+<FORM NAME="qcm1">
+<h1>Question 6 :</h1><BR>
+quels elements font partie de la famille des halogenes ?<BR>
+<B>Réponses :</B>
+<BR><INPUT TYPE=CHECKBOX NAME="choix" VALUE=0>F,Cl,bh,Kr</INPUT>
+<BR><INPUT TYPE=CHECKBOX NAME="choix" VALUE=1>F,Cl,Br,I</INPUT>
+<BR><INPUT TYPE=CHECKBOX NAME="choix" VALUE=0>Be,Mg,Ca,Sr</INPUT>
+<BR><INPUT TYPE=CHECKBOX NAME="choix" VALUE=1>Be,Li,Na,Ca</INPUT>
+<BR><BR>
+<INPUT TYPE=BUTTON NAME="bouton" VALUE="Vérifier"
+ ONCLICK="if (test(choix,4)) {alert('BONNES REPONSES ')} 
+          else {alert('Dommage...')}">
+</INPUT>
+
+
+<BR><BR><BR>
+<FORM NAME="qcm1">
+<h1>Question 7 :</h1><BR>
+ A quoi correspond le nombre situé en haut de chaque lettre ?<BR>
+<B>Réponses :</B>
+<BR><INPUT TYPE=CHECKBOX NAME="choix" VALUE=0>le nombres de pays ou se trouve cet element </INPUT>
+<BR><INPUT TYPE=CHECKBOX NAME="choix" VALUE=0>le nombre de nucléons </INPUT>
+<BR><INPUT TYPE=CHECKBOX NAME="choix" VALUE=1>le nombre de protons et de neutrons </INPUT>
+<BR><INPUT TYPE=CHECKBOX NAME="choix" VALUE=1>le nombre de mole pour 1mg</INPUT>
+<BR><BR>
+<INPUT TYPE=BUTTON NAME="bouton" VALUE="Vérifier"
+ ONCLICK="if (test(choix,4)) {alert('BONNES REPONSES ')} 
+          else {alert('Dommage...')}">
+		  
+
+<BR><BR><BR>
+<h1>Question 8 :</h1><BR>
+A quelle famille correspond l'element Fluor ? <BR>
+<B>=> </B>
+<INPUT TYPE=RADIO NAME="choix">les non-metaux</INPUT>
+<INPUT TYPE=RADIO NAME="choix">Les alcalins</INPUT>
+<INPUT TYPE=RADIO NAME="choix">actinides</INPUT>
+<INPUT TYPE=RADIO NAME="choix">Halogènes</INPUT>
+<BR><BR>
+<INPUT TYPE=BUTTON NAME="bouton" VALUE="Vérifier"
+ ONCLICK="if (document.qcm1.choix[30].checked) {alert('BONNE REPONSE.')} 
+          else {alert('MAUVAISE REPONSE !!!!')}"></INPUT>
+		  
+
+<BR><BR><BR>
+<h1>Question 9 :</h1><BR>
+Quel est le numero du Lithuium ? <BR>
+<B>=> </B>
+<INPUT TYPE=RADIO NAME="choix">3</INPUT>
+<INPUT TYPE=RADIO NAME="choix">7</INPUT>
+<INPUT TYPE=RADIO NAME="choix">1</INPUT>
+<INPUT TYPE=RADIO NAME="choix">24</INPUT>
+<BR><BR>
+<INPUT TYPE=BUTTON NAME="bouton" VALUE="Vérifier"
+ ONCLICK="if (document.qcm1.choix[31].checked) {alert('BONNE REPONSE.')} 
+          else {alert('MAUVAISE REPONSE !!!!')}"></INPUT>
+		  
+		  
+		  
+<BR><BR><BR>
+<FORM NAME="qcm1">
+<h1>Question 10 :</h1><BR>
+ Qui est l'auteur de ce fameux tableau ?<BR>
+<B>Réponses :</B>
+<BR><INPUT TYPE=CHECKBOX NAME="choix" VALUE=1>Dimitri Mendeleïv </INPUT>
+<BR><INPUT TYPE=CHECKBOX NAME="choix" VALUE=1> un chimiste connu </INPUT>
+<BR><INPUT TYPE=CHECKBOX NAME="choix" VALUE=0>Albert Einstein</INPUT>
+<BR><INPUT TYPE=CHECKBOX NAME="choix" VALUE=0>un savant fou</INPUT>
+<BR><BR>
+<INPUT TYPE=BUTTON NAME="bouton" VALUE="Vérifier"
+ ONCLICK="if (test(choix,4)) {alert('BONNES REPONSES ')} 
+          else {alert('Dommage...')}">
+		  
+
+		  
+<p> "La théorie, c'est quand on sait tout et que rien ne fonctionne. La pratique, c'est quand tout fonctionne et que personne ne sait pourquoi.
+ Ici, nous avons réuni théorie et pratique : Rien ne fonctionne... et personne ne sait pourquoi ! " <br>
+ ~~Albert Einstein ~~ </p>
+ 
+ 
+</INPUT>
+ </SCRIPT>
+</FORM>

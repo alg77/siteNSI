@@ -1,0 +1,14 @@
+h1 {
+	color:red;	
+}
+
+p {
+	color:black;
+	margin: 35px;
+}
+body {
+	background: CadetBlue;
+}
+a:hover {
+	color: grey;
+}

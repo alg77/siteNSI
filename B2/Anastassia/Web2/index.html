@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html>
+<!-- On définit le style de présentation du tableau périodique -->
+<style>
+  table,
+  th,
+  td {
+    border: 1px solid black;
+  }
+</style>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width">
+  <title>replit</title>
+  <!-- On relie le html au css -->
+  <link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+  <h1>
+    <center>Tableau périodique des élements</center>
+  </h1>
+
+  <!-- On créée les lignes et les colonnes du tableau -->
+  <center><table style="width:50%">
+    <tr>
+      <!-- On utilise "class" pour la couleur, "onclick" pour créer un bouton lié à la fonction "hydrogene" qui affichera l'image correspondante -->
+      <td class="vert"><button onclick="hydrogene()" class="vert">1H</button></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td> </td>
+      <td class="blue">18
+        He</td>
+
+    </tr>
+    <tr>
+      <!-- On utilise "class" pour la couleur, "onclick" pour créer un bouton lié à la fonction "lithium" qui affichera l'image correspondante -->
+      <td><button onclick="lithium()" class="rouge">3
+        Li</button></td>
+      <!-- On utilise "class" pour la couleur, "onclick" pour créer un bouton lié à la fonction "beryllium" qui affichera l'image correspondante -->
+      <td><button onclick="beryllium()" class="gold">4
+        Be</button></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="kaki">5
+        B</td>
+      <td class="vert">6
+        C</td>
+      <td class="vert">7
+        N</td>
+      <td class="vert">8
+        O</td>
+      <td class="jaunevif">9
+        F</td>
+      <td class="blue">10
+        Ne</td>
+    </tr>
+    <tr>
+      <td class="rouge">11
+        Na</td>
+      <td class="gold">12
+        Mg</td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td></td>
+      <td class="grisfonce">13
+        Al</td>
+      <td class="kaki">14
+        Si</td>
+      <td class="vert">15
+        P</td>
+      <td class="vert">16
+        S</td>
+      <td class="jaunevif">17
+        Cl</td>
+      <td class="blue">18
+        Ar</td>
+    </tr>
+    <tr>
+      <td class="rouge">19
+        K</td>
+      <td class="gold">20
+        Ca</td>
+      <td class="rose">21
+        Sc</td>
+      <td class="rose">22
+        Ti</td>
+      <td class="rose">23
+        V</td>
+      <td class="rose">24
+        Cr</td>
+      <td class="rose">25
+        Mn</td>
+      <td class="rose">26
+        Fe</td>
+      <td class="rose">27
+        Co</td>
+      <td class="rose">28
+        Ni</td>
+      <td class="rose">29
+        Cu</td>
+      <td class="rose">30
+        Zn</td>
+      <td class="grisfonce">31
+        Ga</td>
+      <td class="kaki">32
+        Ge</td>
+      <td class="kaki">33
+        As</td>
+      <td class="vert">34
+        Se</td>
+      <td class="jaunevif">35
+        Br</td>
+      <td class="blue">36
+        Kr</td>
+    </tr>
+    <tr>
+      <td class="rouge">37
+        Rb</td>
+      <td class="gold">38
+        Sr</td>
+      <td class="rose">39
+        Y</td>
+      <td class="rose">40
+        Zr</td>
+      <td class="rose">41
+        Nb</td>
+      <td class="rose">42
+        Mo</td>
+      <td class="rose">43
+        Tc</td>
+      <td class="rose">44
+        Ru</td>
+      <td class="rose">45
+        Rh</td>
+      <td class="rose">46
+        Pd</td>
+      <td class="rose">47
+        Ag</td>
+      <td class="rose">48
+        Cd</td>
+      <td class="grisfonce">49
+        In</td>
+      <td class="grisfonce">50
+        Sn</td>
+      <td class="kaki">51
+        Sb</td>
+      <td class="kaki">52
+        Te</td>
+      <td class="jaunevif">53
+        I</td>
+      <td class="blue">54
+        Xe</td>
+    </tr>
+    </tr>
+    <tr>
+      <td class="rouge">55
+        Cs</td>
+      <td class="gold">56
+        Ba</td>
+      <td class="violet">
+
+      </td>
+      <td class="rose">72
+        Hf</td>
+      <td class="rose">73
+        Ta</td>
+      <td class="rose">74
+        W</td>
+      <td class="rose">75
+        Re</td>
+      <td class="rose">76
+        Os</td>
+      <td class="rose">77
+        Ir</td>
+      <td class="rose">78
+        Pt</td>
+      <td class="rose">79
+        Au</td>
+      <td class="rose">80
+        Hg</td>
+      <td class="grisfonce">81
+        Tl</td>
+      <td class="grisfonce">82
+        Pb</td>
+      <td class="grisfonce">83
+        Bi</td>
+      <td class="grisfonce">84
+        Po</td>
+      <td class="jaunevif">85
+        At</td>
+      <td class="blue">86
+        Rn</td>
+    </tr>
+    </tr>
+    <tr>
+      <td class="rouge">87
+        Fr</td>
+      <td class="gold">88
+        Ra</td>
+      <td class="rosefonce"></td>
+      <td class="rose">104
+        Rf</td>
+      <td class="rose">105
+        Db</td>
+      <td class="rose">106
+        Sg</td>
+      <td class="rose">107
+        Bh</td>
+      <td class="rose">108
+        Hs</td>
+      <td class="grisclair">109
+        Mt</td>
+      <td class="grisclair">110
+        Ds</td>
+      <td class="grisclair">111
+        Rg</td>
+      <td class="rose">112
+        Cn</td>
+      <td class="grisclair">113
+        Nh</td>
+      <td class="grisclair">114
+        Fl</td>
+      <td class="grisclair">115
+        Mc</td>
+      <td class="grisclair">116
+        Lv</td>
+      <td class="grisclair">117
+        Ts</td>
+      <td class="grisclair">118
+        Og</td>
+    </tr>
+    </tr>
+    <tr>
+      <td>_</td>
+      <td0></td0>
+      <td0></td0>
+      <td0> </td0>
+      <td0> </td0>
+      <td0> </td0>
+      <td0> </td0>
+      <td0></td0>
+      <td0></td0>
+      <td0></td0>
+      <td0></td0>
+      <td0></td0>
+      <td0></td0>
+      <td0></td0>
+      <td0></td0>
+      <td0> </td0>
+      <td0> </td0>
+      <td0> </td0>
+    </tr>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td class="violet">57
+        La</td>
+      <td class="violet">58
+        Ce</td>
+      <td class="violet">59
+        Pr</td>
+      <td class="violet">60
+        Nd</td>
+      <td class="violet">61
+        Pm</td>
+      <td class="violet">62
+        Sm</td>
+      <td class="violet">63
+        Eu</td>
+      <td class="violet">64
+        Gd</td>
+      <td class="violet">65
+        Tb</td>
+      <td class="violet">66
+        Dy</td>
+      <td class="violet">67
+        Ho</td>
+      <td class="violet">68
+        Er</td>
+      <td class="violet">69
+        Tm</td>
+      <td class="violet">70
+        Yb</td>
+      <td class="violet">71
+        Lu</td>
+      <td></td>
+    </tr>
+    </tr>
+    <tr>
+      <td></td>
+      <td></td>
+      <td class="rosefonce">89
+        Ac</td>
+      <td class="rosefonce">90
+        Th</td>
+      <td class="rosefonce">91
+        Pa</td>
+      <td class="rosefonce">92
+        U</td>
+      <td class="rosefonce">93
+        Np</td>
+      <td class="rosefonce">94
+        Pu</td>
+      <td class="rosefonce">95
+        Am</td>
+      <td class="rosefonce">96
+        Cm</td>
+      <td class="rosefonce">97
+        Bk</td>
+      <td class="rosefonce">98
+        Cf</td>
+      <td class="rosefonce">99
+        Es</td>
+      <td class="rosefonce">100
+        Fm</td>
+      <td class="rosefonce">101
+        Md</td>
+      <td class="rosefonce">102
+        No</td>
+      <td class="rosefonce">103
+        Lr</td>
+      <td></td>
+    </tr>
+
+</table></center>
+  <script src="https://replit.com/public/js/replit-badge-v2.js" theme="dark" position="bottom-right"></script>
+</body>
+
+<!-- On attribue à chaque image utilisée un id, afin de pouvoir les utiliser dans le javascript -->
+<body>  
+  <img id="image1" src="https://energyeducation.ca/wiki2develop/images/8/88/HYDROGEN.png" width="20%">
+  <img id="image2" src="https://static.vecteezy.com/ti/vecteur-libre/p3/10421692-symbole-lithium-element-chimique-du-tableau-periodique-illustrationle-vectoriel.jpg" width="20%">
+  <img id="image3" src="https://as2.ftcdn.net/v2/jpg/01/39/87/19/1000_F_139871901_QS4NeZIaQERHlHCWGnZSxX8zjBDrIHPZ.jpg" width="20%">
+</body>
+
+  
+<body>
+  <!-- On crée une partie javascript dans le html -->
+  <script>
+    // On associe chaque image par leur id à une variable spécifique
+    var div1 = document.getElementById('image1');
+    var div2 = document.getElementById('image2');
+    var div3 = document.getElementById('image3');
+
+    // Pour chaque image, on utilise une fonction correspondant à l'élément chimique attribué
+    function hydrogene() {
+      div1.style.display = "block";
+      div2.style.display = "none";
+      div3.style.display = "none";
+    }
+    
+    function lithium() {
+      div1.style.display = "none";
+      div2.style.display = "block";
+      div3.style.display = "none";
+    }
+  
+    function beryllium() {
+      div1.style.display = "none";
+      div2.style.display = "none";
+      div3.style.display = "block";
+    }
+  </script>
+</body>
+
+  
+<body>
+  <!-- On ajoute un lien au quizz des éléments -->
+  <p>Psst, as-tu bien retenu le tableau ? Voici un petit <a href="quizz.html">Quizz</a> pour te tester...</p>
+  
+</body>
+  
+</html>
+
+
+

@@ -1,0 +1,517 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Tableau périodique</title>
+		<link rel="stylesheet" href="style_tableau.css" />
+		<script src="script_tableau.js" defer></script>
+		<script>
+			var p1 = 0;
+			var p2 = 0;
+			var p3 = 0;
+			var p4 = 0;
+			var p5 = 0;
+		</script>
+	</head>
+	
+	<body>
+		<table class="t2 t3">
+			<caption>Tableau périodique</caption>
+		
+			<tr>
+				<td onclick="showContent1()" style="background-color:lime; color:black;">1<br>H</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td onclick="showContent2()" style="background-color:aqua; color:black;">2<br>He</td>
+			</tr>
+			
+			<tr>
+				<td onclick="showContent3()" style="background-color:red; color:black;">3<br>Li</td>
+				<td onclick="showContent4()" style="background-color:GoldenRod; color:black;">4<br>Be</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td onclick="showContent5()" style="background-color:RGB(116, 116, 13); color:black;">5<br>B</td>
+				<td onclick="showContent6()" style="background-color:lime; color:black;">6<br>C</td>
+				<td onclick="showContent7()" style="background-color:lime; color:black;">7<br>N</td>
+				<td onclick="showContent8()" style="background-color:lime; color:black;">8<br>O</td>
+				<td onclick="showContent9()" style="background-color:yellow; color:black;">9<br>F</td>
+				<td onclick="showContent10()" style="background-color:aqua; color:black;">10<br>Ne</td>
+			</tr>
+			
+			<tr>
+				<td onclick="showContent11()" style="background-color:red; color:black;">11<br>Na</td>
+				<td onclick="showContent12()" style="background-color:GoldenRod; color:black;">12<br>Mg</td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td></td>
+				<td onclick="showContent13()" style="background-color:RGB(117, 117, 117); color:black;">13<br>Al</td>
+				<td onclick="showContent14()" style="background-color:olive; color:black;">14<br>Si</td>
+				<td onclick="showContent15()" style="background-color:lime; color:black;">15<br>P</td>
+				<td onclick="showContent16()" style="background-color:lime; color:black;">16<br>S</td>
+				<td onclick="showContent17()" style="background-color:yellow; color:black;">17<br>Cl</td>
+				<td onclick="showContent18()" style="background-color:aqua; color:black;">18<br>Ar</td>
+			</tr>
+			
+			
+			<tr>
+				<td onclick="showContent19()" style="background-color:red; color:black;">19<br>K</td>
+				<td onclick="showContent20()" style="background-color:GoldenRod; color:black;">20<br>Ca</td>
+				<td onclick="showContent21()" style="background-color:coral; color:black;">21<br>Sc</td>
+				<td onclick="showContent22()" style="background-color:coral; color:black;">22<br>Ti</td>
+				<td onclick="showContent23()" style="background-color:coral; color:black;">23<br>V</td>
+				<td onclick="showContent24()" style="background-color:coral; color:black;">24<br>Cr</td>
+				<td onclick="showContent25()" style="background-color:coral; color:black;">25<br>Mn</td>
+				<td onclick="showContent26()" style="background-color:coral; color:black;">26<br>Fe</td>
+				<td onclick="showContent27()" style="background-color:coral; color:black;">27<br>Co</td>
+				<td onclick="showContent28()" style="background-color:coral; color:black;">28<br>Ni</td>
+				<td onclick="showContent29()" style="background-color:coral; color:black;">29<br>Cu</td>
+				<td onclick="showContent30()" style="background-color:coral; color:black;">30<br>Zn</td>
+				<td onclick="showContent31()" style="background-color:gray; color:black;">31<br>Ga</td>
+				<td onclick="showContent32()" style="background-color:olive; color:black;">32<br>Ge</td>
+				<td onclick="showContent33()" style="background-color:olive; color:black;">33<br>As</td>
+				<td onclick="showContent34()" style="background-color:lime; color:black;">34<br>Se</td>
+				<td onclick="showContent35()" style="background-color:yellow; color:black;">35<br>Br</td>
+				<td onclick="showContent36()" style="background-color:aqua; color:black;">36<br>Kr</td>
+			</tr>
+			
+			<tr>
+				<td style="background-color:red; color:black;">37<br>Rb</td>
+				<td style="background-color:GoldenRod; color:black;">38<br>Sr</td>
+				<td style="background-color:coral; color:black;">39<br>Y</td>
+				<td style="background-color:coral; color:black;">40<br>Zr</td>
+				<td style="background-color:coral; color:black;">41<br>Nb</td>
+				<td style="background-color:coral; color:black;">42<br>Mo</td>
+				<td style="background-color:coral; color:black;">43<br>Tc</td>
+				<td style="background-color:coral; color:black;">44<br>Ru</td>
+				<td style="background-color:coral; color:black;">45<br>Rh</td>
+				<td style="background-color:coral; color:black;">46<br>Pd</td>
+				<td style="background-color:coral; color:black;">47<br>Ag</td>
+				<td style="background-color:coral; color:black;">48<br>Cd</td>
+				<td style="background-color:gray; color:black;">49<br>In</td>
+				<td style="background-color:gray; color:black;">50<br>Sn</td>
+				<td style="background-color:olive; color:black;">51<br>Sb</td>
+				<td style="background-color:olive; color:black;">52<br>Te</td>
+				<td style="background-color:yellow; color:black;">53<br>I</td>
+				<td style="background-color:aqua; color:black;">54<br>Xe</td>
+			</tr>
+			
+			<tr>
+				<td style="background-color:red; color:black;">55<br>Cs</td>
+				<td style="background-color:GoldenRod; color:black;">56<br>Ba</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">57-71</td>
+				<td style="background-color:coral; color:black;">72<br>Hf</td>
+				<td style="background-color:coral; color:black;">73<br>Ta</td>
+				<td style="background-color:coral; color:black;">74<br>W</td>
+				<td style="background-color:coral; color:black;">75<br>Re</td>
+				<td style="background-color:coral; color:black;">76<br>Os</td>
+				<td style="background-color:coral; color:black;">77<br>Ir</td>
+				<td style="background-color:coral; color:black;">78<br>Pt</td>
+				<td style="background-color:coral; color:black;">79<br>Au</td>
+				<td style="background-color:coral; color:black;">80<br>Hg</td>
+				<td style="background-color:gray; color:black;">81<br>Tl</td>
+				<td style="background-color:gray; color:black;">82<br>Pb</td>
+				<td style="background-color:gray; color:black;">83<br>Bi</td>
+				<td style="background-color:gray; color:black;">84<br>Po</td>
+				<td style="background-color:yellow; color:black;">85<br>At</td>
+				<td style="background-color:aqua; color:black;">86<br>Rn</td>
+			</tr>
+				
+			<tr>
+				<td style="background-color:red; color:black;">87<br>Fr</td>
+				<td style="background-color:GoldenRod; color:black;">88<br>Ra</td>
+				<td style="background-color:crimson; color:black;">89-103</td>
+				<td style="background-color:coral; color:black;">104<br>Rf</td>
+				<td style="background-color:coral; color:black;">105<br>Db</td>
+				<td style="background-color:coral; color:black;">106<br>Sg</td>
+				<td style="background-color:coral; color:black;">107<br>Bh</td>
+				<td style="background-color:coral; color:black;">108<br>Hs</td>
+				<td style="background-color:silver; color:black;">109<br>Mt</td>
+				<td style="background-color:silver; color:black;">110<br>Ds</td>
+				<td style="background-color:silver; color:black;">111<br>Rg</td>
+				<td style="background-color:coral; color:black;">112<br>Cn</td>
+				<td style="background-color:silver; color:black;">113<br>Nh</td>
+				<td style="background-color:silver; color:black;">114<br>Fl</td>
+				<td style="background-color:silver; color:black;">115<br>Mc</td>
+				<td style="background-color:silver; color:black;">116<br>Lv</td>
+				<td style="background-color:silver; color:black;">117<br>Ts</td>
+				<td style="background-color:silver; color:black;">118<br>Og</td>
+			</tr>	
+
+			<tr>
+			</tr>
+				
+			<tr>
+				<td></td>
+				<td></td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">57<br>La</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">58<br>Ce</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">59<br>Pr</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">60<br>Nd</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">61<br>Pm</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">62<br>Sm</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">63<br>Eu</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">64<br>Gd</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">65<br>Tb</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">66<br>Dy</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">67<br>Ho</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">68<br>Er</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">69<br>Tm</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">70<br>Yb</td>
+				<td style="background-color:RGB(219, 89, 219); color:black;">71<br>Lu</td>
+			</tr>
+			
+			<tr>
+				<td></td>
+				<td></td>
+				<td style="background-color:crimson; color:black;">89<br>Ac</td>
+				<td style="background-color:crimson; color:black;">90<br>Th</td>
+				<td style="background-color:crimson; color:black;">91<br>Pa</td>
+				<td style="background-color:crimson; color:black;">92<br>U</td>
+				<td style="background-color:crimson; color:black;">93<br>Np</td>
+				<td style="background-color:crimson; color:black;">94<br>Pu</td>
+				<td style="background-color:crimson; color:black;">95<br>Am</td>
+				<td style="background-color:crimson; color:black;">96<br>Cm</td>
+				<td style="background-color:crimson; color:black;">97<br>Bk</td>
+				<td style="background-color:crimson; color:black;">98<br>Cf</td>
+				<td style="background-color:crimson; color:black;">99<br>Es</td>
+				<td style="background-color:crimson; color:black;">100<br>Fm</td>
+				<td style="background-color:crimson; color:black;">101<br>Md</td>
+				<td style="background-color:crimson; color:black;">102<br>No</td>
+				<td style="background-color:crimson; color:black;">103<br>Lr</td>		
+			</tr>
+		</table>
+		<table class="t3"> 
+			<td div id="content"
+					style="display:none">
+						<p>Le numéro atomique 1 correspond à l'hydrogène de symbole H</p>
+						<img src="images/hydrogene.jpg" width="15%"/></td>
+			<td div id="content2"
+					style="display:none">
+						<p>Le numéro atomique 2 correspond à l'hellium de symbole He</p>
+						<img src="images/hellium.jpg" width="15%"/></td>
+			<td div id="content3"
+					style="display:none">
+						<p>Le numéro atomique 3 correspond au lithium de symbole Li</p>
+						<img src="images/lithium.jpg" width="15%"/></td>
+			<td div id="content4"
+					style="display:none">
+						<p>Le numéro atomique 4 correspond au beryllium de symbole Be</p>
+						<img src="images/beryllium.jpg" width="15%"/></td>
+			<td div id="content5"
+					style="display:none">
+						<p>Le numéro atomique 5 correspond au bore de symbole B</p>
+						<img src="images/bore.jpg" width="15%"/></td>
+			<td div id="content6"
+					style="display:none">
+						<p>Le numéro atomique 6 correspond au carbone de symbole C</p>
+						<img src="images/carbone.jpg" width="15%"/></td>
+			<td div id="content7"
+					style="display:none">
+						<p>Le numéro atomique 7 correspond à l'azote de symbole N</p>
+						<img src="images/azote.jpg" width="15%"/></td>
+			<td div id="content8"
+					style="display:none">
+						<p>Le numéro atomique 8 correspond à l'oxygène de symbole O</p>
+						<img src="images/oxygene.jpg" width="15%"/></td>
+			<td div id="content9"
+					style="display:none">
+						<p>Le numéro atomique 9 correspond au fluor de symbole F</p>
+						<img src="images/fluor.jpg" width="15%"/></td>
+			<td div id="content10"
+					style="display:none">
+						<p>Le numéro atomique 10 correspond au néon de symbole Ne</p>
+						<img src="images/neon.jpg" width="15%"/></td>
+			<td div id="content11"
+					style="display:none">
+						<p>Le numéro atomique 11 correspond au sodium de symbole Na</p>
+						<img src="images/sodium.jpg" width="15%"/></td>
+			<td div id="content12"
+					style="display:none">
+						<p>Le numéro atomique 12 correspond au magnésium de symbole Mg</p>
+						<img src="images/magnesium.jpg" width="15%"/></td>
+			<td div id="content13"
+					style="display:none">
+						<p>Le numéro atomique 13 correspond à l'aluminium de symbole Al</p>
+						<img src="images/aluminium.jpg" width="15%"/></td>
+			<td div id="content14"
+					style="display:none">
+						<p>Le numéro atomique 14 correspond au silicium de symbole Si</p>
+						<img src="images/silicium.jpg" width="15%"/></td>
+			<td div id="content15"
+					style="display:none">
+						<p>Le numéro atomique 15 correspond au phosphore de symbole P</p>
+						<img src="images/phosphore.jpg" width="15%"/></td>
+			<td div id="content16"
+					style="display:none">
+						<p>Le numéro atomique 16 correspond au soufre de symbole S</p>
+						<img src="images/soufre.jpg" width="15%"/></td>
+			<td div id="content17"
+					style="display:none">
+						<p>Le numéro atomique 17 correspond au chlore de symbole Cl</p>
+						<img src="images/chlore.jpg" width="15%"/></td>
+			<td div id="content18"
+					style="display:none">
+						<p>Le numéro atomique 18 correspond à l'argon de symbole Ar</p>
+						<img src="images/argon.jpg" width="15%"/></td>
+			<td div id="content19"
+					style="display:none">
+						<p>Le numéro atomique 19 correspond au potassium de symbole K</p>
+						<img src="images/potassium.jpg" width="15%"/></td>
+			<td div id="content20"
+					style="display:none">
+						<p>Le numéro atomique 20 correspond au calcium de symbole Ca</p>
+						<img src="images/calcium.jpg" width="15%"/></td>
+			<td div id="content21"
+					style="display:none">
+						<p>Le numéro atomique 21 correspond au scandium de symbole Sc</p>
+						<img src="images/scandium.jpg" width="15%"/></td>
+			<td div id="content22"
+					style="display:none">
+						<p>Le numéro atomique 22 correspond au titane de symbole Ar</p>
+						<img src="images/titane.jpg" width="15%"/></td>
+			<td div id="content23"
+					style="display:none">
+						<p>Le numéro atomique 23 correspond au vanadium de symbole V</p>
+						<img src="images/vanadium.jpg" width="15%"/></td>
+			<td div id="content24"
+					style="display:none">
+						<p>Le numéro atomique 24 correspond au chrome de symbole Cr</p>
+						<img src="images/chrome.jpg" width="15%"/></td>
+			<td div id="content25"
+					style="display:none">
+						<p>Le numéro atomique 25 correspond au manganèse de symbole Mn</p>
+						<img src="images/manganese.jpg" width="15%"/></td>
+			<td div id="content26"
+					style="display:none">
+						<p>Le numéro atomique 26 correspond au fer de symbole Fe</p>
+						<img src="images/fer.jpg" width="15%"/></td>
+			<td div id="content27"
+					style="display:none">
+						<p>Le numéro atomique 27 correspond au cobalte de symbole Co</p>
+						<img src="images/cobalt.jpg" width="15%"/></td>
+			<td div id="content28"
+					style="display:none">
+						<p>Le numéro atomique 28 correspond au nickel de symbole Ni</p>
+						<img src="images/nickel.jpg" width="15%"/></td>
+			<td div id="content29"
+					style="display:none">
+						<p>Le numéro atomique 29 correspond au cuivre de symbole Cu</p>
+						<img src="images/cuivre.jpg" width="15%"/></td>
+			<td div id="content30"
+					style="display:none">
+						<p>Le numéro atomique 30 correspond au zinc de symbole Zn</p>
+						<img src="images/zinc.jpg" width="15%"/></td>
+			<td div id="content31"
+					style="display:none">
+						<p>Le numéro atomique 31 correspond au gallium de symbole Ga</p>
+						<img src="images/gallium.jpg" width="15%"/></td>
+			<td div id="content32"
+					style="display:none">
+						<p>Le numéro atomique 32 correspond au germanium de symbole Ge</p>
+						<img src="images/germanium.jpg" width="15%"/></td>
+			<td div id="content33"
+					style="display:none">
+						<p>Le numéro atomique 33 correspond à l'arsenic de symbole As</p>
+						<img src="images/arsenic.jpg" width="15%"/></td>
+			<td div id="content34"
+					style="display:none">
+						<p>Le numéro atomique 34 correspond au sélénium de symbole Se</p>
+						<img src="images/selenium.jpg" width="15%"/></td>
+			<td div id="content35"
+					style="display:none">
+						<p>Le numéro atomique 35 correspond au brome de symbole Br</p>
+						<img src="images/brome.jpg" width="15%"/></td>
+			<td div id="content36"
+					style="display:none">
+						<p>Le numéro atomique 36 correspond au krypton de symbole Kr</p>
+						<img src="images/krypton.jpg" width="15%"/></td>
+			
+						
+		</table>
+
+		
+		
+		<table class="t3 "> 
+			<form method="get" name="formSaisie">
+			  <p>
+				<label for="prenom">Saisissez votre nom :</label>
+				<input type="text" placeholder="nom" name="nom" id="nom" />
+				<input type="button" value="ok" onClick="nom()">
+			  </p>
+			</form>
+			
+			<form method="get" name="formSaisie">
+			  <p>
+				<label for="prenom">Saisissez votre prénom :</label>
+				<input type="text" placeholder="prénom" name="prenom" id="prenom" />
+				<input type="button" value="ok" onClick="prenom()">
+			  </p>
+			</form>
+			
+		
+			<td div id="q1"
+				style="display:none">
+					<form id="form1" name="form1" method="get">
+						<p>Comment s'appelle le tableau ci-dessus ? </p>
+						<input id="casea" type="checkbox">tableau de Mendeleïev<br>
+						<input id="caseb" type="checkbox">tableau périodique<br>
+						<input id="casec" type="checkbox">tableau des chimistes<br>
+						<div style="text-align:center"><input type="button" value="Valider" onClick="valider()"></div>
+					</form>
+			</td>
+			
+			
+			<td div id="q2"
+					style="display:none">
+					<form id="form1" name="form1" method="get">
+						<p>La quantité de matière s'exprime en : </p>
+						<input type="radio" name="SECTEUR1" value="moles" id="moles"/> moles<br>
+						<input type="radio" name="SECTEUR1" value="g/Mol" id="g/Mol"/> g/Mol<br>
+						<input type="radio" name="SECTEUR1" value="Mol" id="Mol" /> Mol<br>
+						<div style="text-align:center"><input type="button" value="Valider" onClick="valider2()"></div>
+					</form>
+			</td>
+
+			
+			<td div id="q3"
+					style="display:none">
+					<form id="form2" name="form2" method="get">
+						<p>Quel est le numéro atomique du chrome ?</p>
+						<input type="radio" name="SECTEUR2" value="52" id="52"/>52<br>
+						<input type="radio" name="SECTEUR2" value="24" id="24" /> 24<br>
+						<input type="radio" name="SECTEUR2" value="111" id="111"/> 111<br>
+						<div style="text-align:center"><input type="button" value="Valider" onClick="valider3()"></div>
+
+					</form>
+			</td>			
+			
+
+			<td div id="q4"
+					<td div id="q4"
+					style="display:none">
+					<form id="form2" name="form2" method="get">
+						<p>Donnez le symbole chimique de l'élément Mercure ?</p>
+						<input type="radio" name="SECTEUR1" value="Me" id="Me"/>Me<br>
+						<input type="radio" name="SECTEUR1" value="Hg" id="Hg" />Hg<br>
+						<input type="radio" name="SECTEUR1" value="Ir" id="Ir"/>Ir<br>
+						<div style="text-align:center"><input type="button" value="Valider" onClick="valider4()"></div>
+					</form>
+			</td>
+			
+			
+			<td div id="q5"
+				style="display:none">
+					<form id="form1" name="form1" method="get">
+						<p>Quelle est la formule brute du dioxygène ?</p>
+						<input id="cased" type="checkbox">CO2<br>
+						<input id="casee" type="checkbox">H2O<br>
+						<input id="casef" type="checkbox">O2<br>
+						<div style="text-align:center"><input type="button" value="Valider" onClick="valider5()"></div>
+					</form>
+			</td>
+			
+			
+			<td div id="q6"
+				style="display:none">
+					<form id="form1" name="form1" method="get">
+						<p>Qu'appelle-t-on "isotopes" ?</p>
+						<input id="caseg" type="checkbox">ces atomes ont le même nombre de protons<br>
+						<input id="caseh" type="checkbox">ces atomes n'ont pas le même nombre de neutrons<br>
+						<input id="casei" type="checkbox">des ions qui ont un nombre différent d'électrons<br>
+						<div style="text-align:center"><input type="button" value="Valider" onClick="valider6()"></div>
+
+					</form>
+			</td>
+			
+			<td div id="q7"
+					style="display:none">
+					<form id="form2" name="form2" method="get">
+						<p>Comment peut-on repérer des éléments qui forment le même nombre de liaisons covalentes dans la classification périodique ?</p>
+						<input type="radio" name="SECTEUR2" value="colonne" id="colonne" />sur une même colonne<br>
+						<input type="radio" name="SECTEUR2" value="ligne" id="ligne" />sur une même ligne<br>
+						<input type="radio" name="SECTEUR2" value="diagonale" id="diagonale" />sur une même diagonale<br>
+						<div style="text-align:center"><input type="button" value="Valider" onClick="valider7()"></div>
+
+					</form>
+			</td>
+			
+			
+			<td div id="q8"
+					style="display:none">
+					<form id="form2" name="form2" method="get">
+						<p>Comment appelle-t-on une ligne de la classification périodique ?</p>
+						<input type="radio" name="SECTEUR2" value="branche" id="branche" />une branche<br>
+						<input type="radio" name="SECTEUR2" value="famille" id="famille" />une famille <br>
+						<input type="radio" name="SECTEUR2" value="période" id="période" />une période<br>
+						<div style="text-align:center"><input type="button" value="Valider" onClick="valider8()"></div>
+
+						
+					</form>
+			</td>
+			
+			<td div id="q9"
+					style="display:none">
+					<form id="form2" name="form2" method="get">
+						<p>Qu’ont en commun les ions formés par des éléments chimiques appartenant à une même colonne du tableau périodique ?</p>
+						<input type="radio" name="SECTEUR2" value="num_atom" id="num_atom" />le numéro atomique<br>
+						<input type="radio" name="SECTEUR2" value="charge_elec" id="charge_elec" />la charge électrique<br>
+						<input type="radio" name="SECTEUR2" value="electrons" id="electrons" />le nombres d'électrons<br>
+						<div style="text-align:center"><input type="button" value="Valider" onClick="valider9()"></div>
+
+					</form>
+			</td>
+			
+			<td div id="q10"
+					style="display:none">
+					<form id="form2" name="form2" method="get">
+						<p>A quelle famille associe-t-on généralement le fer ?</p>
+						<input type="radio" name="SECTEUR2" value="metaux_transition" id="metaux_transition" />famille des métaux de transition<br>
+						<input type="radio" name="SECTEUR2" value="alcalino-terreux" id="alcalino-terreux" />famille des métaux alcalino-terreux<br>
+						<input type="radio" name="SECTEUR2" value="alcalins" id="alcalins" />famille des métaux alcalins<br>
+						<div style="text-align:center"><input type="button" value="Valider" onClick="valider10()"></div>
+
+					</form>
+				
+			</td>
+			
+			
+		</table>
+		
+		<table class="essai">
+			<button class="favorite styled" onclick="showQuiz()" type="button">QUIZZ</button>
+
+			
+
+		</table>	
+	</body>
+
+

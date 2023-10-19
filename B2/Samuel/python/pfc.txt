@@ -1,0 +1,81 @@
+nuls = 0 #on compte les manches nuls
+
+print("Jouons au  pierre-feuille-ciseaux-lézard-spock (PFCLS)") #phrase de début
+print(" Pour rappel : \n●La pierre écrase le lézard.\n● La pierre écrase les ciseaux.\n● La feuille enveloppe la pierre.\n● La feuille désavoue Spock.\n● Les ciseaux coupent la feuille.\n● Les ciseaux décapitent le lézard.\n● Le lézard empoisonne Spock● Le lézard mange la feuille.\n● Spock écrase les ciseaux.\n● Spock détruit la pierre.")
+
+nombrevictoirejoueur1=0; #variable pour comptabiliser les victoires du joueur1 afin d'arrêter lorsque celui-ci aura 2 victoires
+nombrevictoirejoueur2=0; #variable pour comptabiliser les victoires du joueur2 afin d'arrêter lorsque celui-ci aura 2 victoires
+
+while (nombrevictoirejoueur1<2 and nombrevictoirejoueur2<2): #boucle qui s'arrête lorsque le nombre de victoires d'un des deux joueurs est égal à 2
+    x = input("joueur 1, veuillez choisir votre coup : ")   #variable pour choix du joueur1
+    y = input("joueur 2, veuillez choisir votre coup : ")  #variable pour choix du joueur2
+
+    if x == y:        #condition si les parties nulles
+     print("égalité")
+     nuls=nuls+1      #variable pour comptabiliser les parties nulles
+     print("parties nulles :", nuls)
+
+
+    elif x == 'pierre' and y == 'ciseaux':              # on teste toutes les possiblités de parties dans lesquelles le joueur1 gagne
+        print ("joueur1 gagne 1point")
+        nombrevictoirejoueur1=nombrevictoirejoueur1+1
+
+
+    elif x == 'pierre' and y == 'spock':
+        print ("joueur1 gagne 1point")
+        nombrevictoirejoueur1=nombrevictoirejoueur1+1
+
+
+    elif x == 'feuille' and y == 'pierre':
+        print ("joueur1 gagne 1point")
+        nombrevictoirejoueur1=nombrevictoirejoueur1+1
+
+
+    elif x == 'feuille' and y == 'spock':
+        print ("joueur1 gagne 1point")
+        nombrevictoirejoueur1=nombrevictoirejoueur1+1
+
+
+    elif x== 'ciseaux' and y == 'feuille':
+        print ("joueur1 gagne 1point")
+        nombrevictoirejoueur1=nombrevictoirejoueur1+1
+
+
+    elif x == 'ciseaux' and y == 'lezard':
+        print ("joueur1 gagne 1point")
+        nombrevictoirejoueur1=nombrevictoirejoueur1+1
+
+
+    elif x == 'lezard' and y == 'spock':
+        print ("joueur1 gagne 1point")
+        nombrevictoirejoueur1=nombrevictoirejoueur1+1
+
+
+    elif x == 'lezard' and y == 'feuille':
+        print ("joueur1 gagne 1point")
+        nombrevictoirejoueur1=nombrevictoirejoueur1+1
+
+
+    elif x == 'spock' and y == 'ciseaux':
+        print ("joueur1 gagne 1point")
+        nombrevictoirejoueur1=nombrevictoirejoueur1+1
+
+    elif x == 'spock' and y == 'pierre':
+        print ("joueur1 gagne 1point")
+        nombrevictoirejoueur1=nombrevictoirejoueur1+1
+
+    else:                                                   #si le joueur1 gagne dans aucune des conditions alors c'est le joueur2 qui gagne la partie
+        print ("joueur2 gagne 1point")
+        nombrevictoirejoueur2 += 1
+
+    print('nombre victoires joueur 1:')  # affiche le score total
+    print(nombrevictoirejoueur1)
+    print('nombre victoires joueur 2:')
+    print(nombrevictoirejoueur2)
+
+
+if nombrevictoirejoueur1==2:                             #comme le nombre de victoires d'un des deux joueurs est égal à 2 alors la boucle s'arrête
+    print("le vainqueur est le joueur 1")
+
+else:
+    print("le vainqueur est le joueur 2")

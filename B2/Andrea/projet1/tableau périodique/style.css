@@ -1,0 +1,82 @@
+h1 {
+	color:red;
+}
+body {
+	color:black;
+	background: white;
+}
+
+.zone_aide { 
+  display:none;
+  width: 175px;
+  background-color: #23A2DE;
+  position: absolute;
+  color:black;
+  border:2px solid blue ;
+}
+
+.case:hover {
+background-color: #3E3E3E;
+color: white;
+}
+
+.case:hover .zone_aide {
+  display: inline-block;
+}
+
+td {
+	display:table-cell;
+	border:2px solid #fff;
+	text-align: center;
+	padding: 10px 16px;
+}
+.rouge {
+	background-color: red;
+}
+.vert {
+	background-color: #44E200;
+}
+.saumon {
+	background-color: #FF735C;
+}
+.orange {
+	background-color: orange;
+
+}
+.rose {
+	background-color: #F97ECE;
+}
+
+.violet {
+	background-color: #EE249B;
+
+}
+.bleu {
+	background-color: #24AEEE;
+}
+
+.jaune {
+	background-color: #E9F12E;
+}
+
+.grisc {
+	background-color: #B5B5AF;
+}
+
+.grisf {
+	background-color: #6E6E6E;
+}
+
+.verf {
+	background-color: #579300;
+}
+form {
+	color:#2A6AC0;
+}
+.button {
+  background-color: #7EA9FF;
+  color: black;
+  font-size: 14px;
+  border: 2px solid #2A6AC0;
+  border-radius: 4px;
+}

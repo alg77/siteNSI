@@ -1,0 +1,37 @@
+
+
+
+LES LISTES.
+Voici deux petits programmes Pythons qui vous feront découvrir les listes.
+
+#programme qui permet d'inverser une liste.
+ma_liste = [1, 5, 3, 4, 2]
+
+def ma_liste_inverse(L):
+    L.sort(reverse = True)
+    print(L)
+
+ma_liste_inverse(ma_liste)
+
+
+
+#programme python qui renvoie le pokemon avec son type 
+
+ma_liste =["Pikachu","Salamèche","Bulbizarre","Dracaufeu","Mewtwo","Carapuce"]
+ma_liste_type = ["electrik","fire","plant","fire","psy","water"]
+
+
+for i, element in enumerate(ma_liste):
+    print(f"{element} est un pokemon de type {ma_liste_type[i]} a la position {i}")
+
+ma_liste.append("Mew")
+print(ma_liste)
+
+for i, element in enumerate(ma_liste):
+    if element in ["Mew", "Mewtwo"] :
+        print(f"{element} est un pokemon légendare a la position {i}")
+    else :
+        print(f"{element} est un pokemon classique a la position {i}")
+
+
+
