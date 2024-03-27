@@ -1,0 +1,340 @@
+13/06/2022_09H00.
+
+- Installer Notepad ++
+- Installer appli Teams + se créer 1 compte (outlook.fr, me.com, orange.fr, laposte.net, ou ...).
+- Environnement de dév. Oxygène sur PC d'Olivier + VisualStudio (C++) 2019 
+- Pack Office NFR
+
+===========================================
+
+13/06/2022_10H10 : Notepad ++ Installé sur Opti-380 dans "C:\Program Files\Notepad++" et mis a jour (version 8.4.2)
+
+13/06/2022_10H24 : Création du mail outlook.fr (olivier.truong@outlook.fr) "Mon langage de programmation favori est C#."
+
+13/06/2022_10H34 : Installation de Teams Terminée.
+
+13/06/2022_10H40 : Installation de WhatsApp terminé, relié au compte sur le téléphone vivo.
+
+13/06/2022_10H57 : Debut Installation de visual studio 2019. Voir "Screens\20220613_11H00_Capture_VS_2019_Installation" Pour détails.
+
+=> 12H34 : Fin Installation VS 2019 
+
+=> 15H38 : Dézip de "oxygene_11_00_19.iso" terminé dans "C:\DevOxy\CI\V11.00.19\Install\CD_V11.00.19"
+	- Copie de "Oxydev dev CI V11.00.19 du 13-06-2022_10H55.7z" et "Oxypp dev CI V11.00.19 du 13-06-2022_10H55.7z" dans "C:\DevOxy\CI\V11.00.19\20220613_BaseOxygène_Dév".
+	
+=> ~17H à 18H52 Installation d'oxygène et de ses redistribuables,
+	- Ouverture avec VS_2019 + tentative de convertion de la solution : erreurs et avertissement à "\\192.168.1.250\olivier\Informatique\Stage Seconde 13-06-2022\Oxygène\UpgradeLog.htm"
+	- Test de compilation de Mes MAILS avec visual studio 2019, Avertissements à "\\192.168.1.250\olivier\Informatique\Stage Seconde 13-06-2022\Oxygène\erreurs_compil_VS_2019.txt",
+
+15/06/2022_9H30 : Début de la journée au bureau passage au siège de l'entreprise pour aller chercher du courrier.
+
+=> ~10H Test des machines virtuelles debian 10 sur opti-780_0311 erreurs de lancement "Screens\20220615_erreur_lancement_VM_Opti-780_0311_BU\IMG_20220615_180253.jpg"
+
+=> Photo table réunion "Screens\20220615_Photos_visite_bureau\IMG_20220615_180628.jpg"
+
+=> 16H50 Déscente dans la cave de l'entreprise pour visite / controle du serveur "Screens\20220615_Photos_visite_bureau\IMG_20220615_165648.jpg"
+
+=> Photo Routeur CISCO + Switchs "Screens\20220615_Photos_visite_bureau\IMG_20220615_180653.jpg"
+
+=> Programmation sur opti-780_0311 "Screens\20220615_Photos_visite_bureau\IMG_20220615_171011.jpg"
+
+=> 18H02
+	- Test installation d'une machine virtuelle windows 10 sur opti-780_0311 avec même erreur que VM debian.
+
+
+===========================================
+17/06/2022.
+Problème de compilation d'une solution migrée de VC++ 2008 =>  VC++ 2019.
+
+Forum revendeur : http://memsoft.forum-pro.fr, Login = sc..., MDP = ... ==== retirer pour des raisons de confidentialité ===...
+
+voir par exemple : https://memsoft.forum-pro.fr/t257-installeur-des-outils-pour-visual-studio
+ou https://memsoft.forum-pro.fr/t531-developpements-sous-visual-studio-2019?highlight=oxygenepch#1469
+ou autres, à rechercher.
+
+===========================================
+20/06/2022.
+
+1) 
+
+
+2) Dupliquer Oxypp et Oxydev de "C:\DevOxy\CI\V11.00.19\" vers "C:\DevOxy\CI\V11.00.19_VS2022"
+
+
+10H11 solution "C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRC.sln" à la régénération de GRCACT,
+
+=> Erreur de Build :
+Gravité	Code	Description	Projet	Fichier	Ligne	État de la suppression
+Avertissement	MSB4211	La propriété "IntermediateOutputPath" est définie à une valeur pour la première fois, mais elle a déjà été consommée à "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets (38,5)".	GRCACT		39	
+Avertissement	MSB4211	La propriété "DebugType" est définie à une valeur pour la première fois, mais elle a déjà été consommée à "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.BuildSteps.Targets (29,5)".	GRCACT		30	
+Avertissement	MSB4211	La propriété "CleanFile" est définie à une valeur pour la première fois, mais elle a déjà été consommée à "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets (38,5)".	GRCACT		373	
+Erreur	MSB4019	le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.	GRCACT	C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRCACT\GRCACT.vcxproj	142	
+
+10H25 : relancé install + mode dév. Oxygène V11.00.19 dans "C:\DevOxy\CI\V11.00.19\20220613_BaseOxygène_Dév"
+
+11H57 : apres installation de oxygène dans sln CI,
+=> Test recompilation de MESMAILS avec erreur: 
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPEFAC\CIGCPEFAC.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPEFAC\CIGCPEFAC.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\Mailing_Ci\Mailing_Ci.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\Mailing_Ci\Mailing_Ci.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\IMPEXP_BDD\IMPEXP_BDD.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\IMPEXP_BDD\IMPEXP_BDD.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\Oxdocori\OXDOCORI.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\Oxdocori\OXDOCORI.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\Oxdoctyp\OXDOCTYP.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\Oxdoctyp\OXDOCTYP.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\Oxdocu\OXDOCU.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\Oxdocu\OXDOCU.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\UTILS\UTILS.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\UTILS\UTILS.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\ALARM\ALARM.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\ALARM\ALARM.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\COLLMAIL\COLLMAIL.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\COLLMAIL\COLLMAIL.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPCONTA\CIGCPCONTA.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPCONTA\CIGCPCONTA.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPFOUR\CIGCPFOUR.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPFOUR\CIGCPFOUR.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPEBL\CIGCPEBL.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPEBL\CIGCPEBL.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPEDEV\CIGCPEDEV.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPEDEV\CIGCPEDEV.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGAPEFAC\CIGAPEFAC.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGAPEFAC\CIGAPEFAC.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGAPCONTA\CIGAPCONTA.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGAPCONTA\CIGAPCONTA.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPCLI\CIGCPCLI.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPCLI\CIGCPCLI.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPARTIC\CIGCPARTIC.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPARTIC\CIGCPARTIC.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPTEXTE\CIGCPTEXTE.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGCPTEXTE\CIGCPTEXTE.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGAPEBL\CIGAPEBL.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\CIGAPEBL\CIGAPEBL.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\MESMAILS\MESMAILS.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\MESMAILS\MESMAILS.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\MESCOMPT\MESCOMPT.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\MESCOMPT\MESCOMPT.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\REGLES\REGLES.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\REGLES\REGLES.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\ProjOxyPrPSH\ProjOxyPrPSH.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.props" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.props" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\ProjOxyPrPSH\ProjOxyPrPSH.vcxproj
+
+
+C:\DevOxy\CI\V11.00.19\Oxydev\CI\MESMAILS\MESMAILS.vcxproj : error  : le projet importé "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\trad_l4g.targets" est introuvable. Vérifiez que l'expression de la déclaration Import "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\\BuildCustomizations\trad_l4g.targets" est correcte et que le fichier existe sur le disque.  C:\DevOxy\CI\V11.00.19\Oxydev\CI\MESMAILS\MESMAILS.vcxproj
+
+
+En effet si l'on va dans : "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations\"
+
+PS C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations> ls
+
+
+    Répertoire: C:\Program Files (x86)\Microsoft Visual
+    Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        13/06/2022     12:12            710 ImageContentTask.props
+-a----        13/06/2022     12:12           3271 ImageContentTask.targets
+-a----        13/06/2022     12:12           4710 ImageContentTask.xml
+-a----        13/06/2022     12:12           1186 lc.props
+-a----        13/06/2022     12:12           4091 lc.targets
+-a----        13/06/2022     12:12           6503 lc.xml
+-a----        13/06/2022     12:12           1276 marmasm.props
+-a----        13/06/2022     12:12           3533 marmasm.targets
+-a----        13/06/2022     12:12           8302 marmasm.xml
+-a----        13/06/2022     12:12           1450 masm.props
+-a----        13/06/2022     12:12           4716 masm.targets
+-a----        13/06/2022     12:12          14652 masm.xml
+-a----        13/06/2022     12:12            701 MeshContentTask.props
+-a----        13/06/2022     12:12           3156 MeshContentTask.targets
+-a----        13/06/2022     12:12           1490 MeshContentTask.xml
+-a----        13/06/2022     12:12            764 ShaderGraphContentTask.props
+-a----        13/06/2022     12:12           3277 ShaderGraphContentTask.targets
+-a----        13/06/2022     12:12           1490 ShaderGraphContentTask.xml
+
+
+PS C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations>
+
+>>> Aucun fichier "trad_l4g.targets"
+
+En revanche dans "C:\Program Files\Microsoft Visual Studio\2022\Community\Msbuild\Microsoft\VC\v160\BuildCustomizations",
+
+PS C:\Program Files\Microsoft Visual Studio\2022\Community\Msbuild\Microsoft\VC\v160\BuildCustomizations> ls
+
+
+    Répertoire: C:\Program Files\Microsoft Visual
+    Studio\2022\Community\Msbuild\Microsoft\VC\v160\BuildCustomizations
+
+
+Mode                 LastWriteTime         Length Name
+----                 -------------         ------ ----
+-a----        11/05/2020     17:46           2033 trad_l4g.props
+-a----        11/05/2020     17:46           6357 trad_l4g.targets
+-a----        11/05/2020     17:46           9624 trad_l4g.xml
+
+
+PS C:\Program Files\Microsoft Visual Studio\2022\Community\Msbuild\Microsoft\VC\v160\BuildCustomizations>
+
+Donc Faire Attention quand deux compilateurs tel que VS 2019 et VS 2022 sont installer sur la machine, le VS 2022 prend le
+devant sur l'install !
+
+=====================================================================
+
+12H08
+=> test de copie des fichiers targets de VS 2022 vers VS 2019
+=> Re Ouverture de la soulution avec succès.
+=> Visiblement Tous ou presque les projets ont été rechargés.
+=> Régénération de oxygenepch avec succès.
+=> Régénération de MESMAILS avec succès !
+=> Régénération de CIGAPEFAC avec succès,
+=> (Voir : "\\192.168.1.250\olivier\Informatique\Stage Seconde 13-06-2022\Oxygène\Regenerations_Projects\20220620_12H10_regen_CI_VS2019.txt").
+
+==================================================================
+
+~12H20 :
+=> Test Régénération pour GRC ouverture de la soulution OK 15 / 21 project,
+=> Régénération de oxygenepch : OK,
+=> Régénération de GRCACT : échoué,
+erreurs :
+
+Gravité	Code	Description	Projet	Fichier	Ligne	État de la suppression
+Erreur	C1083	Impossible d'ouvrir le fichier include : 'oxygene.hpp' : No such file or directory	GRCACT	C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRCACT\cpp\GRCACT-Agenda_Ci.cpp	9	
+Erreur	C1083	Impossible d'ouvrir le fichier include : 'oxygene.hpp' : No such file or directory	GRCACT	C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRCACT\cpp\GRCACT-acces.cpp	9	
+Erreur	C1083	Impossible d'ouvrir le fichier include : 'oxygene.hpp' : No such file or directory	GRCACT	C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRCACT\cpp\GRCACT-Affcom.cpp	9	
+Erreur	C1083	Impossible d'ouvrir le fichier include : 'oxygene.hpp' : No such file or directory	GRCACT	C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRCACT\cpp\GRCACT-exp_ical.cpp	9	
+Erreur	C1083	Impossible d'ouvrir le fichier include : 'oxygene.hpp' : No such file or directory	GRCACT	C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRCACT\cpp\GRCACT-gestion.cpp	9	
+Erreur	C1083	Impossible d'ouvrir le fichier include : 'oxygene.hpp' : No such file or directory	GRCACT	C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRCACT\cpp\GRCACT-histo.cpp	9	
+Erreur	C1083	Impossible d'ouvrir le fichier include : 'oxygene.hpp' : No such file or directory	GRCACT	C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRCACT\cpp\GRCACT-histomulticible.cpp	9	
+Erreur	C1083	Impossible d'ouvrir le fichier include : 'oxygene.hpp' : No such file or directory	GRCACT	C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRCACT\cpp\GRCACT-imprl.cpp	9	
+Erreur	C1083	Impossible d'ouvrir le fichier include : 'oxygene.hpp' : No such file or directory	GRCACT	C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRCACT\cpp\GRCACT-Inter.cpp	9	
+Erreur	C1083	Impossible d'ouvrir le fichier include : 'oxygene.hpp' : No such file or directory	GRCACT	C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRCACT\cpp\GRCACT-multiact.cpp	9	
+Erreur	C1083	Impossible d'ouvrir le fichier include : 'oxygene.hpp' : No such file or directory	GRCACT	C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRCACT\cpp\GRCACT-stats.cpp	9	
+Erreur	C1083	Impossible d'ouvrir le fichier include : 'oxygene.hpp' : No such file or directory	GRCACT	C:\DevOxy\CI\V11.00.19\Oxydev\GRC\GRCACT\cpp\GRCACT-ZoomAct.cpp	9	
+
+=> (Voir "\\192.168.1.250\olivier\Informatique\Stage Seconde 13-06-2022\Oxygène\Regenerations_Projects\20220620_12H20_regen_GRC_VS2019.txt").
+
+================================================================
+
+~12H30 : 
+=> Ouverture de la soultion Hotlines : OK,
+=> Régénération de oxygenepch après l'avoir supprimé et régénéré et avoir supprimé les pdb,
+=> Régénération HOTINTER: OK,
+=> Régénération de HOTDOS : OK,
+=> (Voir "\\192.168.1.250\olivier\Informatique\Stage Seconde 13-06-2022\Oxygène\Regenerations_Projects\20220620_12H30_regen_Hotlines_VS2019.txt").
+
+En finale : il fallait copier les fichiers trad_l4g.xml, trad_l4g.targets et trad_l4g.props de "C:\Program Files\Microsoft Visual Studio\2022\Community\Msbuild\Microsoft\VC\v160\BuildCustomizations" vers "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\BuildCustomizations"
+
+13H40 : Fin des copie de Oxydev et Oxypp dans le dossier "C:\DevOxy\CI\V11.0.00.19_VS2022\"
+
+
+=> Ouverture de la solution avec VS_2022 (~5mins pour démarrer),
+=> Convertion de la solution voir screen "\\192.168.1.250\olivier\Informatique\Stage Seconde 13-06-2022\Screens\Form_ConvertionSLN_Oxy_VS2019_vers_VS2022\VS2022_Convert_SLN_oxyCI.PNG"
+=> Régénération de OxygenePch : OK,
+=> Régénération de MESMAILS : OK,
+=> Régénération de CIGAPEFAC : OK,
+=> (Voir "\\192.168.1.250\olivier\Informatique\Stage Seconde 13-06-2022\Oxygène\Regenerations_Projects\20220620_13H50_regen_CI_VS2022.txt")
+
+======================================================================
+
+14H00 : Ouverture de GRC.sln : OK,
+=> Convertion de la solution,
+=> Régénération de OxygenePch apres avoir selectionné Release (Positionné de base sur Debug) : OK,
+=> tentative de Regénération de GRCACT : échoué,
+=> (Voir "\\192.168.1.250\olivier\Informatique\Stage Seconde 13-06-2022\Oxygène\Regenerations_Projects\20220620_14H09_regen_GRC_VS2022.txt").
+
+======================================================================
+
+14H20 : Ouverture de Hotlines.sln : OK,
+=> Convertion de sln VS_2019 vers VS_2022 : OK,
+=> Régénération de oxygenepch : OK,
+=> Régénération de HOTINTER : OK,
+=> Régénération de HOTDOS : OK,
+=> (Voir "\\192.168.1.250\olivier\Informatique\Stage Seconde 13-06-2022\Oxygène\Regenerations_Projects\20220620_14H22_regen_Hotlines_VS2022.txt").
+
+=======================================================================
+21/06/2022.
+
+Programme de la journée :
+
+	1) Utilitaire sauvegarde automatique répertoire + alerte sur dossier occupé + envoi de journal / mail. Horodage du fichier : 21-06-2022_12H35. 1 fichier de config contenant le préfixe du nom de fichier, MDP de l'archive, répertoire source, répertoire destination
+		- répertoire source : C:\Gestion_Ci\#OXYGENE_CAPSOFT\V11.00.19\Oxypp
+		- préfixe du nom de fichier : _CI_V11.00.19 du 
+		- fichier cible en finale ; Oxypp_CI_V11.00.19 du 21-06-2022_09H04.7z
+		- destination : E:\temp
+		
+		- suggestion pour config.conf :
+[OXYCAP]
+C:\Gestion_Ci\#OXYGENE_CAPSOFT\V11.00.19\Oxypp
+_CI_V11.00.19 du 
+E:\temp
+[CONFIGZ]
+C:\Gestion_Ci\#OXYGENE_CAPSOFT\V10.00.18\Oxypp
+_CI_V10.00.18 du 
+E:\temp2
+[BUREAUTIQUE_LS]
+C:\Users\lamson\Documents
+_PC local LS du 
+E:\temp2
+
+Pour lancer la svg d'Oxygène de CAPSOFT, il faut "taper" : svg_ot.exe  OXYCAP
+Pour lancer la svg des documents locaux du PC de LS, il faut "taper" : svg_ot.exe BUREAUTIQUE_LS
+
+	2) Ping : ajouter l'adresse MAC de la cible : si la cibre est détectée, afficher l'adresse MAC après l'adresse IP, par exemple : (192.168.141.1 ; mac-addr : E4006A85A4FF)
+
+
+22/06/2022 : 
+Passage au bureau, 
+=> Travail sur la lecture et l'ecriture dans les process,
+=> Mise en place de MesRépertoires sur l'opti-780_0311,
+=> Remplacement d'une barette de RAM de 2GO par une de 4GO sur le dimm 2 (provenant du opti-780_0311),
+
+23/06/2022
+
+~10H30 : 
+
+Ajout des fonctionnalitées ProcessPriority modulable, Taux de compressiona ainsi que le support de l'ajout d'un
+mot de passe sur le project compression7zip,
+
+=======================================================================
+02/07_15H45 : 
+
+compression7zip.exe (version  sans log) à "\\192.168.1.250\olivier\Informatique\Stage Seconde 13-06-2022\compression7zipApp\20220702_15H43_compression7zip\compression7zip\bin\Debug\net6.0\win-x64\publish"
+
+arguments : 
+compression7zip.exe "repertoire à compresser "prefixe" "repertoire de destination" "2" "9" "motdepasse" "noResume" "noLog"
+
+
+
+
+
+=======================================================================
+A FAIRE
+=======================================================================
+- 12/07/2022 : Interrupteurs WEMOS (LED rouge, LED verte) : la programmation ne fonctionne pas, voir exemple de l'interrupteur VMC (qui utilise par contre un port GPIO du Raspberry)
+- 12/07/2022 : gestionnaire de raccourcis : résoudre le pb du 20° libellé (le dernier) qui ne s'efface pas s'il est vide dans la page en cours : c'est le libellé de la précédente page qui est conservé.
+
+=======================================================================

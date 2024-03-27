@@ -1,0 +1,42 @@
+.color_green {
+	background-color: #27FF2D;
+}
+.color_red {
+	background-color: red;
+}
+.color_orange {
+	background-color: orange;
+}
+.color_salmon {
+	background-color: salmon;
+}
+.color_kaki {
+	background-color: #204D00;
+}
+.color_lightgreen {
+	background-color: #A4E003;
+}
+.color_blue {
+	background-color: #55ECFF;
+}
+.color_darkgrey {
+	background-color: #756A6D;
+}
+.color_lightgrey {
+	background-color: #A8979D;
+}
+.color_pink {
+	background-color: #E649DE;
+}
+.color_darkpink {
+	background-color: #E60E59;
+}
+
+td {
+	border-radius: 3px 3px;
+	text-align: center;
+	font-size: 45px;	
+}
+table {
+	
+}

@@ -1,0 +1,89 @@
+﻿body, div {
+	margin: 0;
+	padding: 0;
+}
+header{
+padding: 1px;
+	background-color: white;
+	text-align: right;
+  color: black;
+  font-family: 'Arial Black', sans-serif;  
+}
+h1{background-color: darkblue;
+	font-family: 'Arial Black', sans-serif;
+	font-size: 40px;
+  color: white;
+  text-align: center;
+}
+body {
+	background-color: darkblue;
+	font-family: 'Arial Black', sans-serif;
+	font-size: 16px;
+  color: white;
+}
+h2{
+	font-family: 'Arial Black', sans-serif;
+	font-size: 40px;
+  color: white;
+  text-align: center;
+}
+}
+img { 
+	float: right; 
+	}
+th { width: 500px;}
+th { height: 60px;}
+th {background-color: white;}
+th{font-size: 20px;}
+ul { list-style-type: square; }
+
+#entete-de-page {
+	padding: 5px;
+	height: 100px;
+	background-color: darkblue;
+	font-size: 32px;
+	font-weight: bold;
+	font-variant: small-caps;
+	text-align: center;
+  color: white;
+}
+#bloc-menu {
+	height: 36px;
+	background-color: white;
+	float: center;
+	color: blue;
+}
+#contenu {
+	padding: 11px;
+	background-color: darkblue;
+	text-align: center;
+  color: white;
+  font-size: 20px;
+  font-family: 'Arial Black', sans-serif;
+  
+}
+
+#infos  {
+	color:5pxd;
+
+}
+#pied-de-page {
+	padding: 5px;
+	background-color: white;
+	font-size: 11px;
+  color: black;
+  text-align: center;
+}
+a:link
+{
+    color: blue;
+  text-decoration: none;
+}
+a:hover
+  {
+    color:cyan;
+  }
+a{
+  font-family: 'Arial Black', sans-serif;
+  color: blue;
+}

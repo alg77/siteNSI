@@ -1,0 +1,792 @@
+<!DOCTYPE html>
+<!--
+  Daraz by TEMPLATE STOCK
+  templatestock.co @templatestock
+  Released for free under the Creative Commons Attribution 3.0 license (templated.co/license)
+-->
+
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>St Laurent - Spécialité NSI</title>
+
+  <link rel="stylesheet" href="css/bootstrap.min.css" />
+  <link rel="stylesheet" href="css/fontawesome.min.css" />
+  <link rel="stylesheet" href="css/animate.css" />
+
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="stylesheet" href="css/eleve.css" />
+  <style>
+	body {
+		--orange-moi: #E56717;
+		--jaune-perso: #EBEB2B;
+    background-color: #fff;
+	}
+  .about-content {
+    color: #eee;
+  }
+  .about-content h4 {
+    color: #898;
+  }
+  a:hover {
+    color: var(--teal);
+    zoom: 110%;
+  }
+  </style>
+
+  <script type="text/javascript" src="js/jquery-1.11.2.min.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript"
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCZXJBVDf7R4JqmSpopVPoduIGWx1IwpBM"></script>
+  <script type="text/javascript" src="js/plugins.js"></script>
+  <!-- Font Awesome v5 -->
+  <script src="https://kit.fontawesome.com/bef258002f.js" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/showdown/1.9.0/showdown.min.js"></script>
+
+  <!-- HTML5 shim and Respond.js for IE8 support of HTML5 elements and media queries -->
+  <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+  <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+
+<body>
+  <div class="svg-wrap">
+    <svg width="64" height="64" viewBox="0 0 64 64">
+      <path id="arrow-left"
+        d="M26.667 10.667q1.104 0 1.885 0.781t0.781 1.885q0 1.125-0.792 1.896l-14.104 14.104h41.563q1.104 0 1.885 0.781t0.781 1.885-0.781 1.885-1.885 0.781h-41.563l14.104 14.104q0.792 0.771 0.792 1.896 0 1.104-0.781 1.885t-1.885 0.781q-1.125 0-1.896-0.771l-18.667-18.667q-0.771-0.813-0.771-1.896t0.771-1.896l18.667-18.667q0.792-0.771 1.896-0.771z">
+      </path>
+    </svg>
+
+    <svg width="64" height="64" viewBox="0 0 64 64">
+      <path id="arrow-right"
+        d="M37.333 10.667q1.125 0 1.896 0.771l18.667 18.667q0.771 0.771 0.771 1.896t-0.771 1.896l-18.667 18.667q-0.771 0.771-1.896 0.771-1.146 0-1.906-0.76t-0.76-1.906q0-1.125 0.771-1.896l14.125-14.104h-41.563q-1.104 0-1.885-0.781t-0.781-1.885 0.781-1.885 1.885-0.781h41.563l-14.125-14.104q-0.771-0.771-0.771-1.896 0-1.146 0.76-1.906t1.906-0.76z">
+      </path>
+    </svg>
+  </div>
+
+
+  <!-- MAIN CONTENT -->
+
+  <div class="container-fluid">
+
+    <!-- HEADER -->
+
+    <section id="header">
+
+      <!-- NAVIGATION -->
+      <nav class="navbar navbar-fixed-top navbar-default bottom">
+        <div class="container">
+          <div class="navbar-header">
+            <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#menu">
+              <span class="sr-only">Toggle navigation</span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+            </button>
+            <a class="navbar-brand" href="#header"><img src="Images/StLaurentlaPaix.png" width="20%"></a>
+          </div><!-- /.navbar-header -->
+
+          <div class="collapse navbar-collapse" id="menu">
+            <ul class="nav navbar-nav navbar-right">
+              <li><a href="#header"><i class="fas fa-home fa-2x"></i> Home</a></li>
+              <li><a href="#about"><i class="fas fa-info-circle fa-2x"></i> About</a></li>
+              <li><a href="#cv"><i class="fas fa-user-ninja fa-2x"></i> Resume</a></li>
+              <li><a href="#portfolio"><i class="fas fa-camera fa-2x"></i> Portfolio</a></li>
+              <li><a href="#info"><i class="fas fa-dice-d20 fa-2x"></i> Skills</a></li>
+              <li><a href="#contact"><i class="fas fa-envelope fa-2x"></i> Contact</a></li>
+            </ul>
+          </div> <!-- /.navbar-collapse -->
+        </div> <!-- /.container -->
+      </nav>
+
+      <!-- SLIDER -->
+      <div class="header-slide">
+        <section>
+          <div id="loader" class="pageload-overlay" data-opening="M 0,0 0,60 80,60 80,0 z M 80,0 40,30 0,60 40,30 z">
+            <svg xmlns="http://www.w3.org/2000/svg" width="100%" height="100%" viewBox="0 0 80 60"
+              preserveAspectRatio="none">
+              <path d="M 0,0 0,60 80,60 80,0 Z M 80,0 80,60 0,60 0,0 Z" />
+            </svg>
+          </div> <!-- /.pageload-overlay -->
+
+          <div class="image-slide bg-fixed">
+            <div class="overlay">
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-12">
+
+                    <div class="slider-content">
+                      <h1></h1>
+                      <p>Site de la Spécialité NSI en Tle</p>
+                    </div>
+
+                  </div> <!-- /.col-md-12 -->
+                </div> <!-- /.row -->
+              </div> <!-- /.container -->
+            </div> <!-- /.overlay -->
+          </div> <!-- /.image-slide -->
+
+          <nav class="nav-slide">
+            <a class="prev" href="#prev">
+              <span class="icon-wrap">
+                <svg class="icon" width="32" height="32" viewBox="0 0 64 64">
+                  <use xlink:href="#arrow-left">
+                </svg>
+              </span>
+              <div>
+                <span>Prev Photo</span>
+                <h3>...</h3>
+                <p>...</p>
+                <img alt="Previous thumb">
+              </div>
+            </a>
+            <a class="next" href="#next">
+              <span class="icon-wrap">
+                <svg class="icon" width="32" height="32" viewBox="0 0 64 64">
+                  <use xlink:href="#arrow-right">
+                </svg>
+              </span>
+              <div>
+                <span>Next Photo</span>
+                <h3>...</h3>
+                <p>...</p>
+                <img alt="Next thumb">
+              </div>
+            </a>
+          </nav>
+        </section>
+        
+        <script type="text/javascript">
+          var dataHeader = [
+            {
+              bigImage: "Images/nav-webp-01.webp",
+              title: "Présentation de mon Projet Post-BAC, \n",
+              author: "Video by Tom Schönmann: https://www.pexels.com/video/snow-wood-light-sea-17140884/"
+            },
+            {
+              bigImage: "Images/nav-webp-02.webp",
+              title: "“ La Science sans La Connaissance n'est Pas la Science. De même, La Connaissance n'est Rien sans la Science. Ainsi nait l'idée du progrès.. ”",
+              author: "Video by Domianick Arts: https://www.pexels.com/video/time-lapse-footage-of-a-lake-4854417/"
+            },
+            {
+              bigImage: "Images/nav-webp-03.webp",
+              title: "“ La Maitrise d'un Domaine, passe par la Recherche Continue de Connaissances Nouvelles ”",
+              author: "Video by Pressmaster from Pexels: https://www.pexels.com/video/digital-projection-of-a-planet-geometrical-symmetry-with-relation-to-outer-space-3141208/"
+            }
+          ],
+            loaderSVG = new SVGLoader(document.getElementById('loader'), { speedIn: 600, speedOut: 600, easingIn: mina.easeinout });
+          loaderSVG.show()
+
+          // Update the slider content with the correct information
+          function updateSliderContent(index) {
+            var slide = dataHeader[index];
+            document.querySelector(".slider-content h1").innerHTML = slide.title;
+            document.querySelector(".nav-slide .prev h3").innerHTML = dataHeader[index === 0 ? dataHeader.length - 1 : index - 1].title;
+            document.querySelector(".nav-slide .next h3").innerHTML = dataHeader[index === dataHeader.length - 1 ? 0 : index + 1].title;
+          }
+          
+          // Initial update of the slider content
+          updateSliderContent(0);
+          
+          // Add event listeners for previous and next slide navigation
+          document.querySelector(".nav-slide .prev").addEventListener("click", function() {
+            var index = dataHeader.findIndex(slide => slide.title === document.querySelector(".slider-content h1").innerHTML);
+            updateSliderContent(index === 0 ? dataHeader.length - 1 : index - 1);
+          });
+          
+          document.querySelector(".nav-slide .next").addEventListener("click", function() {
+            var index = dataHeader.findIndex(slide => slide.title === document.querySelector(".slider-content h1").innerHTML);
+            updateSliderContent(index === dataHeader.length - 1 ? 0 : index + 1);
+          });
+
+          /* When the user clicks on the button, toggle between hiding and showing the dropdown content */
+          function clicDrop() {
+            document.getElementById("myDropdown").classList.toggle("show");
+          }
+
+
+          
+          try {
+            var converter = new showdown.Converter();
+            let https = new XMLHttpRequest();
+            var rep = "";
+            //https.open("GET", "https://raw.githubusercontent.com/Olivier-true/SqlServer-access-using-powershell/main/README.md", false);
+            https.send();
+            rep = https.responseText;
+            var html = converter.makeHtml(rep);
+            document.writeln(html);
+            console.log(rep);
+  
+            
+          } catch(error){
+            console.log("Pb avec la lib markdown :'(" + error);
+          }
+
+          // Close the dropdown if the user clicks outside of it
+          window.onclick = function (e) {
+            if (!e.target.matches('.dropbtn')) {
+              var myDropdown = document.getElementById("myDropdown");
+              if (myDropdown.classList.contains('show')) {
+                myDropdown.classList.remove('show');
+              }
+            }
+          }
+
+          
+        </script>
+
+      </div><!-- /.header-slide -->
+    </section>
+
+    <!-- HEADER END -->
+
+
+    <!-- ABOUT -->
+
+    <section id="about" class="dark">
+      <header class="title">
+        <h2>Olivier <span>TRUONG</span></h2>
+        <p>Présentation de mes <strong>projets personnels</strong> et en <strong>NSI</strong></p>
+      </header>
+
+      <div class="container">
+        <div class="row table-row">
+          <div class="col-sm-6 hidden-xs">
+            <div class="section-content">
+              <div class="big-image" style="background-image:url(Images/OIG-2.jpeg)"></div>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="section-content">
+              <div class="about-content left animated" data-animate="fadeInLeft">
+                <div class="about-icon"><i class="fab fa-html5" style="color: var(--orange-moi);"></i></div>
+                <div class="about-detail">
+                  <h4>Projets Web</h4>
+                  <p>
+                    - Création de deux sites web en HTML/css/js et Flask (python) regroupant des utilitaires en JavaScript. Permettant de manipuler simplement les Algorithmes de Cryptographie répandues.
+                    <br>Comme l'encodage en base 16,
+                    <br>  - <a href="https://glazedwebtools.0xsql.repl.co/encoding-base64" target="_blank">l'encodage en base 64</a>,
+                    <br>  - le chiffrement par l'opérateur XOR,
+                    <br>  - <a href="https://msg.0xsql.repl.co/aes" target="_blank">le Chiffrement AES</a> (via un script de cloudflare),
+                    <br><br><b>Ainsi</b> Que des Interfaces pour <b>remplacer des occurences Simples</b>, calculer la <a href="https://glazedwebtools.0xsql.repl.co/length-calculator" target="_blank">longueur d'un Texte</a>, etc...
+                    <br>
+                    <a href="https://msg.0xsql.repl.co/" target="_blank">-> Voir le site de SNT de Seconde</a>
+                    <br>
+                    <a href="https://glazedwebtools.0xsql.repl.co/" target="_blank">-> Voir le site de NSI de Première</a>
+                    <br><br>
+                    - Développement d'une Interface web avec la bibliothèque Flask de python,
+                    pour télécharger ses playlistes Spotify hors-Connexion et les exporter en Archive `ZIP`.
+                    <br>
+                    <a href="https://github.com/Olivier-true/Spotify-Playlist-Downloader-Web-App" target="_blank">Voir sur mon github</a>
+                  </p>
+                </div>
+              </div>
+
+              <div class="about-content left animated" data-animate="fadeInLeft">
+                <div class="about-icon"><i class="fab fa-python" style="color: #25e;"></i></div>
+                <div class="about-detail">
+                  <h4>Projets Python</h4>
+                  <p>
+                    <i>Beaucoup de fichiers correspondent au pattern `*.py` sur mon PC.</i><br>
+                    <b>• En d'autres termes, j'utilise le langage Python principalement pour :</b><br>
+                    <br>
+                    - Le <b>développement</b> <b>de sites</b> web énumérés plus haut, dans <b>`Projets Web`</b>.<br>
+                    - <b>Résoudre</b> des tâches <b>simples</b>, très spécifiques liées à une transformation de formats basiques.<br>
+                    - <b>Effectuer</b> des tâches <b>d'automatisation</b> en local (excepté pour le déploiement au grand public, non-développeur).<br>
+                    <br>
+                    
+                    <a href="https://pastebin.com/Zmt82pb2" target="_blank">• Vous pouvez jeter un œil aux noms de tous mes fichiers en *.py en suivant ce lien :</a><br>
+                    <br>
+                    <b>• Je conçois qu'il n'y a parfois rien d'explicite dans ces noms. Il s'agit simplement d'une liste des notions abordées.</b><br>
+                    <br>
+                    <br>
+                  </p>
+                </div>
+              </div>
+
+              <div class="about-content left animated" data-animate="fadeInLeft">
+                <div class="about-icon"><i class="fa fa-code" style="color: #777";></i></div>
+                <div class="about-detail">
+                  <h4>Autres</h4>
+                  <p>
+                    - IA et Contibutions: <br>
+                    <br>
+                    <b>• XTTS_V1 :</b><br>
+                    <br>
+                      - J'ai apporté une solution pour permettre aux utilisateurs de Hugging Face d'exécuter le modèle sur un CPU au lieu d'un GPU.<br>
+                      En fournissant des instructions et des configurations Python pour XTTS, répondant ainsi aux questions des utilisateurs sur le référentiel GitHub.<br>
+                      - J'ai également suivi le développement de XTTS_V1, puis ajouté la branche de développement à mon projet, lorsque les corrections ont été apportées.<br>
+                    <br><br>
+                    <b>• Faster Whisper Webui :</b><br>
+                    <br>
+                    • Pour le projet Faster Whisper Webui,<br>
+                    - J'ai effectué des modifications sur l'interface utilisateur (UI gradio) et la configuration du modèle.<br>
+                    <br>
+                    - Mon objectif était de faciliter l'utilisation des modèles et d'améliorer l'expérience des utilisateurs.<br>
+                    • Ces premières contributions m'ont permis d'explorer l'architecture globale des modèles d'IA open-source, ainsi que d'apporter des solutions pratiques et de contribuer à mon échelle, à la démocratisation de l'intelligence artificielle.<br>
+                    <br>
+                    <b>• [*] Je garde l'ambition de continuer à explorer et à apprendre dans ce domaine</b><br>
+                    <br>
+
+                    <a href="https://huggingface.co/Olivier-Truong" target="_blank">-> Mes Contibutions aux Projets d'IA sur Hugging-Face</a>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div> <!-- /.row table-row -->
+      </div> <!-- /.container -->
+    </section>
+
+    <!--CV -->
+    <section id="cv" class="light">
+      <header class="title">
+        <h2>Mon <span>CV</span></h2>
+        <p>About me (again...)</p>
+      </header>
+        <div class="container">
+            <div class="row">
+                <div class="col-md-6 col-lg-4">
+                    <div class="card">
+                       <div class="card-header">
+                            <div class="mt-2">
+                                <h4>Expériences Professionnelles et Stages</h4>
+                                <span class="line"></span>  
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="title text-danger">Juillet 2022 - Stage Chez Capsoft (2 semaines)</h6>
+                            <P>J'ai pu faire un Stage de deux semaines chez <a href="https://capsoft.fr/content/politique-de-confidentialite" target="_blank">Capsoft</a>, une SARL.
+                              Leur domaine est assez spécialisé, axés sur le développement de divers <b>outils de Gestion commercial</b> personnalisés pour les clients.
+                              Le développement de ces Interfaces, utilisent un <i>langage de programmation propriétaire <a href="https://aides.memsoft.fr/aide/sdk/accueil.html" target="_blank">(L4G de Memsoft)</a></i> (surcouche du langage <a href="https://fr.wikipedia.org/wiki/Visual_C%2B%2B" target="_blank">populaire C++ de Microsoft !</a>)
+                              Néanmoins, ce langage est spécialisé pour un domaine précis. Ce qui peux rendre certaine tâches complexes voire limitante pour le développeur.
+                              Pendant ce stage, j'ai réalisé en accord avec le développeur, des petits utilitaires tel que
+                              <br><br>
+                              - <a href="" target="_blank">Un Menu permettant l'acces rapide aux nombreux répertoire et fichiers de l'explorateur windows. (en C#, Windows Forms)</a>. Permettant un Gain de temps aux personnes travaillant sur la conception et le test des produits.
+                              <br><br>
+                              - <a href="" target="_blank">Journalisation de l'activité des postes sur le VPN de l'entreprise</a>  (stockant le temps de réponse des postes et un `Ping` en C# pour mesurer la fiabilité du réseau, ainsi que d'autres informations).
+                              <br><br>
+                              - <a href="./fichier_de_documentation_markdown_en_html_par_subl_ext/sauvegarde_7zip_documentation.html" target="_blank">Un automate <b> périodiquement la sauvegarde des fichiers de la base du logiciel</b> `avec 7z.exe`</a>, redirigeant le flux de sortie de la sauvegarde vers un journal pour énumérer les erreurs (utilisateur occupant une partie de la base).
+                              <br><br>
+                              <h6>* Avant cela, le développeur utilisait des scripts batch Windows et devait refaire l'opération manuellement, ou du moins la finaliser si le traitement n'était pas complet.</h6>
+                            </P>
+                            <P class="subtitle"></P>
+                            <hr>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6 col-lg-4">
+                    <div class="card">
+                       <div class="card-header">
+                            <div class="mt-2">
+                                <h4>Expériences: (Suite)</h4>
+                                <span class="line"></span>  
+                            </div>
+                        </div>
+                        <div class="card-body">
+                            <h6 class="title text-danger">Encore aujourd'hui...</h6>
+                            <P> - De temps en temps, j'apporte mon aide à Capsoft pour des rectifications de front-end simples (concernant leur site web). J'apporte parfois certaines 'Mises à Jour' sur mes projets.
+                              <br><b>Récemment</b> (~01/11/23), je leur ai créé une API en <a href="https://learn.microsoft.com/fr-fr/cpp/dotnet/dotnet-programming-with-cpp-cli-visual-cpp" target="_blank">CLI/C++</a> qu'ils pourront intégrer à leur projet, pour permettre de réduire en partie certains temps de traitements sur les données.
+                              Je ne rentrerais pas dans les détails du concept, <b>le programme pourrait potentiellement être proposé comme produit à la vente à l'avenir.</b>
+                              <br></P>
+                        </div>
+                        <div class="card-header">
+                          <div class="mt-2">
+                              <h4>Formation / Diplômes</h4>
+                              <span class="line"></span>  
+                          </div>
+                      </div>
+                      <div class="card-body">
+                          <hr>
+                            <h6 class="title text-danger">DNB (Session 2021)</h6>
+                            <P>Mention: Bien.</P>
+                            <P class="subtitle">
+                              - Le Brevet est le premier vrai diplôme que j'ai obtenu.
+                              <br><br>
+                              • Du côté des certifications <b>obligatoires ou secondaires</b> j'ai eu :
+                              <br>
+                              - La certification PSC1
+                              <br>
+                              - L'ASSR 1 puis 2 (17/20)
+                              <br>
+                              - <b>Entraînement PIX: </b> (92% de bonnes réponses) et <b>421 points / 896 points</b> Validés.
+                              <br> 🏆 : [niv. 7] en Programmation.
+                            </P>
+                          <hr>
+                      </div>
+
+                    </div>
+                </div>
+                <div class="col-lg-4">
+                    <div class="card">
+                       <div class="card-header">
+                            <div class="pull-left">
+                                <h4 class="mt-2">Compétences (Jugement Objectif)</h4>
+                                <span class="line"></span>  
+                            </div>
+                        </div>
+                        <div class="card-body pb-2">
+						<h6>H4king</h6>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 58%; background-color: #404;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+							<h6>C#</h6>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 75%; background-color: #070;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+							<h6>PowerShell</h6>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 65%; background-color: rgb(20, 111, 191);" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+							<h6>Python>=3.7.1</h6>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 70%; background-color: rgb(48, 105, 152);" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                           <h6>HTML5 &amp; CSS3</h6>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 55%; background-color: var(--orange-moi);" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+							
+                            <h6>JavaScript</h6>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 57%; background-color: var(--jaune-perso);" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            
+                            <h6>SQLite3</h6>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 45%; background-color: rgb(0, 57, 86);" aria-valuenow="45" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            
+                            <h6>Cryptography & Networking</h6>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 54%; background: linear-gradient(90deg, rgb(235, 188, 17), rgb(100, 130, 150));" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+							<h6>Data / AI</h6>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 30%; background: linear-gradient(90deg, rgb(140, 10, 140), rgb(230, 50, 230));" aria-valuenow="75" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card">
+                       <div class="card-header">
+                            <div class="pull-left">
+                                <h4 class="mt-2">Languages</h4>
+                                <span class="line"></span>  
+                            </div>
+                        </div>
+                        <div class="card-body pb-2">
+                           <h6>English</h6>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 60%; background: linear-gradient(90deg, #ff0000, #cccccc, #0000ff);" aria-valuenow="40" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <h6>French</h6>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 85%; background: linear-gradient(90deg, rgb(10, 10, 255), #eff, #ffe, rgb(255, 10, 10));" aria-valuenow="70" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                            <h6>Spanish</h6>
+                            <div class="progress mb-3">
+                                <div class="progress-bar bg-danger" role="progressbar" style="width: 40%; background: linear-gradient(90deg, #ff1010, #ff1010, #ff1010 , #ffff10, #ffff10, #ffff10, #ffff10, #ff1010, #ff1010, #ff1010);" aria-valuenow="30" aria-valuemin="0" aria-valuemax="100"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <div class="card-body">
+    <div class="motivation_et_valeur" style="max-width: 97%; text-align: justify; margin-left: 20px; margin-right: 20px;">
+      <P class="subtitle"><h3> - Je considère ces expériences essentielles à la compréhension <b>des besoins des différents acteurs</b> à différents postes.
+        J'ai pu voir que le langage de programmation n'est <b>qu'un outil</b>. Utile, certes parfois complexe. Mais le fait de voir la réalité du monde en entreprise me donne encore plus de motivation et d'intérêt pour l'étude des domaines généraux, dans lesquels je peux parfois avoir des difficultés de compréhension.
+        Une des valeurs qui me tient à cœur est de pouvoir, moi aussi, à mon tour, répondre à des problèmes techniques demandant une expertise et apporter des solutions dans les domaines de l'ingénierie moderne, tout en contribuant aux causes communes et au progrès.
+      </h3></P>
+      </div>
+    </div>
+    <!-- PORTFOLIO -->
+
+    <section id="portfolio" class="dark">
+      <header class="title">
+        <h2>Portfolio</h2>
+        <p>Voici quelques-uns de mes <strong>projets</strong> !</p>
+      </header>
+
+      <div class="container-fluid">
+        <div class="row">
+          <ul id="filters" class="list-inline">
+            <li data-filter="all" class="filter">All</li>
+			<li data-filter=".hacking" class="filter"><i class="fas fa-video"></i> H4king</li>
+			<li data-filter=".csharp" class="filter"><i class="fas fa-desktop"></i> C#</li>
+			<li data-filter=".pwsh" class="filter"><i class="fas fa-terminal"></i> PowerShell</li>
+			<li data-filter=".crypto" class="filter"><i class="fa fa-shield" aria-hidden="true"></i> Cryptography</li>
+            <li data-filter=".python" class="filter"><i class="fab fa-python"></i> Python</li>
+			<li data-filter=".AI" class="filter"><i class="fas fa-server"></i> IA</li>
+            <li data-filter=".cool-websites" class="filter"><i class="fab fa-html5"></i> HTML</li>
+            <li data-filter=".sites-js" class="filter"><i class="fab fa-js-square"></i> JS</li>
+            
+          </ul>
+        </div>
+
+        <div class="row">
+          <div class="container-portfolio">
+            <!-- PORTFOLIO OBJECT -->
+            <script type="text/javascript">
+              var portfolio = [
+                {
+                  category: "hacking csharp",
+                  image: "Images/rev_shell_glz.png",
+                  title: "Reverse <span>Shell</span> Tcp Encrypted",
+                  link: "https://github.com/Olivier-true/revserse-shell",
+                  text: "A Simple Reverse Shell TCP End-To-End Encrypted Made In C#"
+                },
+                {
+                  category: "pwsh",
+                  image: "Images/sqlclient_pwsh.jpg",
+                  title: "<span>SqlClient</span> In PowerShell (Native)",
+                  link: "https://github.com/Olivier-true/SqlServer-access-using-powershell",
+                  text: "Access to SqlServer database using simple powershell syntax [no dependancies]"
+                },
+                {
+                  category: "cool-websites",
+                  image: "Images/glz_wt_screen.png",
+                  title: "<span>Glz</span> Web Tools",
+                  link: "https://glazedwebtools.0xsql.repl.co/",
+                  text: "Un site de service web"
+                },
+                {
+                  category: "crypto",
+                  image: "Images/aes_encryption.webp",
+                  title: "<span>AES Util.</span> Online",
+                  link: "https://msg.0xsql.repl.co/aes",
+                  text: "Chiffrez & Déchiffrez des chaines (en ligne)"
+                },
+                {
+                  category: "cool-websites",
+                  image: "Images/webapp-spotify-downloader.png",
+                  title: "<span>Spotify Audio Downloader</span> Web App",
+                  onclick: "onClick(this)",
+                  link: "https://github.com/Olivier-true/Spotify-Playlist-Downloader-Web-App",
+                  text: "Spotify Audio Downloader Web App with Flask and spotDL"
+                },
+                {
+                  category: "python",
+                  image: "Images/krequests_optimized.png",
+                  title: "Module <span>requests</span> optimisé",
+                  link: "https://github.com/Olivier-true/MicroPython-Memory-Friendly-HTTP-Requests",
+                  text: "Module de requête HTTP optimisée pour ESP32 (micropython)"
+                },
+                {
+                  category: "cool-websites",
+                  image: "Images/msg_site_2nd.png",
+                  title: "<span>Site de SNT</span> (2nd)",
+                  onclick: "onClick(this)",
+                  link: "https://msg.0xsql.repl.co/",
+                  text: "Mon Premier Vrai Site Web"
+                },
+                {
+                  category: "sites-js cool-websites python",
+                  image: "Images/fast-messaging.png",
+                  title: "Flask-SocketIO <span>Messaging Application</span>",
+                  link: "https://github.com/Olivier-true/Flask-SocketIO-Messaging-Application",
+                  text: "A simple messaging application built using Flask and SocketIO."
+                },
+                {
+                  category: "AI cool-websites",
+                  image: "Images/xtts_v1_hf.jpg",
+                  title: "Contribution au modèle <span>XTTS_V1</span>",
+                  onclick: "onClick(this)",
+                  link: "https://huggingface.co/spaces/Olivier-Truong/XTTS_V1_CPU_working",
+                  text: "Interface gradio du modèle XTTS_V1 (Text-2-Speech) revisitée. Marche avec un simple CPU"
+                },
+                {
+                  category: "AI cool-websites",
+                  image: "Images/whisper_openai_remake.png",
+                  title: "Interface du modèle <span>whisper (Openai)</span> légèrement modifiée",
+                  onclick: "onClick(this)",
+                  link: "https://huggingface.co/spaces/Olivier-Truong/faster-whisper-webui-v2",
+                  text: "(Speech-2-Text) sur Hugging Face version modifiée whisper d'openai."
+                },
+                {
+                  category: "csharp",
+                  image: "Images/compression7zip_doc.png",
+                  title: "<span>Sauvegarde de répertoire (Projet Compression7zip)</span>",
+                  onclick: "onClick(this)",
+                  link: "./fichier_de_documentation_markdown_en_html_par_subl_ext/sauvegarde_7zip_documentation.html",
+                  text: "Programme de Sauvegarde des Répertoires de la base Développer lors de mon Stage de Seconde."
+                },
+              ];
+            </script>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- INFO -->
+
+    <section id="info" class="dark">
+      <header class="title">
+        <h2>Compétences</h2>
+        <p>Les compétences que j'ai développées ici !</p>
+      </header>
+
+      <div class="container experties">
+        <div class="row">
+          <div class="col-md-6">
+            <div class="skill">
+              <ul class="skill-bar list-unstyled">
+                <li><span class="percentage" data-value="98%"></span><em>Autonomie & initiative</em></li>
+                <li><span class="percentage" data-value="85%"></span><em>Créativité</em></li>
+                <li><span class="percentage" data-value="80%"></span><em>Coopération</em></li>
+                <li><span class="percentage" data-value="100%"></span><em>Apprentissage par l'erreur</em></li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="col-md-6">
+            <div class="skill">
+              <ul class="skill-bar list-unstyled">
+                <li><span class="percentage" data-value="75%"></span><em>Développement Python</em></li>
+                <li><span class="percentage" data-value="60%"></span><em>Développement HTML CSS</em></li>
+                <li><span class="percentage" data-value="55%"></span><em>Développement de documents</em></li>
+                <li><span class="percentage" data-value="68%"></span><em>Informatique théorique</em></li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div> <!-- /.container -->
+    </section>
+
+
+    <section class="separator blue">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-3 col-sm-6 col-xs-6">
+            <div class="counter animated" data-animate="fadeInUp" data-delay="0">
+              <div class="counter-icon">
+                <i class="fa fa-group"></i>
+              </div>
+              <div class="counter-content">
+                <span class="value" data-from="0" data-to="42"></span>
+                <small>Élèves</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 col-xs-6">
+            <div class="counter animated" data-animate="fadeInUp" data-delay="500">
+              <div class="counter-icon">
+                <i class="fa fa-leaf"></i>
+              </div>
+              <div class="counter-content">
+                <span class="value" data-from="0" data-to="999"></span>
+                <small>Bugs résolus: <br>429 HTTP/1.1\r\n<br> (To Many Requests)</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 col-xs-6">
+            <div class="counter animated" data-animate="fadeInUp" data-delay="1000">
+              <div class="counter-icon">
+                <i class="fa fa-gears"></i>
+              </div>
+              <div class="counter-content">
+                <span class="value" data-from="0" data-to="100">+</span>
+                <small>Projets et Plus</small>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-3 col-sm-6 col-xs-6">
+            <div class="counter animated" data-animate="fadeInUp" data-delay="1500">
+              <div class="counter-icon">
+                <i class="fa fa-inbox"></i>
+              </div>
+              <div class="counter-content">
+                <span class="value" data-from="0" data-to="20">+</span>
+                <small>20+ Sites web (replit.com/@0xsql)</small>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- FOOTER CONTACT -->
+
+    <section id="contact" class="dark">
+      <header class="title">
+        <h2>Me <span>Contacter</span></h2>
+        <p>Pour plus d'information, n'hésitez pas à m'envoyer un message !</p>
+      </header>
+
+      <div class="container">
+        <div class="row">
+          <div class="col-md-8 animated" data-animate="fadeInLeft">
+            <form action="mailto:a.leguern@stlaurent77.com" method="post" enctype="text/plain">
+              <div class="row">
+                <div class="col-md-6">
+                  <input type="text" name="name" class="form-control" placeholder="Votre Nom">
+                </div>
+                <div class="col-md-6">
+                  <input type="email" name="email" class="form-control" placeholder="Votre E-mail">
+                </div>
+                <div class="col-md-12">
+                  <textarea name="message" class="form-control" rows="3" placeholder="Dites-nous tout !"></textarea>
+                </div>
+                <div class="col-md-12">
+                  <button type="submit" class="btn btn-default submit">Envoyer</button>
+                </div>
+              </div>
+            </form>
+          </div>
+
+          <div class="col-md-4 animated" data-animate="fadeInRight">
+            <address>
+              <span><i class="fa fa-map-marker fa-lg"></i> 43 Rue Alfred Brébion, <br>77400 Lagny-sur-Marne</span>
+            <div class="map">
+          <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2626.766254524832!2d2.684413615674769!3d48.876860879289004!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47e60fc4700f7503%3A0x6c1920a1b9936e9a!2s43%20Rue%20Alfred%20Br%C3%A9bion%2C%2077400%20Lagny-sur-Marne!5e0!3m2!1sen!2sfr!4v1649206417167!5m2!1sen!2sfr" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe>
+        </div>
+              <span><i class="fa fa-phone fa-lg"></i> (+33) 7 89 74 50 71</span>
+              <span><i class="fa fa-envelope-o fa-lg"></i> <a
+                  href="mailto:a.leguern@stlaurent77.com">nsi&#64;stlaurent77.com</a></span>
+              <span><i class="fa fa-globe fa-lg"></i> <a
+                  href="http://www.maristes-stlaurent77.fr/fr/page/lycee-presentation" target="_blank">http://www.maristes-stlaurent77.fr/fr/page/lycee-presentation</a></span>
+            </address>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+    <section id="footer">
+      <div class="container">
+        <div class="row">
+          <div class="col-md-12 text-center">
+            <p>Made With <i class="fa fa-heart"></i> BY Team Spé NSI</p>
+            <p><small>Images : unsplash.com - Animal Crossing</small></p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </div><!-- /.container-fluid -->
+
+  <!-- SCRIPT -->
+  <script type="text/javascript" src="js/main.js">
+    // Modal Image Gallery
+    function onClick(element) {
+      document.getElementById("img01").src = element.src;
+      document.getElementById("modal01").style.display = "block";
+      var captionText = document.getElementById("caption");
+      captionText.innerHTML = element.alt;
+    }
+  </script>
+</body>
+
+</html>
