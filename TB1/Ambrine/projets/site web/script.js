@@ -1,0 +1,4 @@
+function Alerte()
+{
+alert("Bravo !  :)");
+}
