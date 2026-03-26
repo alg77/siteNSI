@@ -1,0 +1,92 @@
+def generate_html_tree(level, max_level):
+""" Fonction récursive pour générer un arbre de cœurs en HTML """
+if level > max_level:
+return ""
+
+return f"""
+<div class='node'>
+    <span class='heart'>❤️</span>
+    <div class='children'>
+        {generate_html_tree(level + 1, max_level)}
+        {generate_html_tree(level + 1, max_level)}
+    </div>
+</div>
+"""
+
+html_content = f"""
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arbre de la Saint-Valentin</title>
+    <style>
+        body {
+                {
+                text-align: center;
+                background-color: #ffe6e6;
+                font-family: Arial, sans-serif;
+            }
+        }
+
+        .node {
+                {
+                display: inline-block;
+                position: relative;
+                margin: 20px;
+            }
+        }
+
+        .children {
+                {
+                display: flex;
+                justify-content: center;
+            }
+        }
+
+        .heart {
+                {
+                font-size: 24px;
+                color: red;
+                animation: pulse 1.5s infinite;
+            }
+        }
+
+        @keyframes pulse {
+                {
+                0% {
+                        {
+                        transform: scale(1);
+                    }
+                }
+
+                50% {
+                        {
+                        transform: scale(1.2);
+                    }
+                }
+
+                100% {
+                        {
+                        transform: scale(1);
+                    }
+                }
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <h1>💖 Arbre de la Saint-Valentin 💖</h1>
+    {generate_html_tree(0, 4)}
+</body>
+
+</html>
+"""
+
+# Sauvegarde dans un fichier HTML
+with open("arbre_saint_valentin.html", "w", encoding="utf-8") as file:
+file.write(html_content)
+
+print("Fichier HTML généré : arbre_saint_valentin.html")
