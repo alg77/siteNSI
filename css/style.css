@@ -1165,3 +1165,12 @@ address span a {
 #footer .fa {
   color: #008ED6;
 }
+
+
+/* ICONS STYLE*/
+.about-icon img {
+  transition: transform 0.3s ease;
+}
+.about-icon img:hover {
+  transform: scale(1.1); /* Le logo grossit légèrement au survol */
+}
