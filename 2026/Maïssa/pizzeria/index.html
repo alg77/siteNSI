@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pizzeria</title>
+<style>
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    background: #f4f4f4;
+}
+
+header {
+    background: #333; 
+    color: rgb(224, 98, 8);
+    padding: 30px;
+    text-align: center;
+}
+
+nav {
+    background: #444;
+    padding: 10px;
+    text-align: center;
+}
+
+nav button {
+    color: white;
+    background: none;
+    border: none;
+    margin: 10px;
+    font-size: 16px;
+    cursor: pointer;
+}
+
+nav button:hover {
+    color: yellow;
+}
+
+.page {
+    display: none;
+    background: white;
+    margin: 20px;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #aaa;
+}
+
+h2 {
+    color: #333;
+}
+
+.pizza-btn {
+    border: none;
+    background: none;
+    cursor: pointer;
+    margin: 10px;
+    transition: transform 0.2s;
+}
+
+.pizza-btn img {
+    width: 150px;
+    border-radius: 10px;
+    border: 2px solid #ccc;
+}
+
+.pizza-btn:hover img {
+    transform: scale(1.1);
+    border-color: red;
+}
+
+.option-btn {
+    padding: 12px 20px;
+    margin: 10px;
+    border: none;
+    background: rgb(15, 77, 236);
+    color: white;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+.option-btn:hover {
+    background: rgb(12, 45, 130);
+}
+
+#ticket {
+    margin-top: 20px;
+    padding: 15px;
+    border: 2px dashed #333;
+    border-radius: 10px;
+    background: #f9f9f9;
+}
+
+footer {
+    background: #333;
+    color: white;
+    text-align: center;
+    padding: 10px;
+}
+
+.photo {
+    width: 200px;   /* largeur fixe */
+    height: 150px ;  /* hauteur fixe */
+    object-fit: cover; /* recadre l'image si elle dépasse */
+}
+
+@keyframes pop {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.pizza-anim {
+    animation: pop 0.3s ease-out;
+}
+
+@keyframes slideFade {
+    0% {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.ticket-anim {
+    animation: slideFade 0.4s ease-out;
+}
+
+</style>
+</head>
+<body>
+
+<header>
+<h1>🍕 Pizzeria</h1>
+</header>
+
+<nav>
+<button onclick="showPage('accueil')">Commander</button>
+<button onclick="showPage('services')">Renseignement</button>
+<button onclick="showPage('contact')">Contact</button>
+</nav>
+
+<!-- Page Commande -->
+<div id="accueil" class="page">
+<h2>Choisis ta pizza 🍕</h2>
+<div>
+    <button class="pizza-btn" onclick="choisirPizza('Margherita', 5)">
+        <img src="Margherita.jpeg" alt="Margherita" class="photo">
+        <p>Margherita - 5€</p>
+    </button>
+    <button class="pizza-btn" onclick="choisirPizza('4 Fromages', 6.5)">
+        <img src="pizzafromage.jpeg" alt="4 Fromages" class="photo">
+        <p>4 Fromages - 6.5€</p>
+    </button>
+    <button class="pizza-btn" onclick="choisirPizza('Pepperoni', 7)">
+        <img src="photopizza.jpeg" alt="Pepperoni" class="photo">
+        <p>Pepperoni - 7€</p>
+    </button>
+    <button class="pizza-btn" onclick="choisirPizza('Végétarienne', 6)">
+        <img src="Vegeta.jpeg" alt="Végétarienne" class="photo">
+        <p>Végétarienne - 6€</p>
+    </button>
+</div>
+
+<div id="options" style="margin-top:20px;"></div>
+<div id="ticket"></div>
+</div>
+
+<!-- Page Renseignement -->
+<div id="services" class="page">
+<h2>Renseignement</h2>
+<p>Adresse: <b>12 rue de Paris 75016</b></p>
+<p>Horaires : <b>09h - 23h Lundi-Dimanche</b></p>
+</div>
+
+<!-- Page Contact -->
+<div id="contact" class="page">
+<h2>Contact</h2>
+<p>Instagram : <b>pizzeria_commander</b></p>
+<p>Téléphone : <b>+33 6 76 67 76 67</b></p>
+</div>
+
+<footer>
+<p>Pizzeria officielle depuis 1934</p>
+</footer>
+
+<script>
+let pizzaChoisie = "";
+let prixPizza = 0;
+let panier = [];
+
+
+function showPage(pageId) {
+    document.querySelectorAll(".page").forEach(p => {
+        p.style.display = "none";
+    });
+    document.getElementById(pageId).style.display = "block";
+    document.getElementById("ticket").innerHTML = "";
+    document.getElementById("options").innerHTML = "";
+}
+
+// Affiche la page d'accueil par défaut
+showPage('accueil');
+
+function choisirPizza(nom, prix) {
+
+    // Animation sur la pizza cliquée
+    event.currentTarget.classList.add("pizza-anim");
+    setTimeout(() => {
+        event.currentTarget.classList.remove("pizza-anim");
+    }, 300);
+
+    pizzaChoisie = nom;
+    prixPizza = prix;
+
+    panier.push({ nom: nom, prix: prix });
+
+    afficherPanier();
+
+    document.getElementById("options").innerHTML = `
+        <h3>${nom} choisi - ${prix}€</h3>
+        <p>Que veux-tu faire ?</p>
+        <button class="option-btn" onclick="choisirLieu('Sur place')">Sur place</button>
+        <button class="option-btn" onclick="choisirLieu('À emporter')">À emporter</button>
+    `;
+}
+
+function ajouterPizza() {
+    document.getElementById("options").innerHTML = "";
+    document.getElementById("ticket").innerHTML = "";
+}
+
+
+function choisirLieu(lieu) {
+    document.getElementById("options").innerHTML = `
+        <h3>${pizzaChoisie} - ${lieu}</h3>
+        <p>Choisis le paiement :</p>
+        <button class="option-btn" onclick="payer('Carte', '${lieu}')">Carte</button>
+        <button class="option-btn" onclick="payer('Espèces', '${lieu}')">Espèces</button>
+    `;
+}
+
+function payer(modePaiement, lieu) {
+    let total = panier.reduce((s, p) => s + p.prix, 0);
+
+    let listePizzas = panier
+        .map(p => `<p>- ${p.nom} : ${p.prix}€</p>`)
+        .join("");
+
+    const ticket = document.getElementById("ticket");
+
+    ticket.innerHTML = `
+        <h3>🎟️ Reçu</h3>
+        ${listePizzas}
+        <h3>Total : ${total}€</h3>
+        <p><b>Lieu :</b> ${lieu}</p>
+        <p><b>Paiement :</b> ${modePaiement}</p>
+        <hr>
+        <p>Merci pour votre commande ! 🍕</p>
+    `;
+
+    // 🔥 Animation du ticket
+    ticket.classList.add("ticket-anim");
+    setTimeout(() => ticket.classList.remove("ticket-anim"), 400);
+
+    panier = []; // on vide le panier après paiement
+}
+
+
+function afficherPanier() {
+    let html = "<h3>🛒 Panier :</h3>";
+    let total = 0;
+
+    panier.forEach((p, index) => {
+        html += `
+            <p>
+                - ${p.nom} : ${p.prix}€
+                <button onclick="retirerPizza(${index})" style="
+                    margin-left:10px;
+                    padding:3px 8px;
+                    background:red;
+                    color:white;
+                    border:none;
+                    border-radius:4px;
+                    cursor:pointer;
+                ">Retirer</button>
+            </p>
+        `;
+        total += p.prix;
+    });
+
+    html += `<h3>Total : ${total}€</h3>`;
+
+    document.getElementById("ticket").innerHTML = html;
+}
+
+function retirerPizza(index) {
+    panier.splice(index, 1); // supprime la pizza choisie
+    afficherPanier();        // met à jour l'affichage
+}
+
+
+</script>
+
+</body>
+</html>

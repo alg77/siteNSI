@@ -1,0 +1,62 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Formulaire</title>
+		<link rel="stylesheet" href="style.css" />		
+	</head>
+	
+	<body>
+		
+		<div id="entete">
+			<center/> <img src="images/baniereformulaire.jpg" alt="canyon" width="85%"/> </center>
+		</div>
+
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">Acceuil</a></li>
+				<li><a href="page_1.html">Les montagnes</a></li>
+				<li><a href="page_2.html">Lever et coucher de soleil</a></li>
+				<li><a href="page_3.html">Aurore boréale</a></li>
+				<li><a href="bibliographie.html">Bibliographie</a></li>
+				<li><a href="formulaire.html">Formulaire</a></li>
+			</ul>
+		</div>
+		
+		<div id="contenu">
+			<h1>Formulaire</h1>
+			<h2> Nous aimerions votre avis: </h2>
+			<form action="" method="POST" >
+			<label for="idPrenom" > Votre prénom :</label >
+			<input type="text" name="prenom" id="idPrenom" size="20" maxlength="30" />
+			
+			<label for="idNom" > Votre nom :</label >
+			<input type="text" name="nom" id="idNom" size="20" maxlength="30" />
+			
+			<p><label for="idMail" > Votre adresse mail :</label >
+			<input type="mail" name="mail" id="idMail" size="20" maxlength="30" /> </p>
+			
+			<label for="lib" > Donnez votre avis :</label >
+			<textarea name="lib" rows="3" cols="25" > écrire ici </textarea>
+			
+			<p> <label for="sexe" > Votre sexe: </label >
+			<input type="radio" name="sexe" value="M" /> Homme
+			<input type="radio" name="sexe" value="F" /> Femme </p>
+			
+			<label for="statut" > Votre statut: </label >
+			<select name="statut">
+				<option value="1" selected> Etudiant </option>
+				<option value="3" > Salarié </option>
+				<option value="2"> Professeur</option>
+				<option value="4"> Autre</option>
+			</select>
+			
+			<p> <input type="submit" value="Envoyer" name="BtE" /> </p>
+			</form>
+			
+			<script src="script.js"></script>
+			<button onclick="Alerte()"> Petite surprise </button>
+		</div>
+		
+	</body>
+</html>

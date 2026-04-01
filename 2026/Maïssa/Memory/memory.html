@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Jeu de Mémoire</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <h1>Jeu de Mémoire</h1>
+  <p>Cliquez sur les cases pour trouver les paires</p>
+  <p>Quand vous avez gagné, cliquez sur Ctrl+R ou actualisez pour recommencer</p>
+  <div class="game-board" id="gameBoard"></div>
+  <button id="restartBtn" style="display: none;">Recommencer</button>
+
+
+  <script>
+    // Liste de couleurs de base
+    const colors = ["red", "blue", "green", "yellow", "purple", "orange", "pink", "cyan"];
+    // Dupliquer la liste pour créer des paires
+    let cards = [...colors, ...colors];
+    // Mélanger les cartes aléatoirement
+    cards = cards.sort(() => Math.random() - 0.5);
+
+    let firstCard = null;
+    let secondCard = null;
+
+    const gameBoard = document.getElementById("gameBoard");
+
+    // Création des cartes
+    cards.forEach(color => {
+      const card = document.createElement("div");
+      card.classList.add("card");
+      // Définit la couleur personnalisée via une variable CSS
+      card.style.setProperty("--color", color);
+      card.dataset.color = color;
+
+      card.addEventListener("click", () => {
+        // Empêche de cliquer si la carte est déjà révélée ou si deux cartes sont en train d'être comparées
+        if (card.classList.contains("revealed") || secondCard) return;
+
+        card.classList.add("revealed");
+
+        if (!firstCard) {
+          firstCard = card;
+        } else {
+          secondCard = card;
+          // Si les deux cartes ont la même couleur, on garde leur état révélé
+          if (firstCard.dataset.color === secondCard.dataset.color) {
+            firstCard = null;
+            secondCard = null;
+          } else {
+            // Sinon, on les retourne après 1 seconde
+            setTimeout(() => {
+              firstCard.classList.remove("revealed");
+              secondCard.classList.remove("revealed");
+              firstCard = null;
+              secondCard = null;
+            }, 1000);
+          }
+        }
+      });
+
+      gameBoard.appendChild(card);
+    });
+    
+  </script>
+</body>
+</html>

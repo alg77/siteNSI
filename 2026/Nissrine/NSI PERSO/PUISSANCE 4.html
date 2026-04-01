@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Puissance 4</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #CFE8FA; /* Bleu clair */
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(7, 50px);
+            grid-template-rows: repeat(6, 50px);
+            gap: 5px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .cell {
+            width: 50px;
+            height: 50px;
+            background-color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0px 0px 5px rgba(0, 0, 0, 0.2);
+        }
+        .red { background-color: #E63946; } /* Rouge */
+        .yellow { background-color: #F4D35E; } /* Jaune */
+        .button-container {
+            margin-top: 20px;
+        }
+        button {
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #457B9D; /* Bleu doux */
+            border: none;
+            border-radius: 5px;
+            color: white;
+        }
+        button:hover {
+            background-color: #1D3557; /* Bleu foncé au survol */
+        }
+        #status {
+            font-size: 18px;
+            font-weight: bold;
+            margin: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Puissance 4</h1>
+    <div class="button-container">
+        <button onclick="startGame('player')">Joueur contre Joueur</button>
+        <button onclick="startGame('computer')">Joueur contre Ordinateur</button>
+    </div>
+    <p id="status"></p>
+    <div class="grid" id="grid" style="display: none;"></div>
+    <button id="replay" onclick="restartGame()" style="display: none;">Rejouer</button>
+
+    <script>
+        const rows = 6;
+        const cols = 7;
+        let currentPlayer = "red";
+        let gameMode = "player";
+        const grid = document.getElementById("grid");
+        const board = Array.from({ length: rows }, () => Array(cols).fill(null));
+
+        function startGame(mode) {
+            gameMode = mode;
+            document.querySelector(".button-container").style.display = "none";
+            grid.style.display = "grid";
+            document.getElementById("status").textContent = `Tour du joueur ${currentPlayer === "red" ? "Rouge" : "Jaune"}`;
+            document.getElementById("replay").style.display = "none";
+            createGrid();
+        }
+
+        function createGrid() {
+            grid.innerHTML = "";
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    const cell = document.createElement("div");
+                    cell.classList.add("cell");
+                    cell.dataset.row = r;
+                    cell.dataset.col = c;
+                    cell.addEventListener("click", () => dropPiece(c));
+                    grid.appendChild(cell);
+                }
+            }
+        }
+
+        function dropPiece(col) {
+            for (let r = rows - 1; r >= 0; r--) {
+                if (!board[r][col]) {
+                    board[r][col] = currentPlayer;
+                    document.querySelector(`.cell[data-row='${r}'][data-col='${col}']`).classList.add(currentPlayer);
+
+                    if (checkWin(r, col)) {
+                        document.getElementById("status").textContent = `Le joueur ${currentPlayer === "red" ? "Rouge" : "Jaune"} gagne !`;
+                        grid.style.pointerEvents = "none";
+                        document.getElementById("replay").style.display = "inline";
+                    } else {
+                        currentPlayer = currentPlayer === "red" ? "yellow" : "red";
+                        document.getElementById("status").textContent = `Tour du joueur ${currentPlayer === "red" ? "Rouge" : "Jaune"}`;
+                        if (gameMode === "computer" && currentPlayer === "yellow") {
+                            setTimeout(computerMove, 500);
+                        }
+                    }
+                    break;
+                }
+            }
+        }
+
+        function computerMove() {
+            let col;
+            do {
+                col = Math.floor(Math.random() * cols);
+            } while (board[0][col]);
+            dropPiece(col);
+        }
+
+        function checkWin(row, col) {
+            function countDirection(rStep, cStep) {
+                let count = 0;
+                let r = row, c = col;
+
+                while (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === currentPlayer) {
+                    count++;
+                    r += rStep;
+                    c += cStep;
+                }
+
+                r = row - rStep;
+                c = col - cStep;
+                while (r >= 0 && r < rows && c >= 0 && c < cols && board[r][c] === currentPlayer) {
+                    count++;
+                    r -= rStep;
+                    c -= cStep;
+                }
+
+                return count >= 4; // Vérifie si 4 jetons consécutifs sont alignés
+            }
+
+            return (
+                countDirection(-1, 0) || countDirection(1, 0) || // Vertical
+                countDirection(0, -1) || countDirection(0, 1) || // Horizontal
+                countDirection(-1, -1) || countDirection(1, 1) || // Diagonale \
+                countDirection(-1, 1) || countDirection(1, -1)    // Diagonale /
+            );
+        }
+
+        function restartGame() {
+            currentPlayer = "red";
+            for (let r = 0; r < rows; r++) {
+                for (let c = 0; c < cols; c++) {
+                    board[r][c] = null;
+                }
+            }
+            grid.style.pointerEvents = "auto";
+            document.getElementById("status").textContent = `Tour du joueur Rouge`;
+            document.getElementById("replay").style.display = "none";
+            createGrid();
+        }
+    </script>
+</body>
+</html>

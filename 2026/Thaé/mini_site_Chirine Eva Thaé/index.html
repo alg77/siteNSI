@@ -1,0 +1,125 @@
+<!doctype html>
+<html>
+	<head>
+	<head>
+  <link href="https://fonts.googleapis.com/css?family=Pirata-One:400,700" rel="stylesheet">
+</head>
+</head>
+	
+		<meta charset="utf-8" />
+		<title>TECoques</title>
+		body {
+        font-family: 'Bebas Neue', serif;
+		<link rel="stylesheet" href="style.css" />		
+	</head>
+	<script language="javascript">
+imgPath = new Array;
+SiClickGoTo = new Array;
+version = navigator.appVersion.substring(0,1);
+if (version >= 3)
+	{
+	i0 = new Image;
+	i0.src = 'images/photo.png';
+	SiClickGoTo[0] = "file:///P:/Documents/NSI/fichiers_html/fichiers_html/mini_site_vide/index.html";
+	imgPath[0] = i0.src;
+	i1 = new Image;
+	i1.src = 'images/bandeau-bf.png';
+	SiClickGoTo[1] = "file:///P:/Documents/NSI/fichiers_html/fichiers_html/mini_site_vide/page_2.html";
+	imgPath[1] = i1.src;
+	i2 = new Image;
+	i2.src = 'images/seab.png';
+	SiClickGoTo[2] = "file:///P:/Documents/NSI/fichiers_html/fichiers_html/mini_site_vide/page_3.html";
+	imgPath[2] = i2.src;
+	}
+a = 0;
+function StartAnim()
+	{
+	if (version >= 3)
+		{
+		document.write('<a href="#" onclick="ImgDest();return(false)"><img src="url_image0" border="0" alt="Menu" name="defil" /></a>');
+		defilimg()
+		}
+	else
+		{
+		document.write('<a href="Lien0"><img src="url_image0" border="0" /></a>')
+		}
+	}
+function ImgDest()
+{
+	document.location.href = SiClickGoTo[a-1];
+	}
+function defilimg()
+	{
+	if (a == 3)
+		{
+		a = 0;
+		}
+	if (version >= 3)
+		{
+		document.defil.src = imgPath[a];
+		tempo3 = setTimeout("defilimg()",3000);
+		a++;
+		}
+	}
+</script><script language="javascript">
+StartAnim();
+</script>
+	
+	<body>
+		
+		<div id="entete">
+			
+		</div>
+
+		<div id="navigation">
+			<ul>
+				<li><a href="index.html">TECoques</a></li>
+				<li><a href="page_2.html">Black Friday</a></li>
+				<li><a href="page_3.html">Collection saisonière</a></li>				
+			</ul>
+		</div>
+		
+		<div id="contenu">
+			<h1>TECoques</h1>
+			
+			<h2>Découverte de notre marque</h2>
+			<p>Découvrez notre gamme de coques d'iphone originales et sans risque de casse.
+			
+	        Nos nombreux modèles s'adaptent à tous les gouts!
+			
+	        De plus, à chaque période, notre nouvelle collection "saison" est attendue avec impatience.
+			
+	        Jettez un coup d'oeil à la collection "let's sea"</p>
+            <img src="images/photo2.png" alt="photo2" width="35%"/>			
+
+			<h2>Des coques personalisables</h2>
+			<p>Personalisez à l'infini vos coques selon vos envies du moment et vos gouts!</p>
+
+<h2>Ultra performante</h2>
+<p>Grâce a notre nouvelle technologie anti-pluie, vous pourrez utiliser votre smartphone dans toutes les circonstances: qu'il pleuve, qu'il vente, qu'il neige, les TECoques s'adaptent et permettent une protection totale.<br>
+<img src="images/performante.png" alt="performante" width="20%"/>
+
+<p>Personalisez à l'infini vos coques selon vos envies du moment et vos gouts!</p>
+<h2>Collections</h2>
+<h2>Disney</h2>
+<img src="images/disneyb.png" alt="disneyb" width="100%"/>
+<p>Retombez en enfance avec les coques Disney! Vos personnages préférés vous suivront tout le temps; Lilo et Stitch,La féé clochette, Le livre de la jungle, Vaina... Affichez avec fierté votre stye. Vous souhaitez vous détendre en regardant un dessin animé de votre enfance? Nous sommes en partenariat avec Disney. Pour plus d'informations, cliquez <a href="https://www.bing.com/ck/a?!&&p=90e403a9e3569ce5267e649cef40c0f2d4b1d4d8d7e760e3c54b39bc6da7a5f3JmltdHM9MTczMzA5NzYwMA&ptn=3&ver=2&hsh=4&fclid=022ecb54-fc24-61fd-1b77-de1dfd9060ae&psq=disney+plus&u=a1aHR0cHM6Ly93d3cuZGlzbmV5cGx1cy5jb20vZnItZnIvYnJhbmQvZGlzbmV5P21zb2NraWQ9MDIyZWNiNTRmYzI0NjFmZDFiNzdkZTFkZmQ5MDYwYWU&ntb=1">ici</a>.<p> 
+<img src="images/disney.png" alt="disney" width="90%"/>	
+<img src="images/disney2.png" alt="disney2" width="90%"/>	
+
+<h2>Harry Potter</h2>
+
+<img src="images/hpb.png" alt="hpb" width="100%"/>
+<p>Bienvenue à Poudlard cher sorcière oub sorcier! Peu importe votre maison, une coque choisi son ou sa sorcière. Découvrez tous les personnages de la saga. Entrez à Poudlard pour plus de magie! Cliquez <a href="https://www.bing.com/ck/a?!&&p=bd19e1c386fa144d9313294250662e6d9894a06c54ca36effe3b128104be5d92JmltdHM9MTczMzA5NzYwMA&ptn=3&ver=2&hsh=4&fclid=022ecb54-fc24-61fd-1b77-de1dfd9060ae&psq=site+harry+potter&u=a1aHR0cHM6Ly93d3cuaGFycnlwb3R0ZXIuY29tLw&ntb=1">ici.</a><p>
+    <img src="images/hp1.png" alt="hp1" width="90%"/>
+	<img src="images/hp2.png" alt="hp2" width="90%"/>
+
+<h2>Les minions</h2>
+<img src="images/minionsb.png" alt="minionsb" width="100%"/>
+<p>Voici notre collection inspirée par ces créatures espiègles, amoureuses de bananes qui ont conquis le coeur du monde entier! Vous aurez une touche de fantaisie en plus dans votre vie quotidienne! Faites connaissance avec les Minions pour plus de fun! Pour plus <a href="https://www.bing.com/ck/a?!&&p=615ae36cce5c40d540a234eb33641e0909cf0f27518afb7bf067f74f9a7e3474JmltdHM9MTczMzA5NzYwMA&ptn=3&ver=2&hsh=4&fclid=022ecb54-fc24-61fd-1b77-de1dfd9060ae&psq=site+minion&u=a1aHR0cHM6Ly9taW5pb25zLmZyLw&ntb=1">d'infos</a><p>
+    <img src="images/minions1.png" alt="minions1" width="90%"/>
+	<img src="images/minions2.png" alt="minions2" width="90%"/>
+		</div>
+		
+	</body> 
+</html>

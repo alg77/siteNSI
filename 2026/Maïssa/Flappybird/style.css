@@ -1,0 +1,45 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background: #162628; /* Fond rappelant le ciel */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: Arial, sans-serif;
+}
+
+/* Conteneur pour le titre et le canvas, organisé en colonne */
+#gameContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+}
+
+/* Style du titre */
+#gameTitle {
+  color: #fff;
+  text-shadow: 2px 2px 4px #000;
+}
+
+/* Style des instructions */
+#gameInstructions {
+  color: #fff;
+  font-size: 1.2em;
+  text-shadow: 1px 1px 3px #000;
+}
+
+/* Style du canvas */
+canvas {
+  border: 15px solid #000;
+  background: linear-gradient(#33adff, #98deff);
+  display: block;
+  image-rendering: pixelated;
+}
+
+ 

@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>PyLand Adventure Park 🎢</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: linear-gradient(to bottom, #74ebd5, #ACB6E5);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    h1 {
+      background: #2c3e50;
+      color: white;
+      padding: 15px;
+      margin: 0;
+    }
+    #jeu, #explication {
+      margin: 20px auto;
+      max-width: 800px;
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      text-align: left;
+    }
+    button {
+      padding: 10px 20px;
+      margin: 10px;
+      font-size: 14px;
+      background: #e67e22;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #d35400;
+    }
+    .visiteur {
+      margin: 8px 0;
+      padding: 8px;
+      background: #ecf0f1;
+      border-radius: 6px;
+    }
+    .barre {
+      height: 12px;
+      border-radius: 6px;
+      background: red;
+    }
+    #log {
+      margin-top: 20px;
+      padding: 10px;
+      background: #f9f9f9;
+      border-radius: 6px;
+      font-family: monospace;
+      max-height: 200px;
+      overflow-y: auto;
+    }
+    h2 {
+      color: #2c3e50;
+    }
+  </style>
+</head>
+<body>
+  <h1>🎢 PyLand Adventure Park</h1>
+
+  <!-- Partie explication -->
+  <div id="explication">
+    <h2>📖 Règles du jeu</h2>
+    <p>
+      Bienvenue à <strong>PyLand Adventure Park</strong> ! Ton objectif est de gérer la file d’attente d’une attraction.
+    </p>
+    <ul>
+      <li>À chaque tour, jusqu’à <strong>2 visiteurs sortent</strong> et leur satisfaction augmente.</li>
+      <li>Entre <strong>1 et 5 nouveaux visiteurs</strong> entrent dans la file.</li>
+      <li>Les visiteurs qui attendent voient leur satisfaction <strong>baisser</strong>.</li>
+      <li>La mascotte 🎭 apparaît tous les 3 tours et booste la satisfaction des visiteurs en attente.</li>
+    </ul>
+    <p>Essaie de garder tes visiteurs heureux et d’atteindre une satisfaction moyenne élevée 🎉.</p>
+  </div>
+
+  <!-- Écran de jeu -->
+  <div id="jeu">
+    <button onclick="tourAttraction()">Lancer un tour</button>
+    <button onclick="simulation()">Simulation (10 tours)</button>
+    <h2>Tour actuel : <span id="tour">0</span></h2>
+
+    <h2>File d'attente</h2>
+    <div id="file">Vide</div>
+
+    <h2>Visiteurs sortis</h2>
+    <div id="sortis">Aucun</div>
+
+    <h2>Logs</h2>
+    <div id="log"></div>
+  </div>
+
+  <script>
+    let fileAttente = [];
+    let visiteursSortis = [];
+    let tour = 0;
+
+    function creerVisiteur(nom) {
+      return {
+        nom: nom,
+        satisfaction: Math.floor(Math.random() * 51) + 50
+      };
+    }
+
+    function ajoutVisiteur(visiteur) {
+      fileAttente.push(visiteur);
+    }
+
+    function retirerVisiteur() {
+      if (fileAttente.length > 0) {
+        let visiteur = fileAttente.shift();
+        log("🎉 " + visiteur.nom + " sort de la file avec le sourire !");
+        return visiteur;
+      } else {
+        log("⚠️ La file est vide.");
+        return null;
+      }
+    }
+
+    function afficherFile() {
+      let contenu = "";
+      if (fileAttente.length === 0) {
+        contenu = "La file est vide.";
+      } else {
+        fileAttente.forEach((v, i) => {
+          let couleur = v.satisfaction > 70 ? "green" : v.satisfaction > 40 ? "orange" : "red";
+          contenu += `<div class="visiteur">${i+1}. ${v.nom} - Satisfaction : ${v.satisfaction}
+            <div class="barre" style="width:${v.satisfaction}%;background:${couleur};"></div></div>`;
+        });
+      }
+      document.getElementById("file").innerHTML = contenu;
+    }
+
+    function afficherSortis() {
+      let contenu = "";
+      if (visiteursSortis.length === 0) {
+        contenu = "Aucun visiteur n'a encore fait l'attraction.";
+      } else {
+        let total = visiteursSortis.reduce((acc,v)=>acc+v.satisfaction,0);
+        let moyenne = (total / visiteursSortis.length).toFixed(2);
+        contenu = "⭐ Satisfaction moyenne des " + visiteursSortis.length + " visiteurs sortis : " + moyenne + "<br><br>";
+        visiteursSortis.forEach((v,i)=>{
+          contenu += (i+1) + ". " + v.nom + " - Satisfaction : " + v.satisfaction + "<br>";
+        });
+      }
+      document.getElementById("sortis").innerHTML = contenu;
+    }
+
+    function tourAttraction() {
+      tour++;
+      document.getElementById("tour").textContent = tour;
+
+      // Retirer jusqu'à 2 visiteurs
+      for (let i=0; i<2; i++) {
+        let visiteur = retirerVisiteur();
+        if (visiteur) {
+          visiteur.satisfaction = Math.min(100, visiteur.satisfaction + Math.floor(Math.random()*11)+5);
+          visiteursSortis.push(visiteur);
+        }
+      }
+
+      // Ajouter entre 1 et 5 nouveaux visiteurs
+      let nbNouveaux = Math.floor(Math.random()*5)+1;
+      for (let i=0; i<nbNouveaux; i++) {
+        let nom = "Visiteur_" + Math.floor(Math.random()*9000+1000);
+        ajoutVisiteur(creerVisiteur(nom));
+      }
+
+      // Baisser la satisfaction des visiteurs en attente
+      fileAttente.forEach(v=>{
+        v.satisfaction = Math.max(0, v.satisfaction - (Math.floor(Math.random()*5)+1));
+      });
+
+      // Mascotte tous les 3 tours
+      if (tour % 3 === 0 && fileAttente.length > 0) {
+        log("🎭 La mascotte apparaît et remonte le moral des visiteurs !");
+        fileAttente.forEach(v=>{
+          v.satisfaction = Math.min(100, v.satisfaction + 10);
+        });
+      }
+
+      afficherFile();
+      afficherSortis();
+    }
+
+    function simulation() {
+      for (let i=0; i<10; i++) {
+        tourAttraction();
+      }
+    }
+
+    function log(message) {
+      document.getElementById("log").innerHTML += message + "<br>";
+      document.getElementById("log").scrollTop = document.getElementById("log").scrollHeight;
+    }
+  </script>
+</body>
+</html>

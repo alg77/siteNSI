@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Mini Geometry Dash+</title>
+  <style>
+    body { margin: 0; overflow: hidden; background: #111; }
+    canvas { display: block; background: linear-gradient(#eee, #ddd); }
+    #gameOver {
+      position: absolute;
+      top: 40%;
+      width: 100%;
+      text-align: center;
+      font-size: 40px;
+      color: white;
+      font-family: Arial;
+      display: none;
+    }
+  </style>
+</head>
+<body>
+<canvas id="game" width="800" height="400"></canvas>
+<div id="gameOver">GAME OVER<br><small>Press SPACE to restart</small></div>
+
+<script>
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+const gameOverScreen = document.getElementById("gameOver");
+
+let player, obstacles, frames, score, gameOver;
+
+function resetGame() {
+  player = { x: 80, y: 300, w: 30, h: 30, vy: 0, gravity: 0.6, jump: -12, grounded: false };
+  obstacles = [];
+  frames = 0;
+  score = 0;
+  gameOver = false;
+  gameOverScreen.style.display = "none";
+}
+
+resetGame();
+
+document.addEventListener("keydown", e => {
+  if (e.code === "Space") {
+    if (gameOver) resetGame();
+    else if (player.grounded) {
+      player.vy = player.jump;
+      player.grounded = false;
+    }
+  }
+});
+
+function update() {
+  if (gameOver) return;
+
+  frames++;
+  score++;
+
+  // Player physics
+  player.vy += player.gravity;
+  player.y += player.vy;
+
+  if (player.y + player.h >= canvas.height - 40) {
+    player.y = canvas.height - 40 - player.h;
+    player.vy = 0;
+    player.grounded = true;
+  }
+
+  // Spawn obstacles
+  if (frames % 80 === 0) {
+    let height = 20 + Math.random() * 60;
+    obstacles.push({ x: canvas.width, y: canvas.height - 40 - height, w: 25, h: height });
+  }
+
+  // Move obstacles
+  obstacles.forEach(o => o.x -= 6);
+  obstacles = obstacles.filter(o => o.x + o.w > 0);
+
+  // Collision
+  obstacles.forEach(o => {
+    if (player.x < o.x + o.w && player.x + player.w > o.x &&
+        player.y < o.y + o.h && player.y + player.h > o.y) {
+      gameOver = true;
+      gameOverScreen.style.display = "block";
+    }
+  });
+}
+
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  // Ground
+  ctx.fillStyle = "#444";
+  ctx.fillRect(0, canvas.height - 40, canvas.width, 40);
+
+  // Player
+  ctx.fillStyle = "#00aaff";
+  ctx.fillRect(player.x, player.y, player.w, player.h);
+
+  // Obstacles
+  ctx.fillStyle = "#ff3355";
+  obstacles.forEach(o => ctx.fillRect(o.x, o.y, o.w, o.h));
+
+  // Score
+  ctx.fillStyle = "#000";
+  ctx.font = "20px Arial";
+  ctx.fillText("Score: " + score, 10, 25);
+}
+
+function loop() {
+  update();
+  draw();
+  requestAnimationFrame(loop);
+}
+
+loop();
+</script>
+</body>
+</html>

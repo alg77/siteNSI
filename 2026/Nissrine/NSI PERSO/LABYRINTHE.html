@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu du Labyrinthe - Faux Chemins</title>
+    <style>
+        body { background-color: #B0E0E6; color: #4B0082; font-family: Arial, sans-serif; text-align: center; }
+        canvas { background-color: #ADD8E6; display: block; margin: auto; border: 5px solid #4682B4; }
+        button { margin: 10px; padding: 12px; font-size: 16px; cursor: pointer; background-color: #4682B4; border: none; color: white; }
+        button:hover { background-color: #4169E1; }
+        .level-container { margin-top: 20px; }
+        .level-btn { background-color: #87CEEB; border: none; color: white; padding: 10px; margin: 5px; cursor: pointer; }
+        .level-btn:hover { background-color: #6495ED; }
+    </style>
+</head>
+<body>
+
+    <h1>Jeu du Labyrinthe</h1>
+    <canvas id="jeu" width="600" height="600"></canvas>
+    <button onclick="nextLevel()">Niveau Suivant</button>
+    <button onclick="restartLevel()">Recommencer</button>
+
+    <script>
+        const canvas = document.getElementById("jeu");
+        const ctx = canvas.getContext("2d");
+
+        let niveau = 1;
+        let taille = 7;
+        let joueur = { x: 1, y: 1, size: canvas.width / taille, color: "#4169E1" };
+        let sortie = { x: taille - 2, y: taille - 2, size: canvas.width / taille, color: "#FFD700" };
+        let labyrinthe = [];
+
+        function genererLabyrinthe(taille) {
+            let grid = Array.from({ length: taille }, () => Array(taille).fill("#"));
+
+            function creuser(x, y) {
+                grid[y][x] = " ";
+                let directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+                directions.sort(() => Math.random() - 0.5);
+
+                for (const [dx, dy] of directions) {
+                    let nx = x + dx * 2, ny = y + dy * 2;
+                    if (nx > 0 && ny > 0 && nx < taille - 1 && ny < taille - 1 && grid[ny][nx] === "#") {
+                        grid[y + dy][x + dx] = " ";
+                        creuser(nx, ny);
+                    }
+                }
+            }
+
+            creuser(1, 1);
+
+            // Ajout de faux chemins et impasses
+            for (let i = 1; i < taille - 1; i += 2) {
+                for (let j = 1; j < taille - 1; j += 2) {
+                    if (Math.random() < 0.3 && grid[i][j] === " ") {
+                        let directions = [[0, -1], [0, 1], [-1, 0], [1, 0]];
+                        let [dx, dy] = directions[Math.floor(Math.random() * directions.length)];
+                        if (grid[i + dy] && grid[i + dy][j + dx] === "#") {
+                            grid[i + dy][j + dx] = " ";
+                        }
+                    }
+                }
+            }
+
+            return grid;
+        }
+
+        function drawLabyrinthe() {
+            const caseSize = Math.floor(canvas.width / taille);
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            for (let i = 0; i < taille; i++) {
+                for (let j = 0; j < taille; j++) {
+                    ctx.fillStyle = labyrinthe[i][j] === "#" ? "#00008B" : "#ADD8E6";
+                    ctx.fillRect(j * caseSize, i * caseSize, caseSize, caseSize);
+                }
+            }
+            ctx.fillStyle = "#32CD32";
+            ctx.fillRect(joueur.x * caseSize, joueur.y * caseSize, caseSize, caseSize);
+            ctx.fillStyle = sortie.color;
+            ctx.fillRect(sortie.x * caseSize, sortie.y * caseSize, caseSize, caseSize);
+        }
+
+        document.addEventListener("keydown", (event) => {
+            let dx = 0, dy = 0;
+            if (event.key === "ArrowUp") dy = -1;
+            if (event.key === "ArrowDown") dy = 1;
+            if (event.key === "ArrowLeft") dx = -1;
+            if (event.key === "ArrowRight") dx = 1;
+
+            let newX = joueur.x + dx, newY = joueur.y + dy;
+            if (newX >= 0 && newY >= 0 && newX < taille && newY < taille && labyrinthe[newY][newX] === " ") {
+                joueur.x = newX;
+                joueur.y = newY;
+                drawLabyrinthe();
+            }
+
+            if (joueur.x === sortie.x && joueur.y === sortie.y) {
+                setTimeout(() => alert("Bravo ! Niveau " + niveau + " terminé !"), 100);
+            }
+        });
+
+        function nextLevel() {
+            niveau++;
+            taille = 7 + niveau * 2;
+            joueur.x = 1;
+            joueur.y = 1;
+            sortie.x = taille - 2;
+            sortie.y = taille - 2;
+            labyrinthe = genererLabyrinthe(taille);
+            drawLabyrinthe();
+        }
+
+        function restartLevel() {
+            joueur.x = 1;
+            joueur.y = 1;
+            drawLabyrinthe();
+        }
+
+        labyrinthe = genererLabyrinthe(taille);
+        drawLabyrinthe();
+    </script>
+
+</body>
+</html>

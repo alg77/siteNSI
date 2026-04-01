@@ -1,0 +1,69 @@
+html {
+  height: 100%;
+  width: 100%;
+}
+
+/* Cases */
+p {
+	padding: 10px 50px; 
+  
+}
+
+.table-périodique {
+  display: grid;
+  grid-row: 9;
+  grid-column: 18;
+}
+
+.rouge {
+  background-color: #f3564e;
+}
+
+.gold {
+  background-color: #e2dbad;
+}
+
+.vert {
+  background-color: #a6d066 ;
+}
+
+.blue {
+  background-color: #6cdbcd;
+}
+
+.rose {
+  background-color: #f2a8aa;
+}
+
+.kaki {
+  background-color: #57a25b
+
+}
+
+.grisclair {
+  background-color: #bfbfbf;
+}
+
+.grisfonce {
+  background-color: #747474;
+}
+
+.rosefonce {
+  background-color: #4e62c2;
+}
+  
+.jaunevif {
+  background-color: #f9d648;
+}
+
+.violet {
+  background-color: #b892e2;
+}
+
+.info1 {
+  background-color: #a6d066 ;
+}
+
+img {
+  display: none;
+}

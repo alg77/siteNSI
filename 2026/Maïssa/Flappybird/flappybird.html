@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flappy Bird</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <div id="gameContainer">
+    <h1 id="gameTitle">Flappy Bird</h1>
+    <h2 id="gameInstructions">Appuie sur ESPACE pour jouer</h2>
+    <canvas id="gameCanvas"></canvas>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('gameCanvas');
+    const ctx = canvas.getContext('2d');
+
+    // Sprite oiseau
+    const birdImg = new Image();
+    birdImg.src = "bird.png";
+
+    canvas.width = 400;
+    canvas.height = 600;
+
+    const bird = {
+      x: 50,
+      y: canvas.height / 2,
+      width: 20,
+      height: 20,
+      velocity: 0,
+      gravity: 0.5,
+      jump: -8
+    };
+
+    let obstacles = [];
+    const obstacleWidth = 40;
+    const obstacleGap = 150;
+    const obstacleSpeed = 2;
+    let frameCount = 0;
+    let gameOver = false;
+    let score = 0;
+    let startMenu = true;
+
+    function resetGame() {
+      bird.y = canvas.height / 2;
+      bird.velocity = 0;
+      obstacles = [];
+      frameCount = 0;
+      gameOver = false;
+      score = 0;
+    }
+
+    function createObstacle() {
+      const minHeight = 50;
+      const maxHeight = canvas.height - obstacleGap - minHeight;
+      const topHeight = Math.floor(Math.random() * (maxHeight - minHeight + 1)) + minHeight;
+      const bottomY = topHeight + obstacleGap;
+
+      obstacles.push({
+        x: canvas.width,
+        topHeight: topHeight,
+        bottomY: bottomY,
+        passed: false
+      });
+    }
+
+    function update() {
+      if (startMenu || gameOver) return;
+
+      frameCount++;
+
+      // Score
+      obstacles.forEach(obstacle => {
+        if (!obstacle.passed && obstacle.x + obstacleWidth < bird.x) {
+          obstacle.passed = true;
+          score++;
+        }
+      });
+
+      // Gravité
+      bird.velocity += bird.gravity;
+      bird.y += bird.velocity;
+
+      // Sol / plafond
+      if (bird.y < 0 || bird.y + bird.height > canvas.height) {
+        gameOver = true;
+      }
+
+      // Obstacles
+      if (frameCount % 90 === 0) createObstacle();
+
+      obstacles.forEach(obstacle => {
+        obstacle.x -= obstacleSpeed;
+
+        // Collision haut
+        if (
+          bird.x < obstacle.x + obstacleWidth &&
+          bird.x + bird.width > obstacle.x &&
+          bird.y < obstacle.topHeight
+        ) {
+          gameOver = true;
+        }
+
+        // Collision bas
+        if (
+          bird.x < obstacle.x + obstacleWidth &&
+          bird.x + bird.width > obstacle.x &&
+          bird.y + bird.height > obstacle.bottomY
+        ) {
+          gameOver = true;
+        }
+      });
+
+      obstacles = obstacles.filter(o => o.x + obstacleWidth > 0);
+    }
+
+    function draw() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      // Oiseau
+      ctx.drawImage(birdImg, bird.x, bird.y, bird.width, bird.height);
+
+      obstacles.forEach(obstacle => {
+  // Couleur principale du tuyau
+  ctx.fillStyle = "#00CC00"; // vert clair cartoon
+
+  // Tuyau supérieur
+  ctx.fillRect(obstacle.x, 0, obstacleWidth, obstacle.topHeight);
+
+  // Tuyau inférieur
+  ctx.fillRect(obstacle.x, obstacle.bottomY, obstacleWidth, canvas.height - obstacle.bottomY);
+
+  // Bordure foncée
+  ctx.strokeStyle = "#006600"; // vert foncé
+  ctx.lineWidth = 4;
+
+  // Bordure tuyau supérieur
+  ctx.strokeRect(obstacle.x, 0, obstacleWidth, obstacle.topHeight);
+
+  // Bordure tuyau inférieur
+  ctx.strokeRect(obstacle.x, obstacle.bottomY, obstacleWidth, canvas.height - obstacle.bottomY);
+
+  // Bande horizontale décorative (style Flappy Bird)
+  ctx.fillStyle = "#009900";
+  ctx.fillRect(obstacle.x, obstacle.topHeight - 10, obstacleWidth, 10); // bande sur le haut du tuyau
+  ctx.fillRect(obstacle.x, obstacle.bottomY, obstacleWidth, 10); // bande sur le bas du tuyau
+});
+
+
+      // MENU DE DÉMARRAGE
+      if (startMenu) {
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#fff";
+        ctx.font = "50px Arial Black";
+        ctx.textAlign = "center";
+        ctx.fillText("FLAPPY BIRD", canvas.width / 2, canvas.height / 2 - 40);
+
+        ctx.font = "22px Arial";
+        ctx.fillText("Appuie sur ESPACE pour jouer", canvas.width / 2, canvas.height / 2 + 10);
+
+        ctx.textAlign = "left";
+        return;
+      }
+
+      // GAME OVER
+      if (gameOver) {
+        ctx.fillStyle = "rgba(0,0,0,0.6)";
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+        ctx.fillStyle = "#fff";
+        ctx.font = "50px Arial Black";
+        ctx.textAlign = "center";
+        ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2 - 40);
+
+        ctx.font = "22px Arial";
+        ctx.fillText("Appuie sur ESPACE pour recommencer", canvas.width / 2, canvas.height / 2 + 10);
+
+        ctx.font = "26px Arial";
+        ctx.fillText("Score : " + score, canvas.width / 2, canvas.height / 2 + 60);
+
+        ctx.textAlign = "left";
+        return;
+      }
+
+      // Score
+      ctx.fillStyle = "#fff";
+      ctx.font = "20px Arial";
+      ctx.fillText("Score : " + score, 20, 40);
+    }
+
+    function loop() {
+      update();
+      draw();
+      if (!gameOver) requestAnimationFrame(loop);
+    }
+
+    // Contrôles
+    document.addEventListener('keydown', (e) => {
+      if (e.code === 'Space') {
+
+        if (startMenu) {
+          startMenu = false;
+          loop();
+          return;
+        }
+
+        if (gameOver) {
+          resetGame();
+          loop();
+          return;
+        }
+
+        bird.velocity = bird.jump;
+      }
+    });
+
+    canvas.addEventListener('click', () => {
+      if (!startMenu && !gameOver) {
+        bird.velocity = bird.jump;
+      }
+    });
+
+  </script>
+</body>
+</html>

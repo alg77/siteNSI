@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Bec de la Chouette</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f4f9;
+      margin: 0;
+      padding: 0;
+      text-align: center;
+    }
+    h1 {
+      background: #4a148c;
+      color: white;
+      padding: 15px;
+      margin: 0;
+    }
+    #intro, #jeu, #regles {
+      margin: 20px auto;
+      max-width: 600px;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      text-align: left;
+    }
+    input, button {
+      padding: 10px;
+      margin: 5px;
+      font-size: 14px;
+    }
+    button {
+      background: #4a148c;
+      color: white;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #6a1b9a;
+    }
+    #scores {
+      margin-top: 20px;
+      text-align: left;
+    }
+    #log {
+      margin-top: 20px;
+      background: #eee;
+      padding: 10px;
+      height: 200px;
+      overflow-y: auto;
+      font-family: monospace;
+      text-align: left;
+    }
+    .highlight {
+      font-weight: bold;
+      color: #4a148c;
+    }
+  </style>
+</head>
+<body>
+  <h1>Bec de la Chouette</h1>
+
+  <!-- Section règles -->
+  <div id="regles">
+    <h2>🎲 Comment ça se joue ?</h2>
+    <p>Le Bec de la Chouette se joue avec 3 dés à 6 faces.</p>
+    <p>Chaque joueur lance les dés à son tour, et selon le résultat, il marque des points.</p>
+    <p><strong>Les principales combinaisons sont :</strong></p>
+    <ul>
+      <li>🦉 Chouette : deux dés identiques → score = carré de la valeur.</li>
+      <li>➕ Velute : la somme de deux dés est égale au troisième → score = double du carré.</li>
+      <li>👑 Bec de Chouette : trois dés identiques → score = 40 + 10 × valeur du dé.</li>
+      <li>📈 Suite : trois dés consécutifs → pas de points, le tour passe.</li>
+      <li>❌ Néant : aucune combinaison spéciale → score = somme des dés.</li>
+    </ul>
+    <p>Des variantes amusantes existent, comme la <strong>Grelottine</strong> (double le score après une Chouette) ou le <strong>Sirop</strong> (triple le score après une Velute).</p>
+    <p>Le jeu continue jusqu’à ce qu’un joueur atteigne <strong>343 points</strong>. Celui qui y arrive en premier est déclaré <strong>vainqueur</strong> 🎉.</p>
+  </div>
+
+  <!-- Écran d’introduction -->
+  <div id="intro">
+    <p>Entrez les noms des joueurs (séparés par des virgules) :</p>
+    <input type="text" id="noms" size="50" placeholder="Ex: Prenom1, Prenom2, Prenom3">
+    <br>
+    <button onclick="demarrerPartie()">Commencer</button>
+  </div>
+
+  <!-- Écran de jeu -->
+  <div id="jeu" style="display:none;">
+    <h2 id="joueurActif"></h2>
+    <p id="des"></p>
+    <p id="combinaison"></p>
+    <p id="score"></p>
+    <button onclick="jouerTour()">Lancer les dés</button>
+    <button onclick="location.reload()">Quitter</button>
+
+    <div id="scores"></div>
+    <div id="log"></div>
+  </div>
+
+  <script>
+    class Joueur {
+      constructor(nom) {
+        this.nom = nom;
+        this.score = 0;
+      }
+    }
+
+    let joueurs = [];
+    let indexJoueur = 0;
+
+    function lancerDe() {
+      return Math.floor(Math.random() * 6) + 1;
+    }
+
+    function estChouette(d1, d2, d3) {
+      return d1 === d2 || d1 === d3 || d2 === d3;
+    }
+
+    function estVelute(d1, d2, d3) {
+      return d1 + d2 === d3 || d1 + d3 === d2 || d2 + d3 === d1;
+    }
+
+    function analyserCombinaison(d1, d2, d3) {
+      let des = [d1, d2, d3].sort((a,b)=>a-b);
+      if (d1 === d2 && d2 === d3) {
+        return ["bec", 40 + 10 * d1];
+      } else if (estChouette(d1,d2,d3) && estVelute(d1,d2,d3)) {
+        let veluteVal = (d1+d2===d3)?d3:(d1+d3===d2?d2:d1);
+        return ["chouette velute", 2 * veluteVal**2];
+      } else if (estChouette(d1,d2,d3)) {
+        let chouetteVal = (d1===d2||d1===d3)?d1:d2;
+        return ["chouette", chouetteVal**2];
+      } else if (estVelute(d1,d2,d3)) {
+        let veluteVal = (d1+d2===d3)?d3:(d1+d3===d2?d2:d1);
+        return ["velute", 2 * veluteVal**2];
+      } else if (des[0]+1===des[1] && des[1]+1===des[2]) {
+        return ["suite", 0];
+      } else {
+        return ["neant", d1+d2+d3];
+      }
+    }
+
+    function tenterGrelottine(d1,d2,d3) {
+      let relance = lancerDe();
+      log("Grelottine : dé relancé = " + relance);
+      if ([d1,d2,d3].includes(relance)) {
+        log("→ Grelottine réussie ! Score doublé.");
+        return true;
+      }
+      log("→ Grelottine échouée.");
+      return false;
+    }
+
+    function tenterSirop(d1,d2,d3) {
+      let relance = lancerDe();
+      log("Sirop : dé relancé = " + relance);
+      if ([d1,d2,d3].includes(relance)) {
+        log("→ Sirop réussi ! Score triplé.");
+        return true;
+      }
+      log("→ Sirop échoué.");
+      return false;
+    }
+
+    function demarrerPartie() {
+      let noms = document.getElementById("noms").value.split(",");
+      joueurs = noms.filter(n=>n.trim()!=="").map(n=>new Joueur(n.trim()));
+      if (joueurs.length===0) {
+        alert("Veuillez entrer au moins un nom.");
+        return;
+      }
+      document.getElementById("intro").style.display="none";
+      document.getElementById("jeu").style.display="block";
+      afficherJoueur();
+      afficherScores();
+    }
+
+    function afficherJoueur() {
+      let joueur = joueurs[indexJoueur];
+      document.getElementById("joueurActif").textContent = 
+        "Tour de " + joueur.nom + " (score: " + joueur.score + ")";
+      document.getElementById("des").textContent="";
+      document.getElementById("combinaison").textContent="";
+      document.getElementById("score").textContent="";
+    }
+
+    function afficherScores() {
+      let html = "<h3>Scores</h3><ul>";
+      joueurs.forEach(j=>{
+        html += "<li>"+j.nom+" : "+j.score+"</li>";
+      });
+      html += "</ul>";
+      document.getElementById("scores").innerHTML = html;
+    }
+
+    function jouerTour() {
+      let joueur = joueurs[indexJoueur];
+      let d1 = lancerDe(), d2 = lancerDe(), d3 = lancerDe();
+      document.getElementById("des").textContent = "Dés : " + d1 + ", " + d2 + ", " + d3;
+      let [combinaison, points] = analyserCombinaison(d1,d2,d3);
+      log(joueur.nom+" → "+combinaison.toUpperCase()+" → "+points+" points");
+
+      if (combinaison==="chouette" && tenterGrelottine(d1,d2,d3)) {
+        points *= 2;
+      } else if (combinaison==="velute" && tenterSirop(d1,d2,d3)) {
+        points *= 3;
+      }
+
+      joueur.score += points;
+      document.getElementById("combinaison").textContent = "Combinaison : " + combinaison;
+      document.getElementById("score").textContent = "Score total : " + joueur.score;
+      afficherScores();
+
+      if (joueur.score >= 343) {
+        alert(joueur.nom+" a gagné avec "+joueur.score+" points !");
+        location.reload();
+        return;
+      }
+
+      indexJoueur = (indexJoueur+1) % joueurs.length;
+      afficherJoueur();
+    }
+
+    function log(message) {
+      let logDiv = document.getElementById("log");
+      logDiv.innerHTML += message+"<br>---------------------------------------------<br>";
+      logDiv.scrollTop = logDiv.scrollHeight;
+    }
+  </script>
+</body>
+</html>

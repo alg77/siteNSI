@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jeu de Mémoire</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #FFF8DC; /* Jaune pastel clair */
+        }
+
+        .game-board {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            gap: 10px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+
+        .card {
+            width: 100px;
+            height: 100px;
+            background-color: lightgray;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 10px;
+        }
+
+        .card.revealed {
+            background-color: white;
+        }
+
+        .category-selection, .score-section {
+            margin-bottom: 20px;
+        }
+
+        button {
+            padding: 10px;
+            margin: 5px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #FFD700;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Jeu de Mémoire</h1>
+    <div class="category-selection">
+        <button onclick="startGame('fruits')">Fruits</button>
+        <button onclick="startGame('couleurs')">Couleurs</button>
+        <button onclick="startGame('animaux')">Animaux</button>
+    </div>
+    
+    <div class="score-section">
+        <p>Score : <span id="score">0</span></p>
+        <button onclick="startGame(currentCategory)">Rejouer</button>
+    </div>
+    
+    <div class="game-board"></div>
+
+    <script>
+        const categories = {
+            fruits: ['🍎', '🍊', '🍌', '🍇', '🍉', '🍓', '🍒', '🥝'],
+            couleurs: ['🔴', '🟠', '🟡', '🟢', '🔵', '🟣', '⚫', '⚪'],
+            animaux: ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼']
+        };
+
+        let firstCard, secondCard, lockBoard = false;
+        let score = 0;
+        let currentCategory = 'fruits';
+        const gameBoard = document.querySelector('.game-board');
+        const scoreDisplay = document.getElementById('score');
+
+        function startGame(category) {
+            currentCategory = category;
+            gameBoard.innerHTML = '';
+            score = 0;
+            scoreDisplay.textContent = score;
+
+            let cards = [...categories[category], ...categories[category]].sort(() => Math.random() - 0.5);
+            cards.forEach(symbol => {
+                const card = document.createElement('div');
+                card.classList.add('card');
+                card.dataset.symbol = symbol;
+                card.addEventListener('click', revealCard);
+                gameBoard.appendChild(card);
+            });
+
+            firstCard = secondCard = null;
+            lockBoard = false;
+        }
+
+        function revealCard() {
+            if (lockBoard || this === firstCard) return;
+
+            this.textContent = this.dataset.symbol;
+            this.classList.add('revealed');
+
+            if (!firstCard) {
+                firstCard = this;
+                return;
+            }
+
+            secondCard = this;
+            lockBoard = true;
+
+            if (firstCard.dataset.symbol === secondCard.dataset.symbol) {
+                score++;
+                scoreDisplay.textContent = score;
+                firstCard = secondCard = null;
+                lockBoard = false;
+            } else {
+                setTimeout(() => {
+                    firstCard.textContent = '';
+                    secondCard.textContent = '';
+                    firstCard.classList.remove('revealed');
+                    secondCard.classList.remove('revealed');
+                    firstCard = secondCard = null;
+                    lockBoard = false;
+                }, 1000);
+            }
+        }
+    </script>
+</body>
+</html>

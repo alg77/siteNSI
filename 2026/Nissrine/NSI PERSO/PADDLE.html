@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Casse-Briques</title>
+    <style>
+        body { background-color: #ADD8E6; font-family: Arial, sans-serif; text-align: center; margin: 0; }
+        canvas { background-color: #FFE4C4; display: block; margin: auto; border: 2px solid black; }
+        button { margin: 10px; padding: 12px; font-size: 18px; cursor: pointer; }
+        #message { font-size: 24px; font-weight: bold; margin-top: 20px; color: #8B0000; }
+
+        /* Effet lumineux subtil sur la raquette */
+        .raquette { box-shadow: 0px 0px 15px rgba(255, 215, 0, 0.5); transition: box-shadow 0.3s; }
+    </style>
+</head>
+<body>
+
+    <h1>Casse-Briques</h1>
+    <canvas id="jeu" width="800" height="600"></canvas>
+    <p id="message"></p>
+    <button onclick="restartGame()">Rejouer</button>
+
+    <script>
+        const canvas = document.getElementById("jeu");
+        const ctx = canvas.getContext("2d");
+
+        let raquette = { x: 350, y: 550, width: 120, height: 20, color: "#FFD700" }; // Doré pour effet lumineux
+        let balle = { x: 400, y: 500, radius: 16, dx: 4, dy: -4, color: "#FF6347" }; // Rouge clair et plus grande
+        let briques = [];
+        let obstacle = { x: 300, y: 200, width: 200, height: 20, dx: 2, color: "gray" };
+        let message = document.getElementById("message");
+
+        document.addEventListener("mousemove", (event) => {
+            raquette.x = event.clientX - canvas.offsetLeft - raquette.width / 2;
+        });
+
+        function initBriques() {
+            briques = [];
+            let couleurs = ["#F08080", "#FA8072", "#FFDAB9", "#DA70D6", "#87CEFA", "#66CDAA", "#F4A460"];
+            for (let i = 0; i < 7; i++) {
+                for (let j = 0; j < 4; j++) {
+                    briques.push({ x: 20 + i * 110, y: 20 + j * 30, width: 90, height: 25, color: couleurs[Math.floor(Math.random() * couleurs.length)] });
+                }
+            }
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            // Dessiner la raquette avec effet lumineux
+            ctx.fillStyle = raquette.color;
+            ctx.fillRect(raquette.x, raquette.y, raquette.width, raquette.height);
+
+            // Dessiner la balle
+            ctx.fillStyle = balle.color;
+            ctx.beginPath();
+            ctx.arc(balle.x, balle.y, balle.radius, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Dessiner l'obstacle
+            ctx.fillStyle = obstacle.color;
+            ctx.fillRect(obstacle.x, obstacle.y, obstacle.width, obstacle.height);
+
+            // Dessiner les briques
+            briques.forEach(b => {
+                ctx.fillStyle = b.color;
+                ctx.fillRect(b.x, b.y, b.width, b.height);
+            });
+        }
+
+        function update() {
+            balle.x += balle.dx;
+            balle.y += balle.dy;
+            obstacle.x += obstacle.dx;
+
+            if (balle.x - balle.radius < 0 || balle.x + balle.radius > canvas.width) balle.dx *= -1;
+            if (balle.y - balle.radius < 0) balle.dy *= -1;
+            if (balle.y + balle.radius > canvas.height) {
+                message.innerText = "Game Over !";
+                return;
+            }
+
+            if (balle.y + balle.radius > raquette.y && balle.x > raquette.x && balle.x < raquette.x + raquette.width) balle.dy *= -1;
+
+            briques = briques.filter(b => {
+                if (balle.x > b.x && balle.x < b.x + b.width && balle.y > b.y && balle.y < b.y + b.height) {
+                    balle.dy *= -1;
+                    return false;
+                }
+                return true;
+            });
+
+            if (briques.length === 0) {
+                message.innerText = "Félicitations ! Vous avez gagné !";
+                return;
+            }
+
+            if (obstacle.x <= 0 || obstacle.x + obstacle.width >= canvas.width) obstacle.dx *= -1;
+        }
+
+        function restartGame() {
+            message.innerText = "";
+            initBriques();
+            balle.x = 400;
+            balle.y = 500;
+            balle.dx = 4;
+            balle.dy = -4;
+        }
+
+        function loop() {
+            update();
+            draw();
+            requestAnimationFrame(loop);
+        }
+
+        initBriques();
+        loop();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Mastermind – Épuré</title>
+
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", sans-serif;
+        background: #f2f2f7;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+        margin: 0;
+    }
+
+    .screen {
+        background: white;
+        padding: 32px;
+        width: 460px;
+        border-radius: 24px;
+        box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+        text-align: center;
+        display: none;
+        animation: fadeIn 0.4s ease;
+    }
+
+    #welcome {
+        display: block;
+    }
+
+    @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(10px); }
+        to   { opacity: 1; transform: translateY(0); }
+    }
+
+    h1 {
+        margin-top: 0;
+        color: #1d1d1f;
+        font-size: 30px;
+        font-weight: 600;
+    }
+
+    .rules {
+        font-size: 15px;
+        color: #6e6e73;
+        margin-top: 10px;
+        margin-bottom: 22px;
+        line-height: 1.5;
+        text-align: left;
+    }
+
+    .rules strong {
+        color: #1d1d1f;
+    }
+
+    button {
+        padding: 10px 18px;
+        border: none;
+        border-radius: 12px;
+        background: #007aff;
+        color: white;
+        font-size: 15px;
+        cursor: pointer;
+        transition: 0.2s;
+    }
+
+    button:hover {
+        background: #0063cc;
+    }
+
+    .restart {
+        background: #34c759;
+    }
+
+    .restart:hover {
+        background: #28a745;
+    }
+
+    .secondary {
+        background: #e5e5ea;
+        color: #1d1d1f;
+        margin-left: 8px;
+    }
+
+    .secondary:hover {
+        background: #d1d1d6;
+    }
+
+    .top-bar {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 16px;
+    }
+
+    .slots, .color-row {
+        display: flex;
+        justify-content: center;
+        gap: 14px;
+        margin-bottom: 18px;
+    }
+
+    .slot, .color {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        cursor: pointer;
+        transition: 0.2s;
+        border: 2px solid transparent;
+    }
+
+    .slot {
+        background: #e5e5ea;
+        border-color: #d1d1d6;
+    }
+
+    .slot:hover {
+        transform: scale(1.08);
+    }
+
+    .color:hover {
+        transform: scale(1.12);
+        border-color: #d2d2d7;
+    }
+
+    .history {
+        margin-top: 18px;
+        max-height: 220px;
+        overflow-y: auto;
+        padding-right: 10px;
+        text-align: left;
+        font-size: 14px;
+    }
+
+    .entry {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background: #f2f2f7;
+        padding: 8px 12px;
+        border-radius: 14px;
+        margin-bottom: 8px;
+        animation: fadeIn 0.3s ease;
+    }
+
+    .guess-balls {
+        display: flex;
+        gap: 6px;
+    }
+
+    .ball {
+        width: 20px;
+        height: 20px;
+        border-radius: 50%;
+    }
+
+    .feedback {
+        display: flex;
+        gap: 4px;
+    }
+
+    .fb {
+        width: 12px;
+        height: 12px;
+        border-radius: 50%;
+    }
+
+    .fb.green { background: #34c759; }
+    .fb.yellow { background: #ffd60a; }
+    .fb.gray { background: #c7c7cc; }
+
+    .attempts {
+        color: #6e6e73;
+        font-size: 14px;
+    }
+</style>
+</head>
+
+<body>
+
+<!-- ÉCRAN D'ACCUEIL AVEC RÈGLES COURTES -->
+<div id="welcome" class="screen">
+    <h1>Mastermind</h1>
+    <div class="rules">
+        <strong>But du jeu :</strong> deviner une combinaison secrète de 4 couleurs.<br><br>
+        <strong>Principe :</strong><br>
+        – Une combinaison est choisie automatiquement.<br>
+        – À chaque tentative, tu proposes 4 couleurs.<br>
+        – Le jeu t’indique si tes couleurs et positions sont correctes.<br><br>
+        <strong>Contrôles :</strong><br>
+        – Clique sur une couleur pour remplir le prochain emplacement vide.<br>
+        – Clique sur un emplacement pour effacer cette couleur.<br>
+        – Clique sur « Retour » pour annuler la dernière couleur ajoutée.
+    </div>
+    <button onclick="startGame()">Jouer</button>
+</div>
+
+<!-- ÉCRAN DE JEU -->
+<div id="game" class="screen">
+    <div class="top-bar">
+        <h1 style="margin: 0; font-size: 22px;">Mastermind</h1>
+        <div class="attempts" id="attempts">Tentative : 1 / 10</div>
+    </div>
+
+    <div class="slots" id="slots"></div>
+
+    <div class="color-row" id="colorRow"></div>
+
+    <div style="margin-bottom: 10px;">
+        <button onclick="submitGuess()">Valider</button>
+        <button class="secondary" onclick="undoLast()">Retour</button>
+    </div>
+
+    <div class="history" id="history"></div>
+
+    <div style="margin-top: 10px;">
+        <button class="restart" onclick="restart()">Recommencer</button>
+    </div>
+</div>
+
+<script>
+    const COLORS = ["#ffb3b3", "#ffd6a5", "#fff1a8", "#c8f7c5", "#b3d9ff", "#e3c6ff"];
+    let code = [];
+    let attempt = 1;
+    let currentGuess = ["", "", "", ""];
+    let historySteps = [];  // pour le bouton "Retour"
+
+    function startGame() {
+        document.getElementById("welcome").style.display = "none";
+        document.getElementById("game").style.display = "block";
+        restart();
+    }
+
+    function generateCode() {
+        code = [];
+        for (let i = 0; i < 4; i++) {
+            code.push(COLORS[Math.floor(Math.random() * COLORS.length)]);
+        }
+    }
+
+    function createColorButtons() {
+        const row = document.getElementById("colorRow");
+        row.innerHTML = "";
+
+        COLORS.forEach(color => {
+            const div = document.createElement("div");
+            div.className = "color";
+            div.style.background = color;
+
+            div.onclick = () => {
+                const index = currentGuess.indexOf("");
+                if (index !== -1) {
+                    currentGuess[index] = color;
+                    historySteps.push(index);  // mémorise où on a mis la couleur
+                    updateSlots();
+                }
+            };
+
+            row.appendChild(div);
+        });
+    }
+
+    function createSlots() {
+        const slots = document.getElementById("slots");
+        slots.innerHTML = "";
+
+        for (let i = 0; i < 4; i++) {
+            const s = document.createElement("div");
+            s.className = "slot";
+
+            s.onclick = () => {
+                currentGuess[i] = "";
+                // enlever toutes les entrées de l'historique correspondant à cet index
+                historySteps = historySteps.filter(idx => idx !== i);
+                updateSlots();
+            };
+
+            slots.appendChild(s);
+        }
+    }
+
+    function updateSlots() {
+        const slots = document.querySelectorAll(".slot");
+        for (let i = 0; i < 4; i++) {
+            slots[i].style.background = currentGuess[i] || "#e5e5ea";
+        }
+    }
+
+    function undoLast() {
+        if (historySteps.length === 0) return;
+        const lastIndex = historySteps.pop();
+        currentGuess[lastIndex] = "";
+        updateSlots();
+    }
+
+    function checkGuess(guess) {
+        let fb = [];
+
+        for (let i = 0; i < 4; i++) {
+            if (guess[i] === code[i]) fb.push("green");
+            else if (code.includes(guess[i])) fb.push("yellow");
+            else fb.push("gray");
+        }
+
+        return fb;
+    }
+
+    function submitGuess() {
+        if (currentGuess.includes("")) return;
+
+        const feedback = checkGuess(currentGuess);
+
+        const entry = document.createElement("div");
+        entry.className = "entry";
+
+        const guessBalls = document.createElement("div");
+        guessBalls.className = "guess-balls";
+
+        currentGuess.forEach(c => {
+            const b = document.createElement("div");
+            b.className = "ball";
+            b.style.background = c;
+            guessBalls.appendChild(b);
+        });
+
+        const fbDiv = document.createElement("div");
+        fbDiv.className = "feedback";
+
+        feedback.forEach(f => {
+            const dot = document.createElement("div");
+            dot.className = "fb " + f;
+            fbDiv.appendChild(dot);
+        });
+
+        entry.appendChild(guessBalls);
+        entry.appendChild(fbDiv);
+
+        document.getElementById("history").prepend(entry);
+
+        if (feedback.every(f => f === "green")) {
+            alert("Bravo, tu as trouvé la combinaison.");
+            disableGame();
+            return;
+        }
+
+        attempt++;
+        document.getElementById("attempts").textContent = `Tentative : ${attempt} / 10`;
+
+        if (attempt > 10) {
+            alert("Tu as perdu. La combinaison était secrète.");
+            disableGame();
+        }
+
+        currentGuess = ["", "", "", ""];
+        historySteps = [];
+        updateSlots();
+    }
+
+    function disableGame() {
+        document.querySelectorAll(".color").forEach(c => c.onclick = null);
+    }
+
+    function restart() {
+        attempt = 1;
+        currentGuess = ["", "", "", ""];
+        historySteps = [];
+        generateCode();
+        createColorButtons();
+        createSlots();
+        updateSlots();
+        document.getElementById("attempts").textContent = "Tentative : 1 / 10";
+        document.getElementById("history").innerHTML = "";
+    }
+</script>
+
+</body>
+</html>

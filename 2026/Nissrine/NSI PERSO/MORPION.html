@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MORPION</title>
+    <style>
+        body { background-color: #FFF8DC; font-family: Arial, sans-serif; text-align: center; margin: 0; }
+        #jeu { display: grid; grid-template-columns: repeat(3, 1fr); grid-template-rows: repeat(3, 1fr); gap: 10px; width: 90vmin; height: 90vmin; margin: auto; }
+        .case { width: 100%; height: 100%; font-size: 4vmin; text-align: center; background-color: #FAEBD7; border: 2px solid black; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: background-color 0.3s; }
+        .case:hover { background-color: #FFDAB9; }
+        button { margin: 10px; padding: 12px; font-size: 18px; cursor: pointer; border: none; border-radius: 8px; background-color: #8B0000; color: white; transition: 0.3s; }
+        button:hover { background-color: #B22222; }
+        #niveauSelectionne { font-size: 20px; font-weight: bold; margin-top: 15px; color: #8B0000; }
+        #score, #resultat { font-size: 20px; margin-top: 15px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <h1>MORPION</h1>
+    <p id="score">Joueur: 0 | Ordinateur: 0 | Matchs nuls: 0</p>
+
+    <p id="niveauSelectionne">Choisissez un niveau avant de jouer :</p>
+
+    <div>
+        <button onclick="choisirNiveau('Débutant')">Débutant</button>
+        <button onclick="choisirNiveau('Amateur')">Amateur</button>
+        <button onclick="choisirNiveau('Semi-pro')">Semi-pro</button>
+        <button onclick="choisirNiveau('Pro')">Pro</button>
+        <button onclick="choisirNiveau('Légendaire')">Légendaire</button>
+    </div>
+
+    <div id="jeu"></div>
+
+    <p id="resultat"></p>
+
+    <button onclick="rejouer()">Rejouer</button>
+    <button onclick="reinitialiserScores()">Réinitialiser les scores</button>
+
+    <script>
+        let grille = Array(9).fill("");
+        let joueur = "X";
+        let ordinateur = "O";
+        let niveau = ""; 
+        let score = { "Joueur": 0, "Ordinateur": 0, "Match Nul": 0 };
+
+        function choisirNiveau(niveauSelectionne) {
+            niveau = niveauSelectionne;
+            document.getElementById("niveauSelectionne").innerText = `Niveau choisi : ${niveau}`;
+            rejouer();
+        }
+
+        function creerGrille() {
+            const jeu = document.getElementById("jeu");
+            jeu.innerHTML = "";
+            document.getElementById("resultat").innerText = "";
+            grille.forEach((_, i) => {
+                const cell = document.createElement("div");
+                cell.classList.add("case");
+                cell.setAttribute("data-index", i);
+                cell.onclick = () => { if (niveau) jouer(i); };
+                jeu.appendChild(cell);
+            });
+        }
+
+        function jouer(position) {
+            if (!niveau) return alert("Veuillez choisir un niveau avant de commencer !");
+            if (grille[position] === "") {
+                grille[position] = joueur;
+                document.querySelector(`[data-index="${position}"]`).innerText = joueur;
+                if (verifierGagnant(joueur)) { mettreAJourScore("Joueur"); return; }
+                if (!grille.includes("")) { mettreAJourScore("Match Nul"); return; }
+                setTimeout(ordinateurJouer, 500);
+            }
+        }
+
+        function ordinateurJouer() {
+            let coupsDispo = grille.map((v, i) => v === "" ? i : null).filter(v => v !== null);
+            let coup = null;
+            
+            if (niveau === "Débutant") {
+                coup = coupsDispo[Math.floor(Math.random() * coupsDispo.length)];
+            } else if (niveau === "Amateur") {
+                coup = coupsDispo.length > 0 ? coupsDispo[0] : null;
+            } else if (niveau === "Semi-pro") {
+                coup = choixStratégique() || coupsDispo[Math.floor(Math.random() * coupsDispo.length)];
+            } else if (niveau === "Pro") {
+                coup = choixStratégique() || coupsDispo[0];
+            } else if (niveau === "Légendaire") {
+                coup = minimax(grille, ordinateur).index;
+            }
+            
+            if (coup !== null) {
+                grille[coup] = ordinateur;
+                document.querySelector(`[data-index="${coup}"]`).innerText = ordinateur;
+                if (verifierGagnant(ordinateur)) { mettreAJourScore("Ordinateur"); }
+            }
+        }
+
+        function choixStratégique() {
+            const combinaisons = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
+            for (let c of combinaisons) {
+                if (c.filter(i => grille[i] === ordinateur).length === 2 && c.some(i => grille[i] === "")) {
+                    return c.find(i => grille[i] === "");
+                }
+                if (c.filter(i => grille[i] === joueur).length === 2 && c.some(i => grille[i] === "")) {
+                    return c.find(i => grille[i] === "");
+                }
+            }
+            return null;
+        }
+
+        function verifierGagnant(symbole) {
+            const combinaisons = [[0,1,2], [3,4,5], [6,7,8], [0,3,6], [1,4,7], [2,5,8], [0,4,8], [2,4,6]];
+            return combinaisons.some(c => c.every(i => grille[i] === symbole));
+        }
+
+        function mettreAJourScore(gagnant) {
+            score[gagnant]++;
+            document.getElementById("score").innerText = `Joueur: ${score["Joueur"]} | Ordinateur: ${score["Ordinateur"]} | Matchs nuls: ${score["Match Nul"]}`;
+            document.getElementById("resultat").innerText = `${gagnant} a gagné !`;
+            document.querySelectorAll(".case").forEach(c => c.onclick = null);
+        }
+
+        function rejouer() {
+            grille.fill("");
+            creerGrille();
+        }
+
+        function reinitialiserScores() {
+            score = { "Joueur": 0, "Ordinateur": 0, "Match Nul": 0 };
+            document.getElementById("score").innerText = "Joueur: 0 | Ordinateur: 0 | Matchs nuls: 0";
+            rejouer();
+        }
+
+        creerGrille();
+    </script>
+
+</body>
+</html>

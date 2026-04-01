@@ -1,0 +1,538 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Premier pas en CSS</title>
+		<link rel="stylesheet" href="style.css" />
+		
+		
+	</head>
+	
+	<body>
+		<h1>Mon premier pargraphe</h1>
+		<p>.periodic-table {
+  display: grid;
+  grid-template-columns: repeat(18, 1fr [col-start]);
+  grid-template-rows: repeat(10, 90px [col-start]);
+}
+.periodic-table {
+  display: grid;
+  grid-template-columns: repeat(18, 1fr [col-start]);
+  grid-template-rows: repeat(10, 90px [col-start]);
+}
+.periodic-table .element {
+  border: 2px solid #fff;
+  text-align: center;
+  padding-top: 30px;
+  font-family: arial;
+  font-weight: bold;
+}
+/*******************************************
+************ TYPES COLORS
+*******************************************/
+.periodic-table .element.-reactive-nonmetal {
+  background: #fff777;
+}
+.periodic-table .element.-metalloid {
+  background: #8a9bff;
+}
+.periodic-table .element.-noble-gas {
+  background: #8cfffe;
+}
+.periodic-table .element.-alkali-metal {
+  background: #fb6767;
+}
+.periodic-table .element.-alkaline-earth-metal {
+  background: #ffb38a;
+}
+.periodic-table .element.-post-transition-metal {
+  background: #b59ddd;
+}
+.periodic-table .element.-unknown-chemical-properties {
+  background: #bbb;
+}
+.periodic-table .element.-lanthanide {
+  background: #85f9ae;
+}
+.periodic-table .element.-actinide {
+  background: #bd9179;
+}
+.periodic-table .element.-transition-metal {
+  background: #ffb9f4;
+}
+/*******************************************
+************ ELEMENTS
+*******************************************/
+.periodic-table .element.-n1 {
+  grid-column: 1/2;
+  grid-row: 1/2;
+}
+.periodic-table .element.-n2 {
+  grid-column: 18/19;
+  grid-row: 1/2;
+}
+.periodic-table .element.-n3 {
+  grid-column: 1/2;
+  grid-row: 2/3;
+}
+.periodic-table .element.-n4 {
+  grid-column: 2/3;
+  grid-row: 2/3;
+}
+.periodic-table .element.-n5 {
+  grid-column: 13/14;
+  grid-row: 2/3;
+}
+.periodic-table .element.-n6 {
+  grid-column: 14/15;
+  grid-row: 2/3;
+}
+.periodic-table .element.-n7 {
+  grid-column: 15/16;
+  grid-row: 2/3;
+}
+.periodic-table .element.-n8 {
+  grid-column: 16/17;
+  grid-row: 2/3;
+}
+.periodic-table .element.-n9 {
+  grid-column: 17/18;
+  grid-row: 2/3;
+}
+.periodic-table .element.-n10 {
+  grid-column: 18/19;
+  grid-row: 2/3;
+}
+.periodic-table .element.-n11 {
+  grid-column: 1/2;
+  grid-row: 3/4;
+}
+.periodic-table .element.-n12 {
+  grid-column: 2/3;
+  grid-row: 3/4;
+}
+.periodic-table .element.-n13 {
+  grid-column: 13/14;
+  grid-row: 3/4;
+}
+.periodic-table .element.-n14 {
+  grid-column: 14/15;
+  grid-row: 3/4;
+}
+.periodic-table .element.-n15 {
+  grid-column: 15/16;
+  grid-row: 3/4;
+}
+.periodic-table .element.-n16 {
+  grid-column: 16/17;
+  grid-row: 3/4;
+}
+.periodic-table .element.-n17 {
+  grid-column: 17/18;
+  grid-row: 3/4;
+}
+.periodic-table .element.-n18 {
+  grid-column: 18/19;
+  grid-row: 3/4;
+}
+.periodic-table .element.-n19 {
+  grid-column: 1/2;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n20 {
+  grid-column: 2/3;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n21 {
+  grid-column: 3/4;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n22 {
+  grid-column: 4/5;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n23 {
+  grid-column: 5/6;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n24 {
+  grid-column: 6/7;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n25 {
+  grid-column: 7/8;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n26 {
+  grid-column: 8/9;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n27 {
+  grid-column: 9/10;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n28 {
+  grid-column: 10/11;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n29 {
+  grid-column: 11/12;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n30 {
+  grid-column: 12/13;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n31 {
+  grid-column: 13/14;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n32 {
+  grid-column: 14/15;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n33 {
+  grid-column: 15/16;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n34 {
+  grid-column: 16/17;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n35 {
+  grid-column: 17/18;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n36 {
+  grid-column: 18/19;
+  grid-row: 4/5;
+}
+.periodic-table .element.-n37 {
+  grid-column: 1/2;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n38 {
+  grid-column: 2/3;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n39 {
+  grid-column: 3/4;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n40 {
+  grid-column: 4/5;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n41 {
+  grid-column: 5/6;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n42 {
+  grid-column: 6/7;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n43 {
+  grid-column: 7/8;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n44 {
+  grid-column: 8/9;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n45 {
+  grid-column: 9/10;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n46 {
+  grid-column: 10/11;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n47 {
+  grid-column: 11/12;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n48 {
+  grid-column: 12/13;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n49 {
+  grid-column: 13/14;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n50 {
+  grid-column: 14/15;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n51 {
+  grid-column: 15/16;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n52 {
+  grid-column: 16/17;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n53 {
+  grid-column: 17/18;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n54 {
+  grid-column: 18/19;
+  grid-row: 5/6;
+}
+.periodic-table .element.-n55 {
+  grid-column: 1/2;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n56 {
+  grid-column: 2/3;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n57 {
+  grid-column: 3/4;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n72 {
+  grid-column: 4/5;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n73 {
+  grid-column: 5/6;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n74 {
+  grid-column: 6/7;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n75 {
+  grid-column: 7/8;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n76 {
+  grid-column: 8/9;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n77 {
+  grid-column: 9/10;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n78 {
+  grid-column: 10/11;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n79 {
+  grid-column: 11/12;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n80 {
+  grid-column: 12/13;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n81 {
+  grid-column: 13/14;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n82 {
+  grid-column: 14/15;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n83 {
+  grid-column: 15/16;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n84 {
+  grid-column: 16/17;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n85 {
+  grid-column: 17/18;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n86 {
+  grid-column: 18/19;
+  grid-row: 6/7;
+}
+.periodic-table .element.-n87 {
+  grid-column: 1/2;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n88 {
+  grid-column: 2/3;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n89 {
+  grid-column: 3/4;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n104 {
+  grid-column: 4/5;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n105 {
+  grid-column: 5/6;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n106 {
+  grid-column: 6/7;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n107 {
+  grid-column: 7/8;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n108 {
+  grid-column: 8/9;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n109 {
+  grid-column: 9/10;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n110 {
+  grid-column: 10/11;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n111 {
+  grid-column: 11/12;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n112 {
+  grid-column: 12/13;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n113 {
+  grid-column: 13/14;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n114 {
+  grid-column: 14/15;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n115 {
+  grid-column: 15/16;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n116 {
+  grid-column: 16/17;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n117 {
+  grid-column: 17/18;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n118 {
+  grid-column: 18/19;
+  grid-row: 7/8;
+}
+.periodic-table .element.-n58 {
+  grid-column: 4/5;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n59 {
+  grid-column: 5/6;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n60 {
+  grid-column: 6/7;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n61 {
+  grid-column: 7/8;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n62 {
+  grid-column: 8/9;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n63 {
+  grid-column: 9/10;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n64 {
+  grid-column: 10/11;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n65 {
+  grid-column: 11/12;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n66 {
+  grid-column: 12/13;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n67 {
+  grid-column: 13/14;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n68 {
+  grid-column: 14/15;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n69 {
+  grid-column: 15/16;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n70 {
+  grid-column: 16/17;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n71 {
+  grid-column: 17/18;
+  grid-row: 9/10;
+}
+.periodic-table .element.-n90 {
+  grid-column: 4/5;
+  grid-row: 10/11;
+}
+.periodic-table .element.-n91 {
+  grid-column: 5/6;
+  grid-row: 10/11;
+}
+.periodic-table .element.-n92 {
+  grid-column: 6/7;
+  grid-row: 10/11;
+}
+.periodic-table .element.-n93 {
+  grid-column: 7/8;
+  grid-row: 10/11;
+}
+.periodic-table .element.-n94 {
+  grid-column: 8/9;
+  grid-row: 10/11;
+}
+.periodic-table .element.-n95 {
+  grid-column: 9/10;
+  grid-row: 10/11;
+}
+.periodic-table .element.-n96 {
+  grid-column: 10/11;
+  grid-row: 10/11;
+}
+.periodic-table .element.-n97 {
+  grid-column: 11/12;
+  grid-row: 10/11;
+}
+.periodic-table .element.-n98 {
+  grid-column: 12/13;
+  grid-row: 10/11;
+}
+.periodic-table .element.-n99 {
+  grid-column: 13/14;
+  grid-row: 10/11;
+}
+.periodic-table .element.-n100 {
+  grid-column: 14/15;
+  grid-row: 10/11;
+}
+.periodic-table .element.-n101 {
+  grid-column: 15/16;
+  grid-row: 10/11;
+}
+.periodic-table .element.-n102 {
+  grid-column: 16/17;
+  grid-row: 10/11;
+}
+.periodic-table .element.-n103 {
+  grid-column: 17/18;
+  grid-row: 10/11;
+}
+

@@ -1,4 +1,0 @@
-function Alerte()
-{
-alert("Bravo !  :)");
-}
