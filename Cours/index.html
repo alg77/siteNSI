@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cours NSI</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, sans-serif;
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      color: #e2e8f0;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 40px 20px 60px;
+    }
+    .back-link {
+      display: inline-block;
+      margin-bottom: 24px;
+      color: #93c5fd;
+      text-decoration: none;
+      font-weight: bold;
+    }
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      margin-bottom: 10px;
+    }
+    .intro {
+      color: #cbd5e1;
+      max-width: 760px;
+      line-height: 1.7;
+      margin-bottom: 32px;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+    .card {
+      background: rgba(15, 23, 42, 0.72);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      border-radius: 18px;
+      padding: 26px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+    }
+    .badge {
+      display: inline-block;
+      font-size: 0.8rem;
+      font-weight: bold;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #86efac;
+      background: rgba(34,197,94,0.12);
+      padding: 6px 10px;
+      border-radius: 999px;
+      margin-bottom: 14px;
+    }
+    h2 {
+      margin-top: 0;
+      margin-bottom: 10px;
+      font-size: 1.4rem;
+    }
+    p {
+      color: #cbd5e1;
+      line-height: 1.7;
+    }
+    .btn {
+      display: inline-block;
+      margin-top: 14px;
+      padding: 12px 18px;
+      background: #38bdf8;
+      color: #082032;
+      font-weight: bold;
+      text-decoration: none;
+      border-radius: 12px;
+    }
+    .muted {
+      opacity: .85;
+      font-size: .95rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <a class="back-link" href="../index.html">← Retour au site NSI</a>
+    <h1>Cours et révisions NSI</h1>
+    <p class="intro">Cette page rassemble les ressources de cours mises à disposition pour les élèves de spécialité NSI. </p>
+    <p>Tu peux y retrouver des supports de révision, des fiches thématiques et des pages interactives pour t'entraîner.</p>
+
+    <div class="grid">
+      <div class="card">
+        <div class="badge">1ère NSI</div>
+        <h2>HTML &amp; CSS</h2>
+        <p>Un cours complet et très visuel sur les bases du web, avec rappels de syntaxe, exemples, exercices progressifs et QCM interactif.</p>
+        <a class="btn" href="1ere/cours_html_css_1ere_nsi.html">Ouvrir le cours</a>
+      </div>
+
+      <div class="card">
+        <div class="badge">Bientôt</div>
+        <h2>Autres cours à venir</h2>
+        <p class="muted">Bientôt d'autres cours...</p>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

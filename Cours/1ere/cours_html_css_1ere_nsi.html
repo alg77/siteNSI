@@ -1,0 +1,1657 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>HTML & CSS — Cours 1ère NSI</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Fraunces:ital,wght@0,300;0,700;0,900;1,300&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0f1117;
+    --surface: #171b26;
+    --surface2: #1e2333;
+    --border: #2a2f45;
+    --accent: #6ee7b7;
+    --accent2: #f59e0b;
+    --accent3: #818cf8;
+    --text: #e2e8f0;
+    --muted: #64748b;
+    --code-bg: #0d1117;
+    --red: #f87171;
+    --blue: #60a5fa;
+    --yellow: #fbbf24;
+    --green: #34d399;
+    --pink: #f472b6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Fraunces', Georgia, serif;
+    background: var(--bg);
+    color: var(--text);
+    line-height: 1.7;
+    font-size: 17px;
+  }
+
+  /* HEADER */
+  .hero {
+    background: linear-gradient(135deg, #0f1117 0%, #1a1040 50%, #0f1117 100%);
+    border-bottom: 1px solid var(--border);
+    padding: 60px 40px 50px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(110,231,183,0.08) 0%, transparent 70%);
+  }
+  .hero-badge {
+    display: inline-block;
+    background: rgba(110,231,183,0.1);
+    border: 1px solid rgba(110,231,183,0.3);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+  }
+  .hero h1 {
+    font-size: clamp(36px, 6vw, 72px);
+    font-weight: 900;
+    line-height: 1.1;
+    letter-spacing: -2px;
+    margin-bottom: 16px;
+  }
+  .hero h1 span { color: var(--accent); }
+  .hero p {
+    color: var(--muted);
+    font-style: italic;
+    font-weight: 300;
+    font-size: 18px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  /* NAV */
+  .toc {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 16px 40px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+  }
+  .toc a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+    text-decoration: none;
+    padding: 5px 12px;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    transition: all 0.2s;
+  }
+  .toc a:hover { color: var(--accent); border-color: var(--accent); background: rgba(110,231,183,0.05); }
+
+  /* LAYOUT */
+  .container { max-width: 900px; margin: 0 auto; padding: 0 30px; }
+
+  /* SECTIONS */
+  .section {
+    padding: 60px 0 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--accent);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .section h2 {
+    font-size: clamp(24px, 4vw, 40px);
+    font-weight: 900;
+    letter-spacing: -1px;
+    margin-bottom: 24px;
+    line-height: 1.15;
+  }
+  .section h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent2);
+    margin: 36px 0 12px;
+  }
+  .section p { color: #cbd5e1; margin-bottom: 16px; }
+
+  /* CODE BLOCKS */
+  .code-block {
+    background: var(--code-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin: 20px 0;
+    overflow: hidden;
+  }
+  .code-header {
+    background: var(--surface2);
+    border-bottom: 1px solid var(--border);
+    padding: 8px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    color: var(--muted);
+  }
+  .code-dot { width: 10px; height: 10px; border-radius: 50%; }
+  .dot-red { background: #ff5f56; }
+  .dot-yellow { background: #ffbd2e; }
+  .dot-green { background: #27c93f; }
+  pre {
+    padding: 20px;
+    overflow-x: auto;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .tag { color: var(--blue); }
+  .attr { color: var(--yellow); }
+  .val { color: var(--green); }
+  .comment { color: var(--muted); font-style: italic; }
+  .prop { color: var(--pink); }
+  .val2 { color: var(--accent); }
+  .sel { color: var(--accent2); }
+
+  /* PREVIEW BOXES */
+  .preview {
+    border: 2px dashed var(--border);
+    border-radius: 10px;
+    padding: 24px;
+    margin: 16px 0;
+    background: white;
+    color: #333;
+  }
+  .preview-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+
+  /* INFO BOXES */
+  .box {
+    border-radius: 10px;
+    padding: 18px 22px;
+    margin: 20px 0;
+    border-left: 3px solid;
+    font-size: 15px;
+  }
+  .box-tip { background: rgba(110,231,183,0.07); border-color: var(--accent); }
+  .box-warn { background: rgba(251,191,36,0.07); border-color: var(--yellow); }
+  .box-info { background: rgba(129,140,248,0.07); border-color: var(--accent3); }
+  .box-alert { background: rgba(248,113,113,0.07); border-color: var(--red); }
+  .box-title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    font-weight: 700;
+  }
+  .box-tip .box-title { color: var(--accent); }
+  .box-warn .box-title { color: var(--yellow); }
+  .box-info .box-title { color: var(--accent3); }
+  .box-alert .box-title { color: var(--red); }
+
+  /* TABLE */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 20px 0;
+    font-size: 15px;
+  }
+  th {
+    background: var(--surface2);
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 10px 16px;
+    text-align: left;
+    border: 1px solid var(--border);
+  }
+  td {
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    color: #cbd5e1;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: rgba(255,255,255,0.02); }
+  td code, th code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    color: var(--accent);
+    background: rgba(110,231,183,0.1);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+
+  /* INLINE CODE */
+  p code, li code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--accent);
+    background: rgba(110,231,183,0.1);
+    padding: 1px 7px;
+    border-radius: 4px;
+  }
+
+  /* LISTS */
+  ul, ol { padding-left: 24px; margin-bottom: 16px; }
+  li { color: #cbd5e1; margin-bottom: 6px; }
+
+  /* GRID DEMO */
+  .demo-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin: 12px 0;
+  }
+  .demo-cell {
+    background: #e0e7ff;
+    border: 2px solid #6366f1;
+    padding: 12px;
+    text-align: center;
+    font-weight: bold;
+    border-radius: 4px;
+    color: #3730a3;
+  }
+
+  .demo-flex {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    padding: 8px;
+  }
+  .demo-flex-item {
+    background: #fef3c7;
+    border: 2px solid #d97706;
+    padding: 10px 16px;
+    border-radius: 4px;
+    font-weight: bold;
+    color: #92400e;
+  }
+
+  /* BOX MODEL DIAGRAM */
+  .boxmodel {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    margin: 16px auto;
+    font-size: 13px;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .bm-margin { background: #fde68a; padding: 18px; border-radius: 4px; }
+  .bm-border { background: #fca5a5; padding: 14px; border-radius: 2px; }
+  .bm-padding { background: #bbf7d0; padding: 14px; border-radius: 2px; }
+  .bm-content { background: #bfdbfe; padding: 16px 28px; text-align: center; border-radius: 2px; }
+  .bm-label { font-size: 11px; font-weight: bold; }
+
+  /* SELECTEURS DEMO */
+  .sel-demo { background: #f8fafc; padding: 16px; border-radius: 6px; }
+  .sel-demo p { color: #334155; margin: 4px 0; }
+  .sel-demo .special { color: #7c3aed; font-weight: bold; }
+  .sel-demo #titre-demo { font-size: 18px; color: #0f172a; }
+
+  /* DST SECTION */
+  .dst-section {
+    background: linear-gradient(135deg, #1a0a2e 0%, #0f1117 100%);
+    border: 1px solid rgba(248,113,113,0.3);
+    border-radius: 12px;
+    padding: 36px;
+    margin: 40px 0;
+  }
+  .dst-section h2 { color: var(--red) !important; }
+  .dst-section .section-num { color: var(--red) !important; }
+
+  .checklist { list-style: none; padding: 0; }
+  .checklist li {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+  }
+  .checklist li::before {
+    content: '□';
+    font-size: 16px;
+    color: var(--accent);
+    flex-shrink: 0;
+  }
+
+  footer {
+    text-align: center;
+    padding: 40px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    border-top: 1px solid var(--border);
+  }
+
+  @media print {
+    .toc { display: none; }
+    .hero { padding: 30px 20px; }
+    .section { padding: 30px 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">NSI · 1ère Spécialité</div>
+  <h1>HTML <span>&</span> CSS</h1>
+  <p>Le langage du Web — cours complet pour le DST</p>
+</div>
+
+<nav class="toc">
+  <a href="#s1">1. Structure HTML</a>
+  <a href="#s2">2. Balises essentielles</a>
+  <a href="#s3">3. Attributs</a>
+  <a href="#s4">4. CSS : bases</a>
+  <a href="#s5">5. Sélecteurs</a>
+  <a href="#s6">6. Modèle de boîte</a>
+  <a href="#s7">7. Mise en page</a>
+  <a href="#s8">8. Formulaires</a>
+  <a href="#s9">⚠ Pour le DST</a>
+  <a href="#s10">9. Exercices</a>
+  <a href="#s11">10. QCM d'entraînement</a>
+</nav>
+
+<div class="container">
+
+<!-- ======================== SECTION 1 ======================== -->
+<div class="section" id="s1">
+  <div class="section-num">01 — Introduction</div>
+  <h2>Structure d'une page HTML</h2>
+
+  <p>HTML (<em>HyperText Markup Language</em>) est le langage qui décrit le <strong>contenu et la structure</strong> d'une page web. CSS (<em>Cascading Style Sheets</em>) en gère l'<strong>apparence visuelle</strong>.</p>
+
+  <h3>Le squelette minimal</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">index.html</span></div>
+    <pre><span class="comment">&lt;!-- Déclaration du type de document --&gt;</span>
+<span class="tag">&lt;!DOCTYPE html&gt;</span>
+
+<span class="tag">&lt;html</span> <span class="attr">lang=</span><span class="val">"fr"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;head&gt;</span>
+    <span class="comment">&lt;!-- Métadonnées (invisibles à l'écran) --&gt;</span>
+    <span class="tag">&lt;meta</span> <span class="attr">charset=</span><span class="val">"UTF-8"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;title&gt;</span>Ma première page<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;/head&gt;</span>
+
+  <span class="tag">&lt;body&gt;</span>
+    <span class="comment">&lt;!-- Contenu visible --&gt;</span>
+    <span class="tag">&lt;h1&gt;</span>Bonjour monde !<span class="tag">&lt;/h1&gt;</span>
+  <span class="tag">&lt;/body&gt;</span>
+
+<span class="tag">&lt;/html&gt;</span></pre>
+  </div>
+
+  <div class="box box-info">
+    <div class="box-title">🔍 À retenir</div>
+    <ul>
+      <li><code>&lt;!DOCTYPE html&gt;</code> : déclare la version HTML5 (obligatoire en 1ère ligne)</li>
+      <li><code>&lt;head&gt;</code> : informations sur la page (titre, encodage, styles…)</li>
+      <li><code>&lt;body&gt;</code> : tout ce qui s'affiche dans le navigateur</li>
+      <li><code>charset="UTF-8"</code> : permet les accents et caractères spéciaux</li>
+    </ul>
+  </div>
+
+  <h3>Notion de balise</h3>
+  <p>Une balise HTML suit la syntaxe <code>&lt;nombalise&gt;contenu&lt;/nombalise&gt;</code>. Certaines balises sont <strong>auto-fermantes</strong> (pas de contenu) : <code>&lt;br&gt;</code>, <code>&lt;img&gt;</code>, <code>&lt;input&gt;</code>, <code>&lt;meta&gt;</code>.</p>
+</div>
+
+<!-- ======================== SECTION 2 ======================== -->
+<div class="section" id="s2">
+  <div class="section-num">02 — Balises</div>
+  <h2>Les balises essentielles</h2>
+
+  <h3>Titres et paragraphes</h3>
+  <table>
+    <tr><th>Balise</th><th>Rôle</th><th>Exemple</th></tr>
+    <tr><td><code>&lt;h1&gt;</code> à <code>&lt;h6&gt;</code></td><td>Titres (h1 = plus important)</td><td><code>&lt;h1&gt;Titre principal&lt;/h1&gt;</code></td></tr>
+    <tr><td><code>&lt;p&gt;</code></td><td>Paragraphe</td><td><code>&lt;p&gt;Texte...&lt;/p&gt;</code></td></tr>
+    <tr><td><code>&lt;br&gt;</code></td><td>Saut de ligne (auto-fermant)</td><td><code>ligne1&lt;br&gt;ligne2</code></td></tr>
+    <tr><td><code>&lt;hr&gt;</code></td><td>Ligne horizontale</td><td><code>&lt;hr&gt;</code></td></tr>
+  </table>
+
+  <h3>Mise en forme du texte</h3>
+  <table>
+    <tr><th>Balise</th><th>Rendu</th></tr>
+    <tr><td><code>&lt;strong&gt;</code></td><td><strong>Texte en gras</strong> (important sémantiquement)</td></tr>
+    <tr><td><code>&lt;em&gt;</code></td><td><em>Texte en italique</em> (emphase)</td></tr>
+    <tr><td><code>&lt;span&gt;</code></td><td>Conteneur inline générique (pour le CSS)</td></tr>
+    <tr><td><code>&lt;code&gt;</code></td><td>Code informatique (police monospace)</td></tr>
+  </table>
+
+  <h3>Listes</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+    <pre><span class="comment">&lt;!-- Liste non ordonnée (puces) --&gt;</span>
+<span class="tag">&lt;ul&gt;</span>
+  <span class="tag">&lt;li&gt;</span>Python<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>JavaScript<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ul&gt;</span>
+
+<span class="comment">&lt;!-- Liste ordonnée (numérotée) --&gt;</span>
+<span class="tag">&lt;ol&gt;</span>
+  <span class="tag">&lt;li&gt;</span>Allumer l'ordinateur<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;li&gt;</span>Ouvrir l'éditeur<span class="tag">&lt;/li&gt;</span>
+<span class="tag">&lt;/ol&gt;</span></pre>
+  </div>
+
+  <h3>Liens et images</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+    <pre><span class="comment">&lt;!-- Lien hypertexte --&gt;</span>
+<span class="tag">&lt;a</span> <span class="attr">href=</span><span class="val">"https://wikipedia.org"</span> <span class="attr">target=</span><span class="val">"_blank"</span><span class="tag">&gt;</span>Wikipedia<span class="tag">&lt;/a&gt;</span>
+
+<span class="comment">&lt;!-- Image (balise auto-fermante) --&gt;</span>
+<span class="tag">&lt;img</span> <span class="attr">src=</span><span class="val">"photo.jpg"</span> <span class="attr">alt=</span><span class="val">"Description de l'image"</span> <span class="attr">width=</span><span class="val">"300"</span><span class="tag">&gt;</span></pre>
+  </div>
+
+  <div class="box box-warn">
+    <div class="box-title">⚠ Piège fréquent</div>
+    L'attribut <code>alt</code> est <strong>obligatoire</strong> sur <code>&lt;img&gt;</code> (accessibilité). <code>target="_blank"</code> ouvre le lien dans un nouvel onglet.
+  </div>
+
+  <h3>Tableaux</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+    <pre><span class="tag">&lt;table&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>  <span class="comment">&lt;!-- Ligne --&gt;</span>
+    <span class="tag">&lt;th&gt;</span>Nom<span class="tag">&lt;/th&gt;</span>   <span class="comment">&lt;!-- Cellule d'en-tête --&gt;</span>
+    <span class="tag">&lt;th&gt;</span>Note<span class="tag">&lt;/th&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;td&gt;</span>Alice<span class="tag">&lt;/td&gt;</span>  <span class="comment">&lt;!-- Cellule normale --&gt;</span>
+    <span class="tag">&lt;td&gt;</span>18<span class="tag">&lt;/td&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+<span class="tag">&lt;/table&gt;</span></pre>
+  </div>
+
+  <h3>Conteneurs structurels</h3>
+  <table>
+    <tr><th>Balise</th><th>Usage</th></tr>
+    <tr><td><code>&lt;div&gt;</code></td><td>Conteneur bloc générique (pour CSS/JS)</td></tr>
+    <tr><td><code>&lt;header&gt;</code></td><td>En-tête de la page ou d'une section</td></tr>
+    <tr><td><code>&lt;nav&gt;</code></td><td>Menu de navigation</td></tr>
+    <tr><td><code>&lt;main&gt;</code></td><td>Contenu principal</td></tr>
+    <tr><td><code>&lt;section&gt;</code></td><td>Section thématique</td></tr>
+    <tr><td><code>&lt;article&gt;</code></td><td>Contenu autonome (article de blog…)</td></tr>
+    <tr><td><code>&lt;footer&gt;</code></td><td>Pied de page</td></tr>
+  </table>
+</div>
+
+<!-- ======================== SECTION 3 ======================== -->
+<div class="section" id="s3">
+  <div class="section-num">03 — Attributs</div>
+  <h2>Attributs HTML importants</h2>
+
+  <p>Les attributs se placent <strong>dans la balise ouvrante</strong> : <code>&lt;balise attribut="valeur"&gt;</code></p>
+
+  <table>
+    <tr><th>Attribut</th><th>Balises</th><th>Rôle</th></tr>
+    <tr><td><code>id</code></td><td>toutes</td><td>Identifiant <strong>unique</strong> sur la page</td></tr>
+    <tr><td><code>class</code></td><td>toutes</td><td>Classe CSS (réutilisable)</td></tr>
+    <tr><td><code>href</code></td><td><code>&lt;a&gt;</code></td><td>URL du lien</td></tr>
+    <tr><td><code>src</code></td><td><code>&lt;img&gt;, &lt;script&gt;</code></td><td>Chemin du fichier source</td></tr>
+    <tr><td><code>alt</code></td><td><code>&lt;img&gt;</code></td><td>Texte alternatif</td></tr>
+    <tr><td><code>type</code></td><td><code>&lt;input&gt;</code></td><td>Type de champ (text, email…)</td></tr>
+    <tr><td><code>name</code></td><td><code>&lt;input&gt;</code></td><td>Nom du champ (envoi formulaire)</td></tr>
+    <tr><td><code>style</code></td><td>toutes</td><td>CSS inline (à éviter)</td></tr>
+    <tr><td><code>rel</code></td><td><code>&lt;link&gt;</code></td><td>Relation (ex: stylesheet)</td></tr>
+  </table>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">Relier un fichier CSS externe</span></div>
+    <pre><span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;link</span> <span class="attr">rel=</span><span class="val">"stylesheet"</span> <span class="attr">href=</span><span class="val">"style.css"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/head&gt;</span></pre>
+  </div>
+</div>
+
+<!-- ======================== SECTION 4 ======================== -->
+<div class="section" id="s4">
+  <div class="section-num">04 — CSS Bases</div>
+  <h2>CSS : syntaxe et propriétés</h2>
+
+  <h3>Syntaxe d'une règle CSS</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">style.css</span></div>
+    <pre><span class="sel">sélecteur</span> {
+  <span class="prop">propriété</span>: <span class="val2">valeur</span>;
+  <span class="prop">propriété2</span>: <span class="val2">valeur2</span>;
+}
+
+<span class="comment">/* Exemple concret */</span>
+<span class="sel">h1</span> {
+  <span class="prop">color</span>: <span class="val2">navy</span>;
+  <span class="prop">font-size</span>: <span class="val2">32px</span>;
+  <span class="prop">text-align</span>: <span class="val2">center</span>;
+}</pre>
+  </div>
+
+  <h3>Où écrire le CSS ?</h3>
+  <table>
+    <tr><th>Méthode</th><th>Syntaxe</th><th>Recommandé ?</th></tr>
+    <tr><td>Fichier externe</td><td><code>&lt;link rel="stylesheet" href="style.css"&gt;</code></td><td>✅ Oui (séparation)</td></tr>
+    <tr><td>Balise &lt;style&gt;</td><td><code>&lt;style&gt; h1 { ... } &lt;/style&gt;</code> dans &lt;head&gt;</td><td>⚠ Acceptable</td></tr>
+    <tr><td>Inline (style=)</td><td><code>&lt;p style="color:red"&gt;</code></td><td>❌ À éviter</td></tr>
+  </table>
+
+  <h3>Propriétés texte et couleurs</h3>
+  <table>
+    <tr><th>Propriété</th><th>Exemple</th><th>Effet</th></tr>
+    <tr><td><code>color</code></td><td><code>color: red;</code></td><td>Couleur du texte</td></tr>
+    <tr><td><code>background-color</code></td><td><code>background-color: #f0f0f0;</code></td><td>Fond</td></tr>
+    <tr><td><code>font-size</code></td><td><code>font-size: 18px;</code></td><td>Taille du texte</td></tr>
+    <tr><td><code>font-family</code></td><td><code>font-family: Arial, sans-serif;</code></td><td>Police</td></tr>
+    <tr><td><code>font-weight</code></td><td><code>font-weight: bold;</code></td><td>Gras</td></tr>
+    <tr><td><code>text-align</code></td><td><code>text-align: center;</code></td><td>Alignement</td></tr>
+    <tr><td><code>text-decoration</code></td><td><code>text-decoration: none;</code></td><td>Soulignement</td></tr>
+  </table>
+
+  <h3>Couleurs CSS : 3 notations</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+    <pre><span class="sel">p</span> { <span class="prop">color</span>: <span class="val2">red</span>; }          <span class="comment">/* Nom anglais */</span>
+<span class="sel">p</span> { <span class="prop">color</span>: <span class="val2">#ff0000</span>; }      <span class="comment">/* Hexadécimal (RRGGBB) */</span>
+<span class="sel">p</span> { <span class="prop">color</span>: <span class="val2">rgb(255, 0, 0)</span>; } <span class="comment">/* RGB (0-255) */</span></pre>
+  </div>
+</div>
+
+<!-- ======================== SECTION 5 ======================== -->
+<div class="section" id="s5">
+  <div class="section-num">05 — Sélecteurs</div>
+  <h2>Les sélecteurs CSS</h2>
+
+  <table>
+    <tr><th>Sélecteur</th><th>Syntaxe CSS</th><th>Cible</th></tr>
+    <tr><td>Balise</td><td><code>p { }</code></td><td>Tous les <code>&lt;p&gt;</code></td></tr>
+    <tr><td>Classe</td><td><code>.important { }</code></td><td>Éléments avec <code>class="important"</code></td></tr>
+    <tr><td>Identifiant</td><td><code>#menu { }</code></td><td>L'élément avec <code>id="menu"</code></td></tr>
+    <tr><td>Universel</td><td><code>* { }</code></td><td>Tous les éléments</td></tr>
+    <tr><td>Descendant</td><td><code>div p { }</code></td><td>Tous les <code>&lt;p&gt;</code> dans un <code>&lt;div&gt;</code></td></tr>
+    <tr><td>Enfant direct</td><td><code>ul &gt; li { }</code></td><td>Enfants directs seulement</td></tr>
+    <tr><td>Groupement</td><td><code>h1, h2, h3 { }</code></td><td>h1, h2 et h3 simultanément</td></tr>
+    <tr><td>Pseudo-classe</td><td><code>a:hover { }</code></td><td>Lien au survol de la souris</td></tr>
+  </table>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">Exemples pratiques</span></div>
+    <pre><span class="comment">/* Classe : peut s'appliquer à plusieurs éléments */</span>
+<span class="sel">.rouge</span> { <span class="prop">color</span>: <span class="val2">red</span>; }
+
+<span class="comment">/* ID : unique sur la page */</span>
+<span class="sel">#titre-principal</span> { <span class="prop">font-size</span>: <span class="val2">40px</span>; }
+
+<span class="comment">/* Combinaison */</span>
+<span class="sel">nav a:hover</span> { <span class="prop">text-decoration</span>: <span class="val2">underline</span>; <span class="prop">color</span>: <span class="val2">blue</span>; }
+
+<span class="comment">/* Plusieurs classes sur un élément HTML */</span>
+<span class="comment">&lt;!-- &lt;p class="rouge grand"&gt; est ciblé par .rouge ET .grand --&gt;</span></pre>
+  </div>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 Spécificité CSS</div>
+    En cas de conflit, l'ordre de priorité est : <strong>inline style &gt; ID &gt; classe &gt; balise</strong>. Plus le sélecteur est précis, plus il prend la priorité.
+  </div>
+</div>
+
+<!-- ======================== SECTION 6 ======================== -->
+<div class="section" id="s6">
+  <div class="section-num">06 — Mise en forme</div>
+  <h2>Le modèle de boîte (Box Model)</h2>
+
+  <p>Chaque élément HTML est une boîte rectangulaire composée de 4 couches :</p>
+
+  <div style="text-align:center; margin: 24px 0;">
+    <div style="display:inline-block; background:#fde68a; padding:20px; border-radius:4px; font-family:'JetBrains Mono',monospace; font-size:13px;">
+      <div style="text-align:center; color:#78350f; margin-bottom:8px; font-weight:bold;">MARGIN (espace extérieur)</div>
+      <div style="background:#fca5a5; padding:16px; border-radius:3px;">
+        <div style="text-align:center; color:#7f1d1d; margin-bottom:8px; font-weight:bold;">BORDER (bordure)</div>
+        <div style="background:#bbf7d0; padding:14px; border-radius:2px;">
+          <div style="text-align:center; color:#14532d; margin-bottom:8px; font-weight:bold;">PADDING (espace intérieur)</div>
+          <div style="background:#bfdbfe; padding:16px 28px; text-align:center; border-radius:2px; color:#1e3a5f; font-weight:bold;">CONTENT (contenu)</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <table>
+    <tr><th>Propriété</th><th>Exemples de valeurs</th><th>Rôle</th></tr>
+    <tr><td><code>width</code> / <code>height</code></td><td><code>200px</code>, <code>50%</code>, <code>auto</code></td><td>Dimensions du contenu</td></tr>
+    <tr><td><code>padding</code></td><td><code>10px</code>, <code>10px 20px</code></td><td>Espacement intérieur (entre contenu et bordure)</td></tr>
+    <tr><td><code>border</code></td><td><code>2px solid black</code></td><td>Bordure (épaisseur style couleur)</td></tr>
+    <tr><td><code>margin</code></td><td><code>10px</code>, <code>0 auto</code></td><td>Espacement extérieur (entre éléments)</td></tr>
+    <tr><td><code>border-radius</code></td><td><code>8px</code>, <code>50%</code></td><td>Coins arrondis</td></tr>
+  </table>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">Raccourcis padding/margin</span></div>
+    <pre><span class="comment">/* 1 valeur = 4 côtés identiques */</span>
+<span class="sel">.box</span> { <span class="prop">padding</span>: <span class="val2">10px</span>; }
+
+<span class="comment">/* 2 valeurs = haut/bas  gauche/droite */</span>
+<span class="sel">.box</span> { <span class="prop">margin</span>: <span class="val2">20px 10px</span>; }
+
+<span class="comment">/* 4 valeurs = haut droite bas gauche (sens des aiguilles) */</span>
+<span class="sel">.box</span> { <span class="prop">padding</span>: <span class="val2">5px 10px 15px 20px</span>; }
+
+<span class="comment">/* Centrer horizontalement un bloc */</span>
+<span class="sel">.container</span> { <span class="prop">width</span>: <span class="val2">800px</span>; <span class="prop">margin</span>: <span class="val2">0 auto</span>; }</pre>
+  </div>
+
+  <h3>display : comment l'élément occupe l'espace</h3>
+  <table>
+    <tr><th>Valeur</th><th>Comportement</th><th>Exemples par défaut</th></tr>
+    <tr><td><code>block</code></td><td>Prend toute la largeur, va à la ligne</td><td><code>&lt;div&gt;, &lt;p&gt;, &lt;h1&gt;</code></td></tr>
+    <tr><td><code>inline</code></td><td>S'intègre dans le texte, pas de width/height</td><td><code>&lt;span&gt;, &lt;a&gt;, &lt;strong&gt;</code></td></tr>
+    <tr><td><code>inline-block</code></td><td>Inline mais accepte width/height/margin</td><td>—</td></tr>
+    <tr><td><code>none</code></td><td>Cache l'élément (pas d'espace)</td><td>—</td></tr>
+  </table>
+</div>
+
+<!-- ======================== SECTION 7 ======================== -->
+<div class="section" id="s7">
+  <div class="section-num">07 — Mise en page</div>
+  <h2>Flexbox & Grid</h2>
+
+  <h3>Flexbox — mise en page en ligne</h3>
+  <p>Flexbox aligne les éléments en ligne (ou colonne). On l'active sur le <strong>conteneur parent</strong>.</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+    <pre><span class="sel">.conteneur</span> {
+  <span class="prop">display</span>: <span class="val2">flex</span>;
+  <span class="prop">flex-direction</span>: <span class="val2">row</span>;         <span class="comment">/* row | column */</span>
+  <span class="prop">justify-content</span>: <span class="val2">space-between</span>; <span class="comment">/* alignement axe principal */</span>
+  <span class="prop">align-items</span>: <span class="val2">center</span>;        <span class="comment">/* alignement axe secondaire */</span>
+  <span class="prop">gap</span>: <span class="val2">16px</span>;                 <span class="comment">/* espace entre items */</span>
+  <span class="prop">flex-wrap</span>: <span class="val2">wrap</span>;            <span class="comment">/* retour à la ligne si besoin */</span>
+}</pre>
+  </div>
+
+  <div class="preview">
+    <div class="preview-label">APERÇU — Flexbox avec justify-content: space-around</div>
+    <div class="demo-flex">
+      <div class="demo-flex-item">Item 1</div>
+      <div class="demo-flex-item">Item 2</div>
+      <div class="demo-flex-item">Item 3</div>
+    </div>
+  </div>
+
+  <h3>CSS Grid — mise en page en grille</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span></div>
+    <pre><span class="sel">.grille</span> {
+  <span class="prop">display</span>: <span class="val2">grid</span>;
+  <span class="prop">grid-template-columns</span>: <span class="val2">200px 1fr 1fr</span>; <span class="comment">/* 3 colonnes */</span>
+  <span class="prop">grid-template-rows</span>: <span class="val2">auto</span>;
+  <span class="prop">gap</span>: <span class="val2">10px</span>;
+}
+
+<span class="comment">/* fr = fraction de l'espace disponible */</span>
+<span class="comment">/* repeat(3, 1fr) = 3 colonnes égales */</span>
+<span class="sel">.grille2</span> { <span class="prop">grid-template-columns</span>: <span class="val2">repeat(3, 1fr)</span>; }</pre>
+  </div>
+
+  <div class="preview">
+    <div class="preview-label">APERÇU — Grid avec 3 colonnes égales</div>
+    <div class="demo-grid">
+      <div class="demo-cell">Col 1</div>
+      <div class="demo-cell">Col 2</div>
+      <div class="demo-cell">Col 3</div>
+      <div class="demo-cell">Col 4</div>
+      <div class="demo-cell">Col 5</div>
+      <div class="demo-cell">Col 6</div>
+    </div>
+  </div>
+
+  <h3>Positionnement CSS</h3>
+  <table>
+    <tr><th>Valeur</th><th>Comportement</th></tr>
+    <tr><td><code>position: static</code></td><td>Par défaut, suit le flux normal</td></tr>
+    <tr><td><code>position: relative</code></td><td>Décalage par rapport à sa position normale (top/left/…)</td></tr>
+    <tr><td><code>position: absolute</code></td><td>Positionné par rapport à son ancêtre positionné</td></tr>
+    <tr><td><code>position: fixed</code></td><td>Fixe dans la fenêtre (ne défile pas)</td></tr>
+  </table>
+</div>
+
+<!-- ======================== SECTION 8 ======================== -->
+<div class="section" id="s8">
+  <div class="section-num">08 — Formulaires</div>
+  <h2>Les formulaires HTML</h2>
+
+  <div class="code-block">
+    <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">Formulaire complet</span></div>
+    <pre><span class="tag">&lt;form</span> <span class="attr">action=</span><span class="val">"traitement.php"</span> <span class="attr">method=</span><span class="val">"post"</span><span class="tag">&gt;</span>
+
+  <span class="comment">&lt;!-- Champ texte --&gt;</span>
+  <span class="tag">&lt;label</span> <span class="attr">for=</span><span class="val">"prenom"</span><span class="tag">&gt;</span>Prénom :<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type=</span><span class="val">"text"</span> <span class="attr">id=</span><span class="val">"prenom"</span> <span class="attr">name=</span><span class="val">"prenom"</span> <span class="attr">placeholder=</span><span class="val">"Votre prénom"</span><span class="tag">&gt;</span>
+
+  <span class="comment">&lt;!-- Email --&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type=</span><span class="val">"email"</span> <span class="attr">name=</span><span class="val">"email"</span> <span class="attr">required</span><span class="tag">&gt;</span>
+
+  <span class="comment">&lt;!-- Mot de passe --&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type=</span><span class="val">"password"</span> <span class="attr">name=</span><span class="val">"mdp"</span><span class="tag">&gt;</span>
+
+  <span class="comment">&lt;!-- Menu déroulant --&gt;</span>
+  <span class="tag">&lt;select</span> <span class="attr">name=</span><span class="val">"classe"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value=</span><span class="val">"1ere"</span><span class="tag">&gt;</span>1ère<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;option</span> <span class="attr">value=</span><span class="val">"terminale"</span><span class="tag">&gt;</span>Terminale<span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;/select&gt;</span>
+
+  <span class="comment">&lt;!-- Cases à cocher --&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type=</span><span class="val">"checkbox"</span> <span class="attr">name=</span><span class="val">"nsi"</span> <span class="attr">id=</span><span class="val">"nsi"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;label</span> <span class="attr">for=</span><span class="val">"nsi"</span><span class="tag">&gt;</span>Spécialité NSI<span class="tag">&lt;/label&gt;</span>
+
+  <span class="comment">&lt;!-- Bouton d'envoi --&gt;</span>
+  <span class="tag">&lt;button</span> <span class="attr">type=</span><span class="val">"submit"</span><span class="tag">&gt;</span>Envoyer<span class="tag">&lt;/button&gt;</span>
+
+<span class="tag">&lt;/form&gt;</span></pre>
+  </div>
+
+  <table>
+    <tr><th>type=</th><th>Usage</th></tr>
+    <tr><td><code>"text"</code></td><td>Texte libre</td></tr>
+    <tr><td><code>"email"</code></td><td>Adresse email (validation auto)</td></tr>
+    <tr><td><code>"password"</code></td><td>Mot de passe (masqué)</td></tr>
+    <tr><td><code>"number"</code></td><td>Nombre</td></tr>
+    <tr><td><code>"checkbox"</code></td><td>Case à cocher</td></tr>
+    <tr><td><code>"radio"</code></td><td>Bouton radio (choix unique)</td></tr>
+    <tr><td><code>"submit"</code></td><td>Bouton d'envoi</td></tr>
+    <tr><td><code>"hidden"</code></td><td>Champ invisible</td></tr>
+  </table>
+</div>
+
+<!-- ======================== SECTION DST ======================== -->
+<div class="dst-section" id="s9">
+  <div class="section-num">⚠ RÉVISION</div>
+  <h2 style="color: #f87171;">Checklist pour le DST</h2>
+
+  <p style="color:#94a3b8; margin-bottom:24px;">Assure-toi de maîtriser chacun de ces points avant demain.</p>
+
+  <h3 style="color:#fbbf24; margin-top:8px;">Structure & HTML</h3>
+  <ul class="checklist">
+    <li>Écrire le squelette HTML5 complet (DOCTYPE, html, head, body)</li>
+    <li>Connaître les 6 niveaux de titres et les utiliser correctement</li>
+    <li>Créer une liste ordonnée et non ordonnée</li>
+    <li>Insérer un lien (<code>href</code>) et une image (<code>src</code>, <code>alt</code>)</li>
+    <li>Créer un tableau (table, tr, th, td)</li>
+    <li>Distinguer <code>&lt;div&gt;</code> (bloc) de <code>&lt;span&gt;</code> (inline)</li>
+    <li>Relier une feuille CSS externe avec <code>&lt;link&gt;</code></li>
+  </ul>
+
+  <h3 style="color:#fbbf24;">CSS fondamental</h3>
+  <ul class="checklist">
+    <li>Écrire une règle CSS valide (sélecteur, accolades, propriété: valeur;)</li>
+    <li>Utiliser les 3 types de sélecteurs (balise, .classe, #id)</li>
+    <li>Appliquer couleur de texte et de fond (color, background-color)</li>
+    <li>Modifier police, taille, alignement (font-family, font-size, text-align)</li>
+    <li>Comprendre le modèle de boîte (margin, padding, border)</li>
+    <li>Centrer un bloc horizontalement avec <code>margin: 0 auto</code></li>
+  </ul>
+
+  <h3 style="color:#fbbf24;">Formulaires</h3>
+  <ul class="checklist">
+    <li>Créer un formulaire avec <code>&lt;form&gt;</code>, <code>action</code>, <code>method</code></li>
+    <li>Utiliser les types d'input : text, email, password, checkbox, submit</li>
+    <li>Lier un <code>&lt;label&gt;</code> à son <code>&lt;input&gt;</code> avec <code>for</code>/<code>id</code></li>
+  </ul>
+
+  <div class="box box-alert" style="margin-top:28px;">
+    <div class="box-title">🚨 Erreurs classiques à éviter</div>
+    <ul>
+      <li>Oublier de fermer une balise (surtout <code>&lt;/div&gt;</code>, <code>&lt;/ul&gt;</code>)</li>
+      <li>Confondre <code>class</code> (CSS = <code>.nom</code>) et <code>id</code> (CSS = <code>#nom</code>)</li>
+      <li>Mettre le <code>&lt;link&gt;</code> CSS dans le <code>&lt;body&gt;</code> au lieu du <code>&lt;head&gt;</code></li>
+      <li>Oublier les guillemets autour des valeurs d'attributs HTML</li>
+      <li>Oublier le point-virgule en fin de déclaration CSS</li>
+      <li>Oublier l'attribut <code>alt</code> sur les images</li>
+    </ul>
+  </div>
+</div>
+
+</div><!-- /container -->
+
+<!-- ========================================================
+     EXERCICES PRATIQUES
+     ======================================================== -->
+<div style="border-top: 2px solid #2a2f45; margin-top: 0; padding-top: 0;">
+<div class="container">
+
+<div class="section" id="s10">
+  <div class="section-num">09 — Exercices</div>
+  <h2>Exercices pratiques progressifs</h2>
+  <p style="color:#94a3b8;">3 niveaux : débutant → intermédiaire → avancé. Pour chaque exercice, écris le code dans ton éditeur et vérifie le rendu dans ton navigateur.</p>
+</div>
+
+<!-- ---- EX 1 ---- -->
+<div class="section" id="ex1" style="padding-top:20px;">
+  <div class="section-num" style="color:#34d399;">⭐ Niveau 1 · Exercice 1</div>
+  <h2 style="font-size:26px;">Ma première page de présentation</h2>
+  <p>Crée une page HTML complète qui te présente. Elle doit contenir :</p>
+  <ul>
+    <li>Le squelette HTML5 valide complet</li>
+    <li>Un titre <code>&lt;h1&gt;</code> avec ton prénom</li>
+    <li>Un paragraphe de présentation (<code>&lt;p&gt;</code>)</li>
+    <li>Une liste non ordonnée de 3 de tes hobbies</li>
+    <li>Un lien vers ton site préféré (qui s'ouvre dans un nouvel onglet)</li>
+  </ul>
+
+  <div class="box box-tip" style="margin-top:16px;">
+    <div class="box-title">💡 Coup de pouce</div>
+    N'oublie pas : <code>&lt;!DOCTYPE html&gt;</code>, <code>&lt;html lang="fr"&gt;</code>, <code>&lt;head&gt;</code> avec charset et title, puis <code>&lt;body&gt;</code>.
+  </div>
+
+  <div class="exo-toggle" onclick="toggleSolution('sol1')">
+    <span class="toggle-icon" id="icon-sol1">▶</span> Voir la solution
+  </div>
+  <div class="solution" id="sol1">
+    <div class="code-block" style="margin-top:12px;">
+      <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">Solution</span></div>
+      <pre><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang=</span><span class="val">"fr"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset=</span><span class="val">"UTF-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Présentation<span class="tag">&lt;/title&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+  <span class="tag">&lt;h1&gt;</span>Alice<span class="tag">&lt;/h1&gt;</span>
+  <span class="tag">&lt;p&gt;</span>Je suis élève en 1ère spécialité NSI au lycée Victor Hugo.<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;ul&gt;</span>
+    <span class="tag">&lt;li&gt;</span>Programmation<span class="tag">&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span>Musique<span class="tag">&lt;/li&gt;</span>
+    <span class="tag">&lt;li&gt;</span>Jeux vidéo<span class="tag">&lt;/li&gt;</span>
+  <span class="tag">&lt;/ul&gt;</span>
+  <span class="tag">&lt;a</span> <span class="attr">href=</span><span class="val">"https://wikipedia.org"</span> <span class="attr">target=</span><span class="val">"_blank"</span><span class="tag">&gt;</span>Mon site préféré<span class="tag">&lt;/a&gt;</span>
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ---- EX 2 ---- -->
+<div class="section" id="ex2" style="padding-top:20px;">
+  <div class="section-num" style="color:#34d399;">⭐ Niveau 1 · Exercice 2</div>
+  <h2 style="font-size:26px;">Mise en forme CSS basique</h2>
+  <p>Reprends la page de l'exercice 1 et crée un fichier <code>style.css</code> lié à ta page. Applique ces styles :</p>
+  <ul>
+    <li>Fond de page de couleur <code>#f0f4f8</code></li>
+    <li>Titre <code>&lt;h1&gt;</code> : couleur <code>navy</code>, centré, taille 40px</li>
+    <li>Paragraphes : police <code>Arial</code>, taille 16px, couleur <code>#333</code></li>
+    <li>Le lien : sans soulignement, couleur rouge ; au survol : souligné</li>
+    <li>La liste : fond blanc, padding 20px, bordure 1px solid grise</li>
+  </ul>
+
+  <div class="exo-toggle" onclick="toggleSolution('sol2')">
+    <span class="toggle-icon" id="icon-sol2">▶</span> Voir la solution
+  </div>
+  <div class="solution" id="sol2">
+    <div class="code-block" style="margin-top:12px;">
+      <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">style.css</span></div>
+      <pre><span class="sel">body</span> {
+  <span class="prop">background-color</span>: <span class="val2">#f0f4f8</span>;
+}
+
+<span class="sel">h1</span> {
+  <span class="prop">color</span>: <span class="val2">navy</span>;
+  <span class="prop">text-align</span>: <span class="val2">center</span>;
+  <span class="prop">font-size</span>: <span class="val2">40px</span>;
+}
+
+<span class="sel">p</span> {
+  <span class="prop">font-family</span>: <span class="val2">Arial, sans-serif</span>;
+  <span class="prop">font-size</span>: <span class="val2">16px</span>;
+  <span class="prop">color</span>: <span class="val2">#333</span>;
+}
+
+<span class="sel">a</span> {
+  <span class="prop">text-decoration</span>: <span class="val2">none</span>;
+  <span class="prop">color</span>: <span class="val2">red</span>;
+}
+
+<span class="sel">a:hover</span> {
+  <span class="prop">text-decoration</span>: <span class="val2">underline</span>;
+}
+
+<span class="sel">ul</span> {
+  <span class="prop">background-color</span>: <span class="val2">white</span>;
+  <span class="prop">padding</span>: <span class="val2">20px</span>;
+  <span class="prop">border</span>: <span class="val2">1px solid #ccc</span>;
+}</pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">Dans &lt;head&gt; du HTML</span></div>
+      <pre><span class="tag">&lt;link</span> <span class="attr">rel=</span><span class="val">"stylesheet"</span> <span class="attr">href=</span><span class="val">"style.css"</span><span class="tag">&gt;</span></pre>
+    </div>
+  </div>
+</div>
+
+<!-- ---- EX 3 ---- -->
+<div class="section" id="ex3" style="padding-top:20px;">
+  <div class="section-num" style="color:#fbbf24;">⭐⭐ Niveau 2 · Exercice 3</div>
+  <h2 style="font-size:26px;">Tableau des élèves</h2>
+  <p>Crée une page HTML avec un tableau de 4 élèves. Le tableau doit avoir :</p>
+  <ul>
+    <li>Une ligne d'en-tête (<code>&lt;th&gt;</code>) : Nom, Prénom, Note /20, Mention</li>
+    <li>4 lignes de données avec des valeurs fictives</li>
+    <li>En CSS : l'en-tête en fond <code>#2c3e50</code>, texte blanc ; les lignes alternent entre blanc et <code>#ecf0f1</code> ; une bordure sur toutes les cellules</li>
+    <li>Le tableau centré avec <code>margin: 0 auto</code>, largeur 80%</li>
+  </ul>
+
+  <div class="exo-toggle" onclick="toggleSolution('sol3')">
+    <span class="toggle-icon" id="icon-sol3">▶</span> Voir la solution
+  </div>
+  <div class="solution" id="sol3">
+    <div class="code-block" style="margin-top:12px;">
+      <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">HTML</span></div>
+      <pre><span class="tag">&lt;table&gt;</span>
+  <span class="tag">&lt;tr&gt;</span>
+    <span class="tag">&lt;th&gt;</span>Nom<span class="tag">&lt;/th&gt;&lt;th&gt;</span>Prénom<span class="tag">&lt;/th&gt;&lt;th&gt;</span>Note /20<span class="tag">&lt;/th&gt;&lt;th&gt;</span>Mention<span class="tag">&lt;/th&gt;</span>
+  <span class="tag">&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;&lt;td&gt;</span>Dupont<span class="tag">&lt;/td&gt;&lt;td&gt;</span>Alice<span class="tag">&lt;/td&gt;&lt;td&gt;</span>18<span class="tag">&lt;/td&gt;&lt;td&gt;</span>TB<span class="tag">&lt;/td&gt;&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;&lt;td&gt;</span>Martin<span class="tag">&lt;/td&gt;&lt;td&gt;</span>Bob<span class="tag">&lt;/td&gt;&lt;td&gt;</span>14<span class="tag">&lt;/td&gt;&lt;td&gt;</span>B<span class="tag">&lt;/td&gt;&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;&lt;td&gt;</span>Bernard<span class="tag">&lt;/td&gt;&lt;td&gt;</span>Clara<span class="tag">&lt;/td&gt;&lt;td&gt;</span>11<span class="tag">&lt;/td&gt;&lt;td&gt;</span>AB<span class="tag">&lt;/td&gt;&lt;/tr&gt;</span>
+  <span class="tag">&lt;tr&gt;&lt;td&gt;</span>Petit<span class="tag">&lt;/td&gt;&lt;td&gt;</span>David<span class="tag">&lt;/td&gt;&lt;td&gt;</span>16<span class="tag">&lt;/td&gt;&lt;td&gt;</span>TB<span class="tag">&lt;/td&gt;&lt;/tr&gt;</span>
+<span class="tag">&lt;/table&gt;</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">CSS</span></div>
+      <pre><span class="sel">table</span> {
+  <span class="prop">width</span>: <span class="val2">80%</span>;
+  <span class="prop">margin</span>: <span class="val2">0 auto</span>;
+  <span class="prop">border-collapse</span>: <span class="val2">collapse</span>;
+}
+<span class="sel">th</span> {
+  <span class="prop">background-color</span>: <span class="val2">#2c3e50</span>;
+  <span class="prop">color</span>: <span class="val2">white</span>;
+  <span class="prop">padding</span>: <span class="val2">10px</span>;
+}
+<span class="sel">td</span> {
+  <span class="prop">border</span>: <span class="val2">1px solid #ccc</span>;
+  <span class="prop">padding</span>: <span class="val2">8px</span>;
+}
+<span class="sel">tr:nth-child(even) td</span> {
+  <span class="prop">background-color</span>: <span class="val2">#ecf0f1</span>;
+}</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ---- EX 4 ---- -->
+<div class="section" id="ex4" style="padding-top:20px;">
+  <div class="section-num" style="color:#fbbf24;">⭐⭐ Niveau 2 · Exercice 4</div>
+  <h2 style="font-size:26px;">Formulaire d'inscription</h2>
+  <p>Crée un formulaire d'inscription à un club NSI. Il doit contenir :</p>
+  <ul>
+    <li>Un champ <strong>Nom</strong> (text, obligatoire)</li>
+    <li>Un champ <strong>Email</strong> (type email)</li>
+    <li>Un menu déroulant <strong>Classe</strong> : 2nde, 1ère, Terminale</li>
+    <li>Des cases à cocher : <em>Python</em>, <em>Web</em>, <em>Réseaux</em></li>
+    <li>Un bouton Envoyer</li>
+    <li>En CSS : formulaire encadré, champs en pleine largeur, espacement agréable</li>
+  </ul>
+
+  <div class="exo-toggle" onclick="toggleSolution('sol4')">
+    <span class="toggle-icon" id="icon-sol4">▶</span> Voir la solution
+  </div>
+  <div class="solution" id="sol4">
+    <div class="code-block" style="margin-top:12px;">
+      <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">HTML</span></div>
+      <pre><span class="tag">&lt;form</span> <span class="attr">action=</span><span class="val">"#"</span> <span class="attr">method=</span><span class="val">"post"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;label</span> <span class="attr">for=</span><span class="val">"nom"</span><span class="tag">&gt;</span>Nom :<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type=</span><span class="val">"text"</span> <span class="attr">id=</span><span class="val">"nom"</span> <span class="attr">name=</span><span class="val">"nom"</span> <span class="attr">required</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;label</span> <span class="attr">for=</span><span class="val">"email"</span><span class="tag">&gt;</span>Email :<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type=</span><span class="val">"email"</span> <span class="attr">id=</span><span class="val">"email"</span> <span class="attr">name=</span><span class="val">"email"</span><span class="tag">&gt;</span>
+
+  <span class="tag">&lt;label</span> <span class="attr">for=</span><span class="val">"classe"</span><span class="tag">&gt;</span>Classe :<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;select</span> <span class="attr">id=</span><span class="val">"classe"</span> <span class="attr">name=</span><span class="val">"classe"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;option&gt;</span>2nde<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;option&gt;</span>1ère<span class="tag">&lt;/option&gt;</span>
+    <span class="tag">&lt;option&gt;</span>Terminale<span class="tag">&lt;/option&gt;</span>
+  <span class="tag">&lt;/select&gt;</span>
+
+  <span class="tag">&lt;p&gt;</span>Centres d'intérêt :<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type=</span><span class="val">"checkbox"</span> <span class="attr">id=</span><span class="val">"python"</span> <span class="attr">name=</span><span class="val">"python"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;label</span> <span class="attr">for=</span><span class="val">"python"</span><span class="tag">&gt;</span>Python<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type=</span><span class="val">"checkbox"</span> <span class="attr">id=</span><span class="val">"web"</span> <span class="attr">name=</span><span class="val">"web"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;label</span> <span class="attr">for=</span><span class="val">"web"</span><span class="tag">&gt;</span>Web<span class="tag">&lt;/label&gt;</span>
+  <span class="tag">&lt;input</span> <span class="attr">type=</span><span class="val">"checkbox"</span> <span class="attr">id=</span><span class="val">"reseaux"</span> <span class="attr">name=</span><span class="val">"reseaux"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;label</span> <span class="attr">for=</span><span class="val">"reseaux"</span><span class="tag">&gt;</span>Réseaux<span class="tag">&lt;/label&gt;</span>
+
+  <span class="tag">&lt;button</span> <span class="attr">type=</span><span class="val">"submit"</span><span class="tag">&gt;</span>Envoyer<span class="tag">&lt;/button&gt;</span>
+<span class="tag">&lt;/form&gt;</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">CSS</span></div>
+      <pre><span class="sel">form</span> {
+  <span class="prop">max-width</span>: <span class="val2">500px</span>;
+  <span class="prop">margin</span>: <span class="val2">30px auto</span>;
+  <span class="prop">padding</span>: <span class="val2">30px</span>;
+  <span class="prop">border</span>: <span class="val2">1px solid #ccc</span>;
+  <span class="prop">border-radius</span>: <span class="val2">8px</span>;
+  <span class="prop">background</span>: <span class="val2">#fafafa</span>;
+}
+<span class="sel">label</span> {
+  <span class="prop">display</span>: <span class="val2">block</span>;
+  <span class="prop">margin-top</span>: <span class="val2">12px</span>;
+  <span class="prop">font-weight</span>: <span class="val2">bold</span>;
+}
+<span class="sel">input[type="text"], input[type="email"], select</span> {
+  <span class="prop">width</span>: <span class="val2">100%</span>;
+  <span class="prop">padding</span>: <span class="val2">8px</span>;
+  <span class="prop">border</span>: <span class="val2">1px solid #aaa</span>;
+  <span class="prop">border-radius</span>: <span class="val2">4px</span>;
+  <span class="prop">margin-top</span>: <span class="val2">4px</span>;
+}
+<span class="sel">button</span> {
+  <span class="prop">margin-top</span>: <span class="val2">20px</span>;
+  <span class="prop">padding</span>: <span class="val2">10px 24px</span>;
+  <span class="prop">background-color</span>: <span class="val2">#2c3e50</span>;
+  <span class="prop">color</span>: <span class="val2">white</span>;
+  <span class="prop">border</span>: <span class="val2">none</span>;
+  <span class="prop">border-radius</span>: <span class="val2">4px</span>;
+  <span class="prop">cursor</span>: <span class="val2">pointer</span>;
+}</pre>
+    </div>
+  </div>
+</div>
+
+<!-- ---- EX 5 ---- -->
+<div class="section" id="ex5" style="padding-top:20px;">
+  <div class="section-num" style="color:#818cf8;">⭐⭐⭐ Niveau 3 · Exercice 5</div>
+  <h2 style="font-size:26px;">Mini-site : page d'accueil complète</h2>
+  <p>Crée une page d'accueil complète pour un lycée fictif. Elle doit respecter cette structure sémantique :</p>
+  <ul>
+    <li><code>&lt;header&gt;</code> : nom du lycée + menu de navigation avec 3 liens</li>
+    <li><code>&lt;main&gt;</code> : section d'accueil avec titre, texte de présentation et une image</li>
+    <li><code>&lt;section&gt;</code> : 3 "cartes" alignées en Flexbox (Actualités, Agenda, Contact) avec un titre et texte chacune</li>
+    <li><code>&lt;footer&gt;</code> : copyright centré</li>
+    <li>CSS : couleurs cohérentes, header fixe en haut, cartes avec ombre et bordure arrondie</li>
+  </ul>
+
+  <div class="box box-info">
+    <div class="box-title">🎯 Points clés évalués</div>
+    Structure sémantique correcte · Flexbox fonctionnel · CSS propre et organisé · Sélecteurs variés (balise, classe, id, pseudo-classe)
+  </div>
+
+  <div class="exo-toggle" onclick="toggleSolution('sol5')">
+    <span class="toggle-icon" id="icon-sol5">▶</span> Voir la solution
+  </div>
+  <div class="solution" id="sol5">
+    <div class="code-block" style="margin-top:12px;">
+      <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">HTML complet</span></div>
+      <pre><span class="tag">&lt;!DOCTYPE html&gt;</span>
+<span class="tag">&lt;html</span> <span class="attr">lang=</span><span class="val">"fr"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;head&gt;</span>
+  <span class="tag">&lt;meta</span> <span class="attr">charset=</span><span class="val">"UTF-8"</span><span class="tag">&gt;</span>
+  <span class="tag">&lt;title&gt;</span>Lycée Victor Hugo<span class="tag">&lt;/title&gt;</span>
+  <span class="tag">&lt;link</span> <span class="attr">rel=</span><span class="val">"stylesheet"</span> <span class="attr">href=</span><span class="val">"style.css"</span><span class="tag">&gt;</span>
+<span class="tag">&lt;/head&gt;</span>
+<span class="tag">&lt;body&gt;</span>
+
+  <span class="tag">&lt;header</span> <span class="attr">id=</span><span class="val">"top"</span><span class="tag">&gt;</span>
+    <span class="tag">&lt;h1&gt;</span>Lycée Victor Hugo<span class="tag">&lt;/h1&gt;</span>
+    <span class="tag">&lt;nav&gt;</span>
+      <span class="tag">&lt;a</span> <span class="attr">href=</span><span class="val">"#"</span><span class="tag">&gt;</span>Accueil<span class="tag">&lt;/a&gt;</span>
+      <span class="tag">&lt;a</span> <span class="attr">href=</span><span class="val">"#"</span><span class="tag">&gt;</span>Actualités<span class="tag">&lt;/a&gt;</span>
+      <span class="tag">&lt;a</span> <span class="attr">href=</span><span class="val">"#"</span><span class="tag">&gt;</span>Contact<span class="tag">&lt;/a&gt;</span>
+    <span class="tag">&lt;/nav&gt;</span>
+  <span class="tag">&lt;/header&gt;</span>
+
+  <span class="tag">&lt;main&gt;</span>
+    <span class="tag">&lt;h2&gt;</span>Bienvenue dans notre lycée<span class="tag">&lt;/h2&gt;</span>
+    <span class="tag">&lt;p&gt;</span>Un établissement d'excellence depuis 1902.<span class="tag">&lt;/p&gt;</span>
+    <span class="tag">&lt;img</span> <span class="attr">src=</span><span class="val">"lycee.jpg"</span> <span class="attr">alt=</span><span class="val">"Photo du lycée"</span> <span class="attr">width=</span><span class="val">"600"</span><span class="tag">&gt;</span>
+
+    <span class="tag">&lt;section</span> <span class="attr">class=</span><span class="val">"cartes"</span><span class="tag">&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class=</span><span class="val">"carte"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;h3&gt;</span>Actualités<span class="tag">&lt;/h3&gt;</span>
+        <span class="tag">&lt;p&gt;</span>Journée portes ouvertes le 15 mars.<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;/div&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class=</span><span class="val">"carte"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;h3&gt;</span>Agenda<span class="tag">&lt;/h3&gt;</span>
+        <span class="tag">&lt;p&gt;</span>Conseil de classe : 20 mars à 18h.<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;/div&gt;</span>
+      <span class="tag">&lt;div</span> <span class="attr">class=</span><span class="val">"carte"</span><span class="tag">&gt;</span>
+        <span class="tag">&lt;h3&gt;</span>Contact<span class="tag">&lt;/h3&gt;</span>
+        <span class="tag">&lt;p&gt;</span>lycee@example.fr · 01 23 45 67 89<span class="tag">&lt;/p&gt;</span>
+      <span class="tag">&lt;/div&gt;</span>
+    <span class="tag">&lt;/section&gt;</span>
+  <span class="tag">&lt;/main&gt;</span>
+
+  <span class="tag">&lt;footer&gt;</span>
+    <span class="tag">&lt;p&gt;</span>&amp;copy; 2025 Lycée Victor Hugo<span class="tag">&lt;/p&gt;</span>
+  <span class="tag">&lt;/footer&gt;</span>
+
+<span class="tag">&lt;/body&gt;</span>
+<span class="tag">&lt;/html&gt;</span></pre>
+    </div>
+    <div class="code-block">
+      <div class="code-header"><span class="code-dot dot-red"></span><span class="code-dot dot-yellow"></span><span class="code-dot dot-green"></span><span style="margin-left:8px">CSS</span></div>
+      <pre><span class="sel">* </span>{ <span class="prop">box-sizing</span>: <span class="val2">border-box</span>; <span class="prop">margin</span>: <span class="val2">0</span>; <span class="prop">padding</span>: <span class="val2">0</span>; }
+
+<span class="sel">header</span> {
+  <span class="prop">background-color</span>: <span class="val2">#2c3e50</span>;
+  <span class="prop">color</span>: <span class="val2">white</span>;
+  <span class="prop">padding</span>: <span class="val2">16px 32px</span>;
+  <span class="prop">position</span>: <span class="val2">fixed</span>;
+  <span class="prop">top</span>: <span class="val2">0</span>; <span class="prop">left</span>: <span class="val2">0</span>; <span class="prop">right</span>: <span class="val2">0</span>;
+  <span class="prop">display</span>: <span class="val2">flex</span>;
+  <span class="prop">justify-content</span>: <span class="val2">space-between</span>;
+  <span class="prop">align-items</span>: <span class="val2">center</span>;
+}
+<span class="sel">nav a</span> { <span class="prop">color</span>: <span class="val2">white</span>; <span class="prop">margin-left</span>: <span class="val2">20px</span>; <span class="prop">text-decoration</span>: <span class="val2">none</span>; }
+<span class="sel">nav a:hover</span> { <span class="prop">text-decoration</span>: <span class="val2">underline</span>; }
+
+<span class="sel">main</span> {
+  <span class="prop">padding</span>: <span class="val2">100px 40px 40px</span>;
+  <span class="prop">max-width</span>: <span class="val2">1000px</span>;
+  <span class="prop">margin</span>: <span class="val2">0 auto</span>;
+}
+
+<span class="sel">.cartes</span> {
+  <span class="prop">display</span>: <span class="val2">flex</span>;
+  <span class="prop">gap</span>: <span class="val2">20px</span>;
+  <span class="prop">margin-top</span>: <span class="val2">30px</span>;
+}
+<span class="sel">.carte</span> {
+  <span class="prop">flex</span>: <span class="val2">1</span>;
+  <span class="prop">padding</span>: <span class="val2">20px</span>;
+  <span class="prop">border</span>: <span class="val2">1px solid #ddd</span>;
+  <span class="prop">border-radius</span>: <span class="val2">8px</span>;
+  <span class="prop">box-shadow</span>: <span class="val2">0 2px 8px rgba(0,0,0,0.1)</span>;
+}
+
+<span class="sel">footer</span> {
+  <span class="prop">text-align</span>: <span class="val2">center</span>;
+  <span class="prop">padding</span>: <span class="val2">20px</span>;
+  <span class="prop">background</span>: <span class="val2">#ecf0f1</span>;
+  <span class="prop">margin-top</span>: <span class="val2">40px</span>;
+}</pre>
+    </div>
+  </div>
+</div>
+
+</div><!-- /container exercices -->
+</div><!-- /border-top wrapper -->
+
+<!-- ========================================================
+     QCM INTERACTIF
+     ======================================================== -->
+<div style="border-top: 2px solid #2a2f45; background: linear-gradient(180deg, #0f1117 0%, #12101f 100%);">
+<div class="container">
+
+<div class="section" id="s11">
+  <div class="section-num">10 — QCM</div>
+  <h2>Quiz HTML & CSS</h2>
+  <p style="color:#94a3b8; margin-bottom:8px;">5 questions tirées aléatoirement parmi 20. Un nouveau tirage à chaque rechargement.</p>
+
+  <div id="qcm-container">
+    <div id="qcm-questions"></div>
+    <div id="qcm-actions" style="display:none; margin-top:28px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+      <button class="btn-qcm" onclick="submitQCM()" id="btn-submit">✅ Valider mes réponses</button>
+      <button class="btn-qcm btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button>
+    </div>
+    <div id="qcm-result" style="display:none;"></div>
+  </div>
+</div>
+
+</div><!-- /container qcm -->
+</div>
+
+<footer>
+  NSI · 1ère Spécialité · HTML &amp; CSS · Cours + Exercices + QCM
+</footer>
+
+<!-- ========================================================
+     STYLES EXERCICES + QCM
+     ======================================================== -->
+<style>
+  /* TOGGLE SOLUTION */
+  .exo-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    margin-top: 16px;
+    padding: 8px 18px;
+    background: rgba(129,140,248,0.1);
+    border: 1px solid rgba(129,140,248,0.3);
+    border-radius: 6px;
+    color: #818cf8;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    transition: all 0.2s;
+    user-select: none;
+  }
+  .exo-toggle:hover { background: rgba(129,140,248,0.2); }
+  .toggle-icon { font-size: 10px; transition: transform 0.2s; }
+
+  .solution { display: none; }
+  .solution.open { display: block; }
+
+  /* QCM */
+  .qcm-q {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 22px 26px;
+    margin-bottom: 18px;
+    transition: border-color 0.3s;
+  }
+  .qcm-q.correct { border-color: #34d399; background: rgba(52,211,153,0.06); }
+  .qcm-q.wrong   { border-color: #f87171; background: rgba(248,113,113,0.06); }
+
+  .qcm-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .qcm-question {
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 16px;
+    line-height: 1.4;
+  }
+  .qcm-question code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 14px;
+    color: var(--accent);
+    background: rgba(110,231,183,0.1);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+  .qcm-options { display: flex; flex-direction: column; gap: 8px; }
+  .qcm-option {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 16px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.15s;
+    font-size: 15px;
+    color: #cbd5e1;
+  }
+  .qcm-option:hover { border-color: var(--accent3); background: rgba(129,140,248,0.06); }
+  .qcm-option input[type="radio"] { accent-color: var(--accent3); width: 16px; height: 16px; flex-shrink: 0; }
+  .qcm-option.opt-correct { border-color: #34d399 !important; background: rgba(52,211,153,0.1) !important; color: #34d399; font-weight: bold; }
+  .qcm-option.opt-wrong   { border-color: #f87171 !important; background: rgba(248,113,113,0.08) !important; color: #f87171; }
+  .qcm-option.opt-reveal  { border-color: #34d399 !important; color: #34d399; }
+  .qcm-option code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    background: rgba(110,231,183,0.1);
+    padding: 1px 5px;
+    border-radius: 3px;
+    color: inherit;
+  }
+  .qcm-feedback {
+    margin-top: 12px;
+    font-size: 14px;
+    font-family: 'JetBrains Mono', monospace;
+    padding: 8px 12px;
+    border-radius: 6px;
+    display: none;
+  }
+  .qcm-feedback.show { display: block; }
+  .qcm-feedback.ok  { background: rgba(52,211,153,0.1); color: #34d399; }
+  .qcm-feedback.ko  { background: rgba(248,113,113,0.1); color: #f87171; }
+
+  /* Score */
+  #qcm-result {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 28px;
+    margin-top: 24px;
+    text-align: center;
+  }
+  .score-big {
+    font-size: 56px;
+    font-weight: 900;
+    font-family: 'Fraunces', serif;
+    line-height: 1;
+    margin-bottom: 8px;
+  }
+  .score-label { color: var(--muted); font-size: 15px; margin-bottom: 20px; }
+  .score-bar-bg {
+    background: var(--border);
+    border-radius: 99px;
+    height: 12px;
+    overflow: hidden;
+    margin: 16px 0;
+  }
+  .score-bar-fill {
+    height: 100%;
+    border-radius: 99px;
+    transition: width 0.8s cubic-bezier(.4,0,.2,1);
+  }
+  .score-msg { font-size: 18px; font-weight: 700; margin-top: 12px; }
+
+  /* Boutons QCM */
+  .btn-qcm {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    padding: 10px 22px;
+    border-radius: 7px;
+    border: none;
+    cursor: pointer;
+    background: var(--accent);
+    color: #0f1117;
+    font-weight: 700;
+    transition: opacity 0.2s;
+  }
+  .btn-qcm:hover { opacity: 0.85; }
+  .btn-qcm.btn-secondary {
+    background: var(--surface2);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  #qcm-actions { display: flex !important; }
+</style>
+
+<!-- ========================================================
+     JAVASCRIPT
+     ======================================================== -->
+<script>
+// ── TOGGLE SOLUTIONS ─────────────────────────────────────
+function toggleSolution(id) {
+  const el = document.getElementById(id);
+  const icon = document.getElementById('icon-' + id);
+  el.classList.toggle('open');
+  icon.textContent = el.classList.contains('open') ? '▼' : '▶';
+}
+
+// ── QCM DATA (20 QUESTIONS) ───────────────────────────────
+const allQuestions = [
+  {
+    q: "Quelle balise définit le titre principal d'une page HTML ?",
+    opts: ["<code>&lt;title&gt;</code>", "<code>&lt;h1&gt;</code>", "<code>&lt;header&gt;</code>", "<code>&lt;heading&gt;</code>"],
+    a: 1,
+    exp: "<code>&lt;h1&gt;</code> est le titre de niveau 1 dans le &lt;body&gt;. <code>&lt;title&gt;</code> est dans le &lt;head&gt; et apparaît dans l'onglet du navigateur."
+  },
+  {
+    q: "Quelle est la déclaration obligatoire en première ligne d'un fichier HTML5 ?",
+    opts: ["<code>&lt;html&gt;</code>", "<code>&lt;!DOCTYPE html&gt;</code>", "<code>&lt;meta charset='UTF-8'&gt;</code>", "<code>&lt;head&gt;</code>"],
+    a: 1,
+    exp: "<code>&lt;!DOCTYPE html&gt;</code> indique au navigateur que le document est en HTML5. Elle doit être en toute première ligne."
+  },
+  {
+    q: "En CSS, comment sélectionne-t-on tous les éléments ayant la classe <code>menu</code> ?",
+    opts: ["<code>#menu</code>", "<code>menu</code>", "<code>.menu</code>", "<code>*menu</code>"],
+    a: 2,
+    exp: "Le sélecteur de classe commence par un point : <code>.menu</code>. Le <code>#</code> est pour les identifiants (id)."
+  },
+  {
+    q: "Quelle propriété CSS permet de modifier la couleur du texte ?",
+    opts: ["<code>background-color</code>", "<code>text-color</code>", "<code>font-color</code>", "<code>color</code>"],
+    a: 3,
+    exp: "<code>color</code> définit la couleur du texte. <code>background-color</code> définit la couleur de fond."
+  },
+  {
+    q: "Quelle balise crée un lien hypertexte ?",
+    opts: ["<code>&lt;link&gt;</code>", "<code>&lt;a&gt;</code>", "<code>&lt;href&gt;</code>", "<code>&lt;url&gt;</code>"],
+    a: 1,
+    exp: "La balise <code>&lt;a href='...'&gt;</code> crée un lien. <code>&lt;link&gt;</code> est utilisé dans le &lt;head&gt; pour relier une feuille CSS."
+  },
+  {
+    q: "Dans le modèle de boîte CSS, qu'est-ce que le <strong>padding</strong> ?",
+    opts: ["L'espace entre deux éléments", "La bordure de l'élément", "L'espace entre le contenu et la bordure", "La largeur totale de l'élément"],
+    a: 2,
+    exp: "Le <code>padding</code> est l'espace intérieur entre le contenu et la bordure. Le <code>margin</code> est l'espace extérieur entre les éléments."
+  },
+  {
+    q: "Quelle valeur de <code>display</code> active Flexbox sur un conteneur ?",
+    opts: ["<code>flex-box</code>", "<code>flexbox</code>", "<code>flex</code>", "<code>inline-flex-container</code>"],
+    a: 2,
+    exp: "<code>display: flex</code> active Flexbox sur l'élément parent. Les enfants deviennent des flex-items."
+  },
+  {
+    q: "Quelle balise HTML permet d'insérer une image ?",
+    opts: ["<code>&lt;image src='...'&gt;</code>", "<code>&lt;img src='...'&gt;</code>", "<code>&lt;pic src='...'&gt;</code>", "<code>&lt;photo&gt;</code>"],
+    a: 1,
+    exp: "<code>&lt;img src='chemin' alt='description'&gt;</code> est la balise auto-fermante pour insérer une image. L'attribut <code>alt</code> est obligatoire."
+  },
+  {
+    q: "Quel attribut HTML rend un champ de formulaire obligatoire ?",
+    opts: ["<code>mandatory</code>", "<code>obligatoire</code>", "<code>required</code>", "<code>needed</code>"],
+    a: 2,
+    exp: "L'attribut <code>required</code> (sans valeur) rend le champ obligatoire. Le navigateur bloque l'envoi si le champ est vide."
+  },
+  {
+    q: "Comment centrer horizontalement un bloc de largeur fixe en CSS ?",
+    opts: ["<code>text-align: center</code>", "<code>align: center</code>", "<code>margin: 0 auto</code>", "<code>position: center</code>"],
+    a: 2,
+    exp: "<code>margin: 0 auto</code> sur un élément bloc de largeur définie le centre horizontalement. <code>text-align: center</code> centre le contenu inline à l'intérieur."
+  },
+  {
+    q: "Laquelle de ces couleurs CSS est incorrecte ?",
+    opts: ["<code>#ff6600</code>", "<code>rgb(255, 100, 0)</code>", "<code>orange</code>", "<code>color(255, 100, 0)</code>"],
+    a: 3,
+    exp: "<code>color(255,100,0)</code> n'est pas une notation CSS valide. Les notations valides sont : noms (<code>orange</code>), hexadécimal (<code>#ff6600</code>) et <code>rgb()</code>."
+  },
+  {
+    q: "Quelle balise HTML crée une liste <strong>ordonnée</strong> (numérotée) ?",
+    opts: ["<code>&lt;ul&gt;</code>", "<code>&lt;list&gt;</code>", "<code>&lt;ol&gt;</code>", "<code>&lt;nl&gt;</code>"],
+    a: 2,
+    exp: "<code>&lt;ol&gt;</code> (ordered list) crée une liste numérotée. <code>&lt;ul&gt;</code> (unordered list) crée une liste à puces."
+  },
+  {
+    q: "En CSS, quel sélecteur cible l'élément avec <code>id='titre'</code> ?",
+    opts: ["<code>.titre</code>", "<code>@titre</code>", "<code>#titre</code>", "<code>*titre</code>"],
+    a: 2,
+    exp: "Le sélecteur d'identifiant commence par <code>#</code>. Un <code>id</code> doit être unique sur la page."
+  },
+  {
+    q: "Quelle balise HTML permet d'indiquer une <strong>mise en gras sémantique</strong> ?",
+    opts: ["<code>&lt;b&gt;</code>", "<code>&lt;bold&gt;</code>", "<code>&lt;strong&gt;</code>", "<code>&lt;gras&gt;</code>"],
+    a: 2,
+    exp: "<code>&lt;strong&gt;</code> indique une importance sémantique forte (et s'affiche en gras). <code>&lt;b&gt;</code> met en gras sans valeur sémantique."
+  },
+  {
+    q: "Que fait <code>target='_blank'</code> sur un lien ?",
+    opts: ["Ouvre le lien dans la même page", "Ouvre le lien dans un nouvel onglet", "Désactive le lien", "Crée un lien interne"],
+    a: 1,
+    exp: "<code>target='_blank'</code> sur <code>&lt;a&gt;</code> ouvre la page cible dans un nouvel onglet (ou nouvelle fenêtre)."
+  },
+  {
+    q: "Quelle propriété CSS crée des coins arrondis ?",
+    opts: ["<code>corner-radius</code>", "<code>round</code>", "<code>border-radius</code>", "<code>border-round</code>"],
+    a: 2,
+    exp: "<code>border-radius</code> arrondit les coins d'un élément. La valeur <code>50%</code> crée un cercle parfait sur un carré."
+  },
+  {
+    q: "Où doit être placée la balise <code>&lt;link rel='stylesheet'&gt;</code> ?",
+    opts: ["Dans <code>&lt;body&gt;</code>", "Après <code>&lt;/html&gt;</code>", "Dans <code>&lt;head&gt;</code>", "N'importe où"],
+    a: 2,
+    exp: "La balise <code>&lt;link&gt;</code> doit être dans <code>&lt;head&gt;</code>. Cela permet au navigateur de charger le CSS avant d'afficher la page."
+  },
+  {
+    q: "Quelle est la différence entre une balise <code>&lt;div&gt;</code> et une balise <code>&lt;span&gt;</code> ?",
+    opts: ["Aucune différence", "<code>&lt;div&gt;</code> est bloc, <code>&lt;span&gt;</code> est inline", "<code>&lt;span&gt;</code> est bloc, <code>&lt;div&gt;</code> est inline", "<code>&lt;div&gt;</code> est réservé aux images"],
+    a: 1,
+    exp: "<code>&lt;div&gt;</code> est un conteneur de type <code>block</code> (prend toute la largeur). <code>&lt;span&gt;</code> est <code>inline</code> (s'intègre dans le texte)."
+  },
+  {
+    q: "Quel attribut de <code>&lt;img&gt;</code> fournit une description textuelle de l'image ?",
+    opts: ["<code>title</code>", "<code>desc</code>", "<code>caption</code>", "<code>alt</code>"],
+    a: 3,
+    exp: "<code>alt</code> (alternative text) est obligatoire sur <code>&lt;img&gt;</code>. Il est lu par les lecteurs d'écran et affiché si l'image ne charge pas."
+  },
+  {
+    q: "En CSS Flexbox, que fait <code>justify-content: space-between</code> ?",
+    opts: ["Centre tous les items", "Colle les items à gauche", "Distribue l'espace entre les items, sans espace aux extrémités", "Ajoute un espace autour de chaque item"],
+    a: 2,
+    exp: "<code>space-between</code> place le premier item au début, le dernier à la fin, et distribue l'espace restant également entre les items du milieu."
+  }
+];
+
+// ── QCM ENGINE ────────────────────────────────────────────
+let currentQuestions = [];
+let submitted = false;
+
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function newQCM() {
+  submitted = false;
+  currentQuestions = shuffle(allQuestions).slice(0, 5);
+  renderQCM();
+  document.getElementById('qcm-result').style.display = 'none';
+  document.getElementById('btn-submit').disabled = false;
+  document.getElementById('btn-submit').style.opacity = '1';
+}
+
+function renderQCM() {
+  const container = document.getElementById('qcm-questions');
+  container.innerHTML = '';
+
+  currentQuestions.forEach((q, qi) => {
+    const shuffledOpts = q.opts.map((o, i) => ({ text: o, origIdx: i }));
+    // Store shuffled mapping on the question for answer checking
+    q._shuffled = shuffledOpts;
+
+    const optHTML = shuffledOpts.map((opt, si) => `
+      <label class="qcm-option" id="opt-${qi}-${si}">
+        <input type="radio" name="q${qi}" value="${si}">
+        <span>${opt.text}</span>
+      </label>
+    `).join('');
+
+    container.innerHTML += `
+      <div class="qcm-q" id="qblock-${qi}">
+        <div class="qcm-num">Question ${qi + 1} / 5</div>
+        <div class="qcm-question">${q.q}</div>
+        <div class="qcm-options">${optHTML}</div>
+        <div class="qcm-feedback" id="fb-${qi}"></div>
+      </div>
+    `;
+  });
+}
+
+function submitQCM() {
+  if (submitted) return;
+  submitted = true;
+  let score = 0;
+
+  currentQuestions.forEach((q, qi) => {
+    const selected = document.querySelector(`input[name="q${qi}"]:checked`);
+    const block = document.getElementById(`qblock-${qi}`);
+    const fb = document.getElementById(`fb-${qi}`);
+
+    // Find which shuffled index corresponds to the correct original index
+    const correctShuffledIdx = q._shuffled.findIndex(o => o.origIdx === q.a);
+
+    // Disable all radios
+    document.querySelectorAll(`input[name="q${qi}"]`).forEach(r => r.disabled = true);
+
+    // Style correct answer
+    const correctLabel = document.getElementById(`opt-${qi}-${correctShuffledIdx}`);
+    if (correctLabel) correctLabel.classList.add('opt-correct');
+
+    if (selected) {
+      const chosenShuffled = parseInt(selected.value);
+      if (chosenShuffled === correctShuffledIdx) {
+        score++;
+        block.classList.add('correct');
+        fb.className = 'qcm-feedback show ok';
+        fb.innerHTML = '✅ Bonne réponse ! ' + q.exp;
+      } else {
+        block.classList.add('wrong');
+        document.getElementById(`opt-${qi}-${chosenShuffled}`).classList.add('opt-wrong');
+        fb.className = 'qcm-feedback show ko';
+        fb.innerHTML = '❌ Mauvaise réponse. ' + q.exp;
+      }
+    } else {
+      block.classList.add('wrong');
+      fb.className = 'qcm-feedback show ko';
+      fb.innerHTML = '⚠️ Pas de réponse. ' + q.exp;
+    }
+  });
+
+  showResult(score);
+  document.getElementById('btn-submit').disabled = true;
+  document.getElementById('btn-submit').style.opacity = '0.5';
+}
+
+function showResult(score) {
+  const pct = (score / 5) * 100;
+  const colors = ['#f87171','#fb923c','#fbbf24','#34d399','#6ee7b7'];
+  const color = score <= 1 ? colors[0] : score === 2 ? colors[1] : score === 3 ? colors[2] : score === 4 ? colors[3] : colors[4];
+  const msgs = [
+    '💪 Courage, relis le cours !',
+    '📖 Quelques révisions s\'imposent.',
+    '👍 Pas mal, mais il reste du travail !',
+    '🎉 Très bien, encore un effort !',
+    '🏆 Excellent ! Tu es prêt(e) pour le DST !'
+  ];
+
+  const result = document.getElementById('qcm-result');
+  result.style.display = 'block';
+  result.innerHTML = `
+    <div class="score-big" style="color:${color}">${score}<span style="font-size:28px;color:var(--muted)">/5</span></div>
+    <div class="score-label">${score * 4} points sur 20</div>
+    <div class="score-bar-bg">
+      <div class="score-bar-fill" style="width:${pct}%; background:${color};"></div>
+    </div>
+    <div class="score-msg" style="color:${color}">${msgs[score]}</div>
+  `;
+
+  setTimeout(() => {
+    result.querySelector('.score-bar-fill').style.width = pct + '%';
+  }, 50);
+
+  result.scrollIntoView({ behavior: 'smooth', block: 'center' });
+}
+
+// ── INIT ─────────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', newQCM);
+</script>
+</body>
+</html>
