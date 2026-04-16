@@ -380,8 +380,8 @@
   <a href="#s7">7. Mise en page</a>
   <a href="#s8">8. Formulaires</a>
   <a href="#s9">⚠ Pour le DST</a>
-  <a href="#s10">✏ Exercices</a>
-  <a href="#s11">🎯 QCM</a>
+  <a href="#s10">9. Exercices</a>
+  <a href="#s11">10. QCM d'entraînement</a>
 </nav>
 
 <div class="container">
@@ -1218,22 +1218,11 @@
 <div class="section" id="s11">
   <div class="section-num">10 — QCM</div>
   <h2>Quiz HTML & CSS</h2>
-  <p style="color:#94a3b8; margin-bottom:20px;">Questions tirées aléatoirement parmi <strong style="color:var(--accent)">52 questions</strong>. Choisis le nombre de questions et lance le tirage !</p>
-
-  <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap; margin-bottom:28px;">
-    <span style="font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted);">Nombre de questions :</span>
-    <label class="qcm-size-opt" id="lbl5">
-      <input type="radio" name="qcm-size" value="5" checked onchange="onSizeChange()"> 5 questions
-    </label>
-    <label class="qcm-size-opt" id="lbl10">
-      <input type="radio" name="qcm-size" value="10" onchange="onSizeChange()"> 10 questions
-    </label>
-    <button class="btn-qcm" onclick="newQCM()" style="margin-left:8px;">🔀 Nouveau tirage</button>
-  </div>
+  <p style="color:#94a3b8; margin-bottom:8px;">5 questions tirées aléatoirement parmi 20. Un nouveau tirage à chaque rechargement.</p>
 
   <div id="qcm-container">
     <div id="qcm-questions"></div>
-    <div id="qcm-actions" style="margin-top:28px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
+    <div id="qcm-actions" style="display:none; margin-top:28px; display:flex; gap:12px; flex-wrap:wrap; align-items:center;">
       <button class="btn-qcm" onclick="submitQCM()" id="btn-submit">✅ Valider mes réponses</button>
       <button class="btn-qcm btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button>
     </div>
@@ -1413,400 +1402,133 @@ function toggleSolution(id) {
   icon.textContent = el.classList.contains('open') ? '▼' : '▶';
 }
 
-// ── SIZE SELECTOR STYLE ───────────────────────────────────
-function onSizeChange() {
-  document.getElementById('lbl5').classList.toggle('active', document.querySelector('[name="qcm-size"][value="5"]').checked);
-  document.getElementById('lbl10').classList.toggle('active', document.querySelector('[name="qcm-size"][value="10"]').checked);
-}
-
-// ── QCM DATA (52 QUESTIONS) ───────────────────────────────
+// ── QCM DATA (20 QUESTIONS) ───────────────────────────────
 const allQuestions = [
-  // ── STRUCTURE HTML ──
   {
-    q: "Quelle balise définit le titre principal d'une page HTML (affiché dans le contenu) ?",
+    q: "Quelle balise définit le titre principal d'une page HTML ?",
     opts: ["<code>&lt;title&gt;</code>", "<code>&lt;h1&gt;</code>", "<code>&lt;header&gt;</code>", "<code>&lt;heading&gt;</code>"],
     a: 1,
-    exp: "<code>&lt;h1&gt;</code> est le titre de niveau 1 visible dans le body. <code>&lt;title&gt;</code> s'affiche dans l'onglet du navigateur, dans le head."
+    exp: "<code>&lt;h1&gt;</code> est le titre de niveau 1 dans le &lt;body&gt;. <code>&lt;title&gt;</code> est dans le &lt;head&gt; et apparaît dans l'onglet du navigateur."
   },
   {
     q: "Quelle est la déclaration obligatoire en première ligne d'un fichier HTML5 ?",
     opts: ["<code>&lt;html&gt;</code>", "<code>&lt;!DOCTYPE html&gt;</code>", "<code>&lt;meta charset='UTF-8'&gt;</code>", "<code>&lt;head&gt;</code>"],
     a: 1,
-    exp: "<code>&lt;!DOCTYPE html&gt;</code> indique au navigateur qu'il s'agit d'un document HTML5. Elle doit être en toute première ligne, avant même la balise <code>&lt;html&gt;</code>."
+    exp: "<code>&lt;!DOCTYPE html&gt;</code> indique au navigateur que le document est en HTML5. Elle doit être en toute première ligne."
   },
-  {
-    q: "Dans quelle balise place-t-on les métadonnées d'une page HTML (titre, encodage, CSS) ?",
-    opts: ["<code>&lt;body&gt;</code>", "<code>&lt;meta&gt;</code>", "<code>&lt;head&gt;</code>", "<code>&lt;top&gt;</code>"],
-    a: 2,
-    exp: "Le <code>&lt;head&gt;</code> contient les métadonnées : titre, encodage (<code>&lt;meta charset&gt;</code>), liens CSS, etc. Rien de visible à l'écran n'y figure directement."
-  },
-  {
-    q: "Quel attribut de la balise <code>&lt;html&gt;</code> indique la langue de la page ?",
-    opts: ["<code>charset</code>", "<code>locale</code>", "<code>language</code>", "<code>lang</code>"],
-    a: 3,
-    exp: "L'attribut <code>lang</code> indique la langue : <code>&lt;html lang='fr'&gt;</code>. C'est important pour l'accessibilité et le référencement."
-  },
-  {
-    q: "Combien de niveaux de titres HTML existe-t-il ?",
-    opts: ["3", "4", "5", "6"],
-    a: 3,
-    exp: "HTML propose 6 niveaux de titres : de <code>&lt;h1&gt;</code> (le plus important) à <code>&lt;h6&gt;</code> (le moins important)."
-  },
-  {
-    q: "Quelle balise représente le contenu principal et unique d'une page ?",
-    opts: ["<code>&lt;section&gt;</code>", "<code>&lt;main&gt;</code>", "<code>&lt;article&gt;</code>", "<code>&lt;content&gt;</code>"],
-    a: 1,
-    exp: "<code>&lt;main&gt;</code> encadre le contenu principal de la page. Il ne doit y en avoir qu'un seul par page et il exclut les éléments répétés comme le header et le footer."
-  },
-  {
-    q: "Quelle balise HTML permet de faire un commentaire (invisible dans le navigateur) ?",
-    opts: ["<code>// commentaire</code>", "<code>/* commentaire */</code>", "<code>&lt;!-- commentaire --&gt;</code>", "<code>&lt;rem&gt;commentaire&lt;/rem&gt;</code>"],
-    a: 2,
-    exp: "Les commentaires HTML s'écrivent <code>&lt;!-- texte --&gt;</code>. Ils sont ignorés par le navigateur et invisibles à l'écran."
-  },
-  // ── BALISES ──
-  {
-    q: "Quelle balise crée un lien hypertexte ?",
-    opts: ["<code>&lt;link&gt;</code>", "<code>&lt;a&gt;</code>", "<code>&lt;href&gt;</code>", "<code>&lt;url&gt;</code>"],
-    a: 1,
-    exp: "La balise <code>&lt;a href='...'&gt;</code> crée un lien. <code>&lt;link&gt;</code> est une balise de métadonnée utilisée dans le head (ex. pour relier une feuille CSS)."
-  },
-  {
-    q: "Quelle balise HTML permet d'insérer une image ?",
-    opts: ["<code>&lt;image src='...'&gt;</code>", "<code>&lt;img src='...'&gt;</code>", "<code>&lt;pic src='...'&gt;</code>", "<code>&lt;photo&gt;</code>"],
-    a: 1,
-    exp: "<code>&lt;img src='chemin' alt='description'&gt;</code> est la balise auto-fermante pour insérer une image. L'attribut <code>alt</code> est obligatoire pour l'accessibilité."
-  },
-  {
-    q: "Quelle balise HTML crée une liste <strong>ordonnée</strong> (numérotée) ?",
-    opts: ["<code>&lt;ul&gt;</code>", "<code>&lt;list&gt;</code>", "<code>&lt;ol&gt;</code>", "<code>&lt;nl&gt;</code>"],
-    a: 2,
-    exp: "<code>&lt;ol&gt;</code> (ordered list) crée une liste numérotée. <code>&lt;ul&gt;</code> (unordered list) crée une liste à puces. Les éléments de liste sont toujours <code>&lt;li&gt;</code>."
-  },
-  {
-    q: "Quelle balise HTML indique une <strong>mise en gras sémantique</strong> (importance forte) ?",
-    opts: ["<code>&lt;b&gt;</code>", "<code>&lt;bold&gt;</code>", "<code>&lt;strong&gt;</code>", "<code>&lt;gras&gt;</code>"],
-    a: 2,
-    exp: "<code>&lt;strong&gt;</code> indique une importance sémantique forte (et s'affiche en gras). <code>&lt;b&gt;</code> met en gras visuellement sans valeur sémantique."
-  },
-  {
-    q: "Que fait <code>target='_blank'</code> sur une balise <code>&lt;a&gt;</code> ?",
-    opts: ["Ouvre le lien dans la même page", "Ouvre le lien dans un nouvel onglet", "Désactive le lien", "Crée un lien ancre interne"],
-    a: 1,
-    exp: "<code>target='_blank'</code> ouvre le lien dans un nouvel onglet (ou nouvelle fenêtre). Par défaut, sans cet attribut, le lien s'ouvre dans la même page."
-  },
-  {
-    q: "Quelle balise est utilisée pour chaque élément d'une liste (<code>&lt;ul&gt;</code> ou <code>&lt;ol&gt;</code>) ?",
-    opts: ["<code>&lt;item&gt;</code>", "<code>&lt;el&gt;</code>", "<code>&lt;dt&gt;</code>", "<code>&lt;li&gt;</code>"],
-    a: 3,
-    exp: "<code>&lt;li&gt;</code> (list item) est l'élément de liste. Il doit toujours être enfant direct de <code>&lt;ul&gt;</code> ou <code>&lt;ol&gt;</code>."
-  },
-  {
-    q: "Quelle balise HTML représente un saut de ligne simple ?",
-    opts: ["<code>&lt;nl&gt;</code>", "<code>&lt;break&gt;</code>", "<code>&lt;br&gt;</code>", "<code>&lt;lb&gt;</code>"],
-    a: 2,
-    exp: "<code>&lt;br&gt;</code> (line break) est une balise auto-fermante qui insère un saut de ligne. À ne pas confondre avec <code>&lt;p&gt;</code> qui crée un nouveau paragraphe avec marge."
-  },
-  {
-    q: "Dans un tableau HTML, quelle balise crée une cellule d'en-tête ?",
-    opts: ["<code>&lt;td&gt;</code>", "<code>&lt;th&gt;</code>", "<code>&lt;tr&gt;</code>", "<code>&lt;thead&gt;</code>"],
-    a: 1,
-    exp: "<code>&lt;th&gt;</code> (table header) crée une cellule d'en-tête, affichée en gras et centrée par défaut. <code>&lt;td&gt;</code> (table data) est une cellule ordinaire."
-  },
-  {
-    q: "Quelle balise HTML représente un paragraphe ?",
-    opts: ["<code>&lt;par&gt;</code>", "<code>&lt;pg&gt;</code>", "<code>&lt;p&gt;</code>", "<code>&lt;text&gt;</code>"],
-    a: 2,
-    exp: "<code>&lt;p&gt;</code> est la balise paragraphe. Elle crée automatiquement un espace vertical avant et après son contenu."
-  },
-  {
-    q: "Quelle est la différence entre <code>&lt;div&gt;</code> et <code>&lt;span&gt;</code> ?",
-    opts: ["Aucune différence visuelle ou structurelle", "<code>&lt;div&gt;</code> est block, <code>&lt;span&gt;</code> est inline", "<code>&lt;span&gt;</code> est block, <code>&lt;div&gt;</code> est inline", "<code>&lt;div&gt;</code> est réservé aux images"],
-    a: 1,
-    exp: "<code>&lt;div&gt;</code> est un conteneur <code>block</code> (prend toute la largeur, crée un retour à la ligne). <code>&lt;span&gt;</code> est <code>inline</code> (s'intègre dans le flux de texte)."
-  },
-  // ── ATTRIBUTS ──
-  {
-    q: "Quel attribut de <code>&lt;img&gt;</code> fournit une description textuelle de l'image ?",
-    opts: ["<code>title</code>", "<code>desc</code>", "<code>caption</code>", "<code>alt</code>"],
-    a: 3,
-    exp: "<code>alt</code> (alternative text) est obligatoire sur <code>&lt;img&gt;</code>. Il est lu par les lecteurs d'écran (accessibilité) et affiché si l'image ne se charge pas."
-  },
-  {
-    q: "Comment rendre un champ de formulaire obligatoire en HTML ?",
-    opts: ["<code>mandatory='true'</code>", "<code>obligatoire</code>", "<code>required</code>", "<code>needed='yes'</code>"],
-    a: 2,
-    exp: "L'attribut booléen <code>required</code> (sans valeur) rend un champ obligatoire. Le navigateur bloque l'envoi du formulaire si le champ est vide."
-  },
-  {
-    q: "Quelle est la différence entre les attributs <code>id</code> et <code>class</code> ?",
-    opts: ["Aucune", "<code>id</code> est unique sur la page, <code>class</code> est réutilisable", "<code>class</code> est unique, <code>id</code> est réutilisable", "<code>id</code> s'utilise uniquement en CSS"],
-    a: 1,
-    exp: "Un <code>id</code> doit être unique sur toute la page. Une <code>class</code> peut être appliquée à plusieurs éléments. En CSS : <code>#id</code> vs <code>.class</code>."
-  },
-  {
-    q: "Quel attribut de <code>&lt;form&gt;</code> définit l'URL de destination des données ?",
-    opts: ["<code>method</code>", "<code>dest</code>", "<code>action</code>", "<code>target</code>"],
-    a: 2,
-    exp: "L'attribut <code>action</code> définit l'URL vers laquelle les données du formulaire sont envoyées. <code>method</code> définit le mode d'envoi (GET ou POST)."
-  },
-  {
-    q: "Où doit être placée la balise <code>&lt;link rel='stylesheet'&gt;</code> ?",
-    opts: ["Dans <code>&lt;body&gt;</code>", "Après <code>&lt;/html&gt;</code>", "Dans <code>&lt;head&gt;</code>", "N'importe où dans la page"],
-    a: 2,
-    exp: "<code>&lt;link&gt;</code> doit être dans <code>&lt;head&gt;</code>. Cela permet au navigateur de charger le CSS avant d'afficher le contenu, évitant un flash de contenu non stylé."
-  },
-  // ── CSS BASES ──
   {
     q: "En CSS, comment sélectionne-t-on tous les éléments ayant la classe <code>menu</code> ?",
     opts: ["<code>#menu</code>", "<code>menu</code>", "<code>.menu</code>", "<code>*menu</code>"],
     a: 2,
-    exp: "Le sélecteur de classe commence par un point : <code>.menu</code>. Le <code>#</code> est réservé aux identifiants (id). Le nom seul cible une balise HTML."
+    exp: "Le sélecteur de classe commence par un point : <code>.menu</code>. Le <code>#</code> est pour les identifiants (id)."
   },
   {
     q: "Quelle propriété CSS permet de modifier la couleur du texte ?",
     opts: ["<code>background-color</code>", "<code>text-color</code>", "<code>font-color</code>", "<code>color</code>"],
     a: 3,
-    exp: "<code>color</code> définit la couleur du texte. <code>background-color</code> définit la couleur de fond de l'élément. <code>text-color</code> et <code>font-color</code> n'existent pas en CSS."
+    exp: "<code>color</code> définit la couleur du texte. <code>background-color</code> définit la couleur de fond."
   },
   {
-    q: "En CSS, quel sélecteur cible l'élément avec <code>id='titre'</code> ?",
-    opts: ["<code>.titre</code>", "<code>@titre</code>", "<code>#titre</code>", "<code>*titre</code>"],
-    a: 2,
-    exp: "Le sélecteur d'identifiant commence par <code>#</code> : <code>#titre { }</code>. Un <code>id</code> doit être unique sur la page, donc ce sélecteur ne cible qu'un seul élément."
-  },
-  {
-    q: "Quelle est la syntaxe correcte d'une règle CSS ?",
-    opts: ["<code>sélecteur { propriété = valeur }</code>", "<code>sélecteur { propriété: valeur; }</code>", "<code>sélecteur [ propriété: valeur ]</code>", "<code>sélecteur -> propriété: valeur</code>"],
+    q: "Quelle balise crée un lien hypertexte ?",
+    opts: ["<code>&lt;link&gt;</code>", "<code>&lt;a&gt;</code>", "<code>&lt;href&gt;</code>", "<code>&lt;url&gt;</code>"],
     a: 1,
-    exp: "Une règle CSS s'écrit : <code>sélecteur { propriété: valeur; }</code>. Le séparateur entre propriété et valeur est <code>:</code> et chaque déclaration se termine par <code>;</code>."
+    exp: "La balise <code>&lt;a href='...'&gt;</code> crée un lien. <code>&lt;link&gt;</code> est utilisé dans le &lt;head&gt; pour relier une feuille CSS."
   },
-  {
-    q: "Laquelle de ces notations de couleur CSS est <strong>incorrecte</strong> ?",
-    opts: ["<code>#ff6600</code>", "<code>rgb(255, 100, 0)</code>", "<code>orange</code>", "<code>color(255, 100, 0)</code>"],
-    a: 3,
-    exp: "<code>color(255,100,0)</code> n'est pas une notation CSS standard. Les notations valides sont : noms (<code>orange</code>), hexadécimal (<code>#ff6600</code>) et <code>rgb(r,g,b)</code>."
-  },
-  {
-    q: "Quelle propriété CSS modifie la taille du texte ?",
-    opts: ["<code>text-size</code>", "<code>font-size</code>", "<code>size</code>", "<code>font-height</code>"],
-    a: 1,
-    exp: "<code>font-size</code> contrôle la taille du texte. Les valeurs peuvent être en <code>px</code> (pixels), <code>em</code>, <code>rem</code>, ou <code>%</code>."
-  },
-  {
-    q: "Comment centrer du texte horizontalement en CSS ?",
-    opts: ["<code>align: center</code>", "<code>margin: 0 auto</code>", "<code>text-align: center</code>", "<code>position: center</code>"],
-    a: 2,
-    exp: "<code>text-align: center</code> centre le texte (et le contenu inline) à l'intérieur d'un bloc. <code>margin: 0 auto</code> centre un élément bloc lui-même dans son conteneur."
-  },
-  {
-    q: "Quelle propriété CSS crée des coins arrondis ?",
-    opts: ["<code>corner-radius</code>", "<code>round</code>", "<code>border-radius</code>", "<code>border-round</code>"],
-    a: 2,
-    exp: "<code>border-radius</code> arrondit les coins. <code>border-radius: 50%</code> sur un carré crée un cercle parfait. <code>border-radius: 8px</code> donne des coins légèrement arrondis."
-  },
-  {
-    q: "Quelle propriété CSS contrôle la police de caractères ?",
-    opts: ["<code>text-family</code>", "<code>font</code>", "<code>font-family</code>", "<code>typeface</code>"],
-    a: 2,
-    exp: "<code>font-family</code> définit la police. Il est recommandé de fournir une liste de polices de secours : <code>font-family: Arial, Helvetica, sans-serif;</code>"
-  },
-  {
-    q: "Quelle valeur de <code>font-weight</code> met le texte en gras ?",
-    opts: ["<code>heavy</code>", "<code>strong</code>", "<code>bold</code>", "<code>bolder</code>"],
-    a: 2,
-    exp: "<code>font-weight: bold</code> met le texte en gras. On peut aussi utiliser des valeurs numériques de 100 à 900 (400 = normal, 700 = bold)."
-  },
-  {
-    q: "Que fait <code>text-decoration: none</code> appliqué à un lien ?",
-    opts: ["Met le texte en italique", "Supprime le soulignement", "Cache le lien", "Change la couleur du lien"],
-    a: 1,
-    exp: "<code>text-decoration: none</code> supprime la décoration du texte, notamment le soulignement des liens <code>&lt;a&gt;</code> qui est appliqué par défaut par les navigateurs."
-  },
-  // ── BOX MODEL ──
   {
     q: "Dans le modèle de boîte CSS, qu'est-ce que le <strong>padding</strong> ?",
-    opts: ["L'espace entre deux éléments distincts", "La bordure de l'élément", "L'espace entre le contenu et la bordure", "La largeur totale de l'élément"],
+    opts: ["L'espace entre deux éléments", "La bordure de l'élément", "L'espace entre le contenu et la bordure", "La largeur totale de l'élément"],
     a: 2,
-    exp: "Le <code>padding</code> est l'espace intérieur entre le contenu et la bordure. Le <code>margin</code> est l'espace extérieur entre la bordure et les éléments voisins."
+    exp: "Le <code>padding</code> est l'espace intérieur entre le contenu et la bordure. Le <code>margin</code> est l'espace extérieur entre les éléments."
+  },
+  {
+    q: "Quelle valeur de <code>display</code> active Flexbox sur un conteneur ?",
+    opts: ["<code>flex-box</code>", "<code>flexbox</code>", "<code>flex</code>", "<code>inline-flex-container</code>"],
+    a: 2,
+    exp: "<code>display: flex</code> active Flexbox sur l'élément parent. Les enfants deviennent des flex-items."
+  },
+  {
+    q: "Quelle balise HTML permet d'insérer une image ?",
+    opts: ["<code>&lt;image src='...'&gt;</code>", "<code>&lt;img src='...'&gt;</code>", "<code>&lt;pic src='...'&gt;</code>", "<code>&lt;photo&gt;</code>"],
+    a: 1,
+    exp: "<code>&lt;img src='chemin' alt='description'&gt;</code> est la balise auto-fermante pour insérer une image. L'attribut <code>alt</code> est obligatoire."
+  },
+  {
+    q: "Quel attribut HTML rend un champ de formulaire obligatoire ?",
+    opts: ["<code>mandatory</code>", "<code>obligatoire</code>", "<code>required</code>", "<code>needed</code>"],
+    a: 2,
+    exp: "L'attribut <code>required</code> (sans valeur) rend le champ obligatoire. Le navigateur bloque l'envoi si le champ est vide."
   },
   {
     q: "Comment centrer horizontalement un bloc de largeur fixe en CSS ?",
     opts: ["<code>text-align: center</code>", "<code>align: center</code>", "<code>margin: 0 auto</code>", "<code>position: center</code>"],
     a: 2,
-    exp: "<code>margin: 0 auto</code> sur un élément bloc de largeur définie le centre horizontalement. Sans largeur fixe, l'élément occupe déjà toute la largeur donc le centrage n'a pas d'effet."
+    exp: "<code>margin: 0 auto</code> sur un élément bloc de largeur définie le centre horizontalement. <code>text-align: center</code> centre le contenu inline à l'intérieur."
   },
   {
-    q: "Que représente <code>margin: 10px 20px</code> ?",
-    opts: ["10px partout", "haut/bas: 10px, gauche/droite: 20px", "gauche/droite: 10px, haut/bas: 20px", "haut: 10px, droite: 20px"],
+    q: "Laquelle de ces couleurs CSS est incorrecte ?",
+    opts: ["<code>#ff6600</code>", "<code>rgb(255, 100, 0)</code>", "<code>orange</code>", "<code>color(255, 100, 0)</code>"],
+    a: 3,
+    exp: "<code>color(255,100,0)</code> n'est pas une notation CSS valide. Les notations valides sont : noms (<code>orange</code>), hexadécimal (<code>#ff6600</code>) et <code>rgb()</code>."
+  },
+  {
+    q: "Quelle balise HTML crée une liste <strong>ordonnée</strong> (numérotée) ?",
+    opts: ["<code>&lt;ul&gt;</code>", "<code>&lt;list&gt;</code>", "<code>&lt;ol&gt;</code>", "<code>&lt;nl&gt;</code>"],
+    a: 2,
+    exp: "<code>&lt;ol&gt;</code> (ordered list) crée une liste numérotée. <code>&lt;ul&gt;</code> (unordered list) crée une liste à puces."
+  },
+  {
+    q: "En CSS, quel sélecteur cible l'élément avec <code>id='titre'</code> ?",
+    opts: ["<code>.titre</code>", "<code>@titre</code>", "<code>#titre</code>", "<code>*titre</code>"],
+    a: 2,
+    exp: "Le sélecteur d'identifiant commence par <code>#</code>. Un <code>id</code> doit être unique sur la page."
+  },
+  {
+    q: "Quelle balise HTML permet d'indiquer une <strong>mise en gras sémantique</strong> ?",
+    opts: ["<code>&lt;b&gt;</code>", "<code>&lt;bold&gt;</code>", "<code>&lt;strong&gt;</code>", "<code>&lt;gras&gt;</code>"],
+    a: 2,
+    exp: "<code>&lt;strong&gt;</code> indique une importance sémantique forte (et s'affiche en gras). <code>&lt;b&gt;</code> met en gras sans valeur sémantique."
+  },
+  {
+    q: "Que fait <code>target='_blank'</code> sur un lien ?",
+    opts: ["Ouvre le lien dans la même page", "Ouvre le lien dans un nouvel onglet", "Désactive le lien", "Crée un lien interne"],
     a: 1,
-    exp: "Avec 2 valeurs, <code>margin</code> s'applique ainsi : 1ère valeur = haut/bas, 2ème valeur = gauche/droite. Donc <code>10px 20px</code> = 10px en haut et en bas, 20px à gauche et à droite."
+    exp: "<code>target='_blank'</code> sur <code>&lt;a&gt;</code> ouvre la page cible dans un nouvel onglet (ou nouvelle fenêtre)."
   },
   {
-    q: "Quelle propriété CSS définit une bordure autour d'un élément ?",
-    opts: ["<code>outline</code>", "<code>frame</code>", "<code>border</code>", "<code>box-border</code>"],
+    q: "Quelle propriété CSS crée des coins arrondis ?",
+    opts: ["<code>corner-radius</code>", "<code>round</code>", "<code>border-radius</code>", "<code>border-round</code>"],
     a: 2,
-    exp: "<code>border</code> est la propriété raccourci : <code>border: 2px solid black</code> = épaisseur, style, couleur. On peut aussi cibler un côté : <code>border-top</code>, <code>border-left</code>…"
+    exp: "<code>border-radius</code> arrondit les coins d'un élément. La valeur <code>50%</code> crée un cercle parfait sur un carré."
   },
   {
-    q: "Quelle valeur de <code>display</code> cache un élément sans libérer son espace ?",
-    opts: ["<code>hidden</code>", "<code>invisible</code>", "<code>display: none</code>", "<code>visibility: hidden</code>"],
-    a: 3,
-    exp: "<code>visibility: hidden</code> cache l'élément mais conserve son espace. <code>display: none</code> le supprime du flux : l'espace est libéré et les éléments suivants le remplacent."
-  },
-  {
-    q: "Que vaut la largeur totale d'un élément avec <code>width:200px</code>, <code>padding:10px</code>, <code>border:5px</code> (box-sizing par défaut) ?",
-    opts: ["200px", "210px", "220px", "230px"],
-    a: 3,
-    exp: "Par défaut (<code>box-sizing: content-box</code>), la largeur totale = width + padding×2 + border×2 = 200 + 20 + 10 = 230px. Avec <code>box-sizing: border-box</code>, ce serait 200px."
-  },
-  // ── MISE EN PAGE ──
-  {
-    q: "Quelle valeur de <code>display</code> active Flexbox sur un conteneur ?",
-    opts: ["<code>flex-box</code>", "<code>flexbox</code>", "<code>flex</code>", "<code>inline-flex-container</code>"],
+    q: "Où doit être placée la balise <code>&lt;link rel='stylesheet'&gt;</code> ?",
+    opts: ["Dans <code>&lt;body&gt;</code>", "Après <code>&lt;/html&gt;</code>", "Dans <code>&lt;head&gt;</code>", "N'importe où"],
     a: 2,
-    exp: "<code>display: flex</code> active Flexbox sur l'élément parent. Ses enfants directs deviennent automatiquement des flex-items et s'alignent en ligne par défaut."
+    exp: "La balise <code>&lt;link&gt;</code> doit être dans <code>&lt;head&gt;</code>. Cela permet au navigateur de charger le CSS avant d'afficher la page."
+  },
+  {
+    q: "Quelle est la différence entre une balise <code>&lt;div&gt;</code> et une balise <code>&lt;span&gt;</code> ?",
+    opts: ["Aucune différence", "<code>&lt;div&gt;</code> est bloc, <code>&lt;span&gt;</code> est inline", "<code>&lt;span&gt;</code> est bloc, <code>&lt;div&gt;</code> est inline", "<code>&lt;div&gt;</code> est réservé aux images"],
+    a: 1,
+    exp: "<code>&lt;div&gt;</code> est un conteneur de type <code>block</code> (prend toute la largeur). <code>&lt;span&gt;</code> est <code>inline</code> (s'intègre dans le texte)."
+  },
+  {
+    q: "Quel attribut de <code>&lt;img&gt;</code> fournit une description textuelle de l'image ?",
+    opts: ["<code>title</code>", "<code>desc</code>", "<code>caption</code>", "<code>alt</code>"],
+    a: 3,
+    exp: "<code>alt</code> (alternative text) est obligatoire sur <code>&lt;img&gt;</code>. Il est lu par les lecteurs d'écran et affiché si l'image ne charge pas."
   },
   {
     q: "En CSS Flexbox, que fait <code>justify-content: space-between</code> ?",
-    opts: ["Centre tous les items", "Colle les items à gauche", "Distribue l'espace entre les items, sans espace aux extrémités", "Ajoute un espace égal autour de chaque item"],
+    opts: ["Centre tous les items", "Colle les items à gauche", "Distribue l'espace entre les items, sans espace aux extrémités", "Ajoute un espace autour de chaque item"],
     a: 2,
-    exp: "<code>space-between</code> place le 1er item au début, le dernier à la fin, et répartit l'espace restant également entre les items intermédiaires. <code>space-around</code> ajoute de l'espace aussi aux extrémités."
-  },
-  {
-    q: "En CSS Grid, que produit <code>grid-template-columns: repeat(3, 1fr)</code> ?",
-    opts: ["3 lignes de même hauteur", "3 colonnes de même largeur", "Une colonne qui se répète 3 fois", "3 grilles imbriquées"],
-    a: 1,
-    exp: "<code>repeat(3, 1fr)</code> crée 3 colonnes de largeur égale (1 fraction de l'espace disponible chacune). <code>fr</code> = fraction unit, spécifique à CSS Grid."
-  },
-  {
-    q: "Quelle propriété Flexbox permet aux items de passer à la ligne suivante si nécessaire ?",
-    opts: ["<code>flex-direction: column</code>", "<code>flex-wrap: wrap</code>", "<code>align-items: wrap</code>", "<code>overflow: wrap</code>"],
-    a: 1,
-    exp: "<code>flex-wrap: wrap</code> autorise les flex-items à passer à la ligne si la largeur du conteneur est insuffisante. Par défaut, <code>flex-wrap: nowrap</code> force tout sur une seule ligne."
-  },
-  {
-    q: "Quelle valeur de <code>position</code> fixe un élément dans la fenêtre du navigateur (sans défilement) ?",
-    opts: ["<code>static</code>", "<code>absolute</code>", "<code>sticky</code>", "<code>fixed</code>"],
-    a: 3,
-    exp: "<code>position: fixed</code> sort l'élément du flux normal et le positionne par rapport à la fenêtre du navigateur. Il reste visible même en faisant défiler la page."
-  },
-  {
-    q: "Qu'est-ce que la propriété <code>gap</code> en Flexbox/Grid ?",
-    opts: ["L'espace entre le conteneur et la fenêtre", "L'espace entre les items", "La taille minimale d'un item", "La marge extérieure du conteneur"],
-    a: 1,
-    exp: "<code>gap</code> (anciennement <code>grid-gap</code>) définit l'espace entre les items Flex ou Grid. C'est plus pratique que d'utiliser <code>margin</code> sur chaque item."
-  },
-  {
-    q: "Comment aligner des flex-items au centre de l'axe secondaire (perpendiculaire) ?",
-    opts: ["<code>justify-content: center</code>", "<code>align-content: center</code>", "<code>align-items: center</code>", "<code>vertical-align: center</code>"],
-    a: 2,
-    exp: "<code>align-items: center</code> centre les items sur l'axe secondaire (vertical si flex-direction est row). <code>justify-content</code> agit sur l'axe principal (horizontal par défaut)."
-  },
-  // ── FORMULAIRES ──
-  {
-    q: "Quel type d'input affiche un champ de mot de passe (texte masqué) ?",
-    opts: ["<code>type='hidden'</code>", "<code>type='secret'</code>", "<code>type='masked'</code>", "<code>type='password'</code>"],
-    a: 3,
-    exp: "<code>type='password'</code> masque les caractères saisis. <code>type='hidden'</code> crée un champ invisible qui envoie quand même une valeur au serveur."
-  },
-  {
-    q: "Comment lier correctement un <code>&lt;label&gt;</code> à son <code>&lt;input&gt;</code> ?",
-    opts: ["<code>&lt;label name='x'&gt;</code> + <code>&lt;input id='x'&gt;</code>", "<code>&lt;label for='x'&gt;</code> + <code>&lt;input id='x'&gt;</code>", "<code>&lt;label id='x'&gt;</code> + <code>&lt;input name='x'&gt;</code>", "En les imbriquant dans un <code>&lt;div&gt;</code>"],
-    a: 1,
-    exp: "<code>&lt;label for='x'&gt;</code> est lié à <code>&lt;input id='x'&gt;</code>. Cliquer sur le label active alors le champ. C'est essentiel pour l'accessibilité."
-  },
-  {
-    q: "Quelle balise crée un menu déroulant dans un formulaire ?",
-    opts: ["<code>&lt;dropdown&gt;</code>", "<code>&lt;input type='select'&gt;</code>", "<code>&lt;select&gt;</code>", "<code>&lt;option&gt;</code>"],
-    a: 2,
-    exp: "<code>&lt;select&gt;</code> crée un menu déroulant. Chaque option est définie avec <code>&lt;option value='...'&gt;</code> à l'intérieur du select."
-  },
-  {
-    q: "Quel type d'input crée une case à cocher ?",
-    opts: ["<code>type='radio'</code>", "<code>type='check'</code>", "<code>type='box'</code>", "<code>type='checkbox'</code>"],
-    a: 3,
-    exp: "<code>type='checkbox'</code> crée une case à cocher (plusieurs choix possibles). <code>type='radio'</code> crée un bouton radio (choix unique dans un groupe de même <code>name</code>)."
-  },
-  {
-    q: "Quelle valeur de <code>method</code> dans <code>&lt;form&gt;</code> envoie les données dans l'URL ?",
-    opts: ["<code>post</code>", "<code>send</code>", "<code>get</code>", "<code>url</code>"],
-    a: 2,
-    exp: "<code>method='get'</code> envoie les données dans l'URL (visible, limité en taille). <code>method='post'</code> les envoie dans le corps de la requête (invisible, sans limite de taille)."
-  },
-  // ── SÉLECTEURS AVANCÉS ──
-  {
-    q: "Quel sélecteur CSS cible le survol de la souris sur un élément ?",
-    opts: ["<code>:active</code>", "<code>:focus</code>", "<code>:hover</code>", "<code>:mouse</code>"],
-    a: 2,
-    exp: "<code>:hover</code> est une pseudo-classe qui s'applique quand la souris survole l'élément. Très utilisé pour les effets sur les liens et boutons."
-  },
-  {
-    q: "Que cible le sélecteur CSS <code>ul > li</code> ?",
-    opts: ["Tous les <code>&lt;li&gt;</code> dans la page", "Les <code>&lt;li&gt;</code> enfants directs de <code>&lt;ul&gt;</code>", "Les <code>&lt;li&gt;</code> qui contiennent un <code>&lt;ul&gt;</code>", "Tous les descendants <code>&lt;li&gt;</code> de <code>&lt;ul&gt;</code>"],
-    a: 1,
-    exp: "Le sélecteur <code>></code> cible les enfants <strong>directs</strong> uniquement. <code>ul > li</code> ne cible pas les <code>&lt;li&gt;</code> imbriqués plus profondément. <code>ul li</code> (sans >) ciblerait tous les descendants."
-  },
-  {
-    q: "Que fait le sélecteur <code>p:nth-child(even)</code> ?",
-    opts: ["Cible le 2e paragraphe seulement", "Cible les paragraphes pairs (2e, 4e, 6e…)", "Cible tous les paragraphes", "Cible les paragraphes impairs"],
-    a: 1,
-    exp: "<code>:nth-child(even)</code> cible les éléments dont la position est paire. <code>:nth-child(odd)</code> cible les impairs. Très utile pour les couleurs alternées dans les tableaux."
-  },
-  {
-    q: "Quelle est la priorité de spécificité CSS du plus fort au plus faible ?",
-    opts: ["balise > classe > id > inline", "inline > id > classe > balise", "id > inline > classe > balise", "classe > id > balise > inline"],
-    a: 1,
-    exp: "L'ordre de spécificité est : style inline > id > classe/attribut > balise. En cas de conflit, la règle la plus spécifique l'emporte, quel que soit son ordre dans la feuille de style."
-  },
-  {
-    q: "Que cible le sélecteur CSS <code>*</code> ?",
-    opts: ["Tous les éléments de la page", "Tous les éléments de classe star", "Tous les éléments avec un id", "Les commentaires HTML"],
-    a: 0,
-    exp: "Le sélecteur universel <code>*</code> cible absolument tous les éléments HTML de la page. Il est souvent utilisé pour un reset CSS : <code>* { margin: 0; padding: 0; }</code>."
-  },
-  // ── DIVERS ──
-  {
-    q: "Quelle propriété CSS contrôle la transparence d'un élément ?",
-    opts: ["<code>transparency</code>", "<code>alpha</code>", "<code>visibility</code>", "<code>opacity</code>"],
-    a: 3,
-    exp: "<code>opacity</code> accepte une valeur entre 0 (transparent) et 1 (opaque). <code>opacity: 0.5</code> rend l'élément semi-transparent. Attention : cela affecte aussi le contenu enfant."
-  },
-  {
-    q: "Quelle propriété CSS contrôle le curseur de la souris au survol ?",
-    opts: ["<code>mouse</code>", "<code>cursor</code>", "<code>pointer</code>", "<code>hover-cursor</code>"],
-    a: 1,
-    exp: "<code>cursor: pointer</code> affiche le curseur en forme de main (comme sur un lien). Utile pour indiquer qu'un élément est cliquable. D'autres valeurs : <code>default</code>, <code>text</code>, <code>grab</code>…"
-  },
-  {
-    q: "Comment ajouter une ombre portée à un élément en CSS ?",
-    opts: ["<code>shadow: 2px 2px black</code>", "<code>box-shadow: 2px 2px 5px black</code>", "<code>element-shadow: 2px 2px</code>", "<code>drop-shadow: 2px 2px</code>"],
-    a: 1,
-    exp: "<code>box-shadow: décalage-x décalage-y flou couleur</code> ajoute une ombre portée. Exemple : <code>box-shadow: 2px 2px 8px rgba(0,0,0,0.3)</code> pour une ombre douce."
-  },
-  {
-    q: "Quelle unité CSS est relative à la taille de la police de l'élément parent ?",
-    opts: ["<code>px</code>", "<code>rem</code>", "<code>em</code>", "<code>vw</code>"],
-    a: 2,
-    exp: "<code>em</code> est relative à la taille de police de l'élément parent (<code>1em = taille du parent</code>). <code>rem</code> est relative à la taille de police de la racine (<code>&lt;html&gt;</code>). <code>vw</code> = % de la largeur de la fenêtre."
-  },
-  {
-    q: "Quelle balise HTML est utilisée pour intégrer du code JavaScript directement dans une page ?",
-    opts: ["<code>&lt;js&gt;</code>", "<code>&lt;javascript&gt;</code>", "<code>&lt;script&gt;</code>", "<code>&lt;code&gt;</code>"],
-    a: 2,
-    exp: "<code>&lt;script&gt;</code> permet d'intégrer du JS directement ou de lier un fichier externe (<code>src='script.js'</code>). On le place généralement à la fin du <code>&lt;body&gt;</code> pour ne pas bloquer le chargement."
+    exp: "<code>space-between</code> place le premier item au début, le dernier à la fin, et distribue l'espace restant également entre les items du milieu."
   }
 ];
 
 // ── QCM ENGINE ────────────────────────────────────────────
 let currentQuestions = [];
 let submitted = false;
-let qcmSize = 5;
-
-function getSize() {
-  const checked = document.querySelector('input[name="qcm-size"]:checked');
-  return checked ? parseInt(checked.value) : 5;
-}
 
 function shuffle(arr) {
   const a = [...arr];
@@ -1819,14 +1541,11 @@ function shuffle(arr) {
 
 function newQCM() {
   submitted = false;
-  qcmSize = getSize();
-  currentQuestions = shuffle(allQuestions).slice(0, qcmSize);
+  currentQuestions = shuffle(allQuestions).slice(0, 5);
   renderQCM();
   document.getElementById('qcm-result').style.display = 'none';
-  const btn = document.getElementById('btn-submit');
-  btn.disabled = false;
-  btn.style.opacity = '1';
-  onSizeChange();
+  document.getElementById('btn-submit').disabled = false;
+  document.getElementById('btn-submit').style.opacity = '1';
 }
 
 function renderQCM() {
@@ -1834,7 +1553,8 @@ function renderQCM() {
   container.innerHTML = '';
 
   currentQuestions.forEach((q, qi) => {
-    const shuffledOpts = shuffle(q.opts.map((o, i) => ({ text: o, origIdx: i })));
+    const shuffledOpts = q.opts.map((o, i) => ({ text: o, origIdx: i }));
+    // Store shuffled mapping on the question for answer checking
     q._shuffled = shuffledOpts;
 
     const optHTML = shuffledOpts.map((opt, si) => `
@@ -1846,7 +1566,7 @@ function renderQCM() {
 
     container.innerHTML += `
       <div class="qcm-q" id="qblock-${qi}">
-        <div class="qcm-num">Question ${qi + 1} / ${qcmSize}</div>
+        <div class="qcm-num">Question ${qi + 1} / 5</div>
         <div class="qcm-question">${q.q}</div>
         <div class="qcm-options">${optHTML}</div>
         <div class="qcm-feedback" id="fb-${qi}"></div>
@@ -1864,9 +1584,14 @@ function submitQCM() {
     const selected = document.querySelector(`input[name="q${qi}"]:checked`);
     const block = document.getElementById(`qblock-${qi}`);
     const fb = document.getElementById(`fb-${qi}`);
+
+    // Find which shuffled index corresponds to the correct original index
     const correctShuffledIdx = q._shuffled.findIndex(o => o.origIdx === q.a);
 
+    // Disable all radios
     document.querySelectorAll(`input[name="q${qi}"]`).forEach(r => r.disabled = true);
+
+    // Style correct answer
     const correctLabel = document.getElementById(`opt-${qi}-${correctShuffledIdx}`);
     if (correctLabel) correctLabel.classList.add('opt-correct');
 
@@ -1896,38 +1621,37 @@ function submitQCM() {
 }
 
 function showResult(score) {
-  const pct = (score / qcmSize) * 100;
-  const ratio = score / qcmSize;
-  const color = ratio < 0.3 ? '#f87171' : ratio < 0.5 ? '#fb923c' : ratio < 0.7 ? '#fbbf24' : ratio < 0.9 ? '#34d399' : '#6ee7b7';
+  const pct = (score / 5) * 100;
+  const colors = ['#f87171','#fb923c','#fbbf24','#34d399','#6ee7b7'];
+  const color = score <= 1 ? colors[0] : score === 2 ? colors[1] : score === 3 ? colors[2] : score === 4 ? colors[3] : colors[4];
+  const msgs = [
+    '💪 Courage, relis le cours !',
+    '📖 Quelques révisions s\'imposent.',
+    '👍 Pas mal, mais il reste du travail !',
+    '🎉 Très bien, encore un effort !',
+    '🏆 Excellent ! Tu es prêt(e) pour le DST !'
+  ];
 
-  const getMsgPct = (p) => {
-    if (p < 30) return '💪 Courage, relis le cours attentivement !';
-    if (p < 50) return '📖 Quelques révisions s\'imposent encore.';
-    if (p < 70) return '👍 Pas mal, continue tes révisions !';
-    if (p < 90) return '🎉 Très bien, tu es presque prêt(e) !';
-    return '🏆 Excellent ! Tu maîtrises le sujet !';
-  };
-
-  const note = Math.round((score / qcmSize) * 20);
   const result = document.getElementById('qcm-result');
   result.style.display = 'block';
   result.innerHTML = `
-    <div class="score-big" style="color:${color}">${score}<span style="font-size:28px;color:var(--muted)">/${qcmSize}</span></div>
-    <div class="score-label">Soit environ <strong>${note}/20</strong> au DST</div>
+    <div class="score-big" style="color:${color}">${score}<span style="font-size:28px;color:var(--muted)">/5</span></div>
+    <div class="score-label">${score * 4} points sur 20</div>
     <div class="score-bar-bg">
-      <div class="score-bar-fill" style="width:0%; background:${color};" id="score-fill"></div>
+      <div class="score-bar-fill" style="width:${pct}%; background:${color};"></div>
     </div>
-    <div class="score-msg" style="color:${color}">${getMsgPct(pct)}</div>
+    <div class="score-msg" style="color:${color}">${msgs[score]}</div>
   `;
+
   setTimeout(() => {
-    const fill = document.getElementById('score-fill');
-    if (fill) fill.style.width = pct + '%';
-  }, 80);
+    result.querySelector('.score-bar-fill').style.width = pct + '%';
+  }, 50);
+
   result.scrollIntoView({ behavior: 'smooth', block: 'center' });
 }
 
 // ── INIT ─────────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', () => { newQCM(); onSizeChange(); });
+document.addEventListener('DOMContentLoaded', newQCM);
 </script>
 </body>
 </html>
