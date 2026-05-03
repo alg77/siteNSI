@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>POO — NSI Bac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-brand">NSI<span>.bac</span></a>
+  <div class="nav-links"><a href="../index.html">Accueil</a><a href="../quiz.html">QCM</a><a href="../methodes.html">Méthodes</a><a href="structures.html">Chapitres</a></div>
+  <span class="nav-badge">Terminale 2025</span><button class="burger">☰</button>
+</nav>
+<div class="chapter-layout">
+  <aside class="toc">
+    <h4>📋 Sommaire</h4>
+    <ul>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#classes">Classes & objets</a></li>
+      <li><a href="#heritage">Héritage</a></li>
+      <li><a href="#encapsulation">Encapsulation</a></li>
+      <li><a href="#methodes-spec">Méthodes spéciales</a></li>
+      <li><a href="#pieges">Pièges</a></li>
+      <li><a href="#exercices">Exercices</a></li>
+      <li><a href="#synthese">Synthèse</a></li>
+      <li><a href="#qcm">QCM</a></li>
+    </ul>
+  </aside>
+  <main class="chapter-content">
+    <div class="chapter-header">
+      <div class="chapter-icon">🧩</div>
+      <div>
+        <h1>Programmation Orientée Objet</h1>
+        <p style="color:var(--text2);margin:0">Classes, héritage, encapsulation, polymorphisme</p>
+        <div class="chapter-meta" style="margin-top:.75rem">
+          <span class="chapter-badge badge-blue">Classes</span>
+          <span class="chapter-badge badge-green">Héritage</span>
+          <span class="chapter-badge badge-orange">Encapsulation</span>
+        </div>
+      </div>
+    </div>
+
+    <section id="intro">
+      <h2>🎯 Introduction</h2>
+      <p>La <strong>POO</strong> est un paradigme qui organise le code autour d'<strong>objets</strong> combinant des données (attributs) et des comportements (méthodes). Python est un langage multi-paradigme orienté objet.</p>
+      <div class="must-know">
+        <h3>✅ Ce qu'il faut savoir</h3>
+        <ul>
+          <li>Créer une classe avec <code>__init__</code>, <code>self</code>, attributs et méthodes</li>
+          <li>Héritage : <code>class Enfant(Parent)</code>, <code>super()</code></li>
+          <li>Polymorphisme : même méthode, comportement différent selon le type</li>
+          <li>Encapsulation : convention <code>_attribut</code> (protégé), <code>__attribut</code> (privé)</li>
+          <li>Méthodes spéciales : <code>__str__</code>, <code>__repr__</code>, <code>__len__</code>, <code>__eq__</code></li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="classes">
+      <h2>🏗️ Classes et objets</h2>
+      <pre><code><span class="kw">class</span> <span class="fn">Voiture</span>:
+    <span class="cm"># Attribut de classe (partagé par toutes les instances)</span>
+    nb_roues = <span class="num">4</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, marque, vitesse_max):
+        <span class="cm"># Attributs d'instance (propres à chaque objet)</span>
+        self.marque = marque
+        self.vitesse_max = vitesse_max
+        self._vitesse = <span class="num">0</span>      <span class="cm"># attribut "protégé" (convention)</span>
+
+    <span class="kw">def</span> <span class="fn">accelerer</span>(self, v):
+        <span class="kw">if</span> self._vitesse + v <= self.vitesse_max:
+            self._vitesse += v
+
+    <span class="kw">def</span> <span class="fn">vitesse</span>(self):
+        <span class="kw">return</span> self._vitesse
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="kw">return</span> f<span class="str">"{self.marque} à {self._vitesse} km/h"</span>
+
+<span class="cm"># Instanciation</span>
+ma_voiture = <span class="fn">Voiture</span>(<span class="str">"Toyota"</span>, <span class="num">180</span>)
+ma_voiture.<span class="fn">accelerer</span>(<span class="num">80</span>)
+<span class="kw">print</span>(ma_voiture)            <span class="cm"># Toyota à 80 km/h</span>
+<span class="kw">print</span>(<span class="fn">isinstance</span>(ma_voiture, Voiture))  <span class="cm"># True</span></code></pre>
+    </section>
+
+    <section id="heritage">
+      <h2>👨‍👩‍👧 Héritage</h2>
+      <p>L'<strong>héritage</strong> permet à une classe fille de réutiliser et spécialiser le comportement d'une classe parente.</p>
+      <pre><code><span class="kw">class</span> <span class="fn">Animal</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nom):
+        self.nom = nom
+    <span class="kw">def</span> <span class="fn">parler</span>(self):
+        <span class="kw">return</span> <span class="str">"..."</span>
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="kw">return</span> f<span class="str">"{self.nom} dit : {self.parler()}"</span>
+
+<span class="kw">class</span> <span class="fn">Chien</span>(<span class="fn">Animal</span>):    <span class="cm"># Chien hérite de Animal</span>
+    <span class="kw">def</span> <span class="fn">parler</span>(self):    <span class="cm"># Redéfinition (override)</span>
+        <span class="kw">return</span> <span class="str">"Woof !"</span>
+
+<span class="kw">class</span> <span class="fn">Chat</span>(<span class="fn">Animal</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, nom, interieur):
+        <span class="fn">super</span>().<span class="fn">__init__</span>(nom)  <span class="cm"># appel du constructeur parent</span>
+        self.interieur = interieur
+    <span class="kw">def</span> <span class="fn">parler</span>(self):
+        <span class="kw">return</span> <span class="str">"Miaou !"</span>
+
+<span class="cm"># Polymorphisme : même interface, comportement différent</span>
+animaux = [<span class="fn">Chien</span>(<span class="str">"Rex"</span>), <span class="fn">Chat</span>(<span class="str">"Felix"</span>, <span class="kw">True</span>)]
+<span class="kw">for</span> a <span class="kw">in</span> animaux:
+    <span class="kw">print</span>(a)   <span class="cm"># __str__ utilise parler() → polymorphisme</span></code></pre>
+    </section>
+
+    <section id="encapsulation">
+      <h2>🔒 Encapsulation</h2>
+      <table>
+        <tr><th>Convention Python</th><th>Signification</th><th>Exemple</th></tr>
+        <tr><td><code>attribut</code></td><td>Public — accessible partout</td><td><code>self.nom</code></td></tr>
+        <tr><td><code>_attribut</code></td><td>Protégé — convention, accessible mais "privé par convention"</td><td><code>self._vitesse</code></td></tr>
+        <tr><td><code>__attribut</code></td><td>Privé — name mangling, inaccessible directement de l'extérieur</td><td><code>self.__secret</code></td></tr>
+      </table>
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body"><h4>Getter / Setter</h4>
+        <p>On contrôle l'accès aux attributs privés via des méthodes dédiées :</p>
+        <pre style="margin:.5rem 0"><code><span class="kw">def</span> <span class="fn">get_solde</span>(self): <span class="kw">return</span> self.__solde
+<span class="kw">def</span> <span class="fn">set_solde</span>(self, v):
+    <span class="kw">if</span> v >= <span class="num">0</span>: self.__solde = v</code></pre>
+        </div>
+      </div>
+    </section>
+
+    <section id="methodes-spec">
+      <h2>✨ Méthodes spéciales (dunder)</h2>
+      <table>
+        <tr><th>Méthode</th><th>Déclencheur</th><th>Usage</th></tr>
+        <tr><td><code>__init__</code></td><td><code>Classe(args)</code></td><td>Constructeur</td></tr>
+        <tr><td><code>__str__</code></td><td><code>print(obj)</code>, <code>str(obj)</code></td><td>Affichage lisible</td></tr>
+        <tr><td><code>__repr__</code></td><td>Console Python, <code>repr(obj)</code></td><td>Représentation technique</td></tr>
+        <tr><td><code>__len__</code></td><td><code>len(obj)</code></td><td>Longueur</td></tr>
+        <tr><td><code>__eq__</code></td><td><code>obj1 == obj2</code></td><td>Égalité</td></tr>
+        <tr><td><code>__lt__</code></td><td><code>obj1 &lt; obj2</code></td><td>Comparaison</td></tr>
+        <tr><td><code>__add__</code></td><td><code>obj1 + obj2</code></td><td>Addition</td></tr>
+        <tr><td><code>__getitem__</code></td><td><code>obj[i]</code></td><td>Accès par indice</td></tr>
+      </table>
+    </section>
+
+    <section id="pieges">
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body"><h4>Pièges POO au bac</h4>
+        <ul>
+          <li>Oublier <code>self</code> comme premier paramètre de toute méthode → TypeError</li>
+          <li>Confondre attribut de classe et attribut d'instance</li>
+          <li>Oublier <code>super().__init__()</code> dans le constructeur de la classe fille</li>
+          <li><code>__str__</code> doit retourner une chaîne de caractères (pas afficher avec print)</li>
+          <li>Par défaut, <code>==</code> compare les identités (adresses mémoire), pas les valeurs — définir <code>__eq__</code></li>
+        </ul></div>
+      </div>
+    </section>
+
+    <section id="exercices">
+      <h2>🏋️ Exercices</h2>
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-facile">Facile</span><span class="exercise-title">Classe Fraction</span></div>
+        <div class="exercise-body">
+          <p>Créer une classe <code>Fraction</code> avec numérateur et dénominateur. Implémenter <code>__str__</code> et <code>__add__</code>.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+          <pre><code><span class="kw">from</span> math <span class="kw">import</span> gcd
+<span class="kw">class</span> <span class="fn">Fraction</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, num, den):
+        <span class="kw">if</span> den == <span class="num">0</span>: <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="str">"Dénominateur nul"</span>)
+        g = <span class="fn">gcd</span>(<span class="fn">abs</span>(num), <span class="fn">abs</span>(den))
+        self.num = num // g
+        self.den = den // g
+    <span class="kw">def</span> <span class="fn">__str__</span>(self):
+        <span class="kw">return</span> f<span class="str">"{self.num}/{self.den}"</span>
+    <span class="kw">def</span> <span class="fn">__add__</span>(self, other):
+        <span class="kw">return</span> <span class="fn">Fraction</span>(self.num*other.den + other.num*self.den,
+                       self.den * other.den)</code></pre>
+          </div></div>
+        </div>
+      </div>
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-bac">Niveau bac</span><span class="exercise-title">Héritage : Compte bancaire</span></div>
+        <div class="exercise-body">
+          <p>Créer une classe <code>Compte</code> avec solde et méthodes <code>depot</code>/<code>retrait</code>. Puis une classe <code>CompteEpargne</code> qui hérite de <code>Compte</code> et ajoute un taux d'intérêt et une méthode <code>capitaliser</code>.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+          <pre><code><span class="kw">class</span> <span class="fn">Compte</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, titulaire, solde=<span class="num">0</span>):
+        self.titulaire = titulaire
+        self.__solde = solde
+    <span class="kw">def</span> <span class="fn">solde</span>(self): <span class="kw">return</span> self.__solde
+    <span class="kw">def</span> <span class="fn">depot</span>(self, m): self.__solde += m
+    <span class="kw">def</span> <span class="fn">retrait</span>(self, m):
+        <span class="kw">if</span> m > self.__solde: <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="str">"Solde insuffisant"</span>)
+        self.__solde -= m
+    <span class="kw">def</span> <span class="fn">__str__</span>(self): <span class="kw">return</span> f<span class="str">"{self.titulaire}: {self.__solde}€"</span>
+
+<span class="kw">class</span> <span class="fn">CompteEpargne</span>(<span class="fn">Compte</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, titulaire, solde, taux):
+        <span class="fn">super</span>().<span class="fn">__init__</span>(titulaire, solde)
+        self.taux = taux
+    <span class="kw">def</span> <span class="fn">capitaliser</span>(self):
+        self.<span class="fn">depot</span>(self.<span class="fn">solde</span>() * self.taux)</code></pre>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="synthese" id="synthese">
+      <h2>📌 Fiche synthèse</h2>
+      <div class="synthese-grid">
+        <div class="synthese-card"><h4>CLASSE</h4><ul>
+          <li>__init__ = constructeur</li><li>self = référence à l'objet</li>
+          <li>isinstance(obj, Classe)</li><li>Attribut de classe vs instance</li>
+        </ul></div>
+        <div class="synthese-card"><h4>HÉRITAGE</h4><ul>
+          <li>class Fille(Parent)</li><li>super().__init__()</li>
+          <li>Override : redéfinir méthode</li><li>Polymorphisme : même nom, ≠ comportement</li>
+        </ul></div>
+        <div class="synthese-card"><h4>DUNDER</h4><ul>
+          <li>__str__ : print(obj)</li><li>__eq__ : obj1 == obj2</li>
+          <li>__len__ : len(obj)</li><li>__add__ : obj1 + obj2</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <section class="quiz-section" id="qcm">
+      <div class="quiz-header"><h2>🧠 QCM — POO</h2><span style="font-size:.85rem;color:var(--text2)">5 questions</span></div>
+      <div class="quiz-body"><button class="btn btn-primary" id="quiz-start">▶ Démarrer</button><div id="quiz-embed"></div></div>
+    </section>
+    <div style="text-align:center;margin:2rem 0;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="graphes.html" class="btn btn-outline">← Graphes</a>
+      <a href="bases-de-donnees.html" class="btn btn-outline">Bases de données →</a>
+    </div>
+  </main>
+</div>
+<footer><p>NSI Terminale — <a href="../index.html">Accueil</a> · <a href="../quiz.html">QCM global</a></p></footer>
+<script src="../js/questions.js"></script><script src="../js/quiz.js"></script><script src="../js/main.js"></script>
+<script>initChapterQuiz('quiz-embed', 'poo', 5);</script>
+</body></html>

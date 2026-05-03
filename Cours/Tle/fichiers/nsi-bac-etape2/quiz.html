@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QCM — NSI Bac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-brand">NSI<span>.bac</span></a>
+  <div class="nav-links">
+    <a href="index.html">Accueil</a>
+    <a href="quiz.html">QCM</a>
+    <a href="methodes.html">Méthodes</a><a href="complexite.html">Complexité</a>
+    <a href="chapitres/index.html">Chapitres</a>
+  </div>
+  <span class="nav-badge">Terminale 2025</span>
+  <button class="burger">☰</button>
+</nav>
+
+<div style="background:var(--bg2);border-bottom:1px solid var(--border);padding:2rem 1.5rem;text-align:center">
+  <h1>🧠 QCM de révision</h1>
+  <p style="color:var(--text2)">Sélectionne un chapitre et entraîne-toi avec des questions aléatoires</p>
+</div>
+
+<div class="container" id="quiz-form">
+  <h2>1. Choisis un chapitre</h2>
+  <div class="chapter-selector">
+    <button class="ch-sel-btn" data-chapter="structures"><span class="cs-icon">🗂️</span><span class="cs-name">Structures de données</span></button>
+    <button class="ch-sel-btn" data-chapter="arbres"><span class="cs-icon">🌳</span><span class="cs-name">Arbres</span></button>
+    <button class="ch-sel-btn" data-chapter="graphes"><span class="cs-icon">🕸️</span><span class="cs-name">Graphes</span></button>
+    <button class="ch-sel-btn" data-chapter="poo"><span class="cs-icon">🧩</span><span class="cs-name">POO</span></button>
+    <button class="ch-sel-btn" data-chapter="bdd"><span class="cs-icon">🗄️</span><span class="cs-name">Bases de données</span></button>
+    <button class="ch-sel-btn" data-chapter="algorithmique"><span class="cs-icon">⚙️</span><span class="cs-name">Algorithmique</span></button>
+    <button class="ch-sel-btn" data-chapter="architecture"><span class="cs-icon">🖥️</span><span class="cs-name">Architecture</span></button>
+    <button class="ch-sel-btn" data-chapter="reseaux"><span class="cs-icon">🌐</span><span class="cs-name">Réseaux</span></button>
+  </div>
+
+  <h2>2. Nombre de questions</h2>
+  <div class="quiz-config">
+    <label for="nb-questions">Combien de questions ?</label>
+    <select id="nb-questions">
+      <option value="5">5 questions — Entraînement rapide</option>
+      <option value="10" selected>10 questions — Session standard</option>
+      <option value="20">20 questions — Session intensive</option>
+      <option value="30">30 questions — Prépa bac</option>
+    </select>
+  </div>
+
+  <div style="text-align:center;margin:2rem 0">
+    <button class="btn btn-primary" id="quiz-launch" style="font-size:1.1rem;padding:.9rem 2.5rem">🚀 Lancer le QCM</button>
+  </div>
+
+  <div id="quiz-main"></div>
+</div>
+
+<footer>
+  <p>NSI Terminale — <a href="index.html">Accueil</a> · <a href="methodes.html">Méthodes</a><a href="complexite.html">Complexité</a></p>
+</footer>
+
+<script src="js/questions.js"></script>
+<script src="js/quiz.js"></script>
+<script src="js/main.js"></script>
+</body>
+</html>

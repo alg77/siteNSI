@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Chapitres — NSI Bac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <style>
+    .chapters-page { max-width: 1100px; margin: 0 auto; padding: 2rem 2rem 4rem; }
+    .chapters-index-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 1.5rem;
+    }
+    .chapter-index-card {
+      background: var(--bg2); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.5rem; border-left: 4px solid; display: flex; flex-direction: column;
+      gap: .75rem; transition: transform .15s, box-shadow .15s; text-decoration: none; color: var(--text);
+    }
+    .chapter-index-card:hover { transform: translateY(-3px); box-shadow: 0 8px 32px rgba(0,0,0,.4); text-decoration: none; color: var(--text); }
+    .card-top { display: flex; align-items: center; gap: 1rem; }
+    .card-icon { font-size: 2rem; line-height: 1; }
+    .card-title { font-family: 'Syne', sans-serif; font-size: 1.15rem; font-weight: 800; }
+    .card-desc { color: var(--text2); font-size: .88rem; line-height: 1.55; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: .4rem; margin-top: auto; }
+    .card-tag { font-family: 'JetBrains Mono', monospace; font-size: .72rem; padding: .2rem .55rem; border-radius: 4px; background: var(--bg3); border: 1px solid var(--border); color: var(--text2); }
+    .card-footer { display: flex; align-items: center; justify-content: space-between; padding-top: .75rem; border-top: 1px solid var(--border); font-size: .8rem; color: var(--text2); }
+    .card-footer .go { color: var(--accent); font-weight: 600; }
+    .page-header { text-align: center; padding: 3rem 2rem 2rem; }
+    .stats-strip { display: flex; gap: 2rem; justify-content: center; flex-wrap: wrap; margin: 1.5rem 0 2rem; }
+    .stat-item { text-align: center; }
+    .stat-n { font-family: 'Syne',sans-serif; font-size: 2rem; font-weight: 800; color: var(--accent); display: block; }
+    .stat-l { font-size: .8rem; color: var(--text2); text-transform: uppercase; letter-spacing: .05em; }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="../../index.html" class="nav-brand">Retour <span>site NSI</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Accueil</a><a href="../quiz.html">QCM</a>
+    <a href="../methodes.html">Méthodes & Algos</a>
+    <a href="../complexite.html">Complexité</a>
+    <a href="index.html" style="color:var(--accent)">Chapitres</a>
+  </div>
+  <span class="nav-badge">Terminale — 2026</span><button class="burger">☰</button>
+</nav>
+<div class="page-header">
+  <h1>📚 Tous les chapitres</h1>
+  <p style="color:var(--text2);max-width:600px;margin:.5rem auto 0">Cours complets, exercices progressifs par notion et QCM aléatoires pour chaque chapitre du programme NSI Terminale.</p>
+  <div class="stats-strip">
+    <div class="stat-item"><span class="stat-n">8</span><span class="stat-l">Chapitres</span></div>
+    <div class="stat-item"><span class="stat-n">400+</span><span class="stat-l">Questions QCM</span></div>
+    <div class="stat-item"><span class="stat-n">60+</span><span class="stat-l">Exercices pratiques</span></div>
+  </div>
+</div>
+<div class="chapters-page">
+  <div class="chapters-index-grid">
+    <a href="structures.html" class="chapter-index-card" style="border-left-color:#58a6ff">
+      <div class="card-top"><div class="card-icon">🗂️</div><div class="card-title">Structures de données</div></div>
+      <div class="card-desc">Listes, piles LIFO, files FIFO, dictionnaires, listes chaînées. Complexités et implémentations Python.</div>
+      <div class="card-tags"><span class="card-tag">Listes</span><span class="card-tag">Piles</span><span class="card-tag">Files</span><span class="card-tag">Dict</span></div>
+      <div class="card-footer"><span>5 notions · 25+ exercices · 50 QCM</span><span class="go">Accéder →</span></div>
+    </a>
+    <a href="arbres.html" class="chapter-index-card" style="border-left-color:#3fb950">
+      <div class="card-top"><div class="card-icon">🌳</div><div class="card-title">Arbres</div></div>
+      <div class="card-desc">Arbres binaires, ABR, tas. Parcours préfixe, infixe, postfixe, BFS. Récursivité et hauteur.</div>
+      <div class="card-tags"><span class="card-tag">ABR</span><span class="card-tag">Tas</span><span class="card-tag">Parcours</span><span class="card-tag">Récursion</span></div>
+      <div class="card-footer"><span>4 notions · 20+ exercices · 50 QCM</span><span class="go">Accéder →</span></div>
+    </a>
+    <a href="graphes.html" class="chapter-index-card" style="border-left-color:#bc8cff">
+      <div class="card-top"><div class="card-icon">🕸️</div><div class="card-title">Graphes</div></div>
+      <div class="card-desc">Représentations, BFS, DFS, Dijkstra, connexité. Graphes orientés et pondérés.</div>
+      <div class="card-tags"><span class="card-tag">BFS</span><span class="card-tag">DFS</span><span class="card-tag">Dijkstra</span><span class="card-tag">Matrice</span></div>
+      <div class="card-footer"><span>4 notions · 20+ exercices · 50 QCM</span><span class="go">Accéder →</span></div>
+    </a>
+    <a href="poo.html" class="chapter-index-card" style="border-left-color:#ff7b72">
+      <div class="card-top"><div class="card-icon">🧩</div><div class="card-title">Programmation Orientée Objet</div></div>
+      <div class="card-desc">Classes, héritage, polymorphisme, encapsulation. Méthodes spéciales Python.</div>
+      <div class="card-tags"><span class="card-tag">Classes</span><span class="card-tag">Héritage</span><span class="card-tag">self</span><span class="card-tag">__init__</span></div>
+      <div class="card-footer"><span>4 notions · 20+ exercices · 50 QCM</span><span class="go">Accéder →</span></div>
+    </a>
+    <a href="bases-de-donnees.html" class="chapter-index-card" style="border-left-color:#d29922">
+      <div class="card-top"><div class="card-icon">🗄️</div><div class="card-title">Bases de données</div></div>
+      <div class="card-desc">Modèle relationnel, SQL complet (SELECT, JOIN, GROUP BY), normalisation, ACID.</div>
+      <div class="card-tags"><span class="card-tag">SQL</span><span class="card-tag">JOIN</span><span class="card-tag">GROUP BY</span><span class="card-tag">ACID</span></div>
+      <div class="card-footer"><span>4 notions · 20+ exercices · 50 QCM</span><span class="go">Accéder →</span></div>
+    </a>
+    <a href="algorithmique.html" class="chapter-index-card" style="border-left-color:#79c0ff">
+      <div class="card-top"><div class="card-icon">⚙️</div><div class="card-title">Algorithmique</div></div>
+      <div class="card-desc">Complexité, tris, recherche dichotomique, récursion, programmation dynamique, glouton.</div>
+      <div class="card-tags"><span class="card-tag">O(n log n)</span><span class="card-tag">Tris</span><span class="card-tag">DP</span><span class="card-tag">Récursion</span></div>
+      <div class="card-footer"><span>5 notions · 25+ exercices · 50 QCM</span><span class="go">Accéder →</span></div>
+    </a>
+    <a href="architecture.html" class="chapter-index-card" style="border-left-color:#ffa657">
+      <div class="card-top"><div class="card-icon">🖥️</div><div class="card-title">Architecture &amp; OS</div></div>
+      <div class="card-desc">Von Neumann, CPU, mémoire, processus, ordonnancement. Binaire, hexadécimal, UTF-8.</div>
+      <div class="card-tags"><span class="card-tag">Von Neumann</span><span class="card-tag">Processus</span><span class="card-tag">Binaire</span><span class="card-tag">UTF-8</span></div>
+      <div class="card-footer"><span>4 notions · 20+ exercices · 50 QCM</span><span class="go">Accéder →</span></div>
+    </a>
+    <a href="reseaux.html" class="chapter-index-card" style="border-left-color:#39d353">
+      <div class="card-top"><div class="card-icon">🌐</div><div class="card-title">Réseaux</div></div>
+      <div class="card-desc">Modèle OSI, TCP/IP, DNS, routage, chiffrement, HTTPS/TLS. Protocoles essentiels.</div>
+      <div class="card-tags"><span class="card-tag">TCP/IP</span><span class="card-tag">DNS</span><span class="card-tag">Routage</span><span class="card-tag">TLS</span></div>
+      <div class="card-footer"><span>4 notions · 20+ exercices · 50 QCM</span><span class="go">Accéder →</span></div>
+    </a>
+  </div>
+</div>
+<footer style="text-align:center;padding:2rem;border-top:1px solid var(--border);color:var(--text2);margin-top:2rem">
+  <p>NSI Terminale 2025 — <a href="../quiz.html">QCM Global</a> · <a href="../methodes.html">Méthodes</a> · <a href="../complexite.html">Complexité</a></p>
+</footer>
+<script src="../js/main.js"></script>
+</body>
+</html>

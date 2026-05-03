@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bases de données — NSI Bac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-brand">NSI<span>.bac</span></a>
+  <div class="nav-links"><a href="../index.html">Accueil</a><a href="../quiz.html">QCM</a><a href="../methodes.html">Méthodes</a><a href="../complexite.html">Complexité</a><a href="index.html">Chapitres</a></div>
+  <span class="nav-badge">Terminale 2025</span><button class="burger">☰</button>
+</nav>
+<div class="chapter-layout">
+  <aside class="toc">
+    <h4>📋 Sommaire</h4>
+    <ul>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#modele">Modèle relationnel</a></li>
+      <li><a href="#sql-base">SQL de base</a></li>
+      <li><a href="#jointures">Jointures</a></li>
+      <li><a href="#agregats">Agrégats</a></li>
+      <li><a href="#contraintes">Contraintes</a></li>
+      <li><a href="#pieges">Pièges</a></li>
+      <li><a href="#exercices">Exercices</a></li>
+      <li><a href="#synthese">Synthèse</a></li>
+      <li><a href="#qcm">QCM</a></li>
+    </ul>
+  </aside>
+  <main class="chapter-content">
+    <div class="chapter-header">
+      <div class="chapter-icon">🗄️</div>
+      <div>
+        <h1>Bases de données</h1>
+        <p style="color:var(--text2);margin:0">Modèle relationnel, SQL, jointures, normalisation</p>
+        <div class="chapter-meta" style="margin-top:.75rem">
+          <span class="chapter-badge badge-blue">SQL</span>
+          <span class="chapter-badge badge-green">Relationnel</span>
+          <span class="chapter-badge badge-orange">ACID</span>
+        </div>
+      </div>
+    </div>
+
+    <section id="intro">
+      <h2>🎯 Introduction</h2>
+      <p>Une <strong>base de données relationnelle</strong> organise les données en <strong>tables</strong> (relations) composées de <strong>lignes</strong> (tuples) et de <strong>colonnes</strong> (attributs). SQL est le langage de requête standard.</p>
+      <div class="must-know">
+        <h3>✅ Ce qu'il faut savoir</h3>
+        <ul>
+          <li>Modèle relationnel : table, attribut, tuple, schéma</li>
+          <li>Clé primaire (PK), clé étrangère (FK), contrainte d'intégrité référentielle</li>
+          <li>SELECT, FROM, WHERE, ORDER BY, LIMIT</li>
+          <li>Fonctions d'agrégat : COUNT, SUM, AVG, MIN, MAX avec GROUP BY et HAVING</li>
+          <li>Jointures : JOIN (INNER), LEFT JOIN</li>
+          <li>INSERT, UPDATE, DELETE</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="modele">
+      <h2>📐 Modèle relationnel</h2>
+      <p>Exemple : une base de données de bibliothèque.</p>
+      <pre><code><span class="cm">-- Schéma relationnel</span>
+<span class="kw">CREATE TABLE</span> Auteur (
+    id_auteur   <span class="fn">INTEGER</span>  <span class="kw">PRIMARY KEY</span>,
+    nom         <span class="fn">TEXT</span>     <span class="kw">NOT NULL</span>,
+    nationalite <span class="fn">TEXT</span>
+);
+
+<span class="kw">CREATE TABLE</span> Livre (
+    isbn        <span class="fn">TEXT</span>     <span class="kw">PRIMARY KEY</span>,
+    titre       <span class="fn">TEXT</span>     <span class="kw">NOT NULL</span>,
+    annee       <span class="fn">INTEGER</span>,
+    id_auteur   <span class="fn">INTEGER</span>  <span class="kw">REFERENCES</span> Auteur(id_auteur)
+                          <span class="kw">ON DELETE CASCADE</span>
+);</code></pre>
+      <table>
+        <tr><th>Terme</th><th>Définition</th></tr>
+        <tr><td>Clé primaire (PK)</td><td>Attribut(s) qui identifient uniquement chaque ligne</td></tr>
+        <tr><td>Clé étrangère (FK)</td><td>Attribut qui référence la clé primaire d'une autre table</td></tr>
+        <tr><td>Cardinalité</td><td>Nombre de lignes satisfaisant une condition (lié à COUNT)</td></tr>
+        <tr><td>Domaine</td><td>Ensemble des valeurs possibles d'un attribut</td></tr>
+        <tr><td>Intégrité référentielle</td><td>Chaque FK doit référencer une PK existante</td></tr>
+      </table>
+    </section>
+
+    <section id="sql-base">
+      <h2>📝 SQL — Requêtes de base</h2>
+      <pre><code><span class="cm">-- Sélectionner toutes les colonnes</span>
+<span class="kw">SELECT</span> * <span class="kw">FROM</span> Livre;
+
+<span class="cm">-- Sélection avec condition</span>
+<span class="kw">SELECT</span> titre, annee
+<span class="kw">FROM</span> Livre
+<span class="kw">WHERE</span> annee > <span class="num">2000</span>
+<span class="kw">ORDER BY</span> annee <span class="kw">DESC</span>;
+
+<span class="cm">-- Insérer des données</span>
+<span class="kw">INSERT INTO</span> Auteur (id_auteur, nom, nationalite)
+<span class="kw">VALUES</span> (<span class="num">1</span>, <span class="str">'Camus'</span>, <span class="str">'Française'</span>);
+
+<span class="cm">-- Modifier des données</span>
+<span class="kw">UPDATE</span> Livre <span class="kw">SET</span> annee = <span class="num">1942</span>
+<span class="kw">WHERE</span> isbn = <span class="str">'978-X'</span>;
+
+<span class="cm">-- Supprimer des lignes</span>
+<span class="kw">DELETE FROM</span> Auteur
+<span class="kw">WHERE</span> id_auteur = <span class="num">5</span>;</code></pre>
+    </section>
+
+    <section id="jointures">
+      <h2>🔗 Jointures</h2>
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body"><h4>Principe de la jointure</h4>
+        <p>Une jointure combine les lignes de deux tables selon une condition de correspondance. Le plus souvent : <code>table1.fk = table2.pk</code>.</p></div>
+      </div>
+      <pre><code><span class="cm">-- INNER JOIN : seulement les lignes ayant une correspondance</span>
+<span class="kw">SELECT</span> Livre.titre, Auteur.nom
+<span class="kw">FROM</span> Livre
+<span class="kw">JOIN</span> Auteur <span class="kw">ON</span> Livre.id_auteur = Auteur.id_auteur;
+
+<span class="cm">-- LEFT JOIN : toutes les lignes de gauche + correspondances (NULL si absent)</span>
+<span class="kw">SELECT</span> Auteur.nom, Livre.titre
+<span class="kw">FROM</span> Auteur
+<span class="kw">LEFT JOIN</span> Livre <span class="kw">ON</span> Auteur.id_auteur = Livre.id_auteur;
+<span class="cm">-- → inclut les auteurs qui n'ont pas de livre (titre = NULL)</span>
+
+<span class="cm">-- Jointure de 3 tables</span>
+<span class="kw">SELECT</span> E.nom, C.nom_cours, N.note
+<span class="kw">FROM</span> Etudiant E
+<span class="kw">JOIN</span> Note N <span class="kw">ON</span> E.id = N.id_etudiant
+<span class="kw">JOIN</span> Cours C <span class="kw">ON</span> N.id_cours = C.id
+<span class="kw">WHERE</span> N.note >= <span class="num">10</span>;</code></pre>
+    </section>
+
+    <section id="agregats">
+      <h2>📊 Fonctions d'agrégat</h2>
+      <pre><code><span class="cm">-- COUNT, SUM, AVG, MIN, MAX</span>
+<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">AS</span> nb_livres        <span class="cm">-- nombre total</span>
+<span class="kw">FROM</span> Livre;
+
+<span class="cm">-- GROUP BY : grouper par auteur</span>
+<span class="kw">SELECT</span> id_auteur, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> nb_livres
+<span class="kw">FROM</span> Livre
+<span class="kw">GROUP BY</span> id_auteur;
+
+<span class="cm">-- HAVING : filtrer les groupes (après GROUP BY)</span>
+<span class="kw">SELECT</span> id_auteur, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> nb
+<span class="kw">FROM</span> Livre
+<span class="kw">GROUP BY</span> id_auteur
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) >= <span class="num">3</span>;   <span class="cm">-- auteurs avec 3+ livres
+
+-- Requête combinée avec jointure</span>
+<span class="kw">SELECT</span> Auteur.nom, <span class="fn">AVG</span>(Note.note) <span class="kw">AS</span> moyenne
+<span class="kw">FROM</span> Auteur
+<span class="kw">JOIN</span> Livre <span class="kw">ON</span> Auteur.id = Livre.id_auteur
+<span class="kw">GROUP BY</span> Auteur.nom
+<span class="kw">HAVING</span> <span class="fn">AVG</span>(Note.note) > <span class="num">4.0</span>
+<span class="kw">ORDER BY</span> moyenne <span class="kw">DESC</span>;</code></pre>
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body"><h4>WHERE vs HAVING</h4>
+        <p><strong>WHERE</strong> filtre les lignes <em>avant</em> le GROUP BY. <strong>HAVING</strong> filtre les groupes <em>après</em> le GROUP BY. On ne peut pas utiliser une fonction agrégat dans le WHERE !</p>
+        <p>❌ <code>WHERE COUNT(*) > 3</code> → erreur | ✅ <code>HAVING COUNT(*) > 3</code></p></div>
+      </div>
+    </section>
+
+    <section id="contraintes">
+      <h2>🔒 Contraintes et normalisation</h2>
+      <table>
+        <tr><th>Contrainte</th><th>Effet</th></tr>
+        <tr><td>NOT NULL</td><td>La valeur ne peut pas être NULL</td></tr>
+        <tr><td>UNIQUE</td><td>Chaque valeur doit être unique dans la colonne</td></tr>
+        <tr><td>PRIMARY KEY</td><td>NOT NULL + UNIQUE — identifiant unique</td></tr>
+        <tr><td>FOREIGN KEY</td><td>Référence à une PK d'une autre table</td></tr>
+        <tr><td>CHECK</td><td>Vérifie une condition booléenne</td></tr>
+      </table>
+      <div class="callout callout-purple">
+        <span class="callout-icon">📐</span>
+        <div class="callout-body"><h4>Propriétés ACID</h4>
+        <p><strong>A</strong>tomicité : tout ou rien | <strong>C</strong>ohérence : intégrité préservée | <strong>I</strong>solation : transactions indépendantes | <strong>D</strong>urabilité : données persistées</p></div>
+      </div>
+    </section>
+
+    <section id="pieges">
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body"><h4>Pièges SQL au bac</h4>
+        <ul>
+          <li><code>COUNT(*)</code> compte toutes les lignes, <code>COUNT(col)</code> ignore les NULL</li>
+          <li>Dans un SELECT avec GROUP BY, on ne peut mettre que des colonnes du GROUP BY ou des fonctions d'agrégat</li>
+          <li>La jointure INNER JOIN exclut les lignes sans correspondance (différent de LEFT JOIN)</li>
+          <li>SQL n'est pas sensible à la casse pour les mots clés (<code>SELECT = select</code>), mais peut l'être pour les données</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <section id="exercices">
+      <h2>🏋️ Exercices</h2>
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-facile">Facile</span><span class="exercise-title">Requête de sélection</span></div>
+        <div class="exercise-body">
+          <p>Table <code>Eleve(id, nom, classe, note)</code>. Écrire une requête SQL pour obtenir les noms des élèves de la classe 'TG1' ayant une note supérieure à 15, triés par note décroissante.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+          <pre><code><span class="kw">SELECT</span> nom
+<span class="kw">FROM</span> Eleve
+<span class="kw">WHERE</span> classe = <span class="str">'TG1'</span> <span class="kw">AND</span> note > <span class="num">15</span>
+<span class="kw">ORDER BY</span> note <span class="kw">DESC</span>;</code></pre>
+          </div></div>
+        </div>
+      </div>
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-bac">Niveau bac</span><span class="exercise-title">Jointure et agrégat</span></div>
+        <div class="exercise-body">
+          <p>Tables : <code>Client(id_client, nom, ville)</code> et <code>Commande(id_cmd, id_client, montant, date)</code>.<br>Trouver le nom et le montant total des commandes pour les clients de Paris ayant commandé pour plus de 500€ au total.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+          <pre><code><span class="kw">SELECT</span> C.nom, <span class="fn">SUM</span>(Cmd.montant) <span class="kw">AS</span> total
+<span class="kw">FROM</span> Client C
+<span class="kw">JOIN</span> Commande Cmd <span class="kw">ON</span> C.id_client = Cmd.id_client
+<span class="kw">WHERE</span> C.ville = <span class="str">'Paris'</span>
+<span class="kw">GROUP BY</span> C.nom
+<span class="kw">HAVING</span> <span class="fn">SUM</span>(Cmd.montant) > <span class="num">500</span>;</code></pre>
+          <p>On filtre d'abord les clients de Paris (WHERE), puis on groupe et on filtre les groupes (HAVING).</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="synthese" id="synthese">
+      <h2>📌 Fiche synthèse</h2>
+      <div class="synthese-grid">
+        <div class="synthese-card"><h4>STRUCTURE SQL</h4><ul>
+          <li>SELECT ... FROM ...</li><li>WHERE (filtre lignes)</li>
+          <li>GROUP BY + HAVING</li><li>ORDER BY ... ASC/DESC</li>
+        </ul></div>
+        <div class="synthese-card"><h4>JOINTURES</h4><ul>
+          <li>JOIN = INNER JOIN (intersection)</li><li>LEFT JOIN (tout à gauche)</li>
+          <li>ON table1.fk = table2.pk</li><li>3 tables = 2 JOIN</li>
+        </ul></div>
+        <div class="synthese-card"><h4>AGRÉGATS</h4><ul>
+          <li>COUNT(*) / COUNT(col)</li><li>SUM, AVG, MIN, MAX</li>
+          <li>WHERE ≠ HAVING</li><li>NULL ignoré par AVG, SUM</li>
+        </ul></div>
+      </div>
+    </section>
+
+    <section id="qcm" style="background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:2rem;margin:2rem 0">
+      <h2 style="margin-top:0">🧠 QCM — Bases de données</h2>
+      <p style="color:var(--text2)">Tirage aléatoire parmi 50 questions. Choisissez le nombre :</p>
+      <div style="display:flex;gap:.75rem;flex-wrap:wrap;margin:1rem 0">
+        <button class="btn btn-outline qcm-nb-btn" data-nb="5">5 questions</button>
+        <button class="btn btn-outline qcm-nb-btn" data-nb="10">10 questions</button>
+        <button class="btn btn-outline qcm-nb-btn" data-nb="20">20 questions</button>
+      </div>
+      <div id="quiz-container-bases-de-donnees"></div>
+    </section>
+        <div style="text-align:center;margin:2rem 0;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="index.html" class="btn btn-outline">← Tous les chapitres</a>
+      <a href="poo.html" class="btn btn-outline">← POO</a>
+      <a href="algorithmique.html" class="btn btn-outline">Chapitre suivant : Algorithmique →</a>
+    </div>
+  </main>
+</div>
+<footer><p>NSI Terminale — <a href="../index.html">Accueil</a> · <a href="../quiz.html">QCM global</a></p></footer>
+<script src="../js/questions.js"></script><script src="../js/quiz.js"></script><script src="../js/main.js"></script>
+<script>
+  document.querySelectorAll('.qcm-nb-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.qcm-nb-btn').forEach(b => b.classList.remove('btn-primary'));
+      btn.classList.add('btn-primary');
+      const nb = parseInt(btn.dataset.nb);
+      document.getElementById('quiz-container-bases-de-donnees').innerHTML = '';
+      initChapterQuiz('bases-de-donnees', 'quiz-container-bases-de-donnees', nb);
+    });
+  });
+  document.querySelector('[data-nb="5"]').click();
+</script>
+</body></html>

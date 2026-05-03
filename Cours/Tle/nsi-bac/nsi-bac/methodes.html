@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Méthodes & Algorithmes — NSI Bac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-brand">NSI<span>.bac</span></a>
+  <div class="nav-links">
+    <a href="index.html">Accueil</a>
+    <a href="quiz.html">QCM</a>
+    <a href="methodes.html">Méthodes</a>
+    <a href="chapitres/structures.html">Chapitres</a>
+  </div>
+  <span class="nav-badge">Terminale 2025</span>
+  <button class="burger">☰</button>
+</nav>
+
+<div class="chapter-layout">
+  <aside class="toc">
+    <h4>📋 Sur cette page</h4>
+    <ul>
+      <li><a href="#complexites">Complexités</a></li>
+      <li><a href="#tris">Algorithmes de tri</a></li>
+      <li><a href="#recherche">Recherche</a></li>
+      <li><a href="#recursion">Récursion</a></li>
+      <li><a href="#graphes-algos">Graphes</a></li>
+      <li><a href="#sql-recap">SQL</a></li>
+      <li><a href="#python-tips">Python tips</a></li>
+    </ul>
+  </aside>
+  <main class="chapter-content">
+    <div class="chapter-header">
+      <div class="chapter-icon">📐</div>
+      <div>
+        <h1>Méthodes & Algorithmes</h1>
+        <p style="color:var(--text2);margin:0">Tous les algorithmes incontournables du bac NSI</p>
+        <div class="chapter-meta" style="margin-top:.75rem">
+          <span class="chapter-badge badge-blue">Référence rapide</span>
+          <span class="chapter-badge badge-orange">Indispensable</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COMPLEXITÉS -->
+    <section class="section-card" id="complexites">
+      <h2>📊 Tableau des complexités</h2>
+      <table>
+        <tr><th>Notation</th><th>Nom</th><th>Exemple</th><th>n=1000</th></tr>
+        <tr><td>O(1)</td><td>Constante</td><td>Accès dict, accès liste[i]</td><td>1 op</td></tr>
+        <tr><td>O(log n)</td><td>Logarithmique</td><td>Recherche dichotomique</td><td>~10 op</td></tr>
+        <tr><td>O(n)</td><td>Linéaire</td><td>Parcours liste</td><td>1 000 op</td></tr>
+        <tr><td>O(n log n)</td><td>Quasi-linéaire</td><td>Tri fusion, tri rapide moy.</td><td>~10 000 op</td></tr>
+        <tr><td>O(n²)</td><td>Quadratique</td><td>Tri à bulles, sélection</td><td>1 000 000 op</td></tr>
+        <tr><td>O(2ⁿ)</td><td>Exponentielle</td><td>Fibonacci naïf</td><td>10³⁰⁰ op !</td></tr>
+        <tr><td>O(n!)</td><td>Factorielle</td><td>Permutations</td><td>Impossible</td></tr>
+      </table>
+    </section>
+
+    <!-- TRIS -->
+    <section class="section-card" id="tris">
+      <h2>🔀 Algorithmes de tri</h2>
+
+      <div class="tabs">
+        <div class="tab-list">
+          <button class="tab-btn active" data-tab="tri-bulles">Bulles</button>
+          <button class="tab-btn" data-tab="tri-selection">Sélection</button>
+          <button class="tab-btn" data-tab="tri-insertion">Insertion</button>
+          <button class="tab-btn" data-tab="tri-fusion">Fusion</button>
+        </div>
+        <div class="tab-panel active" id="tri-bulles">
+          <h3 style="margin-top:0">Tri à bulles — O(n²)</h3>
+          <pre><code><span class="kw">def</span> <span class="fn">tri_bulles</span>(tab):
+    n = <span class="fn">len</span>(tab)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n - <span class="num">1</span>):
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(n - <span class="num">1</span> - i):
+            <span class="kw">if</span> tab[j] > tab[j + <span class="num">1</span>]:
+                tab[j], tab[j + <span class="num">1</span>] = tab[j + <span class="num">1</span>], tab[j]
+    <span class="kw">return</span> tab</code></pre>
+          <p><strong>Principe :</strong> Compare paires adjacentes, fait "remonter" les grands éléments. Stable. O(n²) toujours.</p>
+        </div>
+        <div class="tab-panel" id="tri-selection">
+          <h3 style="margin-top:0">Tri par sélection — O(n²)</h3>
+          <pre><code><span class="kw">def</span> <span class="fn">tri_selection</span>(tab):
+    n = <span class="fn">len</span>(tab)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n - <span class="num">1</span>):
+        idx_min = i
+        <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i + <span class="num">1</span>, n):
+            <span class="kw">if</span> tab[j] < tab[idx_min]:
+                idx_min = j
+        tab[i], tab[idx_min] = tab[idx_min], tab[i]
+    <span class="kw">return</span> tab</code></pre>
+          <p><strong>Principe :</strong> Cherche le minimum du sous-tableau non trié et le place en position i. N échanges max. Non stable.</p>
+        </div>
+        <div class="tab-panel" id="tri-insertion">
+          <h3 style="margin-top:0">Tri par insertion — O(n²)</h3>
+          <pre><code><span class="kw">def</span> <span class="fn">tri_insertion</span>(tab):
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, <span class="fn">len</span>(tab)):
+        cle = tab[i]
+        j = i - <span class="num">1</span>
+        <span class="kw">while</span> j >= <span class="num">0</span> <span class="kw">and</span> tab[j] > cle:
+            tab[j + <span class="num">1</span>] = tab[j]
+            j -= <span class="num">1</span>
+        tab[j + <span class="num">1</span>] = cle
+    <span class="kw">return</span> tab</code></pre>
+          <p><strong>Principe :</strong> Insère chaque élément à sa place dans la partie déjà triée. Stable. Efficace si presque trié : O(n).</p>
+        </div>
+        <div class="tab-panel" id="tri-fusion">
+          <h3 style="margin-top:0">Tri fusion — O(n log n) garanti</h3>
+          <pre><code><span class="kw">def</span> <span class="fn">fusionner</span>(g, d):
+    res, i, j = [], <span class="num">0</span>, <span class="num">0</span>
+    <span class="kw">while</span> i < <span class="fn">len</span>(g) <span class="kw">and</span> j < <span class="fn">len</span>(d):
+        <span class="kw">if</span> g[i] <= d[j]: res.<span class="fn">append</span>(g[i]); i += <span class="num">1</span>
+        <span class="kw">else</span>: res.<span class="fn">append</span>(d[j]); j += <span class="num">1</span>
+    <span class="kw">return</span> res + g[i:] + d[j:]
+
+<span class="kw">def</span> <span class="fn">tri_fusion</span>(tab):
+    <span class="kw">if</span> <span class="fn">len</span>(tab) <= <span class="num">1</span>: <span class="kw">return</span> tab
+    m = <span class="fn">len</span>(tab) // <span class="num">2</span>
+    <span class="kw">return</span> <span class="fn">fusionner</span>(<span class="fn">tri_fusion</span>(tab[:m]), <span class="fn">tri_fusion</span>(tab[m:]))</code></pre>
+          <p><strong>Principe :</strong> Divise le tableau en deux, trie chaque moitié récursivement, fusionne. Stable. O(n log n) toujours ✓</p>
+        </div>
+      </div>
+
+      <table>
+        <tr><th>Algorithme</th><th>Meilleur</th><th>Moyen</th><th>Pire</th><th>Stable</th></tr>
+        <tr><td>Bulles</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>Oui</td></tr>
+        <tr><td>Sélection</td><td>O(n²)</td><td>O(n²)</td><td>O(n²)</td><td>Non</td></tr>
+        <tr><td>Insertion</td><td>O(n)</td><td>O(n²)</td><td>O(n²)</td><td>Oui</td></tr>
+        <tr><td>Fusion</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n log n)</td><td>Oui</td></tr>
+        <tr><td>Rapide</td><td>O(n log n)</td><td>O(n log n)</td><td>O(n²)</td><td>Non</td></tr>
+      </table>
+    </section>
+
+    <!-- RECHERCHE -->
+    <section class="section-card" id="recherche">
+      <h2>🔍 Algorithmes de recherche</h2>
+      <h3>Recherche dichotomique — O(log n)</h3>
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body"><h4>Prérequis absolu</h4><p>Le tableau doit être <strong>trié</strong> pour que la recherche dichotomique fonctionne !</p></div>
+      </div>
+      <pre><code><span class="kw">def</span> <span class="fn">recherche_dicho</span>(tab, cible):
+    <span class="cm"># Version itérative — à préférer au bac</span>
+    gauche, droite = <span class="num">0</span>, <span class="fn">len</span>(tab) - <span class="num">1</span>
+    <span class="kw">while</span> gauche <= droite:
+        milieu = (gauche + droite) // <span class="num">2</span>
+        <span class="kw">if</span> tab[milieu] == cible:
+            <span class="kw">return</span> milieu        <span class="cm"># trouvé à l'indice milieu</span>
+        <span class="kw">elif</span> tab[milieu] < cible:
+            gauche = milieu + <span class="num">1</span>   <span class="cm"># chercher à droite</span>
+        <span class="kw">else</span>:
+            droite = milieu - <span class="num">1</span>   <span class="cm"># chercher à gauche</span>
+    <span class="kw">return</span> -<span class="num">1</span>                   <span class="cm"># non trouvé</span></code></pre>
+    </section>
+
+    <!-- RECURSION -->
+    <section class="section-card" id="recursion">
+      <h2>🔄 Récursion</h2>
+      <div class="must-know">
+        <h3>✅ Structure d'une fonction récursive</h3>
+        <ul>
+          <li>Un <strong>cas de base</strong> (condition d'arrêt) — obligatoire !</li>
+          <li>Un <strong>appel récursif</strong> sur un problème plus petit</li>
+          <li>La garantie que le cas de base est atteint</li>
+        </ul>
+      </div>
+      <pre><code><span class="cm"># Exemple : factorielle</span>
+<span class="kw">def</span> <span class="fn">fact</span>(n):
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> <span class="num">1</span>     <span class="cm"># cas de base</span>
+    <span class="kw">return</span> n * <span class="fn">fact</span>(n - <span class="num">1</span>)  <span class="cm"># appel récursif
+
+# Fibonacci avec mémoïsation</span>
+<span class="kw">def</span> <span class="fn">fib</span>(n, memo={}):
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> n
+    <span class="kw">if</span> n <span class="kw">not in</span> memo:
+        memo[n] = <span class="fn">fib</span>(n-<span class="num">1</span>, memo) + <span class="fn">fib</span>(n-<span class="num">2</span>, memo)
+    <span class="kw">return</span> memo[n]</code></pre>
+    </section>
+
+    <!-- GRAPHES -->
+    <section class="section-card" id="graphes-algos">
+      <h2>🕸️ Parcours de graphes</h2>
+      <div class="tabs">
+        <div class="tab-list">
+          <button class="tab-btn active" data-tab="bfs-code">BFS (largeur)</button>
+          <button class="tab-btn" data-tab="dfs-code">DFS (profondeur)</button>
+          <button class="tab-btn" data-tab="dijkstra-code">Dijkstra</button>
+        </div>
+        <div class="tab-panel active" id="bfs-code">
+          <h3 style="margin-top:0">BFS — Parcours en largeur</h3>
+          <pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="fn">bfs</span>(graphe, depart):
+    visites = {depart}
+    file = <span class="fn">deque</span>([depart])
+    ordre = []
+    <span class="kw">while</span> file:
+        sommet = file.<span class="fn">popleft</span>()
+        ordre.<span class="fn">append</span>(sommet)
+        <span class="kw">for</span> voisin <span class="kw">in</span> graphe[sommet]:
+            <span class="kw">if</span> voisin <span class="kw">not in</span> visites:
+                visites.<span class="fn">add</span>(voisin)
+                file.<span class="fn">append</span>(voisin)
+    <span class="kw">return</span> ordre</code></pre>
+          <p>Utilise une <strong>file</strong>. Trouve le plus court chemin (non pondéré). O(V + E).</p>
+        </div>
+        <div class="tab-panel" id="dfs-code">
+          <h3 style="margin-top:0">DFS — Parcours en profondeur</h3>
+          <pre><code><span class="kw">def</span> <span class="fn">dfs</span>(graphe, sommet, visites=<span class="kw">None</span>):
+    <span class="kw">if</span> visites <span class="kw">is None</span>: visites = <span class="fn">set</span>()
+    visites.<span class="fn">add</span>(sommet)
+    <span class="kw">print</span>(sommet)
+    <span class="kw">for</span> voisin <span class="kw">in</span> graphe[sommet]:
+        <span class="kw">if</span> voisin <span class="kw">not in</span> visites:
+            <span class="fn">dfs</span>(graphe, voisin, visites)
+    <span class="kw">return</span> visites</code></pre>
+          <p>Utilise la <strong>récursion</strong> (ou une pile). Explore le plus loin possible avant de revenir. O(V + E).</p>
+        </div>
+        <div class="tab-panel" id="dijkstra-code">
+          <h3 style="margin-top:0">Dijkstra — Plus courts chemins</h3>
+          <pre><code><span class="kw">import</span> heapq
+
+<span class="kw">def</span> <span class="fn">dijkstra</span>(graphe, depart):
+    <span class="cm"># graphe[s] = [(voisin, poids), ...]</span>
+    dist = {s: <span class="fn">float</span>(<span class="str">'inf'</span>) <span class="kw">for</span> s <span class="kw">in</span> graphe}
+    dist[depart] = <span class="num">0</span>
+    tas = [(<span class="num">0</span>, depart)]  <span class="cm"># (distance, sommet)</span>
+    <span class="kw">while</span> tas:
+        d, u = heapq.<span class="fn">heappop</span>(tas)
+        <span class="kw">if</span> d > dist[u]: <span class="kw">continue</span>
+        <span class="kw">for</span> v, poids <span class="kw">in</span> graphe[u]:
+            nd = dist[u] + poids
+            <span class="kw">if</span> nd < dist[v]:
+                dist[v] = nd
+                heapq.<span class="fn">heappush</span>(tas, (nd, v))
+    <span class="kw">return</span> dist</code></pre>
+          <p>Poids positifs uniquement. O((V + E) log V) avec un tas binaire.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- SQL -->
+    <section class="section-card" id="sql-recap">
+      <h2>🗄️ SQL — Aide-mémoire</h2>
+      <pre><code><span class="cm">-- Structure générale d'une requête SQL</span>
+<span class="kw">SELECT</span> colonne1, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> nb
+<span class="kw">FROM</span> table1
+<span class="kw">JOIN</span> table2 <span class="kw">ON</span> table1.id = table2.fk_id
+<span class="kw">WHERE</span> condition
+<span class="kw">GROUP BY</span> colonne1
+<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) > <span class="num">1</span>
+<span class="kw">ORDER BY</span> colonne1 <span class="kw">DESC</span>
+<span class="kw">LIMIT</span> <span class="num">10</span>;</code></pre>
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body"><h4>Ordre d'exécution SQL (pas l'ordre d'écriture !)</h4>
+        <p>FROM → JOIN → WHERE → GROUP BY → HAVING → SELECT → ORDER BY → LIMIT</p>
+        <p>C'est pourquoi on ne peut pas utiliser un alias du SELECT dans le WHERE.</p></div>
+      </div>
+      <table>
+        <tr><th>Clause</th><th>Rôle</th></tr>
+        <tr><td>WHERE</td><td>Filtre les lignes avant GROUP BY</td></tr>
+        <tr><td>GROUP BY</td><td>Regroupe les lignes par valeur</td></tr>
+        <tr><td>HAVING</td><td>Filtre les groupes (après GROUP BY)</td></tr>
+        <tr><td>JOIN</td><td>Jointure entre deux tables sur une condition</td></tr>
+        <tr><td>LEFT JOIN</td><td>Garde toutes les lignes de gauche, NULL si pas de correspondance</td></tr>
+        <tr><td>COUNT(*)</td><td>Nombre de lignes dans le groupe</td></tr>
+        <tr><td>COUNT(col)</td><td>Nombre de valeurs non NULL</td></tr>
+      </table>
+    </section>
+
+    <!-- PYTHON TIPS -->
+    <section class="section-card" id="python-tips">
+      <h2>🐍 Python — Astuces essentielles</h2>
+      <pre><code><span class="cm"># Compréhensions de liste</span>
+carres = [x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">10</span>) <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>]
+
+<span class="cm"># Décompression / échange</span>
+a, b = b, a   <span class="cm"># swap en Python sans variable tmp</span>
+a, *reste = [<span class="num">1</span>, <span class="num">2</span>, <span class="num">3</span>, <span class="num">4</span>]  <span class="cm"># a=1, reste=[2,3,4]</span>
+
+<span class="cm"># Dictionnaire par défaut</span>
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+d = <span class="fn">defaultdict</span>(<span class="fn">list</span>)
+d[<span class="str">'cle'</span>].<span class="fn">append</span>(<span class="num">1</span>)  <span class="cm"># pas de KeyError</span>
+
+<span class="cm"># Trier avec clé personnalisée</span>
+<span class="fn">sorted</span>(liste, key=<span class="kw">lambda</span> x: x[<span class="num">1</span>], reverse=<span class="kw">True</span>)
+
+<span class="cm"># Stack / Queue</span>
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+file = <span class="fn">deque</span>()
+file.<span class="fn">append</span>(<span class="num">1</span>)     <span class="cm"># enfiler</span>
+file.<span class="fn">popleft</span>()    <span class="cm"># défiler O(1)</span>
+
+<span class="cm"># Récursion + mémoïsation</span>
+<span class="kw">from</span> functools <span class="kw">import</span> lru_cache
+<span class="kw">@lru_cache</span>(maxsize=<span class="kw">None</span>)
+<span class="kw">def</span> <span class="fn">fib</span>(n):
+    <span class="kw">if</span> n < <span class="num">2</span>: <span class="kw">return</span> n
+    <span class="kw">return</span> <span class="fn">fib</span>(n-<span class="num">1</span>) + <span class="fn">fib</span>(n-<span class="num">2</span>)</code></pre>
+    </section>
+
+  </main>
+</div>
+
+<footer>
+  <p>NSI Terminale — <a href="index.html">Accueil</a> · <a href="quiz.html">QCM</a></p>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Structures de données — NSI Bac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-brand">NSI<span>.bac</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Accueil</a>
+    <a href="../quiz.html">QCM</a>
+    <a href="../methodes.html">Méthodes</a>
+    <a href="structures.html">Chapitres</a>
+  </div>
+  <span class="nav-badge">Terminale 2025</span>
+  <button class="burger">☰</button>
+</nav>
+
+<div class="chapter-layout">
+  <aside class="toc">
+    <h4>📋 Sommaire</h4>
+    <ul>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#listes">Listes & tableaux</a></li>
+      <li><a href="#piles">Piles (LIFO)</a></li>
+      <li><a href="#files">Files (FIFO)</a></li>
+      <li><a href="#dictionnaires">Dictionnaires</a></li>
+      <li><a href="#chaines">Listes chaînées</a></li>
+      <li><a href="#pieges">Pièges du bac</a></li>
+      <li><a href="#exercices">Exercices</a></li>
+      <li><a href="#synthese">Synthèse</a></li>
+      <li><a href="#qcm">QCM</a></li>
+    </ul>
+  </aside>
+  <main class="chapter-content">
+    <div class="chapter-header">
+      <div class="chapter-icon">🗂️</div>
+      <div>
+        <h1>Structures de données</h1>
+        <p style="color:var(--text2);margin:0">Listes, piles, files, dictionnaires et listes chaînées</p>
+        <div class="chapter-meta" style="margin-top:.75rem">
+          <span class="chapter-badge badge-blue">Structures</span>
+          <span class="chapter-badge badge-green">Python</span>
+          <span class="chapter-badge badge-orange">Complexité O(1) / O(n)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTRO -->
+    <section id="intro">
+      <h2>🎯 Introduction</h2>
+      <p>Les <strong>structures de données</strong> permettent d'organiser et de stocker les informations en mémoire. Le choix d'une structure adaptée est crucial pour l'efficacité d'un algorithme.</p>
+      <div class="must-know">
+        <h3>✅ Ce qu'il faut absolument savoir pour le bac</h3>
+        <ul>
+          <li>Distinguer les structures et leurs propriétés (LIFO, FIFO, accès par clé)</li>
+          <li>Connaître les complexités O(1) / O(n) de chaque opération</li>
+          <li>Implémenter une pile et une file avec une liste Python</li>
+          <li>Utiliser les dictionnaires Python (création, accès, test d'appartenance)</li>
+          <li>Comprendre les listes chaînées (nœuds, pointeurs)</li>
+          <li>Savoir choisir la bonne structure selon le problème</li>
+        </ul>
+      </div>
+    </section>
+
+    <!-- LISTES -->
+    <section id="listes">
+      <h2>📋 Listes et tableaux</h2>
+      <p>En Python, le type <code>list</code> est un <strong>tableau dynamique</strong> : les éléments sont stockés de façon contiguë en mémoire, et Python gère automatiquement le redimensionnement.</p>
+      <table>
+        <tr><th>Opération</th><th>Complexité</th><th>Exemple</th></tr>
+        <tr><td>Accès par indice</td><td>O(1)</td><td><code>tab[i]</code></td></tr>
+        <tr><td>Ajout en fin</td><td>O(1) amorti</td><td><code>tab.append(x)</code></td></tr>
+        <tr><td>Insertion en début</td><td>O(n)</td><td><code>tab.insert(0, x)</code></td></tr>
+        <tr><td>Suppression en fin</td><td>O(1)</td><td><code>tab.pop()</code></td></tr>
+        <tr><td>Recherche d'une valeur</td><td>O(n)</td><td><code>x in tab</code></td></tr>
+        <tr><td>Longueur</td><td>O(1)</td><td><code>len(tab)</code></td></tr>
+      </table>
+      <pre><code><span class="cm"># Création et opérations courantes</span>
+tab = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]
+tab.<span class="fn">append</span>(<span class="num">9</span>)         <span class="cm"># [3,1,4,1,5,9]</span>
+tab.<span class="fn">insert</span>(<span class="num">0</span>, <span class="num">0</span>)      <span class="cm"># [0,3,1,4,1,5,9] — O(n) !</span>
+tab.<span class="fn">pop</span>()             <span class="cm"># retire 9, O(1)</span>
+tab.<span class="fn">pop</span>(<span class="num">0</span>)            <span class="cm"># retire 0, O(n) !</span>
+
+<span class="cm"># Compréhension de liste</span>
+carres = [x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>)]  <span class="cm"># [0,1,4,9,16]</span>
+pairs  = [x <span class="kw">for</span> x <span class="kw">in</span> tab <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>]</code></pre>
+    </section>
+
+    <!-- PILES -->
+    <section id="piles">
+      <h2>📚 Piles — LIFO</h2>
+      <p>Une <strong>pile</strong> (stack) suit le principe <em>LIFO</em> : <strong>Last In, First Out</strong> (dernier entré, premier sorti). Comme une pile d'assiettes.</p>
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body"><h4>Cas d'usage réels</h4>
+        <p>Pile d'appels de fonctions (récursion), annulation dans un éditeur (Ctrl+Z), navigation web (bouton Retour), vérification des parenthèses.</p></div>
+      </div>
+      <pre><code><span class="cm"># Implémentation d'une pile avec une liste Python</span>
+pile = []
+
+<span class="cm"># Empiler (push)</span>
+pile.<span class="fn">append</span>(<span class="str">'A'</span>)   <span class="cm"># pile = ['A']</span>
+pile.<span class="fn">append</span>(<span class="str">'B'</span>)   <span class="cm"># pile = ['A','B']</span>
+pile.<span class="fn">append</span>(<span class="str">'C'</span>)   <span class="cm"># pile = ['A','B','C']</span>
+
+<span class="cm"># Dépiler (pop) — retire le DERNIER élément</span>
+sommet = pile.<span class="fn">pop</span>()   <span class="cm"># sommet = 'C', pile = ['A','B']</span>
+
+<span class="cm"># Consulter sans dépiler (peek)</span>
+<span class="kw">if</span> pile:              <span class="cm"># vérifier non-vide avant !</span>
+    sommet = pile[-<span class="num">1</span>]  <span class="cm"># 'B' sans modifier la pile</span>
+
+<span class="cm"># Classe Pile propre</span>
+<span class="kw">class</span> <span class="fn">Pile</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self): self._data = []
+    <span class="kw">def</span> <span class="fn">est_vide</span>(self): <span class="kw">return</span> <span class="fn">len</span>(self._data) == <span class="num">0</span>
+    <span class="kw">def</span> <span class="fn">empiler</span>(self, x): self._data.<span class="fn">append</span>(x)
+    <span class="kw">def</span> <span class="fn">depiler</span>(self):
+        <span class="kw">if</span> self.<span class="fn">est_vide</span>(): <span class="kw">raise</span> <span class="fn">IndexError</span>(<span class="str">"pile vide"</span>)
+        <span class="kw">return</span> self._data.<span class="fn">pop</span>()
+    <span class="kw">def</span> <span class="fn">sommet</span>(self): <span class="kw">return</span> self._data[-<span class="num">1</span>]</code></pre>
+    </section>
+
+    <!-- FILES -->
+    <section id="files">
+      <h2>🚌 Files — FIFO</h2>
+      <p>Une <strong>file</strong> (queue) suit le principe <em>FIFO</em> : <strong>First In, First Out</strong> (premier entré, premier sorti). Comme une file d'attente.</p>
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body"><h4>N'utilise pas une simple liste Python pour une file !</h4>
+        <p><code>list.insert(0, x)</code> est <strong>O(n)</strong> car il décale tous les éléments. Utilise <code>collections.deque</code> pour des opérations O(1) aux deux extrémités.</p></div>
+      </div>
+      <pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+file = <span class="fn">deque</span>()          <span class="cm"># file vide</span>
+
+<span class="cm"># Enfiler (enqueue) — ajouter en queue</span>
+file.<span class="fn">append</span>(<span class="str">'A'</span>)         <span class="cm"># file = deque(['A'])</span>
+file.<span class="fn">append</span>(<span class="str">'B'</span>)         <span class="cm"># file = deque(['A','B'])</span>
+
+<span class="cm"># Défiler (dequeue) — retirer en tête — O(1) !</span>
+premier = file.<span class="fn">popleft</span>() <span class="cm"># premier = 'A'</span>
+
+<span class="cm"># Classe File propre</span>
+<span class="kw">class</span> <span class="fn">File</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self): self._data = <span class="fn">deque</span>()
+    <span class="kw">def</span> <span class="fn">est_vide</span>(self): <span class="kw">return</span> <span class="fn">len</span>(self._data) == <span class="num">0</span>
+    <span class="kw">def</span> <span class="fn">enfiler</span>(self, x): self._data.<span class="fn">append</span>(x)
+    <span class="kw">def</span> <span class="fn">defiler</span>(self):
+        <span class="kw">if</span> self.<span class="fn">est_vide</span>(): <span class="kw">raise</span> <span class="fn">IndexError</span>(<span class="str">"file vide"</span>)
+        <span class="kw">return</span> self._data.<span class="fn">popleft</span>()</code></pre>
+    </section>
+
+    <!-- DICTIONNAIRES -->
+    <section id="dictionnaires">
+      <h2>🗝️ Dictionnaires</h2>
+      <p>Un <strong>dictionnaire</strong> (table de hachage) associe des <strong>clés</strong> à des <strong>valeurs</strong>. Les clés doivent être hashables (immuables : str, int, tuple).</p>
+      <table>
+        <tr><th>Opération</th><th>Complexité</th><th>Exemple</th></tr>
+        <tr><td>Accès/Modification</td><td>O(1) moy.</td><td><code>d[cle]</code></td></tr>
+        <tr><td>Test d'appartenance</td><td>O(1) moy.</td><td><code>cle in d</code></td></tr>
+        <tr><td>Insertion</td><td>O(1) moy.</td><td><code>d[cle] = val</code></td></tr>
+        <tr><td>Suppression</td><td>O(1) moy.</td><td><code>del d[cle]</code></td></tr>
+        <tr><td>Parcours</td><td>O(n)</td><td><code>for k, v in d.items()</code></td></tr>
+      </table>
+      <pre><code><span class="cm"># Création</span>
+notes = {<span class="str">'Alice'</span>: <span class="num">18</span>, <span class="str">'Bob'</span>: <span class="num">14</span>, <span class="str">'Chloe'</span>: <span class="num">16</span>}
+
+<span class="cm"># Accès (KeyError si absent → utiliser get)</span>
+n = notes.<span class="fn">get</span>(<span class="str">'David'</span>, <span class="num">0</span>)   <span class="cm"># renvoie 0 par défaut</span>
+
+<span class="cm"># Test d'appartenance</span>
+<span class="kw">if</span> <span class="str">'Alice'</span> <span class="kw">in</span> notes:
+    <span class="kw">print</span>(notes[<span class="str">'Alice'</span>])      <span class="cm"># 18</span>
+
+<span class="cm"># Parcours</span>
+<span class="kw">for</span> nom, note <span class="kw">in</span> notes.<span class="fn">items</span>():
+    <span class="kw">print</span>(f<span class="str">"{nom} : {note}"</span>)
+
+<span class="cm"># Compréhension de dictionnaire</span>
+maj = {k.upper(): v <span class="kw">for</span> k, v <span class="kw">in</span> notes.<span class="fn">items</span>()}
+
+<span class="cm"># setdefault / defaultdict</span>
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+freq = <span class="fn">defaultdict</span>(<span class="fn">int</span>)
+<span class="kw">for</span> c <span class="kw">in</span> <span class="str">"bonjour"</span>: freq[c] += <span class="num">1</span></code></pre>
+      <div class="callout callout-success">
+        <span class="callout-icon">✅</span>
+        <div class="callout-body"><h4>Depuis Python 3.7</h4><p>Les dictionnaires <strong>préservent l'ordre d'insertion</strong>. C'est garanti par le langage.</p></div>
+      </div>
+    </section>
+
+    <!-- LISTES CHAÎNÉES -->
+    <section id="chaines">
+      <h2>🔗 Listes chaînées</h2>
+      <p>Dans une <strong>liste chaînée</strong>, chaque élément (nœud) contient une valeur et un pointeur vers le nœud suivant. Contrairement aux tableaux, les éléments ne sont pas contigus en mémoire.</p>
+      <table>
+        <tr><th>Opération</th><th>Liste chaînée</th><th>Tableau Python</th></tr>
+        <tr><td>Accès par indice</td><td>O(n)</td><td>O(1)</td></tr>
+        <tr><td>Insertion en tête</td><td>O(1)</td><td>O(n)</td></tr>
+        <tr><td>Insertion en queue</td><td>O(1) si pointeur fin</td><td>O(1) amorti</td></tr>
+        <tr><td>Suppression en tête</td><td>O(1)</td><td>O(n)</td></tr>
+        <tr><td>Recherche</td><td>O(n)</td><td>O(n)</td></tr>
+      </table>
+      <pre><code><span class="kw">class</span> <span class="fn">Noeud</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, valeur):
+        self.valeur = valeur
+        self.suivant = <span class="kw">None</span>
+
+<span class="kw">class</span> <span class="fn">ListeChainee</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.tete = <span class="kw">None</span>
+
+    <span class="kw">def</span> <span class="fn">inserer_tete</span>(self, val):         <span class="cm"># O(1)</span>
+        n = <span class="fn">Noeud</span>(val)
+        n.suivant = self.tete
+        self.tete = n
+
+    <span class="kw">def</span> <span class="fn">parcourir</span>(self):
+        courant = self.tete
+        <span class="kw">while</span> courant <span class="kw">is not None</span>:
+            <span class="kw">print</span>(courant.valeur)
+            courant = courant.suivant</code></pre>
+    </section>
+
+    <!-- PIÈGES -->
+    <section id="pieges">
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body">
+          <h4>⚠️ Pièges classiques au bac</h4>
+          <ul>
+            <li><code>pop()</code> sur une liste vide → <strong>IndexError</strong> ! Toujours tester <code>if pile:</code> avant.</li>
+            <li><code>list.insert(0, x)</code> est <strong>O(n)</strong>, pas O(1). Pour une file, utiliser <code>deque</code>.</li>
+            <li>Un dictionnaire avec doublon de clé : <code>{'a':1,'a':2}</code> → <code>{'a':2}</code>. La deuxième valeur écrase.</li>
+            <li>Les listes sont <strong>mutables</strong> : <code>b = a</code> ne copie pas ! Utiliser <code>b = a.copy()</code> ou <code>b = a[:]</code>.</li>
+            <li>L'accès dict par clé absente → <strong>KeyError</strong>. Toujours utiliser <code>d.get(cle)</code> ou <code>cle in d</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXERCICES -->
+    <section id="exercices">
+      <h2>🏋️ Exercices</h2>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-facile">Facile</span>
+          <span class="exercise-title">Vérification de parenthèses</span>
+        </div>
+        <div class="exercise-body">
+          <p>Écrire une fonction <code>parentheses_ok(s)</code> qui renvoie <code>True</code> si les parenthèses de la chaîne <code>s</code> sont bien équilibrées, <code>False</code> sinon. Exemple : <code>"(a+(b*c))"</code> → True, <code>"(()"</code> → False.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <pre><code><span class="kw">def</span> <span class="fn">parentheses_ok</span>(s):
+    pile = []
+    <span class="kw">for</span> c <span class="kw">in</span> s:
+        <span class="kw">if</span> c == <span class="str">'('</span>:
+            pile.<span class="fn">append</span>(c)
+        <span class="kw">elif</span> c == <span class="str">')'</span>:
+            <span class="kw">if not</span> pile:
+                <span class="kw">return False</span>  <span class="cm"># fermante sans ouvrante</span>
+            pile.<span class="fn">pop</span>()
+    <span class="kw">return</span> <span class="fn">len</span>(pile) == <span class="num">0</span>  <span class="cm"># vrai si tout est fermé</span></code></pre>
+              <p>On utilise une pile : on empile chaque <code>(</code> et on dépile à chaque <code>)</code>. Si on dépile sur une pile vide → faux. À la fin, la pile doit être vide.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-intermediaire">Intermédiaire</span>
+          <span class="exercise-title">File avec deux piles</span>
+        </div>
+        <div class="exercise-body">
+          <p>Implémenter une file (FIFO) en utilisant uniquement deux piles. Les opérations <code>enfiler(x)</code> et <code>defiler()</code> doivent être correctes.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <pre><code><span class="kw">class</span> <span class="fn">FileAvecDeuxPiles</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.entree = []   <span class="cm"># pile pour enfiler</span>
+        self.sortie = []   <span class="cm"># pile pour défiler</span>
+
+    <span class="kw">def</span> <span class="fn">enfiler</span>(self, x):
+        self.entree.<span class="fn">append</span>(x)
+
+    <span class="kw">def</span> <span class="fn">defiler</span>(self):
+        <span class="kw">if not</span> self.sortie:  <span class="cm"># si sortie vide, transvaser</span>
+            <span class="kw">while</span> self.entree:
+                self.sortie.<span class="fn">append</span>(self.entree.<span class="fn">pop</span>())
+        <span class="kw">if not</span> self.sortie:
+            <span class="kw">raise</span> <span class="fn">IndexError</span>(<span class="str">"file vide"</span>)
+        <span class="kw">return</span> self.sortie.<span class="fn">pop</span>()</code></pre>
+              <p>Astuce : on transvase la pile d'entrée dans la pile de sortie quand elle est vide. Cela inverse l'ordre, donnant l'effet FIFO. Complexité amortie O(1).</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-bac">Niveau bac</span>
+          <span class="exercise-title">Fréquence de mots</span>
+        </div>
+        <div class="exercise-body">
+          <p>Écrire une fonction <code>frequences(texte)</code> qui prend une chaîne de caractères et renvoie un dictionnaire associant chaque mot à son nombre d'occurrences. Les mots sont séparés par des espaces, en ignorant la casse.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <pre><code><span class="kw">def</span> <span class="fn">frequences</span>(texte):
+    freq = {}
+    <span class="kw">for</span> mot <span class="kw">in</span> texte.<span class="fn">lower</span>().<span class="fn">split</span>():
+        freq[mot] = freq.<span class="fn">get</span>(mot, <span class="num">0</span>) + <span class="num">1</span>
+    <span class="kw">return</span> freq
+
+<span class="cm"># Variante avec defaultdict</span>
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+<span class="kw">def</span> <span class="fn">frequences2</span>(texte):
+    freq = <span class="fn">defaultdict</span>(<span class="fn">int</span>)
+    <span class="kw">for</span> mot <span class="kw">in</span> texte.<span class="fn">lower</span>().<span class="fn">split</span>():
+        freq[mot] += <span class="num">1</span>
+    <span class="kw">return</span> <span class="fn">dict</span>(freq)</code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SYNTHÈSE -->
+    <section class="synthese" id="synthese">
+      <h2>📌 Fiche synthèse</h2>
+      <div class="synthese-grid">
+        <div class="synthese-card">
+          <h4>LISTE (tableau)</h4>
+          <ul>
+            <li>Accès[i] → O(1)</li>
+            <li>append → O(1) amorti</li>
+            <li>insert(0,x) → O(n)</li>
+            <li>Recherche → O(n)</li>
+          </ul>
+        </div>
+        <div class="synthese-card">
+          <h4>PILE (LIFO)</h4>
+          <ul>
+            <li>push = append() → O(1)</li>
+            <li>pop() → O(1)</li>
+            <li>peek = tab[-1] → O(1)</li>
+            <li>Usage : récursion, Ctrl+Z</li>
+          </ul>
+        </div>
+        <div class="synthese-card">
+          <h4>FILE (FIFO)</h4>
+          <ul>
+            <li>enqueue = append() → O(1)</li>
+            <li>dequeue = popleft() → O(1)</li>
+            <li>Utiliser deque !</li>
+            <li>Usage : BFS, impression</li>
+          </ul>
+        </div>
+        <div class="synthese-card">
+          <h4>DICTIONNAIRE</h4>
+          <ul>
+            <li>Accès/Insert → O(1) moy.</li>
+            <li>Clé in dict → O(1)</li>
+            <li>Clés hashables</li>
+            <li>Ordre depuis Python 3.7</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- QCM -->
+    <section class="quiz-section" id="qcm">
+      <div class="quiz-header">
+        <h2>🧠 QCM — Structures de données</h2>
+        <span style="font-size:.85rem;color:var(--text2)">5 questions aléatoires</span>
+      </div>
+      <div class="quiz-body">
+        <button class="btn btn-primary" id="quiz-start">▶ Démarrer le QCM</button>
+        <div id="quiz-embed"></div>
+      </div>
+    </section>
+
+    <div style="text-align:center;margin:2rem 0;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="../index.html" class="btn btn-outline">← Tous les chapitres</a>
+      <a href="arbres.html" class="btn btn-outline">Chapitre suivant : Arbres →</a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  <p>NSI Terminale — <a href="../index.html">Accueil</a> · <a href="../quiz.html">QCM global</a></p>
+</footer>
+
+<script src="../js/questions.js"></script>
+<script src="../js/quiz.js"></script>
+<script src="../js/main.js"></script>
+<script>initChapterQuiz('quiz-embed', 'structures', 5);</script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NSI Terminale — Révision Bac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-brand">Retour <span>site NSI</span></a>
+  <div class="nav-links">
+    <a href="index.html">Accueil</a>
+    <a href="quiz.html">QCM</a>
+    <a href="methodes.html">Méthodes & Algos</a>
+    <a href="complexite.html">Complexité</a>
+    <a href="chapitres/index.html">Chapitres</a>
+  </div>
+  <span class="nav-badge">Terminale — 2026</span>
+  <button class="burger" aria-label="Menu">☰</button>
+</nav>
+
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-content">
+    <div class="hero-label">🎯 Révision Baccalauréat NSI</div>
+    <h1>Prépare ton bac<br><span>NSI Terminale</span></h1>
+    <p>Cours structurés, QCM interactifs, exercices progressifs et fiches de synthèse pour tous les chapitres du programme.</p>
+    <div class="hero-stats">
+      <div class="hero-stat"><span class="hero-stat-n">8</span><span class="hero-stat-l">Chapitres</span></div>
+      <div class="hero-stat"><span class="hero-stat-n">400+</span><span class="hero-stat-l">Questions QCM</span></div>
+      <div class="hero-stat"><span class="hero-stat-n">50+</span><span class="hero-stat-l">Exercices</span></div>
+    </div>
+    <div class="hero-cta">
+      <a href="chapitres/structures.html" class="btn btn-primary">📚 Commencer à réviser</a>
+      <a href="quiz.html" class="btn btn-outline">🧠 Faire un QCM</a>
+    </div>
+  </div>
+</section>
+
+<div class="features">
+  <div class="features-grid">
+    <div><div class="feature-icon">📖</div><div class="feature-title">Cours complets</div><div class="feature-desc">Tout le programme NSI avec exemples et explications détaillées</div></div>
+    <div><div class="feature-icon">🧠</div><div class="feature-title">QCM interactifs</div><div class="feature-desc">50 questions par chapitre avec corrections détaillées</div></div>
+    <div><div class="feature-icon">⚠️</div><div class="feature-title">Pièges du bac</div><div class="feature-desc">Les erreurs classiques identifiées et expliquées</div></div>
+    <div><div class="feature-icon">💡</div><div class="feature-title">Fiches synthèse</div><div class="feature-desc">L'essentiel à retenir pour chaque chapitre</div></div>
+    <div><div class="feature-icon">🏋️</div><div class="feature-title">Exercices progressifs</div><div class="feature-desc">Du niveau facile jusqu'aux sujets de bac réels</div></div>
+    <div><div class="feature-icon">🐍</div><div class="feature-title">Python & SQL</div><div class="feature-desc">Tout le code à connaître avec explications</div></div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="section-title">
+    <h2>📚 Chapitres du programme</h2>
+    <p>Clique sur un chapitre pour accéder au cours complet</p>
+  </div>
+  <div class="chapters-grid">
+    <a href="chapitres/structures.html" class="chapter-card" style="--card-color:#58a6ff">
+      <div class="chapter-card-icon">🗂️</div>
+      <div class="chapter-card-title">Structures de données</div>
+      <div class="chapter-card-desc">Listes, piles, files, dictionnaires, listes chaînées. Complexités et implémentations Python.</div>
+      <div class="chapter-card-footer">
+        <span class="chapter-tag">Listes</span><span class="chapter-tag">Piles</span><span class="chapter-tag">Files</span><span class="chapter-tag">Dict</span>
+      </div>
+    </a>
+    <a href="chapitres/arbres.html" class="chapter-card" style="--card-color:#3fb950">
+      <div class="chapter-card-icon">🌳</div>
+      <div class="chapter-card-title">Arbres</div>
+      <div class="chapter-card-desc">Arbres binaires, ABR, tas. Parcours préfixe, infixe, postfixe, BFS. Récursivité.</div>
+      <div class="chapter-card-footer">
+        <span class="chapter-tag">ABR</span><span class="chapter-tag">Tas</span><span class="chapter-tag">Parcours</span>
+      </div>
+    </a>
+    <a href="chapitres/graphes.html" class="chapter-card" style="--card-color:#bc8cff">
+      <div class="chapter-card-icon">🕸️</div>
+      <div class="chapter-card-title">Graphes</div>
+      <div class="chapter-card-desc">Représentations, BFS, DFS, Dijkstra, connexité. Graphes orientés et pondérés.</div>
+      <div class="chapter-card-footer">
+        <span class="chapter-tag">BFS</span><span class="chapter-tag">DFS</span><span class="chapter-tag">Dijkstra</span>
+      </div>
+    </a>
+    <a href="chapitres/poo.html" class="chapter-card" style="--card-color:#ff7b72">
+      <div class="chapter-card-icon">🧩</div>
+      <div class="chapter-card-title">Programmation Orientée Objet</div>
+      <div class="chapter-card-desc">Classes, héritage, polymorphisme, encapsulation. Méthodes spéciales Python.</div>
+      <div class="chapter-card-footer">
+        <span class="chapter-tag">Classes</span><span class="chapter-tag">Héritage</span><span class="chapter-tag">Python</span>
+      </div>
+    </a>
+    <a href="chapitres/bases-de-donnees.html" class="chapter-card" style="--card-color:#d29922">
+      <div class="chapter-card-icon">🗄️</div>
+      <div class="chapter-card-title">Bases de données</div>
+      <div class="chapter-card-desc">Modèle relationnel, SQL complet (SELECT, JOIN, GROUP BY), normalisation, ACID.</div>
+      <div class="chapter-card-footer">
+        <span class="chapter-tag">SQL</span><span class="chapter-tag">JOIN</span><span class="chapter-tag">Normalisation</span>
+      </div>
+    </a>
+    <a href="chapitres/algorithmique.html" class="chapter-card" style="--card-color:#79c0ff">
+      <div class="chapter-card-icon">⚙️</div>
+      <div class="chapter-card-title">Algorithmique</div>
+      <div class="chapter-card-desc">Complexité, tris, recherche dichotomique, récursion, programmation dynamique, glouton.</div>
+      <div class="chapter-card-footer">
+        <span class="chapter-tag">O(n log n)</span><span class="chapter-tag">Tris</span><span class="chapter-tag">DP</span>
+      </div>
+    </a>
+    <a href="chapitres/architecture.html" class="chapter-card" style="--card-color:#ffa657">
+      <div class="chapter-card-icon">🖥️</div>
+      <div class="chapter-card-title">Architecture & OS</div>
+      <div class="chapter-card-desc">Von Neumann, CPU, mémoire, processus, ordonnancement. Binaire, hexadécimal, UTF-8.</div>
+      <div class="chapter-card-footer">
+        <span class="chapter-tag">CPU</span><span class="chapter-tag">Processus</span><span class="chapter-tag">Binaire</span>
+      </div>
+    </a>
+    <a href="chapitres/reseaux.html" class="chapter-card" style="--card-color:#39d353">
+      <div class="chapter-card-icon">🌐</div>
+      <div class="chapter-card-title">Réseaux</div>
+      <div class="chapter-card-desc">Modèle OSI, TCP/IP, DNS, routage, chiffrement, HTTPS/TLS. Protocoles essentiels.</div>
+      <div class="chapter-card-footer">
+        <span class="chapter-tag">TCP/IP</span><span class="chapter-tag">HTTP</span><span class="chapter-tag">Chiffrement</span>
+      </div>
+    </a>
+  </div>
+</div>
+
+<footer>
+  <p>Site de révision NSI Terminale — Baccalauréat 2026 — <a href="quiz.html">QCM</a> · <a href="methodes.html">Méthodes</a></p>
+</footer>
+
+<script src="js/main.js"></script>
+</body>
+</html>

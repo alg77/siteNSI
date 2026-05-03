@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arbres — NSI Bac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-brand">NSI<span>.bac</span></a>
+  <div class="nav-links"><a href="../index.html">Accueil</a><a href="../quiz.html">QCM</a><a href="../methodes.html">Méthodes</a><a href="index.html">Chapitres</a></div>
+  <span class="nav-badge">Terminale — 2026</span><button class="burger">☰</button>
+</nav>
+<div class="chapter-layout">
+  <aside class="toc">
+    <h4>📋 Sommaire</h4>
+    <ul>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#vocabulaire">Vocabulaire</a></li>
+      <li><a href="#parcours">Parcours</a></li>
+      <li><a href="#abr">Arbres ABR</a></li>
+      <li><a href="#tas">Tas</a></li>
+      <li><a href="#pieges">Pièges</a></li>
+      <li><a href="#exercices">Exercices</a></li>
+      <li><a href="#synthese">Synthèse</a></li>
+      <li><a href="#qcm">QCM</a></li>
+    </ul>
+  </aside>
+  <main class="chapter-content">
+    <div class="chapter-header">
+      <div class="chapter-icon">🌳</div>
+      <div>
+        <h1>Arbres</h1>
+        <p style="color:var(--text2);margin:0">Arbres binaires, ABR, tas, parcours</p>
+        <div class="chapter-meta" style="margin-top:.75rem">
+          <span class="chapter-badge badge-blue">Récursion</span>
+          <span class="chapter-badge badge-green">Parcours</span>
+          <span class="chapter-badge badge-orange">O(log n)</span>
+        </div>
+      </div>
+    </div>
+
+    <section id="intro">
+      <h2>🎯 Introduction</h2>
+      <p>Un <strong>arbre</strong> est une structure de données hiérarchique composée de nœuds reliés par des arêtes. Les arbres binaires (chaque nœud a au plus deux fils) sont fondamentaux en informatique.</p>
+      <div class="must-know">
+        <h3>✅ Ce qu'il faut savoir pour le bac</h3>
+        <ul>
+          <li>Vocabulaire : racine, feuille, nœud, hauteur, profondeur, taille</li>
+          <li>Les trois parcours en profondeur : préfixe, infixe, postfixe</li>
+          <li>Le parcours en largeur (BFS)</li>
+          <li>Propriétés d'un ABR (Arbre Binaire de Recherche)</li>
+          <li>Recherche, insertion dans un ABR : O(h) = O(log n) si équilibré</li>
+          <li>Implémenter les parcours récursivement en Python</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="vocabulaire">
+      <h2>📖 Vocabulaire essentiel</h2>
+      <table>
+        <tr><th>Terme</th><th>Définition</th></tr>
+        <tr><td>Racine</td><td>Nœud sans parent (sommet de l'arbre)</td></tr>
+        <tr><td>Feuille</td><td>Nœud sans fils (enfants)</td></tr>
+        <tr><td>Nœud interne</td><td>Nœud avec au moins un fils</td></tr>
+        <tr><td>Hauteur</td><td>Longueur du plus long chemin racine → feuille</td></tr>
+        <tr><td>Profondeur</td><td>Distance d'un nœud à la racine</td></tr>
+        <tr><td>Taille</td><td>Nombre total de nœuds</td></tr>
+        <tr><td>Sous-arbre gauche/droit</td><td>Arbre enraciné au fils gauche/droit</td></tr>
+      </table>
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body"><h4>Formules utiles</h4>
+        <p>Un arbre binaire parfait de hauteur h a <code>2^(h+1) - 1</code> nœuds et <code>2^h</code> feuilles.</p>
+        <p>La hauteur minimale d'un arbre binaire de n nœuds est <code>⌊log₂(n)⌋</code>.</p></div>
+      </div>
+    </section>
+
+    <section id="parcours">
+      <h2>🔄 Parcours d'arbres</h2>
+      <pre><code><span class="kw">class</span> <span class="fn">Noeud</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, val, g=<span class="kw">None</span>, d=<span class="kw">None</span>):
+        self.val = val; self.gauche = g; self.droite = d
+
+<span class="cm"># Parcours PRÉFIXE (racine → gauche → droite)</span>
+<span class="kw">def</span> <span class="fn">prefixe</span>(n):
+    <span class="kw">if</span> n <span class="kw">is None</span>: <span class="kw">return</span>
+    <span class="kw">print</span>(n.val)          <span class="cm"># racine d'abord</span>
+    <span class="fn">prefixe</span>(n.gauche)
+    <span class="fn">prefixe</span>(n.droite)
+
+<span class="cm"># Parcours INFIXE (gauche → racine → droite)</span>
+<span class="kw">def</span> <span class="fn">infixe</span>(n):
+    <span class="kw">if</span> n <span class="kw">is None</span>: <span class="kw">return</span>
+    <span class="fn">infixe</span>(n.gauche)
+    <span class="kw">print</span>(n.val)          <span class="cm"># racine au milieu</span>
+    <span class="fn">infixe</span>(n.droite)
+
+<span class="cm"># Parcours POSTFIXE (gauche → droite → racine)</span>
+<span class="kw">def</span> <span class="fn">postfixe</span>(n):
+    <span class="kw">if</span> n <span class="kw">is None</span>: <span class="kw">return</span>
+    <span class="fn">postfixe</span>(n.gauche)
+    <span class="fn">postfixe</span>(n.droite)
+    <span class="kw">print</span>(n.val)          <span class="cm"># racine en dernier
+
+# Parcours en LARGEUR (BFS)</span>
+<span class="kw">from</span> collections <span class="kw">import</span> deque
+<span class="kw">def</span> <span class="fn">bfs</span>(racine):
+    <span class="kw">if not</span> racine: <span class="kw">return</span>
+    file = <span class="fn">deque</span>([racine])
+    <span class="kw">while</span> file:
+        n = file.<span class="fn">popleft</span>()
+        <span class="kw">print</span>(n.val)
+        <span class="kw">if</span> n.gauche: file.<span class="fn">append</span>(n.gauche)
+        <span class="kw">if</span> n.droite: file.<span class="fn">append</span>(n.droite)</code></pre>
+      <div class="callout callout-purple">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body"><h4>Moyen mnémotechnique</h4>
+        <p><strong>Pré</strong>fixe → <strong>Pré</strong>cède (racine d'abord) | <strong>In</strong>fixe → entre les deux | <strong>Post</strong>fixe → <strong>Post</strong>érieur (racine après)</p>
+        <p>L'infixe d'un ABR donne les valeurs triées en ordre croissant !</p></div>
+      </div>
+    </section>
+
+    <section id="abr">
+      <h2>🔍 Arbre Binaire de Recherche (ABR)</h2>
+      <p>Un ABR vérifie la propriété : pour tout nœud, <strong>toutes les valeurs du sous-arbre gauche sont inférieures</strong> à la valeur du nœud, et <strong>toutes les valeurs du sous-arbre droit sont supérieures</strong>.</p>
+      <pre><code><span class="kw">def</span> <span class="fn">recherche_abr</span>(n, cible):
+    <span class="kw">if</span> n <span class="kw">is None</span>: <span class="kw">return False</span>
+    <span class="kw">if</span> n.val == cible: <span class="kw">return True</span>
+    <span class="kw">elif</span> cible < n.val: <span class="kw">return</span> <span class="fn">recherche_abr</span>(n.gauche, cible)
+    <span class="kw">else</span>: <span class="kw">return</span> <span class="fn">recherche_abr</span>(n.droite, cible)
+
+<span class="kw">def</span> <span class="fn">inserer_abr</span>(n, val):
+    <span class="kw">if</span> n <span class="kw">is None</span>: <span class="kw">return</span> <span class="fn">Noeud</span>(val)
+    <span class="kw">if</span> val < n.val: n.gauche = <span class="fn">inserer_abr</span>(n.gauche, val)
+    <span class="kw">elif</span> val > n.val: n.droite = <span class="fn">inserer_abr</span>(n.droite, val)
+    <span class="kw">return</span> n
+
+<span class="kw">def</span> <span class="fn">hauteur</span>(n):
+    <span class="kw">if</span> n <span class="kw">is None</span>: <span class="kw">return</span> -<span class="num">1</span>  <span class="cm"># convention : hauteur arbre vide = -1</span>
+    <span class="kw">return</span> <span class="num">1</span> + <span class="fn">max</span>(<span class="fn">hauteur</span>(n.gauche), <span class="fn">hauteur</span>(n.droite))</code></pre>
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body"><h4>ABR dégénéré</h4>
+        <p>Si on insère des valeurs déjà triées (1, 2, 3, 4...), l'ABR devient une liste chaînée de hauteur n → la recherche est O(n), pas O(log n) !</p></div>
+      </div>
+    </section>
+
+    <section id="tas">
+      <h2>⛰️ Tas (Heap)</h2>
+      <p>Un <strong>tas binaire</strong> est un arbre binaire complet qui respecte la <em>propriété de tas</em> : chaque nœud est plus grand (tas-max) ou plus petit (tas-min) que ses fils.</p>
+      <pre><code><span class="kw">import</span> heapq  <span class="cm"># implémente un tas-min en Python</span>
+
+tas = []
+heapq.<span class="fn">heappush</span>(tas, <span class="num">5</span>)
+heapq.<span class="fn">heappush</span>(tas, <span class="num">2</span>)
+heapq.<span class="fn">heappush</span>(tas, <span class="num">8</span>)
+
+minimum = heapq.<span class="fn">heappop</span>(tas)   <span class="cm"># retire le minimum : 2</span>
+
+<span class="cm"># Créer un tas depuis une liste existante</span>
+lst = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]
+heapq.<span class="fn">heapify</span>(lst)              <span class="cm"># O(n)</span></code></pre>
+    </section>
+
+    <section id="pieges">
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body">
+          <h4>Pièges fréquents au bac</h4>
+          <ul>
+            <li>Confondre <strong>hauteur</strong> (chemin le plus long) et <strong>profondeur</strong> (distance à la racine)</li>
+            <li>Oublier le <strong>cas de base</strong> <code>if n is None: return</code> dans un parcours récursif</li>
+            <li>L'infixe d'un ABR donne une liste triée — utile pour vérifier qu'un arbre est bien un ABR</li>
+            <li>Un ABR avec doublons : convention à préciser (souvent <code>val <= n.val</code> va à gauche)</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="exercices">
+      <h2>🏋️ Exercices</h2>
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-facile">Facile</span><span class="exercise-title">Taille d'un arbre</span></div>
+        <div class="exercise-body">
+          <p>Écrire une fonction récursive <code>taille(n)</code> qui retourne le nombre de nœuds d'un arbre binaire.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+          <pre><code><span class="kw">def</span> <span class="fn">taille</span>(n):
+    <span class="kw">if</span> n <span class="kw">is None</span>: <span class="kw">return</span> <span class="num">0</span>
+    <span class="kw">return</span> <span class="num">1</span> + <span class="fn">taille</span>(n.gauche) + <span class="fn">taille</span>(n.droite)</code></pre>
+          </div></div>
+        </div>
+      </div>
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-bac">Niveau bac</span><span class="exercise-title">Vérifier qu'un arbre est un ABR</span></div>
+        <div class="exercise-body">
+          <p>Écrire une fonction <code>est_abr(n, mini=None, maxi=None)</code> qui vérifie qu'un arbre binaire respecte la propriété ABR.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+          <pre><code><span class="kw">def</span> <span class="fn">est_abr</span>(n, mini=<span class="kw">None</span>, maxi=<span class="kw">None</span>):
+    <span class="kw">if</span> n <span class="kw">is None</span>: <span class="kw">return True</span>
+    <span class="kw">if</span> mini <span class="kw">is not None and</span> n.val <= mini: <span class="kw">return False</span>
+    <span class="kw">if</span> maxi <span class="kw">is not None and</span> n.val >= maxi: <span class="kw">return False</span>
+    <span class="kw">return</span> (<span class="fn">est_abr</span>(n.gauche, mini, n.val) <span class="kw">and</span>
+            <span class="fn">est_abr</span>(n.droite, n.val, maxi))</code></pre>
+          <p>On propage les bornes min/max en descendent. Le fils gauche doit avoir <code>val &lt; n.val</code>, le fils droit doit avoir <code>val &gt; n.val</code>.</p>
+          </div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="synthese" id="synthese">
+      <h2>📌 Fiche synthèse</h2>
+      <div class="synthese-grid">
+        <div class="synthese-card"><h4>PARCOURS</h4><ul>
+          <li>Préfixe : R → G → D</li><li>Infixe : G → R → D</li>
+          <li>Postfixe : G → D → R</li><li>Largeur : file</li>
+        </ul></div>
+        <div class="synthese-card"><h4>ABR</h4><ul>
+          <li>gauche < racine < droite</li><li>Recherche : O(h)</li>
+          <li>Équilibré : h = O(log n)</li><li>Infixe → trié</li>
+        </ul></div>
+        <div class="synthese-card"><h4>FORMULES</h4><ul>
+          <li>Arbre vide : hauteur = -1</li><li>Feuille : hauteur = 0</li>
+          <li>Nœuds parfait h : 2^(h+1)-1</li><li>heapq → tas-min Python</li>
+        </ul></div>
+      </div>
+    </section>
+
+        <section class="quiz-section" id="qcm">
+        <h2>🧠 QCM</h2>
+        <p style="color:var(--text2);margin-bottom:1rem">Choisissez le nombre de questions et le niveau, puis lancez.</p>
+        <div id="quiz-container-arbres"></div>
+    </section>
+
+    <div style="text-align:center;margin:2rem 0;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="structures.html" class="btn btn-outline">← Structures de données</a>
+      <a href="graphes.html" class="btn btn-outline">Graphes →</a>
+    </div>
+  </main>
+</div>
+<footer><p>NSI Terminale — <a href="../index.html">Accueil</a> · <a href="../quiz.html">QCM global</a></p></footer>
+<script src="../js/questions.js"></script><script src="../js/quiz.js"></script><script src="../js/main.js"></script>
+
+<script>
+  document.querySelectorAll('.qnb-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.qnb-btn').forEach(b => b.classList.remove('active-qnb'));
+      btn.classList.add('active-qnb');
+    });
+  });
+  document.querySelectorAll('.qlvl-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.qlvl-btn').forEach(b => b.classList.remove('active-qlvl'));
+      btn.classList.add('active-qlvl');
+    });
+  });
+  initChapterQuiz('arbres', 'quiz-container-arbres', 5);
+</script>
+</body></html>

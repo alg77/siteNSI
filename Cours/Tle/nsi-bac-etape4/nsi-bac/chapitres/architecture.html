@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Architecture — NSI Bac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-brand">NSI<span>.bac</span></a>
+  <div class="nav-links"><a href="../index.html">Accueil</a><a href="../quiz.html">QCM</a><a href="../methodes.html">Méthodes</a><a href="structures.html">Chapitres</a></div>
+  <span class="nav-badge">Terminale 2025</span><button class="burger">☰</button>
+</nav>
+<div class="chapter-layout">
+  <aside class="toc">
+    <h4>📋 Sommaire</h4>
+    <ul>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#von-neumann">Architecture Von Neumann</a></li>
+      <li><a href="#binaire">Représentation binaire</a></li>
+      <li><a href="#os">Système d'exploitation</a></li>
+      <li><a href="#processus">Processus</a></li>
+      <li><a href="#memoire">Mémoire</a></li>
+      <li><a href="#pieges">Pièges</a></li>
+      <li><a href="#exercices">Exercices</a></li>
+      <li><a href="#synthese">Synthèse</a></li>
+      <li><a href="#qcm">QCM</a></li>
+    </ul>
+  </aside>
+  <main class="chapter-content">
+    <div class="chapter-header">
+      <div class="chapter-icon">🖥️</div>
+      <div>
+        <h1>Architecture & OS</h1>
+        <p style="color:var(--text2);margin:0">Von Neumann, binaire, processus, mémoire, ordonnancement</p>
+        <div class="chapter-meta" style="margin-top:.75rem">
+          <span class="chapter-badge badge-blue">Von Neumann</span>
+          <span class="chapter-badge badge-orange">Binaire</span>
+          <span class="chapter-badge badge-purple">Processus</span>
+        </div>
+      </div>
+    </div>
+
+    <section id="intro">
+      <h2>🎯 Introduction</h2>
+      <p>Ce chapitre explore le fonctionnement interne d'un ordinateur : comment les données sont représentées en binaire, comment le processeur exécute des instructions, et comment le système d'exploitation gère les processus et la mémoire.</p>
+      <div class="must-know">
+        <h3>✅ Ce qu'il faut savoir</h3>
+        <ul>
+          <li>Architecture de Von Neumann : CPU, mémoire, bus, E/S</li>
+          <li>Représentation binaire, hexadécimale et entiers signés (complément à 2)</li>
+          <li>Encodage des caractères : ASCII, UTF-8</li>
+          <li>Rôle du système d'exploitation</li>
+          <li>Notion de processus, état (prêt/actif/bloqué), ordonnancement</li>
+          <li>Interblocage (deadlock)</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="von-neumann">
+      <h2>🏗️ Architecture de Von Neumann</h2>
+      <p>Proposée en 1945, cette architecture est à la base de tous les ordinateurs modernes. Elle repose sur <strong>4 composants</strong> reliés par des bus :</p>
+
+      <table>
+        <thead><tr><th>Composant</th><th>Rôle</th><th>Détails</th></tr></thead>
+        <tbody>
+          <tr><td><strong>UC (Unité de Contrôle)</strong></td><td>Décode et séquence les instructions</td><td>Contient le compteur programme (PC) et le registre d'instruction (IR)</td></tr>
+          <tr><td><strong>UAL (Unité Arithmétique et Logique)</strong></td><td>Effectue les calculs</td><td>Opérations +, -, ×, AND, OR, NOT, comparaisons</td></tr>
+          <tr><td><strong>Mémoire principale (RAM)</strong></td><td>Stocke programmes et données</td><td>Volatile, adressable par octet</td></tr>
+          <tr><td><strong>Entrées/Sorties</strong></td><td>Communique avec le monde extérieur</td><td>Clavier, écran, disque, réseau…</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Cycle d'exécution d'une instruction (Fetch–Decode–Execute)</h3>
+      <pre><code><span class="cm">1. FETCH    : Le PC indique l'adresse de l'instruction en mémoire.
+              L'instruction est copiée dans le registre IR.
+              PC est incrémenté (pointe sur l'instruction suivante).
+
+2. DECODE   : L'UC décode l'instruction (quel opcode ? quels opérandes ?)
+
+3. EXECUTE  : L'UAL effectue l'opération. Le résultat est stocké
+              dans un registre ou en mémoire.
+
+Exemple : ADD R1, R2  →  R1 ← R1 + R2</span></code></pre>
+
+      <div class="callout callout-info">
+        <strong>💡 Registres :</strong> Ce sont de petites zones de mémoire ultra-rapides situées directement dans le CPU (R0, R1, …, PC, SP). Accès en 1 cycle d'horloge, contre ~100 cycles pour la RAM.
+      </div>
+
+      <h3>Les bus</h3>
+      <pre><code><span class="cm">Bus de données    : transporte les données entre CPU et mémoire
+Bus d'adresses    : indique où lire/écrire en mémoire
+Bus de contrôle   : signaux de lecture/écriture, interruptions...</span></code></pre>
+    </section>
+
+    <section id="binaire">
+      <h2>💻 Représentation binaire</h2>
+      <h3>Conversion entre bases</h3>
+      <pre><code><span class="cm"># Décimal → Binaire (divisions successives par 2)</span>
+<span class="cm"># 42 = 32+8+2 = 101010₂</span>
+<span class="fn">bin</span>(<span class="num">42</span>)    <span class="cm"># → '0b101010'</span>
+<span class="fn">int</span>(<span class="str">'101010'</span>, <span class="num">2</span>)  <span class="cm"># → 42  (binaire → décimal)</span>
+
+<span class="cm"># Hexadécimal (base 16 : 0-9 puis A-F)</span>
+<span class="fn">hex</span>(<span class="num">255</span>)   <span class="cm"># → '0xff'</span>
+<span class="fn">int</span>(<span class="str">'FF'</span>, <span class="num">16</span>)  <span class="cm"># → 255</span>
+
+<span class="cm"># 1 octet = 8 bits = 2 chiffres hexa</span>
+<span class="cm"># 0xFF = 11111111₂ = 255₁₀</span></code></pre>
+
+      <h3>Entiers signés : complément à 2</h3>
+      <p>Sur <em>n</em> bits, les valeurs vont de <strong>-2ⁿ⁻¹</strong> à <strong>2ⁿ⁻¹ - 1</strong>. Sur 8 bits : -128 à +127.</p>
+      <pre><code><span class="cm"># Représenter -5 sur 8 bits :</span>
+<span class="cm"># 1. Écrire 5 en binaire : 00000101</span>
+<span class="cm"># 2. Inverser tous les bits : 11111010</span>
+<span class="cm"># 3. Ajouter 1 : 11111011 → c'est -5 en complément à 2</span>
+
+<span class="cm"># Vérification : 00000101 + 11111011 = 100000000</span>
+<span class="cm">#                (9 bits, le bit de débordement est ignoré → 0) ✅</span>
+
+<span class="cm"># En Python</span>
+<span class="kw">import</span> struct
+struct.pack(<span class="str">'b'</span>, -<span class="num">5</span>)  <span class="cm"># → b'\xfb'  (0xFB = 11111011)</span></code></pre>
+
+      <h3>Encodage des caractères</h3>
+      <table>
+        <thead><tr><th>Standard</th><th>Taille</th><th>Caractères</th><th>Notes</th></tr></thead>
+        <tbody>
+          <tr><td>ASCII</td><td>7 bits (128 valeurs)</td><td>Lettres latines, chiffres, ponctuation</td><td>Pas d'accents !</td></tr>
+          <tr><td>Latin-1 (ISO-8859-1)</td><td>8 bits (256 valeurs)</td><td>ASCII + caractères européens</td><td>é, à, ü…</td></tr>
+          <tr><td>UTF-8</td><td>1 à 4 octets</td><td>Tous les caractères Unicode (>1M)</td><td>Standard du web</td></tr>
+          <tr><td>UTF-32</td><td>4 octets fixes</td><td>Unicode complet</td><td>Gaspilleur en mémoire</td></tr>
+        </tbody>
+      </table>
+      <pre><code><span class="cm"># En Python 3, les str sont Unicode (UTF-32 interne)</span>
+<span class="fn">ord</span>(<span class="str">'A'</span>)    <span class="cm"># → 65  (code Unicode)</span>
+<span class="fn">chr</span>(<span class="num">65</span>)    <span class="cm"># → 'A'</span>
+<span class="fn">ord</span>(<span class="str">'é'</span>)    <span class="cm"># → 233</span>
+
+<span class="cm"># Encodage en octets</span>
+<span class="str">'café'</span>.encode(<span class="str">'utf-8'</span>)    <span class="cm"># → b'caf\xc3\xa9' (5 octets !)</span>
+<span class="str">'café'</span>.encode(<span class="str">'latin-1'</span>) <span class="cm"># → b'caf\xe9'     (4 octets)</span></code></pre>
+    </section>
+
+    <section id="os">
+      <h2>🐧 Système d'exploitation</h2>
+      <p>Le <strong>système d'exploitation (OS)</strong> est le logiciel qui fait l'interface entre le matériel et les applications. Il gère les ressources partagées : processeur, mémoire, fichiers, périphériques.</p>
+
+      <table>
+        <thead><tr><th>Fonction</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td>Gestion des processus</td><td>Créer, terminer, ordonnancer les programmes en cours</td></tr>
+          <tr><td>Gestion de la mémoire</td><td>Allouer/libérer la RAM, mémoire virtuelle</td></tr>
+          <tr><td>Système de fichiers</td><td>Organisation hiérarchique (arborescence), droits d'accès</td></tr>
+          <tr><td>Gestion des E/S</td><td>Pilotes (drivers), abstraction des périphériques</td></tr>
+          <tr><td>Sécurité</td><td>Mode utilisateur vs mode noyau, isolation des processus</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout callout-info">
+        <strong>💡 Mode noyau vs mode utilisateur :</strong> Le noyau (kernel) a accès direct au matériel. Les programmes tournent en mode utilisateur et doivent passer par des appels système (syscalls) pour accéder aux ressources.
+      </div>
+    </section>
+
+    <section id="processus">
+      <h2>⚙️ Processus et ordonnancement</h2>
+      <p>Un <strong>processus</strong> est un programme en cours d'exécution. Il possède son propre espace mémoire, ses registres et son compteur programme.</p>
+
+      <h3>États d'un processus</h3>
+      <pre><code><span class="cm">           fork()           schedulé          fin
+  Nouveau ────────► Prêt ───────────► Actif ──────► Terminé
+                     ▲                 │
+                     │   préempté      │ attend E/S
+                     └─────────────────┘
+                                       │
+                                       ▼
+                                    Bloqué
+                                (attend ressource)</span></code></pre>
+
+      <table>
+        <thead><tr><th>État</th><th>Description</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Prêt</strong></td><td>En attente du processeur (dans la file de l'ordonnanceur)</td></tr>
+          <tr><td><strong>Actif (Running)</strong></td><td>S'exécute sur le CPU en ce moment</td></tr>
+          <tr><td><strong>Bloqué</strong></td><td>Attend une ressource externe (E/S, verrou, signal)</td></tr>
+          <tr><td><strong>Terminé</strong></td><td>Exécution finie, en attente d'être "nettoyé" (zombie)</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Ordonnancement</h3>
+      <p>L'<strong>ordonnanceur</strong> (scheduler) décide quel processus prêt s'exécute. Stratégies courantes :</p>
+      <pre><code><span class="cm">FIFO (First In, First Out)
+  → Simple mais injuste si un processus est très long
+
+Round Robin (tourniquet)
+  → Chaque processus a un quantum de temps (ex: 10ms)
+  → À la fin du quantum, le suivant prend la main
+  → Équitable, temps de réponse garanti
+
+Priorité
+  → Chaque processus a une priorité
+  → L'ordonnanceur choisit toujours le plus prioritaire
+  → Risque de famine pour les processus bas priorité</span></code></pre>
+
+      <h3>Interblocage (Deadlock)</h3>
+      <p>Deux processus s'attendent mutuellement indéfiniment car chacun détient une ressource dont l'autre a besoin.</p>
+      <pre><code><span class="cm">P1 détient R1, attend R2
+P2 détient R2, attend R1
+→ Deadlock ! Aucun ne peut avancer.
+
+Conditions nécessaires (Coffman, 1971) :
+  1. Exclusion mutuelle : une ressource ne peut être utilisée
+     que par un seul processus à la fois
+  2. Rétention et attente : un processus peut garder ses
+     ressources en attendant d'autres
+  3. Pas de préemption : on ne peut pas forcer un processus
+     à libérer ses ressources
+  4. Attente circulaire : P1 attend P2, P2 attend P1...</span></code></pre>
+    </section>
+
+    <section id="memoire">
+      <h2>💾 Mémoire</h2>
+      <h3>Hiérarchie mémoire</h3>
+      <table>
+        <thead><tr><th>Niveau</th><th>Taille typique</th><th>Vitesse</th><th>Volatil</th></tr></thead>
+        <tbody>
+          <tr><td>Registres CPU</td><td>quelques Ko</td><td>< 1 ns</td><td>Oui</td></tr>
+          <tr><td>Cache L1/L2/L3</td><td>Ko à Mo</td><td>1–10 ns</td><td>Oui</td></tr>
+          <tr><td>RAM</td><td>4–64 Go</td><td>~50–100 ns</td><td>Oui</td></tr>
+          <tr><td>SSD/NVMe</td><td>256 Go – 2 To</td><td>~100 µs</td><td>Non</td></tr>
+          <tr><td>HDD</td><td>1–10 To</td><td>~10 ms</td><td>Non</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Mémoire virtuelle</h3>
+      <pre><code><span class="cm">Chaque processus croit avoir accès à tout l'espace d'adressage
+(ex: 0 à 2^64 - 1 sur un système 64 bits).
+
+L'OS fait la translation adresse virtuelle → adresse physique
+via la MMU (Memory Management Unit).
+
+Pages (généralement 4 Ko) :
+- Si la page est en RAM : accès direct
+- Si la page est sur disque : "page fault" → chargement (lent !)</span></code></pre>
+    </section>
+
+    <section id="pieges">
+      <h2>🚨 Pièges classiques au bac</h2>
+      <div class="callout callout-danger">
+        <strong>⛔ Confondre RAM et stockage</strong><br>
+        La RAM est volatile (s'efface à l'extinction). Le disque (SSD/HDD) est persistant. Un programme tourne en RAM, ses fichiers sont sur disque.
+      </div>
+      <div class="callout callout-danger">
+        <strong>⛔ Complément à 2 : bit de signe ≠ bit de valeur</strong><br>
+        Sur 8 bits, <code>10000000</code> = -128 (pas -0). Le bit de poids fort est le bit de signe, mais il a aussi une valeur (-128).
+      </div>
+      <div class="callout callout-warning">
+        <strong>⚠️ UTF-8 ≠ Unicode</strong><br>
+        Unicode est un standard d'encodage des caractères (attribue un numéro à chaque caractère). UTF-8 est une <em>représentation</em> d'Unicode sur des octets (1 à 4 octets par caractère).
+      </div>
+      <div class="callout callout-warning">
+        <strong>⚠️ Programme ≠ Processus</strong><br>
+        Un programme est un fichier statique sur disque. Un processus est l'exécution de ce programme en mémoire. Plusieurs processus peuvent exécuter le même programme simultanément.
+      </div>
+    </section>
+
+    <section id="exercices">
+      <h2>📝 Exercices</h2>
+
+      <div class="exercise exercise-easy">
+        <div class="exercise-header"><span class="exercise-level">Facile</span><h3>Exo 1 — Conversions binaires</h3></div>
+        <p>Convertir les valeurs suivantes :</p>
+        <ol>
+          <li>42 en binaire (sur 8 bits)</li>
+          <li>0b11001010 en décimal</li>
+          <li>0xFF en décimal</li>
+          <li>-7 en complément à 2 sur 8 bits</li>
+        </ol>
+        <button class="correction-btn" onclick="this.nextElementSibling.classList.toggle('visible')">Voir la correction</button>
+        <div class="correction">
+          <pre><code>1. 42 = 32+8+2 = 00101010₂
+
+2. 11001010₂ = 128+64+8+2 = 202₁₀
+
+3. 0xFF = 15×16 + 15 = 255₁₀
+
+4. -7 sur 8 bits :
+   7 = 00000111
+   Inverser : 11111000
+   +1 : 11111001 → c'est -7 ✅
+   Vérif : 00000111 + 11111001 = 100000000 (overflow ignoré → 0)</code></pre>
+        </div>
+      </div>
+
+      <div class="exercise exercise-medium">
+        <div class="exercise-header"><span class="exercise-level">Intermédiaire</span><h3>Exo 2 — Ordonnancement Round Robin</h3></div>
+        <p>Trois processus arrivent au temps t=0 avec les durées suivantes : P1=5ms, P2=3ms, P3=4ms. Quantum = 2ms. Donner l'ordre d'exécution et calculer le temps de complétion de chaque processus.</p>
+        <button class="correction-btn" onclick="this.nextElementSibling.classList.toggle('visible')">Voir la correction</button>
+        <div class="correction">
+          <pre><code>t=0  : P1 s'exécute 2ms → P1 reste 3ms
+t=2  : P2 s'exécute 2ms → P2 reste 1ms
+t=4  : P3 s'exécute 2ms → P3 reste 2ms
+t=6  : P1 s'exécute 2ms → P1 reste 1ms
+t=8  : P2 s'exécute 1ms → P2 TERMINÉ à t=9ms
+t=9  : P3 s'exécute 2ms → P3 TERMINÉ à t=11ms
+t=11 : P1 s'exécute 1ms → P1 TERMINÉ à t=12ms
+
+Résumé :
+  P1 : terminé à t=12ms
+  P2 : terminé à t=9ms
+  P3 : terminé à t=11ms</code></pre>
+        </div>
+      </div>
+
+      <div class="exercise exercise-hard">
+        <div class="exercise-header"><span class="exercise-level">Niveau bac</span><h3>Exo 3 — Deadlock</h3></div>
+        <p>Deux processus P1 et P2 partagent deux ressources R1 et R2. P1 a acquis R1 et demande R2. P2 a acquis R2 et demande R1. Expliquer pourquoi il y a deadlock et proposer deux solutions pour l'éviter.</p>
+        <button class="correction-btn" onclick="this.nextElementSibling.classList.toggle('visible')">Voir la correction</button>
+        <div class="correction">
+          <p><strong>Deadlock :</strong> P1 attend que P2 libère R2. P2 attend que P1 libère R1. Aucun ne peut progresser → attente circulaire infinie.</p>
+          <p><strong>Solution 1 — Ordre d'acquisition :</strong> Imposer que toutes les ressources soient acquises dans un ordre global fixé (ex: toujours R1 avant R2). P2 devrait d'abord demander R1, puis R2 — supprimant l'attente circulaire.</p>
+          <p><strong>Solution 2 — Timeout :</strong> Si un processus n'obtient pas une ressource en temps maximal, il libère toutes ses ressources et réessaie plus tard.</p>
+          <p><strong>Solution 3 — Détection & récupération :</strong> L'OS détecte le deadlock (graphe d'allocation) et tue un des processus pour libérer les ressources.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="synthese">
+      <h2>📌 Fiche synthèse</h2>
+      <div class="synthese-grid">
+        <div class="synthese-card">
+          <h4>Von Neumann</h4>
+          <ul>
+            <li>UC + UAL + RAM + E/S reliés par bus</li>
+            <li>Cycle : Fetch → Decode → Execute</li>
+            <li>PC pointe toujours sur la prochaine instruction</li>
+          </ul>
+        </div>
+        <div class="synthese-card">
+          <h4>Binaire</h4>
+          <ul>
+            <li>1 octet = 8 bits = 2 chiffres hex</li>
+            <li>Complément à 2 : inverser + 1</li>
+            <li>UTF-8 : 1 à 4 octets, compatible ASCII</li>
+          </ul>
+        </div>
+        <div class="synthese-card">
+          <h4>Processus</h4>
+          <ul>
+            <li>États : Nouveau → Prêt → Actif → Bloqué → Terminé</li>
+            <li>Round Robin : équitable, quantum de temps</li>
+            <li>Deadlock : 4 conditions de Coffman</li>
+          </ul>
+        </div>
+        <div class="synthese-card">
+          <h4>Mémoire</h4>
+          <ul>
+            <li>Hiérarchie : Registres → Cache → RAM → Disque</li>
+            <li>RAM = volatile, Disque = persistant</li>
+            <li>Mémoire virtuelle : adresses virtuelles → physiques</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <section id="qcm">
+      <h2>🎯 QCM — Architecture & OS</h2>
+      <div id="quiz-container-architecture"></div>
+    </section>
+  </main>
+</div>
+<script src="../js/questions.js"></script>
+<script src="../js/quiz.js"></script>
+<script src="../js/main.js"></script>
+<script>initChapterQuiz('architecture', 'quiz-container-architecture', 5);</script>
+</body>
+</html>

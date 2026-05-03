@@ -1,0 +1,1699 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ALGO-BOT — Initiation à la Programmation</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Exo+2:wght@300;400;700;900&display=swap');
+
+  :root {
+    --bg: #0a0e1a;
+    --panel: #111827;
+    --panel2: #1a2235;
+    --accent: #00e5ff;
+    --accent2: #ff6b35;
+    --accent3: #7cfc00;
+    --accent4: #ffd700;
+    --text: #e2e8f0;
+    --text2: #94a3b8;
+    --border: #2d3748;
+    --robot: #00e5ff;
+    --exit: #7cfc00;
+    --wall: #4a5568;
+    --empty: #1a2235;
+    --crystal: #a78bfa;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Exo 2', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Stars background */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      radial-gradient(1px 1px at 20% 30%, white 0%, transparent 100%),
+      radial-gradient(1px 1px at 80% 10%, white 0%, transparent 100%),
+      radial-gradient(1px 1px at 50% 60%, white 0%, transparent 100%),
+      radial-gradient(1px 1px at 10% 80%, white 0%, transparent 100%),
+      radial-gradient(1px 1px at 90% 70%, white 0%, transparent 100%),
+      radial-gradient(1px 1px at 35% 15%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(1px 1px at 65% 45%, rgba(255,255,255,0.5) 0%, transparent 100%),
+      radial-gradient(2px 2px at 15% 55%, rgba(0,229,255,0.4) 0%, transparent 100%),
+      radial-gradient(2px 2px at 75% 85%, rgba(124,252,0,0.3) 0%, transparent 100%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* ===== HEADER ===== */
+  header {
+    position: relative;
+    z-index: 10;
+    text-align: center;
+    padding: 2rem 1rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: linear-gradient(180deg, rgba(0,229,255,0.05) 0%, transparent 100%);
+  }
+
+  .logo {
+    font-family: 'Space Mono', monospace;
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 700;
+    letter-spacing: 0.3em;
+    color: var(--accent);
+    text-shadow: 0 0 20px rgba(0,229,255,0.5), 0 0 60px rgba(0,229,255,0.2);
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { text-shadow: 0 0 20px rgba(0,229,255,0.5), 0 0 60px rgba(0,229,255,0.2); }
+    50% { text-shadow: 0 0 30px rgba(0,229,255,0.8), 0 0 80px rgba(0,229,255,0.4); }
+  }
+
+  .tagline {
+    color: var(--text2);
+    font-size: 0.9rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    margin-top: 0.3rem;
+  }
+
+  .concept-badge {
+    display: inline-block;
+    background: linear-gradient(135deg, rgba(0,229,255,0.15), rgba(0,229,255,0.05));
+    border: 1px solid rgba(0,229,255,0.3);
+    color: var(--accent);
+    padding: 0.25rem 0.8rem;
+    border-radius: 2rem;
+    font-size: 0.75rem;
+    letter-spacing: 0.1em;
+    margin-top: 0.5rem;
+  }
+
+  /* ===== LAYOUT ===== */
+  .app {
+    position: relative;
+    z-index: 5;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1.5rem;
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 1.5rem;
+    align-items: start;
+  }
+
+  @media (max-width: 768px) {
+    .app { grid-template-columns: 1fr; }
+  }
+
+  /* ===== PANELS ===== */
+  .panel {
+    background: var(--panel);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1.2rem;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .panel::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--accent), transparent);
+    opacity: 0.4;
+  }
+
+  .panel-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    text-transform: uppercase;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .panel-title::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* ===== LEVEL SELECTOR ===== */
+  .levels-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.4rem;
+  }
+
+  .level-btn {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    color: var(--text2);
+    padding: 0.5rem;
+    border-radius: 6px;
+    cursor: pointer;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    text-align: center;
+    transition: all 0.2s;
+    position: relative;
+  }
+
+  .level-btn:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: rgba(0,229,255,0.05);
+  }
+
+  .level-btn.active {
+    background: rgba(0,229,255,0.15);
+    border-color: var(--accent);
+    color: var(--accent);
+    box-shadow: 0 0 10px rgba(0,229,255,0.2);
+  }
+
+  .level-btn.completed::after {
+    content: '✓';
+    position: absolute;
+    top: 2px; right: 4px;
+    font-size: 0.55rem;
+    color: var(--accent3);
+  }
+
+  .difficulty-label {
+    font-size: 0.65rem;
+    color: var(--text2);
+    margin-bottom: 0.4rem;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+  }
+
+  .difficulty-section { margin-bottom: 0.8rem; }
+
+  /* ===== CONCEPTS BOX ===== */
+  .concept-box {
+    background: var(--panel2);
+    border: 1px solid rgba(255,107,53,0.3);
+    border-radius: 8px;
+    padding: 0.8rem;
+    margin-top: 1rem;
+  }
+
+  .concept-box h4 {
+    font-size: 0.7rem;
+    color: var(--accent2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.5rem;
+    font-family: 'Space Mono', monospace;
+  }
+
+  .concept-tag {
+    display: inline-block;
+    background: rgba(255,107,53,0.1);
+    border: 1px solid rgba(255,107,53,0.3);
+    color: var(--accent2);
+    padding: 0.15rem 0.5rem;
+    border-radius: 3px;
+    font-size: 0.65rem;
+    margin: 0.15rem 0.15rem 0 0;
+  }
+
+  /* ===== MAIN GAME AREA ===== */
+  .game-area {
+    display: flex;
+    flex-direction: column;
+    gap: 1.2rem;
+  }
+
+  /* ===== MISSION PANEL ===== */
+  .mission-bar {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .mission-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 1rem;
+    color: var(--accent);
+  }
+
+  .mission-desc {
+    color: var(--text2);
+    font-size: 0.85rem;
+    flex: 1;
+    min-width: 200px;
+  }
+
+  .lives-display {
+    font-size: 1.1rem;
+    letter-spacing: 0.1em;
+  }
+
+  /* ===== GRID ===== */
+  .grid-wrapper {
+    display: flex;
+    justify-content: center;
+  }
+
+  .grid {
+    display: inline-grid;
+    gap: 3px;
+    padding: 1rem;
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+
+  .cell {
+    width: 56px;
+    height: 56px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    position: relative;
+    transition: all 0.3s;
+    border: 1px solid transparent;
+  }
+
+  .cell.empty { background: var(--empty); border-color: rgba(255,255,255,0.05); }
+  .cell.wall {
+    background: var(--wall);
+    border-color: #5a6580;
+    background-image: repeating-linear-gradient(
+      45deg, transparent, transparent 4px,
+      rgba(0,0,0,0.2) 4px, rgba(0,0,0,0.2) 5px
+    );
+  }
+
+  .cell.exit {
+    background: rgba(124,252,0,0.15);
+    border-color: var(--accent3);
+    box-shadow: inset 0 0 10px rgba(124,252,0,0.2);
+    animation: exit-pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes exit-pulse {
+    0%,100% { box-shadow: inset 0 0 10px rgba(124,252,0,0.2), 0 0 5px rgba(124,252,0,0.1); }
+    50% { box-shadow: inset 0 0 20px rgba(124,252,0,0.4), 0 0 15px rgba(124,252,0,0.3); }
+  }
+
+  .cell.crystal {
+    background: rgba(167,139,250,0.15);
+    border-color: var(--crystal);
+  }
+
+  .cell.robot-here {
+    border-color: var(--accent);
+    box-shadow: 0 0 12px rgba(0,229,255,0.5);
+  }
+
+  .robot-sprite {
+    font-size: 1.6rem;
+    transition: all 0.3s;
+    filter: drop-shadow(0 0 6px rgba(0,229,255,0.8));
+  }
+
+  .dir-indicator {
+    position: absolute;
+    font-size: 0.6rem;
+    color: var(--accent);
+    bottom: 2px;
+    right: 2px;
+    opacity: 0.7;
+  }
+
+  /* ===== INSTRUCTION LINE ===== */
+  .instruction-section { }
+
+  .instruction-line {
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+    flex-wrap: wrap;
+    min-height: 70px;
+    background: rgba(0,0,0,0.3);
+    border: 1px dashed rgba(0,229,255,0.2);
+    border-radius: 8px;
+    padding: 0.6rem;
+    margin-bottom: 0.8rem;
+    position: relative;
+  }
+
+  .instruction-line::before {
+    content: 'LIGNE DE COMMANDE';
+    position: absolute;
+    top: -0.5rem;
+    left: 0.8rem;
+    background: var(--panel);
+    color: var(--accent);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.55rem;
+    letter-spacing: 0.15em;
+    padding: 0 0.3rem;
+  }
+
+  .slot {
+    width: 54px;
+    height: 54px;
+    border: 1px dashed rgba(0,229,255,0.15);
+    border-radius: 6px;
+    background: rgba(0,229,255,0.02);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.6rem;
+    color: rgba(0,229,255,0.2);
+    font-family: 'Space Mono', monospace;
+    position: relative;
+  }
+
+  .slot-num {
+    position: absolute;
+    top: 2px;
+    left: 4px;
+    font-size: 0.5rem;
+    color: rgba(0,229,255,0.2);
+    font-family: 'Space Mono', monospace;
+  }
+
+  /* ===== TILES ===== */
+  .tile {
+    width: 54px;
+    height: 54px;
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    cursor: grab;
+    border: 2px solid;
+    transition: all 0.2s;
+    font-size: 1.2rem;
+    position: relative;
+    user-select: none;
+    flex-shrink: 0;
+  }
+
+  .tile:hover { transform: translateY(-2px); }
+  .tile:active { cursor: grabbing; transform: scale(0.95); }
+
+  .tile-label {
+    font-size: 0.45rem;
+    font-family: 'Space Mono', monospace;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    margin-top: 0.1rem;
+  }
+
+  .tile.FORWARD { background: rgba(0,229,255,0.15); border-color: var(--accent); color: var(--accent); }
+  .tile.TURN_LEFT { background: rgba(255,165,0,0.15); border-color: orange; color: orange; }
+  .tile.TURN_RIGHT { background: rgba(255,107,53,0.15); border-color: var(--accent2); color: var(--accent2); }
+  .tile.BACKWARD { background: rgba(167,139,250,0.15); border-color: var(--crystal); color: var(--crystal); }
+  .tile.JUMP { background: rgba(124,252,0,0.15); border-color: var(--accent3); color: var(--accent3); }
+  .tile.LOOP { background: rgba(255,215,0,0.15); border-color: var(--accent4); color: var(--accent4); }
+  .tile.IF { background: rgba(255,80,80,0.15); border-color: #ff5050; color: #ff5050; }
+
+  .tile.in-line {
+    cursor: pointer;
+    box-shadow: 0 0 8px rgba(0,229,255,0.2);
+  }
+
+  .tile.in-line:hover {
+    filter: brightness(1.3);
+    transform: translateY(-1px);
+  }
+
+  .tile.executing {
+    animation: tile-exec 0.4s ease-in-out;
+    box-shadow: 0 0 20px rgba(255,255,255,0.5) !important;
+  }
+
+  @keyframes tile-exec {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.2); }
+    100% { transform: scale(1); }
+  }
+
+  /* ===== TILE PALETTE ===== */
+  .tile-palette {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .palette-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.6rem;
+    color: var(--text2);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 0.3rem;
+  }
+
+  .tile-count {
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    background: var(--accent2);
+    color: white;
+    border-radius: 50%;
+    width: 16px;
+    height: 16px;
+    font-size: 0.55rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Space Mono', monospace;
+    font-weight: 700;
+  }
+
+  /* ===== BUTTONS ===== */
+  .btn-row {
+    display: flex;
+    gap: 0.6rem;
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    padding: 0.6rem 1.4rem;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    font-family: 'Exo 2', sans-serif;
+    font-weight: 700;
+    font-size: 0.85rem;
+    letter-spacing: 0.05em;
+    transition: all 0.2s;
+    text-transform: uppercase;
+  }
+
+  .btn-run {
+    background: linear-gradient(135deg, var(--accent), #0080ff);
+    color: #000;
+    box-shadow: 0 0 20px rgba(0,229,255,0.3);
+  }
+  .btn-run:hover { box-shadow: 0 0 30px rgba(0,229,255,0.5); transform: translateY(-1px); }
+
+  .btn-reset {
+    background: rgba(255,107,53,0.15);
+    color: var(--accent2);
+    border: 1px solid var(--accent2);
+  }
+  .btn-reset:hover { background: rgba(255,107,53,0.25); }
+
+  .btn-clear {
+    background: rgba(94,103,130,0.2);
+    color: var(--text2);
+    border: 1px solid var(--border);
+  }
+  .btn-clear:hover { background: rgba(94,103,130,0.3); }
+
+  .btn-hint {
+    background: rgba(255,215,0,0.1);
+    color: var(--accent4);
+    border: 1px solid rgba(255,215,0,0.3);
+    margin-left: auto;
+  }
+  .btn-hint:hover { background: rgba(255,215,0,0.2); }
+
+  /* ===== STATUS ===== */
+  .status-bar {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 0.8rem 1rem;
+    font-family: 'Space Mono', monospace;
+    font-size: 0.75rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .status-dot {
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: var(--text2);
+    flex-shrink: 0;
+  }
+
+  .status-dot.ok { background: var(--accent3); box-shadow: 0 0 6px var(--accent3); }
+  .status-dot.error { background: #ff4444; box-shadow: 0 0 6px #ff4444; animation: blink 0.5s infinite; }
+  .status-dot.running { background: var(--accent4); box-shadow: 0 0 6px var(--accent4); animation: blink 0.3s infinite; }
+
+  @keyframes blink { 0%,100% { opacity: 1; } 50% { opacity: 0.2; } }
+
+  /* ===== FEEDBACK OVERLAY ===== */
+  .feedback-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.8);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .feedback-overlay.show { display: flex; }
+
+  .feedback-box {
+    background: var(--panel);
+    border: 2px solid var(--accent);
+    border-radius: 16px;
+    padding: 2.5rem;
+    text-align: center;
+    max-width: 360px;
+    animation: pop-in 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  }
+
+  @keyframes pop-in {
+    0% { transform: scale(0.7); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+
+  .feedback-box.win { border-color: var(--accent3); }
+  .feedback-box.lose { border-color: #ff4444; }
+
+  .feedback-emoji { font-size: 3rem; margin-bottom: 0.8rem; }
+  .feedback-title { font-family: 'Space Mono', monospace; font-size: 1.3rem; margin-bottom: 0.5rem; }
+  .feedback-box.win .feedback-title { color: var(--accent3); }
+  .feedback-box.lose .feedback-title { color: #ff4444; }
+  .feedback-msg { color: var(--text2); font-size: 0.85rem; margin-bottom: 1.5rem; line-height: 1.5; }
+
+  .feedback-btns { display: flex; gap: 0.7rem; justify-content: center; flex-wrap: wrap; }
+
+  /* ===== HINT BOX ===== */
+  .hint-box {
+    display: none;
+    background: rgba(255,215,0,0.05);
+    border: 1px solid rgba(255,215,0,0.3);
+    border-radius: 8px;
+    padding: 0.8rem;
+    font-size: 0.8rem;
+    color: var(--accent4);
+    line-height: 1.5;
+  }
+  .hint-box.show { display: block; }
+
+  /* ===== TABS (physical/digital) ===== */
+  .tabs {
+    display: flex;
+    gap: 0.3rem;
+    margin-bottom: 1.2rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0.5rem;
+  }
+
+  .tab-btn {
+    background: none;
+    border: none;
+    color: var(--text2);
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    cursor: pointer;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+
+  .tab-btn.active {
+    background: rgba(0,229,255,0.1);
+    color: var(--accent);
+    border: 1px solid rgba(0,229,255,0.3);
+  }
+
+  .tab-content { display: none; }
+  .tab-content.active { display: block; }
+
+  /* ===== PRINT TILES (physical version) ===== */
+  .tiles-print-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 90px);
+    gap: 0.8rem;
+    padding: 1rem;
+    background: var(--panel2);
+    border-radius: 8px;
+  }
+
+  .print-tile {
+    width: 88px; height: 88px;
+    border-radius: 8px;
+    border: 2px dashed;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    font-size: 2rem;
+    gap: 0.2rem;
+  }
+
+  .print-tile span {
+    font-size: 0.55rem;
+    font-family: 'Space Mono', monospace;
+    text-align: center;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* ===== ALGO CONCEPTS ===== */
+  .concept-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .concept-item {
+    background: var(--panel2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 0.6rem 0.8rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 0.6rem;
+  }
+
+  .concept-icon { font-size: 1rem; flex-shrink: 0; }
+  .concept-name {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.65rem;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    display: block;
+    margin-bottom: 0.2rem;
+  }
+  .concept-desc { font-size: 0.75rem; color: var(--text2); line-height: 1.4; }
+
+  .step-counter {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--text2);
+    padding: 0.3rem 0.6rem;
+    background: rgba(0,0,0,0.3);
+    border-radius: 4px;
+    border: 1px solid var(--border);
+  }
+
+  .crystals-collected {
+    font-family: 'Space Mono', monospace;
+    font-size: 0.7rem;
+    color: var(--crystal);
+    padding: 0.3rem 0.6rem;
+    background: rgba(167,139,250,0.1);
+    border-radius: 4px;
+    border: 1px solid rgba(167,139,250,0.3);
+  }
+
+  /* ===== EXEC STEP HIGHLIGHT ===== */
+  .exec-highlight {
+    position: absolute;
+    bottom: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--accent4);
+    box-shadow: 0 0 6px var(--accent4);
+    display: none;
+  }
+
+  .exec-highlight.show { display: block; }
+
+  /* ===== RESPONSIVE tweaks ===== */
+  @media (max-width: 600px) {
+    .cell { width: 44px; height: 44px; font-size: 1.1rem; }
+    .tile { width: 46px; height: 46px; font-size: 1rem; }
+    .slot { width: 46px; height: 46px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🤖 ALGO-BOT</div>
+  <div class="tagline">Mission Mars — Initiation à la Programmation</div>
+  <span class="concept-badge">Séquences · Boucles · Conditions · Fonctions</span>
+</header>
+
+<div class="app">
+
+  <!-- SIDE PANEL -->
+  <div>
+    <div class="panel">
+      <div class="panel-title">Niveaux</div>
+
+      <div class="difficulty-section">
+        <div class="difficulty-label">🟢 Découverte (séquences)</div>
+        <div class="levels-grid" id="grid-easy"></div>
+      </div>
+      <div class="difficulty-section">
+        <div class="difficulty-label">🟡 Exploration (boucles)</div>
+        <div class="levels-grid" id="grid-medium"></div>
+      </div>
+      <div class="difficulty-section">
+        <div class="difficulty-label">🔴 Expert (conditions)</div>
+        <div class="levels-grid" id="grid-hard"></div>
+      </div>
+
+      <div class="concept-box">
+        <h4>Concept du niveau</h4>
+        <div id="level-concepts"></div>
+      </div>
+    </div>
+
+    <!-- Concepts Algorithmiques -->
+    <div class="panel" style="margin-top:1rem;">
+      <div class="panel-title">Guide des concepts</div>
+      <div class="concept-list">
+        <div class="concept-item">
+          <div class="concept-icon">📋</div>
+          <div>
+            <span class="concept-name">Séquence</span>
+            <span class="concept-desc">Les instructions s'exécutent une par une, dans l'ordre de gauche à droite.</span>
+          </div>
+        </div>
+        <div class="concept-item">
+          <div class="concept-icon">🔁</div>
+          <div>
+            <span class="concept-name">Boucle</span>
+            <span class="concept-desc">Répéter plusieurs fois un groupe d'instructions. Ex : "Avance ×3".</span>
+          </div>
+        </div>
+        <div class="concept-item">
+          <div class="concept-icon">🔀</div>
+          <div>
+            <span class="concept-name">Condition (SI)</span>
+            <span class="concept-desc">Une instruction qui ne s'exécute que si une condition est vraie. Ex : "SI cristal → ramasse".</span>
+          </div>
+        </div>
+        <div class="concept-item">
+          <div class="concept-icon">📦</div>
+          <div>
+            <span class="concept-name">Fonction</span>
+            <span class="concept-desc">Un bloc d'instructions réutilisable qu'on appelle par son nom.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- MAIN GAME -->
+  <div class="game-area">
+    <div class="panel">
+      <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('play')">🎮 Jouer</button>
+        <button class="tab-btn" onclick="switchTab('print')">🖨️ Version Physique</button>
+        <button class="tab-btn" onclick="switchTab('rules')">📖 Règles</button>
+      </div>
+
+      <!-- PLAY TAB -->
+      <div id="tab-play" class="tab-content active">
+        <div class="mission-bar">
+          <span class="mission-title" id="mission-title">MISSION 1</span>
+          <span class="mission-desc" id="mission-desc">—</span>
+          <span class="step-counter" id="step-counter">Étapes : 0</span>
+          <span class="crystals-collected" id="crystals-display" style="display:none">💎 0</span>
+        </div>
+
+        <div class="grid-wrapper" style="margin: 1rem 0;">
+          <div class="grid" id="game-grid"></div>
+        </div>
+
+        <!-- Instruction line -->
+        <div class="instruction-section">
+          <div class="instruction-line" id="instruction-line"
+            ondragover="event.preventDefault()" ondrop="dropToLine(event)">
+          </div>
+
+          <!-- Palette de tuiles -->
+          <div class="palette-label">Tuiles disponibles — glisse-les dans la ligne de commande</div>
+          <div class="tile-palette" id="tile-palette"></div>
+        </div>
+
+        <div style="margin-top: 0.8rem;">
+          <div class="btn-row">
+            <button class="btn btn-run" onclick="runProgram()">▶ Exécuter</button>
+            <button class="btn btn-reset" onclick="resetLevel()">↺ Réinitialiser</button>
+            <button class="btn btn-clear" onclick="clearLine()">✕ Vider la ligne</button>
+            <button class="btn btn-hint" onclick="toggleHint()">💡 Indice</button>
+          </div>
+          <div class="hint-box" id="hint-box" style="margin-top:0.8rem;"></div>
+        </div>
+
+        <div class="status-bar" style="margin-top:0.8rem;" id="status-bar">
+          <div class="status-dot" id="status-dot"></div>
+          <span id="status-msg">Prêt. Place tes tuiles dans la ligne de commande, puis clique sur Exécuter.</span>
+        </div>
+      </div>
+
+      <!-- PRINT TAB -->
+      <div id="tab-print" class="tab-content">
+        <p style="color:var(--text2);font-size:0.85rem;margin-bottom:1rem;line-height:1.6;">
+          🖨️ <strong style="color:var(--text)">Version physique (plateau + tuiles)</strong> — Imprime et découpe ces tuiles. Dessine un plateau quadrillé sur du papier (ou utilise un damier) et place tes pions. Chaque joueur pioche ses tuiles et construit le programme à tour de rôle. Idéal de la 6e à la terminale !
+        </p>
+        <div class="tiles-print-grid">
+          <div class="print-tile" style="border-color:var(--accent);color:var(--accent);">⬆️<span>Avancer</span></div>
+          <div class="print-tile" style="border-color:orange;color:orange;">↰<span>Tourner<br>à gauche</span></div>
+          <div class="print-tile" style="border-color:var(--accent2);color:var(--accent2);">↱<span>Tourner<br>à droite</span></div>
+          <div class="print-tile" style="border-color:var(--crystal);color:var(--crystal);">⬇️<span>Reculer</span></div>
+          <div class="print-tile" style="border-color:var(--accent3);color:var(--accent3);">⤴<span>Sauter</span></div>
+          <div class="print-tile" style="border-color:var(--accent4);color:var(--accent4);">🔁<span>Boucle<br>×N</span></div>
+          <div class="print-tile" style="border-color:#ff5050;color:#ff5050;">❓<span>SI cristal<br>→ ramasse</span></div>
+        </div>
+        <div style="margin-top:1.2rem;background:var(--panel2);border-radius:8px;padding:1rem;">
+          <h4 style="color:var(--accent);font-family:'Space Mono',monospace;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.8rem;">📐 Règles du jeu physique</h4>
+          <ol style="color:var(--text2);font-size:0.82rem;line-height:1.8;padding-left:1.2rem;">
+            <li>Chaque joueur reçoit <strong style="color:var(--text)">4 à 6 tuiles</strong> (selon le niveau).</li>
+            <li>Le joueur place ses tuiles dans sa <strong style="color:var(--text)">ligne de commande</strong> (rangée de slots).</li>
+            <li>On exécute les tuiles de <strong style="color:var(--text)">gauche à droite</strong> en déplaçant le pion.</li>
+            <li>Si le robot atteint la <strong style="color:var(--accent3)">case verte (sortie)</strong> → victoire !</li>
+            <li>Si le robot sort du plateau ou heurte un mur → on recommence ce tour.</li>
+            <li>Les tuiles jouées <strong style="color:var(--text)">restent en place</strong> : on ne les reprend pas !</li>
+          </ol>
+        </div>
+        <div style="margin-top:0.8rem;background:rgba(0,229,255,0.05);border:1px solid rgba(0,229,255,0.2);border-radius:8px;padding:1rem;">
+          <h4 style="color:var(--accent);font-family:'Space Mono',monospace;font-size:0.75rem;text-transform:uppercase;letter-spacing:0.1em;margin-bottom:0.6rem;">🎓 En classe (variante pédagogique)</h4>
+          <p style="color:var(--text2);font-size:0.82rem;line-height:1.7;">
+            Mode <strong style="color:var(--text)">débogage</strong> : un élève écrit son programme (les tuiles), un autre l'exécute à voix haute en décrivant chaque étape. Excellent pour développer la pensée algorithmique et la communication !
+          </p>
+        </div>
+      </div>
+
+      <!-- RULES TAB -->
+      <div id="tab-rules" class="tab-content">
+        <div style="color:var(--text2);font-size:0.85rem;line-height:1.8;">
+          <h4 style="color:var(--accent);font-family:'Space Mono',monospace;font-size:0.75rem;margin-bottom:0.8rem;text-transform:uppercase;">🤖 But du jeu</h4>
+          <p style="margin-bottom:1rem;">Aide ALGO-BOT à atteindre la <strong style="color:var(--accent3)">sortie verte 🟢</strong> en programant ses déplacements avec des tuiles. Tu ne peux placer qu'une tuile par tour — et elles restent dans la ligne !</p>
+
+          <h4 style="color:var(--accent);font-family:'Space Mono',monospace;font-size:0.75rem;margin-bottom:0.8rem;margin-top:1rem;text-transform:uppercase;">🎯 Les tuiles</h4>
+          <ul style="padding-left:1rem;">
+            <li><strong style="color:var(--accent)">⬆️ Avancer</strong> — déplace d'une case dans la direction actuelle</li>
+            <li><strong style="color:orange;">↰ Tourner à gauche</strong> — pivote de 90° à gauche (sans bouger)</li>
+            <li><strong style="color:var(--accent2);">↱ Tourner à droite</strong> — pivote de 90° à droite (sans bouger)</li>
+            <li><strong style="color:var(--crystal);">⬇️ Reculer</strong> — recule d'une case (direction opposée)</li>
+            <li><strong style="color:var(--accent3);">⤴ Sauter</strong> — saute par-dessus un obstacle</li>
+            <li><strong style="color:var(--accent4);">🔁 Boucle ×N</strong> — répète les N tuiles précédentes</li>
+            <li><strong style="color:#ff5050;">❓ SI</strong> — exécute la prochaine tuile si cristal présent</li>
+          </ul>
+
+          <h4 style="color:var(--accent);font-family:'Space Mono',monospace;font-size:0.75rem;margin-bottom:0.8rem;margin-top:1rem;text-transform:uppercase;">⚡ Déroulement d'un tour</h4>
+          <ol style="padding-left:1rem;">
+            <li>Glisse une tuile dans la ligne de commande (ou clique dessus depuis la palette).</li>
+            <li>Clique sur <strong style="color:var(--accent)">▶ Exécuter</strong> — toutes les tuiles s'exécutent de gauche à droite.</li>
+            <li>Les tuiles restent en ligne. Continue d'en ajouter au prochain tour.</li>
+            <li>Atteins la sortie pour gagner !</li>
+          </ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Feedback overlay -->
+<div class="feedback-overlay" id="feedback-overlay">
+  <div class="feedback-box" id="feedback-box">
+    <div class="feedback-emoji" id="feedback-emoji"></div>
+    <div class="feedback-title" id="feedback-title"></div>
+    <div class="feedback-msg" id="feedback-msg"></div>
+    <div class="feedback-btns" id="feedback-btns"></div>
+  </div>
+</div>
+
+<script>
+// ================================================================
+// GAME DATA — Levels
+// ================================================================
+
+const TILE_TYPES = {
+  FORWARD:    { icon: '⬆️', label: 'Avancer',   desc: 'Avance d\'une case' },
+  TURN_LEFT:  { icon: '↰',  label: 'Gauche',    desc: 'Tourne à gauche' },
+  TURN_RIGHT: { icon: '↱',  label: 'Droite',    desc: 'Tourne à droite' },
+  BACKWARD:   { icon: '⬇️', label: 'Reculer',   desc: 'Recule d\'une case' },
+  JUMP:       { icon: '⤴',  label: 'Sauter',    desc: 'Saute par-dessus' },
+  LOOP:       { icon: '🔁', label: 'Boucle ×2', desc: 'Répète 2 fois' },
+  IF:         { icon: '❓', label: 'SI cristal', desc: 'Si cristal → suivant' },
+};
+
+// Grid cells: 0=empty, 1=wall, E=exit, C=crystal, R=robot_start
+// Robot dir: 0=up, 1=right, 2=down, 3=left
+const LEVELS = [
+  // ---- DÉCOUVERTE ----
+  {
+    id:1, name:'Décollage', diff:'easy',
+    concepts: ['séquence'],
+    desc: 'Va tout droit jusqu\'à la sortie. Simple comme bonjour !',
+    hint: 'Ajoute 3 fois la tuile ⬆️ Avancer.',
+    grid: [
+      ['E','0','0','0','R'],
+    ],
+    rows:1, cols:5,
+    startPos:{r:0,c:4}, startDir:3,
+    tiles: {FORWARD:5},
+    maxSlots: 5,
+  },
+  {
+    id:2, name:'Premier virage', diff:'easy',
+    concepts: ['séquence'],
+    desc: 'Le chemin tourne ! Pense à regarder où tu vas.',
+    hint: 'Avance, tourne à gauche, avance 2 fois.',
+    grid: [
+      ['E','0','1','1','1'],
+      ['0','0','1','1','1'],
+      ['0','R','1','1','1'],
+    ],
+    rows:3, cols:5,
+    startPos:{r:2,c:1}, startDir:0,
+    tiles: {FORWARD:4, TURN_LEFT:2, TURN_RIGHT:1},
+    maxSlots: 5,
+  },
+  {
+    id:3, name:'Le couloir', diff:'easy',
+    concepts: ['séquence'],
+    desc: 'Navigue dans le couloir. Deux virages !',
+    hint: 'Avance, tourne, avance 2×, tourne, avance.',
+    grid: [
+      ['1','1','E','1','1'],
+      ['1','1','0','1','1'],
+      ['0','0','0','0','R'],
+    ],
+    rows:3, cols:5,
+    startPos:{r:2,c:4}, startDir:3,
+    tiles: {FORWARD:5, TURN_LEFT:2, TURN_RIGHT:2},
+    maxSlots: 6,
+  },
+  {
+    id:4, name:'Labyrinthe I', diff:'easy',
+    concepts: ['séquence'],
+    desc: 'Un petit labyrinthe. Planifie ton chemin avant de poser tes tuiles !',
+    hint: 'Avance 2×, tourne droite, avance 2×, tourne gauche, avance.',
+    grid: [
+      ['1','1','1','1','E'],
+      ['1','1','1','1','0'],
+      ['0','0','0','0','0'],
+      ['0','1','1','1','1'],
+      ['R','1','1','1','1'],
+    ],
+    rows:5, cols:5,
+    startPos:{r:4,c:0}, startDir:0,
+    tiles: {FORWARD:6, TURN_LEFT:2, TURN_RIGHT:2},
+    maxSlots: 7,
+  },
+
+  // ---- EXPLORATION ----
+  {
+    id:5, name:'Boucle simple', diff:'medium',
+    concepts: ['séquence','boucle'],
+    desc: 'Un long couloir droit. Trop de tuiles à placer une par une… il faut une boucle !',
+    hint: 'Place ⬆️ puis 🔁 Boucle×2 pour répéter. Combien de fois dois-tu avancer ?',
+    grid: [
+      ['E','0','0','0','0','0','R'],
+    ],
+    rows:1, cols:7,
+    startPos:{r:0,c:6}, startDir:3,
+    tiles: {FORWARD:3, LOOP:2},
+    maxSlots: 4,
+  },
+  {
+    id:6, name:'Spirale', diff:'medium',
+    concepts: ['séquence','boucle'],
+    desc: 'Un chemin en L répétitif. Les boucles sont tes amies !',
+    hint: 'Avance 2×, tourne gauche. Répète ce motif.',
+    grid: [
+      ['1','1','1','1','E'],
+      ['1','1','1','1','0'],
+      ['0','0','0','0','0'],
+      ['0','1','1','1','1'],
+      ['0','1','1','1','1'],
+      ['R','1','1','1','1'],
+    ],
+    rows:6, cols:5,
+    startPos:{r:5,c:0}, startDir:0,
+    tiles: {FORWARD:4, TURN_LEFT:2, TURN_RIGHT:1, LOOP:2},
+    maxSlots: 5,
+  },
+  {
+    id:7, name:'Cristaux !', diff:'medium',
+    concepts: ['séquence','boucle'],
+    desc: 'Collecte au moins 2 cristaux avant d\'atteindre la sortie.',
+    hint: 'Avance sur les cristaux, puis continue vers la sortie.',
+    grid: [
+      ['E','0','C','0','C','0','R'],
+    ],
+    rows:1, cols:7,
+    startPos:{r:0,c:6}, startDir:3,
+    crystalGoal: 2,
+    tiles: {FORWARD:5, TURN_LEFT:1, TURN_RIGHT:1},
+    maxSlots: 6,
+  },
+  {
+    id:8, name:'Boucle + virage', diff:'medium',
+    concepts: ['séquence','boucle'],
+    desc: 'Combine boucles et virages pour parcourir ce parcours.',
+    hint: 'Avance 3×, tourne droite, avance 2×. Tu peux utiliser une boucle pour les sections droites.',
+    grid: [
+      ['1','1','0','0','E'],
+      ['1','1','0','1','1'],
+      ['1','1','0','1','1'],
+      ['R','0','0','1','1'],
+    ],
+    rows:4, cols:5,
+    startPos:{r:3,c:0}, startDir:1,
+    tiles: {FORWARD:5, TURN_LEFT:2, TURN_RIGHT:2, LOOP:2},
+    maxSlots: 6,
+  },
+
+  // ---- EXPERT ----
+  {
+    id:9, name:'Condition I', diff:'hard',
+    concepts: ['séquence','condition'],
+    desc: 'Des cristaux peuvent ou non être là. Utilise SI pour les ramasser si présents.',
+    hint: 'Utilise la tuile ❓ SI avant la tuile de ramassage. Si pas de cristal, la tuile suivante est ignorée.',
+    grid: [
+      ['E','0','C','0','0','R'],
+    ],
+    rows:1, cols:6,
+    startPos:{r:0,c:5}, startDir:3,
+    crystalGoal: 1,
+    tiles: {FORWARD:4, IF:2, TURN_LEFT:1},
+    maxSlots: 6,
+  },
+  {
+    id:10, name:'Le détective', diff:'hard',
+    concepts: ['séquence','boucle','condition'],
+    desc: 'Chemin complexe avec cristaux facultatifs. Optimise ton programme !',
+    hint: 'Planifie d\'abord le chemin vers la sortie, puis ajoute les conditions pour les cristaux.',
+    grid: [
+      ['1','1','1','E','1'],
+      ['1','1','1','0','1'],
+      ['C','0','0','0','1'],
+      ['0','1','1','1','1'],
+      ['R','1','1','1','1'],
+    ],
+    rows:5, cols:5,
+    startPos:{r:4,c:0}, startDir:0,
+    crystalGoal: 1,
+    tiles: {FORWARD:5, TURN_LEFT:2, TURN_RIGHT:2, IF:1, LOOP:1},
+    maxSlots: 7,
+  },
+  {
+    id:11, name:'Marathon', diff:'hard',
+    concepts: ['séquence','boucle','condition'],
+    desc: 'Le parcours le plus long. Maîtrise tous les concepts !',
+    hint: 'Décompose le problème : section droite, virage, section droite, virage… puis la sortie.',
+    grid: [
+      ['1','1','1','1','E'],
+      ['C','0','0','0','0'],
+      ['0','1','1','1','1'],
+      ['0','1','1','1','C'],
+      ['0','0','0','0','0'],
+      ['1','1','1','1','R'],
+    ],
+    rows:6, cols:5,
+    startPos:{r:5,c:4}, startDir:3,
+    crystalGoal: 1,
+    tiles: {FORWARD:6, TURN_LEFT:3, TURN_RIGHT:2, IF:2, LOOP:2},
+    maxSlots: 8,
+  },
+  {
+    id:12, name:'Boss final', diff:'hard',
+    concepts: ['séquence','boucle','condition'],
+    desc: 'Le défi ultime. Toutes les tuiles, toutes les compétences. Bonne chance !',
+    hint: 'Analyse chaque section séparément. Utilise les boucles pour les longs segments et les conditions pour les cristaux.',
+    grid: [
+      ['E','0','0','0','C'],
+      ['1','1','1','1','0'],
+      ['C','0','0','1','0'],
+      ['0','1','0','1','0'],
+      ['0','0','0','0','0'],
+      ['1','1','1','1','R'],
+    ],
+    rows:6, cols:5,
+    startPos:{r:5,c:4}, startDir:3,
+    crystalGoal: 2,
+    tiles: {FORWARD:6, TURN_LEFT:3, TURN_RIGHT:3, IF:2, LOOP:2, BACKWARD:1},
+    maxSlots: 9,
+  },
+];
+
+// ================================================================
+// GAME STATE
+// ================================================================
+let currentLevel = LEVELS[0];
+let completed = new Set();
+let robotPos = {r:0, c:0};
+let robotDir = 0; // 0=up,1=right,2=down,3=left
+let crystalsCollected = 0;
+let commandLine = []; // array of tile type strings
+let isRunning = false;
+let hintVisible = false;
+
+const DIRS = [
+  {dr:-1,dc:0}, // up
+  {dr:0,dc:1},  // right
+  {dr:1,dc:0},  // down
+  {dr:0,dc:-1}, // left
+];
+const DIR_CHARS = ['⬆','➡','⬇','⬅'];
+
+// ================================================================
+// INIT
+// ================================================================
+function init() {
+  buildLevelButtons();
+  loadLevel(LEVELS[0]);
+}
+
+function buildLevelButtons() {
+  const groups = { easy: [], medium: [], hard: [] };
+  LEVELS.forEach(l => groups[l.diff].push(l));
+
+  ['easy','medium','hard'].forEach(diff => {
+    const container = document.getElementById('grid-' + diff);
+    container.innerHTML = '';
+    groups[diff].forEach(l => {
+      const btn = document.createElement('button');
+      btn.className = 'level-btn' + (l.id === currentLevel.id ? ' active' : '') + (completed.has(l.id) ? ' completed' : '');
+      btn.textContent = l.id;
+      btn.title = l.name;
+      btn.onclick = () => loadLevel(l);
+      btn.id = 'level-btn-' + l.id;
+      container.appendChild(btn);
+    });
+  });
+}
+
+function loadLevel(level) {
+  currentLevel = level;
+  commandLine = [];
+  hintVisible = false;
+  document.getElementById('hint-box').classList.remove('show');
+
+  // Reset robot position
+  robotPos = { ...level.startPos };
+  robotDir = level.startDir;
+  crystalsCollected = 0;
+
+  // Parse grid (clone)
+  renderAll();
+  setStatus('idle', 'Prêt. Glisse tes tuiles dans la ligne de commande, puis clique sur ▶ Exécuter.');
+
+  // Update level buttons
+  document.querySelectorAll('.level-btn').forEach(b => b.classList.remove('active'));
+  const activeBtn = document.getElementById('level-btn-' + level.id);
+  if (activeBtn) activeBtn.classList.add('active');
+
+  // Concepts
+  const cc = document.getElementById('level-concepts');
+  cc.innerHTML = level.concepts.map(c => `<span class="concept-tag">${c}</span>`).join('');
+
+  document.getElementById('mission-title').textContent = `MISSION ${level.id} — ${level.name}`;
+  document.getElementById('mission-desc').textContent = level.desc;
+
+  const cd = document.getElementById('crystals-display');
+  if (level.crystalGoal) {
+    cd.style.display = 'inline';
+    cd.textContent = `💎 ${crystalsCollected}/${level.crystalGoal}`;
+  } else {
+    cd.style.display = 'none';
+  }
+
+  document.getElementById('step-counter').textContent = 'Étapes : 0';
+}
+
+// ================================================================
+// RENDER
+// ================================================================
+function renderAll() {
+  renderGrid();
+  renderCommandLine();
+  renderPalette();
+}
+
+function renderGrid() {
+  const level = currentLevel;
+  const grid = document.getElementById('game-grid');
+  grid.style.gridTemplateColumns = `repeat(${level.cols}, 1fr)`;
+  grid.innerHTML = '';
+
+  // Build grid state from level + current crystal state
+  const crystalState = getCrystalState();
+
+  for (let r = 0; r < level.rows; r++) {
+    for (let c = 0; c < level.cols; c++) {
+      const cell = document.createElement('div');
+      const raw = level.grid[r][c];
+      const isRobot = (r === robotPos.r && c === robotPos.c);
+      const isCrystal = crystalState[`${r},${c}`];
+
+      let type = raw;
+      if (raw === 'R') type = '0'; // start is just empty
+
+      cell.className = 'cell ' + (
+        type === '1' ? 'wall' :
+        type === 'E' ? 'exit' :
+        type === 'C' ? (isCrystal ? 'crystal' : 'empty') :
+        'empty'
+      );
+      if (isRobot) cell.classList.add('robot-here');
+
+      if (isRobot) {
+        cell.innerHTML = `<span class="robot-sprite">${['🤖','🤖','🤖','🤖'][robotDir]}</span><span class="dir-indicator">${DIR_CHARS[robotDir]}</span>`;
+      } else if (type === 'E') {
+        cell.innerHTML = '🟢';
+      } else if (type === 'C' && isCrystal) {
+        cell.innerHTML = '💎';
+      } else if (type === '1') {
+        cell.innerHTML = '🪨';
+      }
+
+      grid.appendChild(cell);
+    }
+  }
+}
+
+let collectedCrystals = new Set();
+
+function getCrystalState() {
+  // Build map of which crystal cells still have crystals
+  const state = {};
+  for (let r = 0; r < currentLevel.rows; r++) {
+    for (let c = 0; c < currentLevel.cols; c++) {
+      if (currentLevel.grid[r][c] === 'C') {
+        state[`${r},${c}`] = !collectedCrystals.has(`${r},${c}`);
+      }
+    }
+  }
+  return state;
+}
+
+function renderCommandLine() {
+  const line = document.getElementById('instruction-line');
+  line.innerHTML = '';
+
+  for (let i = 0; i < currentLevel.maxSlots; i++) {
+    const slot = document.createElement('div');
+    slot.className = 'slot';
+    slot.dataset.index = i;
+    slot.innerHTML = `<span class="slot-num">${i+1}</span>`;
+
+    if (commandLine[i]) {
+      const t = commandLine[i];
+      const info = TILE_TYPES[t];
+      const tile = document.createElement('div');
+      tile.className = `tile ${t} in-line`;
+      tile.innerHTML = `${info.icon}<div class="tile-label">${info.label}</div><div class="exec-highlight" id="exec-${i}"></div>`;
+      tile.title = `Clic : supprimer`;
+      tile.onclick = () => { commandLine[i] = null; renderCommandLine(); };
+      slot.appendChild(tile);
+    }
+
+    slot.ondragover = (e) => { e.preventDefault(); slot.style.borderColor = 'var(--accent)'; };
+    slot.ondragleave = () => { slot.style.borderColor = ''; };
+    slot.ondrop = (e) => {
+      e.preventDefault();
+      slot.style.borderColor = '';
+      const type = e.dataTransfer.getData('tileType');
+      if (type && i < currentLevel.maxSlots) {
+        commandLine[i] = type;
+        renderCommandLine();
+      }
+    };
+
+    line.appendChild(slot);
+  }
+}
+
+function renderPalette() {
+  const palette = document.getElementById('tile-palette');
+  palette.innerHTML = '';
+
+  const available = currentLevel.tiles;
+  Object.entries(available).forEach(([type, count]) => {
+    const info = TILE_TYPES[type];
+    const used = commandLine.filter(t => t === type).length;
+    const remaining = count - used;
+
+    const tile = document.createElement('div');
+    tile.className = `tile ${type}`;
+    tile.title = info.desc;
+    tile.draggable = remaining > 0;
+    tile.innerHTML = `${info.icon}<div class="tile-label">${info.label}</div>`;
+    if (count > 1) tile.innerHTML += `<span class="tile-count">${remaining}</span>`;
+
+    if (remaining <= 0) {
+      tile.style.opacity = '0.3';
+      tile.style.cursor = 'not-allowed';
+      tile.draggable = false;
+    } else {
+      tile.onclick = () => addTileToLine(type);
+      tile.ondragstart = (e) => { e.dataTransfer.setData('tileType', type); };
+    }
+
+    palette.appendChild(tile);
+  });
+}
+
+function addTileToLine(type) {
+  const used = commandLine.filter(t => t === type).length;
+  const max = currentLevel.tiles[type] || 0;
+  if (used >= max) return;
+
+  // Find first empty slot
+  for (let i = 0; i < currentLevel.maxSlots; i++) {
+    if (!commandLine[i]) {
+      commandLine[i] = type;
+      renderCommandLine();
+      renderPalette();
+      return;
+    }
+  }
+  setStatus('error', 'La ligne de commande est pleine ! Supprime une tuile d\'abord.');
+}
+
+function clearLine() {
+  commandLine = [];
+  renderCommandLine();
+  renderPalette();
+  setStatus('idle', 'Ligne de commande vidée.');
+}
+
+function dropToLine(e) {
+  e.preventDefault();
+  // Handled by slot drop
+}
+
+// ================================================================
+// EXECUTION ENGINE
+// ================================================================
+async function runProgram() {
+  if (isRunning) return;
+
+  const tiles = commandLine.filter(Boolean);
+  if (tiles.length === 0) {
+    setStatus('error', 'Ajoute au moins une tuile dans la ligne de commande !');
+    return;
+  }
+
+  isRunning = true;
+  setStatus('running', 'Exécution en cours…');
+
+  let stepCount = 0;
+  let i = 0;
+
+  while (i < commandLine.length) {
+    const type = commandLine[i];
+    if (!type) { i++; continue; }
+
+    // Highlight executing tile
+    highlightTile(i);
+    await delay(400);
+
+    const result = await executeTile(type, i);
+    stepCount++;
+
+    document.getElementById('step-counter').textContent = `Étapes : ${stepCount}`;
+
+    if (result === 'WIN') {
+      isRunning = false;
+      showFeedback('win');
+      return;
+    }
+    if (result === 'CRASH') {
+      isRunning = false;
+      showFeedback('crash');
+      return;
+    }
+
+    // Handle LOOP: repeat previous N tiles
+    if (result && result.jump !== undefined) {
+      i = result.jump;
+      continue;
+    }
+
+    // Handle IF: skip next if no crystal
+    if (result === 'SKIP') {
+      i += 2;
+      continue;
+    }
+
+    i++;
+    renderGrid();
+    await delay(50);
+  }
+
+  isRunning = false;
+
+  // Check win condition
+  if (robotPos.r === findExit().r && robotPos.c === findExit().c) {
+    showFeedback('win');
+  } else {
+    setStatus('error', 'Programme terminé mais le robot n\'a pas atteint la sortie… Essaie encore !');
+  }
+}
+
+async function executeTile(type, index) {
+  const level = currentLevel;
+
+  if (type === 'FORWARD') {
+    const d = DIRS[robotDir];
+    const nr = robotPos.r + d.dr;
+    const nc = robotPos.c + d.dc;
+    if (!inBounds(nr, nc)) return 'CRASH';
+    if (level.grid[nr][nc] === '1') return 'CRASH';
+    robotPos = {r:nr, c:nc};
+    checkCrystal();
+    renderGrid();
+    if (isAtExit()) return 'WIN';
+    return 'OK';
+  }
+
+  if (type === 'BACKWARD') {
+    const d = DIRS[(robotDir+2)%4];
+    const nr = robotPos.r + d.dr;
+    const nc = robotPos.c + d.dc;
+    if (!inBounds(nr, nc)) return 'CRASH';
+    if (level.grid[nr][nc] === '1') return 'CRASH';
+    robotPos = {r:nr, c:nc};
+    checkCrystal();
+    renderGrid();
+    if (isAtExit()) return 'WIN';
+    return 'OK';
+  }
+
+  if (type === 'TURN_LEFT') {
+    robotDir = (robotDir + 3) % 4;
+    renderGrid();
+    return 'OK';
+  }
+
+  if (type === 'TURN_RIGHT') {
+    robotDir = (robotDir + 1) % 4;
+    renderGrid();
+    return 'OK';
+  }
+
+  if (type === 'JUMP') {
+    const d = DIRS[robotDir];
+    // Jump over one cell
+    const nr = robotPos.r + d.dr * 2;
+    const nc = robotPos.c + d.dc * 2;
+    if (!inBounds(nr, nc)) return 'CRASH';
+    if (level.grid[nr][nc] === '1') return 'CRASH';
+    robotPos = {r:nr, c:nc};
+    checkCrystal();
+    renderGrid();
+    if (isAtExit()) return 'WIN';
+    return 'OK';
+  }
+
+  if (type === 'LOOP') {
+    // Find the 2 tiles before this LOOP and re-execute them
+    const toRepeat = [];
+    for (let j = Math.max(0, index-2); j < index; j++) {
+      if (commandLine[j]) toRepeat.push(commandLine[j]);
+    }
+    for (const t of toRepeat) {
+      highlightTile(index);
+      await delay(300);
+      const r = await executeTile(t, index);
+      if (r === 'WIN') return 'WIN';
+      if (r === 'CRASH') return 'CRASH';
+      renderGrid();
+      await delay(200);
+    }
+    return 'OK';
+  }
+
+  if (type === 'IF') {
+    // Check if crystal at current position (or adjacent?)
+    const key = `${robotPos.r},${robotPos.c}`;
+    if (level.grid[robotPos.r][robotPos.c] === 'C' && !collectedCrystals.has(key)) {
+      return 'OK'; // proceed normally, next tile will execute
+    } else {
+      return 'SKIP'; // skip next tile
+    }
+  }
+
+  return 'OK';
+}
+
+function highlightTile(index) {
+  document.querySelectorAll('.exec-highlight').forEach(h => h.classList.remove('show'));
+  document.querySelectorAll('.tile.in-line').forEach(t => t.classList.remove('executing'));
+
+  const el = document.getElementById(`exec-${index}`);
+  if (el) {
+    el.classList.add('show');
+    el.closest('.tile')?.classList.add('executing');
+  }
+}
+
+function checkCrystal() {
+  const key = `${robotPos.r},${robotPos.c}`;
+  if (currentLevel.grid[robotPos.r][robotPos.c] === 'C' && !collectedCrystals.has(key)) {
+    collectedCrystals.add(key);
+    crystalsCollected++;
+    const cd = document.getElementById('crystals-display');
+    if (currentLevel.crystalGoal) {
+      cd.textContent = `💎 ${crystalsCollected}/${currentLevel.crystalGoal}`;
+      cd.style.animation = 'none';
+      setTimeout(() => cd.style.animation = '', 10);
+    }
+  }
+}
+
+function isAtExit() {
+  return currentLevel.grid[robotPos.r][robotPos.c] === 'E';
+}
+
+function findExit() {
+  for (let r = 0; r < currentLevel.rows; r++)
+    for (let c = 0; c < currentLevel.cols; c++)
+      if (currentLevel.grid[r][c] === 'E') return {r,c};
+  return null;
+}
+
+function inBounds(r, c) {
+  return r >= 0 && r < currentLevel.rows && c >= 0 && c < currentLevel.cols;
+}
+
+function delay(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+// ================================================================
+// FEEDBACK
+// ================================================================
+function showFeedback(type) {
+  const overlay = document.getElementById('feedback-overlay');
+  const box = document.getElementById('feedback-box');
+  const emoji = document.getElementById('feedback-emoji');
+  const title = document.getElementById('feedback-title');
+  const msg = document.getElementById('feedback-msg');
+  const btns = document.getElementById('feedback-btns');
+
+  overlay.classList.add('show');
+
+  if (type === 'win') {
+    const crystalOk = !currentLevel.crystalGoal || crystalsCollected >= currentLevel.crystalGoal;
+
+    if (!crystalOk) {
+      // Reached exit but not enough crystals
+      box.className = 'feedback-box lose';
+      emoji.textContent = '💎';
+      title.textContent = 'Presque !';
+      msg.textContent = `ALGO-BOT a atteint la sortie, mais il n'a collecté que ${crystalsCollected}/${currentLevel.crystalGoal} cristaux. Essaie de passer par tous les cristaux !`;
+      btns.innerHTML = `<button class="btn btn-reset" onclick="closeFeedback();resetLevel()">↺ Réessayer</button>`;
+      return;
+    }
+
+    box.className = 'feedback-box win';
+    emoji.textContent = '🎉';
+    title.textContent = 'Mission accomplie !';
+
+    const concepts = currentLevel.concepts.join(', ');
+    msg.textContent = `Bravo ! Tu as maîtrisé : ${concepts}. ALGO-BOT a rejoint la sortie en utilisant ta séquence d'instructions !`;
+
+    completed.add(currentLevel.id);
+    buildLevelButtons();
+
+    const nextLevel = LEVELS.find(l => l.id === currentLevel.id + 1);
+    btns.innerHTML = `
+      ${nextLevel ? `<button class="btn btn-run" onclick="closeFeedback();loadLevel(LEVELS[${nextLevel.id-1}])">▶ Mission suivante</button>` : '<span style="color:var(--accent4)">🏆 Toutes les missions complétées !</span>'}
+      <button class="btn btn-reset" onclick="closeFeedback();resetLevel()">↺ Rejouer</button>
+    `;
+    setStatus('ok', `✅ Mission ${currentLevel.id} réussie ! ${currentLevel.concepts.map(c=>`[${c}]`).join(' ')}`);
+
+  } else if (type === 'crash') {
+    box.className = 'feedback-box lose';
+    emoji.textContent = '💥';
+    title.textContent = 'Crash !';
+    msg.textContent = 'ALGO-BOT a heurté un mur ou est sorti du plateau. Vérifie ta séquence d\'instructions et réessaie. Les tuiles restent en place !';
+    btns.innerHTML = `<button class="btn btn-reset" onclick="closeFeedback();resetLevel()">↺ Réinitialiser</button><button class="btn btn-hint" onclick="closeFeedback();toggleHint()">💡 Voir l'indice</button>`;
+    setStatus('error', '💥 Crash ! Le robot a percuté un obstacle.');
+  }
+}
+
+function closeFeedback() {
+  document.getElementById('feedback-overlay').classList.remove('show');
+}
+
+// ================================================================
+// MISC
+// ================================================================
+function resetLevel() {
+  collectedCrystals = new Set();
+  loadLevel(currentLevel);
+}
+
+function setStatus(type, msg) {
+  const dot = document.getElementById('status-dot');
+  dot.className = 'status-dot' + (type !== 'idle' ? ' ' + (type === 'running' ? 'running' : type === 'ok' ? 'ok' : 'error') : '');
+  document.getElementById('status-msg').textContent = msg;
+}
+
+function toggleHint() {
+  hintVisible = !hintVisible;
+  const box = document.getElementById('hint-box');
+  box.textContent = '💡 ' + currentLevel.hint;
+  box.classList.toggle('show', hintVisible);
+}
+
+function switchTab(tab) {
+  document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+
+// ================================================================
+// START
+// ================================================================
+init();
+</script>
+</body>
+</html>

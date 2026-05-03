@@ -1,0 +1,727 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Complexité algorithmique — NSI Bac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ── Graphique ── */
+    .graph-section {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 1.5rem;
+      margin: 2rem 0;
+    }
+    .graph-controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: .5rem;
+      margin-bottom: 1.25rem;
+    }
+    .graph-toggle {
+      display: flex;
+      align-items: center;
+      gap: .4rem;
+      padding: .35rem .75rem;
+      border-radius: 20px;
+      border: 2px solid;
+      background: transparent;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .8rem;
+      cursor: pointer;
+      transition: background .15s, opacity .15s;
+      opacity: .45;
+    }
+    .graph-toggle.active { opacity: 1; }
+    .graph-toggle:hover { opacity: .85; }
+    .graph-toggle .dot { width: 10px; height: 10px; border-radius: 50%; }
+
+    #complexity-chart {
+      width: 100%;
+      height: 340px;
+      display: block;
+    }
+    .axis-label { font-family: 'JetBrains Mono', monospace; font-size: 11px; fill: var(--text2); }
+    .grid-line { stroke: var(--border); stroke-width: 1; }
+    .curve { fill: none; stroke-width: 2.5; stroke-linecap: round; stroke-linejoin: round; transition: opacity .2s; }
+    .curve-label { font-family: 'JetBrains Mono', monospace; font-size: 12px; font-weight: 700; }
+
+    /* ── Tooltip ── */
+    #chart-tooltip {
+      position: absolute;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: .5rem .8rem;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .78rem;
+      pointer-events: none;
+      display: none;
+      z-index: 10;
+      min-width: 140px;
+    }
+    .tooltip-row { display: flex; justify-content: space-between; gap: 1rem; margin: 2px 0; }
+    .tooltip-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 4px; }
+
+    /* ── Tableau des complexités ── */
+    .complexity-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 1rem;
+      margin: 1.5rem 0;
+    }
+    .complexity-card {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1rem 1.25rem;
+      border-left: 4px solid;
+      transition: transform .15s;
+    }
+    .complexity-card:hover { transform: translateY(-2px); }
+    .complexity-card h4 {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 1.05rem;
+      margin: 0 0 .3rem 0;
+    }
+    .complexity-card .badge-note {
+      display: inline-block;
+      font-size: .7rem;
+      padding: .15rem .5rem;
+      border-radius: 4px;
+      font-weight: 700;
+      margin-bottom: .5rem;
+    }
+    .complexity-card p { margin: .3rem 0; font-size: .88rem; color: var(--text2); }
+    .complexity-card code { font-size: .85rem; }
+
+    /* couleurs des courbes */
+    .c1  { color: #58a6ff; border-color: #58a6ff; }
+    .c2  { color: #3fb950; border-color: #3fb950; }
+    .c3  { color: #d29922; border-color: #d29922; }
+    .c4  { color: #ff7b72; border-color: #ff7b72; }
+    .c5  { color: #bc8cff; border-color: #bc8cff; }
+    .c6  { color: #ffa657; border-color: #ffa657; }
+    .bg-c1 { background:#58a6ff; }
+    .bg-c2 { background:#3fb950; }
+    .bg-c3 { background:#d29922; }
+    .bg-c4 { background:#ff7b72; }
+    .bg-c5 { background:#bc8cff; }
+    .bg-c6 { background:#ffa657; }
+    .note-excellent { background: #1a3a1a; color: #3fb950; }
+    .note-bon       { background: #1a2a3a; color: #58a6ff; }
+    .note-correct   { background: #2a2a1a; color: #d29922; }
+    .note-mauvais   { background: #3a1a1a; color: #ff7b72; }
+    .note-terrible  { background: #2a1a3a; color: #bc8cff; }
+    .note-horrible  { background: #3a1a1a; color: #ffa657; }
+
+    /* ── Règles de calcul ── */
+    .rule-box {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.5rem;
+      margin: 1rem 0;
+    }
+    .rule-box h4 { margin: 0 0 .6rem; font-size: 1rem; }
+    .rule-steps { counter-reset: step; list-style: none; padding: 0; margin: 0; }
+    .rule-steps li {
+      counter-increment: step;
+      padding: .4rem 0 .4rem 2.2rem;
+      position: relative;
+      border-bottom: 1px solid var(--border);
+      font-size: .9rem;
+    }
+    .rule-steps li:last-child { border-bottom: none; }
+    .rule-steps li::before {
+      content: counter(step);
+      position: absolute; left: 0; top: .35rem;
+      width: 1.4rem; height: 1.4rem;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: .72rem; font-weight: 700; color: #000;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* ── Exercice interactif ── */
+    .quiz-complexity { margin: 1.5rem 0; }
+    .qc-question {
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem;
+      margin: 1rem 0;
+    }
+    .qc-question pre { margin: .5rem 0 1rem; }
+    .qc-options { display: flex; flex-wrap: wrap; gap: .5rem; }
+    .qc-opt {
+      padding: .4rem 1rem;
+      border-radius: 6px;
+      border: 1.5px solid var(--border);
+      background: transparent;
+      color: var(--text1);
+      font-family: 'JetBrains Mono', monospace;
+      font-size: .85rem;
+      cursor: pointer;
+      transition: border-color .15s, background .15s;
+    }
+    .qc-opt:hover { border-color: var(--accent); }
+    .qc-opt.correct { border-color: #3fb950; background: #1a3a1a; color: #3fb950; }
+    .qc-opt.wrong   { border-color: #ff7b72; background: #3a1a1a; color: #ff7b72; }
+    .qc-feedback { margin-top: .6rem; font-size: .85rem; min-height: 1.2em; }
+    .qc-feedback.ok { color: #3fb950; }
+    .qc-feedback.ko { color: #ff7b72; }
+
+    .chapter-layout { max-width: 1100px; }
+  </style>
+</head>
+<body>
+<nav>
+  <a href="index.html" class="nav-brand">NSI<span>.bac</span></a>
+  <div class="nav-links">
+    <a href="index.html">Accueil</a>
+    <a href="quiz.html">QCM</a>
+    <a href="methodes.html">Méthodes</a>
+    <a href="chapitres/index.html">Chapitres</a>
+  </div>
+  <span class="nav-badge">Terminale 2025</span>
+  <button class="burger">☰</button>
+</nav>
+
+<div class="chapter-layout">
+  <aside class="toc">
+    <h4>📋 Sommaire</h4>
+    <ul>
+      <li><a href="#intro">Qu'est-ce que la complexité ?</a></li>
+      <li><a href="#notation">Notation grand O</a></li>
+      <li><a href="#graphique">Graphique comparatif</a></li>
+      <li><a href="#catalogue">Catalogue des complexités</a></li>
+      <li><a href="#calculer">Comment calculer ?</a></li>
+      <li><a href="#regles">Règles pratiques</a></li>
+      <li><a href="#exercices">Exercices interactifs</a></li>
+      <li><a href="#pieges">Pièges fréquents</a></li>
+    </ul>
+  </aside>
+
+  <main class="chapter-content">
+    <div class="chapter-header">
+      <div class="chapter-icon">📈</div>
+      <div>
+        <h1>Complexité algorithmique</h1>
+        <p style="color:var(--text2);margin:0">Notation grand O, analyse et comparaison des algorithmes</p>
+        <div class="chapter-meta" style="margin-top:.75rem">
+          <span class="chapter-badge badge-orange">O(n log n)</span>
+          <span class="chapter-badge badge-blue">Analyse</span>
+          <span class="chapter-badge badge-green">Comparaison</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTRO -->
+    <section id="intro">
+      <h2>🤔 Qu'est-ce que la complexité ?</h2>
+      <p>
+        Deux algorithmes peuvent résoudre le même problème, mais l'un peut être <strong>mille fois plus rapide</strong> que l'autre sur de grandes données. La <strong>complexité algorithmique</strong> est l'outil mathématique qui permet de comparer cette efficacité sans avoir à mesurer le temps réel (qui dépend du matériel, du langage, etc.).
+      </p>
+      <p>
+        On distingue deux types de complexité :
+      </p>
+      <ul>
+        <li><strong>Complexité temporelle</strong> : nombre d'opérations élémentaires en fonction de la taille de l'entrée <em>n</em>.</li>
+        <li><strong>Complexité spatiale</strong> : quantité de mémoire utilisée. Moins souvent demandée au bac, mais à connaître.</li>
+      </ul>
+      <div class="callout callout-info">
+        <strong>💡 Pourquoi pas mesurer le temps directement ?</strong> Parce que le temps d'exécution dépend du processeur, du langage, des optimisations du compilateur… La complexité est une mesure <em>universelle</em> indépendante de la machine.
+      </div>
+    </section>
+
+    <!-- NOTATION -->
+    <section id="notation">
+      <h2>📐 La notation grand O</h2>
+      <p>
+        La notation <strong>O(f(n))</strong> (lire "grand O de f de n") décrit le comportement <em>asymptotique</em> de l'algorithme : comment le nombre d'opérations grandit quand <em>n</em> devient très grand.
+      </p>
+      <pre><code><span class="cm">On dit que T(n) = O(f(n)) si, à partir d'un certain n₀,
+T(n) ≤ c × f(n)  pour une constante c > 0.
+
+Autrement dit : f(n) est un majorant du coût, aux constantes près.</span>
+
+<span class="cm">Exemples concrets :</span>
+T(n) = 3n + 7        <span class="cm">→  O(n)       (le 3 et le 7 "disparaissent")</span>
+T(n) = 5n² + 2n + 1  <span class="cm">→  O(n²)      (le terme dominant gagne)</span>
+T(n) = n·log(n) + n  <span class="cm">→  O(n log n) (n·log n domine n pour grand n)</span></code></pre>
+
+      <div class="rule-box">
+        <h4>🔑 Règles de simplification grand O</h4>
+        <ol class="rule-steps">
+          <li><strong>On garde seulement le terme dominant</strong> : O(n² + n) → O(n²)</li>
+          <li><strong>On ignore les constantes multiplicatives</strong> : O(3n) → O(n)</li>
+          <li><strong>On considère le pire cas</strong> (sauf mention contraire)</li>
+          <li><strong>Additions de boucles indépendantes</strong> : O(n) + O(n) = O(n), pas O(2n)</li>
+          <li><strong>Boucles imbriquées → multiplication</strong> : O(n) × O(n) = O(n²)</li>
+        </ol>
+      </div>
+    </section>
+
+    <!-- GRAPHIQUE -->
+    <section id="graphique">
+      <h2>📊 Graphique comparatif</h2>
+      <p>Cliquez sur les courbes pour les afficher ou masquer. Passez la souris sur le graphique pour lire les valeurs.</p>
+
+      <div class="graph-section">
+        <div class="graph-controls" id="graph-controls">
+          <button class="graph-toggle c1 active" data-curve="0"><span class="dot bg-c1"></span>O(1)</button>
+          <button class="graph-toggle c2 active" data-curve="1"><span class="dot bg-c2"></span>O(log n)</button>
+          <button class="graph-toggle c3 active" data-curve="2"><span class="dot bg-c3"></span>O(n)</button>
+          <button class="graph-toggle c4 active" data-curve="3"><span class="dot bg-c4"></span>O(n log n)</button>
+          <button class="graph-toggle c5 active" data-curve="4"><span class="dot bg-c5"></span>O(n²)</button>
+          <button class="graph-toggle c6 active" data-curve="5"><span class="dot bg-c6"></span>O(2ⁿ)</button>
+        </div>
+        <div style="position:relative">
+          <canvas id="complexity-chart"></canvas>
+          <div id="chart-tooltip"></div>
+        </div>
+      </div>
+
+      <p style="color:var(--text2);font-size:.85rem;text-align:center;margin-top:-.5rem">
+        Axe X : taille de l'entrée n (0 → 30) · Axe Y : nombre d'opérations (échelle log)
+      </p>
+    </section>
+
+    <!-- CATALOGUE -->
+    <section id="catalogue">
+      <h2>📚 Catalogue des complexités</h2>
+      <div class="complexity-grid">
+        <div class="complexity-card" style="border-left-color:#58a6ff">
+          <h4 class="c1">O(1) — Constante</h4>
+          <span class="badge-note note-excellent">⭐ Excellent</span>
+          <p>Indépendant de n. Le temps ne change pas quelle que soit la taille des données.</p>
+          <p><strong>Exemples :</strong> accès à <code>lst[i]</code>, push/pop pile, insertion dictionnaire.</p>
+          <pre style="margin:.5rem 0"><code>x = lst[42]   <span class="cm"># toujours 1 opération</span></code></pre>
+        </div>
+        <div class="complexity-card" style="border-left-color:#3fb950">
+          <h4 class="c2">O(log n) — Logarithmique</h4>
+          <span class="badge-note note-bon">✅ Très bon</span>
+          <p>On divise le problème par une constante à chaque étape. Croît très lentement.</p>
+          <p><strong>Exemples :</strong> recherche dichotomique, opérations sur ABR équilibré.</p>
+          <pre style="margin:.5rem 0"><code><span class="cm"># n=1 000 000 → ~20 étapes seulement</span></code></pre>
+        </div>
+        <div class="complexity-card" style="border-left-color:#d29922">
+          <h4 class="c3">O(n) — Linéaire</h4>
+          <span class="badge-note note-correct">👍 Bon</span>
+          <p>On traite chaque élément une fois. Proportionnel à la taille des données.</p>
+          <p><strong>Exemples :</strong> parcours liste, recherche séquentielle, calcul de somme.</p>
+          <pre style="margin:.5rem 0"><code><span class="kw">for</span> x <span class="kw">in</span> lst: ...   <span class="cm"># n opérations</span></code></pre>
+        </div>
+        <div class="complexity-card" style="border-left-color:#ff7b72">
+          <h4 class="c4">O(n log n) — Quasi-linéaire</h4>
+          <span class="badge-note note-correct">👍 Acceptable</span>
+          <p>Légèrement plus que linéaire. C'est l'optimal théorique pour les tris par comparaison.</p>
+          <p><strong>Exemples :</strong> tri fusion, tri rapide (moy.), tri par tas.</p>
+          <pre style="margin:.5rem 0"><code><span class="cm"># n=1 000 000 → ~20 000 000 opérations</span></code></pre>
+        </div>
+        <div class="complexity-card" style="border-left-color:#bc8cff">
+          <h4 class="c5">O(n²) — Quadratique</h4>
+          <span class="badge-note note-mauvais">⚠️ À éviter si possible</span>
+          <p>Deux boucles imbriquées typiquement. Acceptable pour n ≤ 10 000 environ.</p>
+          <p><strong>Exemples :</strong> tri bulles, tri insertion (pire cas), tri sélection.</p>
+          <pre style="margin:.5rem 0"><code><span class="kw">for</span> i ...: <span class="kw">for</span> j ...: ...  <span class="cm"># n² ops</span></code></pre>
+        </div>
+        <div class="complexity-card" style="border-left-color:#ffa657">
+          <h4 class="c6">O(2ⁿ) — Exponentielle</h4>
+          <span class="badge-note note-horrible">💀 Impraticable</span>
+          <p>Explose rapidement. Inutilisable au-delà de n ≈ 30–40 en pratique.</p>
+          <p><strong>Exemples :</strong> énumération de tous les sous-ensembles, fibonacci naïf récursif.</p>
+          <pre style="margin:.5rem 0"><code><span class="cm"># n=50 → 10^15 opérations… des années !</span></code></pre>
+        </div>
+      </div>
+
+      <h3>Tableau de comparaison numérique</h3>
+      <table>
+        <thead>
+          <tr><th>Complexité</th><th>n = 10</th><th>n = 100</th><th>n = 1 000</th><th>n = 10 000</th><th>n = 1 000 000</th></tr>
+        </thead>
+        <tbody>
+          <tr><td><strong>O(1)</strong></td><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr>
+          <tr><td><strong>O(log n)</strong></td><td>3</td><td>7</td><td>10</td><td>14</td><td>20</td></tr>
+          <tr><td><strong>O(n)</strong></td><td>10</td><td>100</td><td>1 000</td><td>10 000</td><td>1 000 000</td></tr>
+          <tr><td><strong>O(n log n)</strong></td><td>33</td><td>664</td><td>9 966</td><td>132 877</td><td>2×10⁷</td></tr>
+          <tr><td><strong>O(n²)</strong></td><td>100</td><td>10 000</td><td>1 000 000</td><td>10⁸</td><td style="color:#ff7b72">10¹²</td></tr>
+          <tr><td><strong>O(2ⁿ)</strong></td><td>1 024</td><td style="color:#ff7b72">10³⁰</td><td style="color:#ff7b72">10³⁰¹</td><td style="color:#ff7b72">∞ (pratique)</td><td style="color:#ff7b72">∞</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- CALCULER -->
+    <section id="calculer">
+      <h2>🔬 Comment calculer la complexité ?</h2>
+      <p>Voici la <strong>méthode systématique</strong> pour analyser n'importe quel algorithme :</p>
+
+      <div class="rule-box">
+        <h4>🧮 Méthode en 5 étapes</h4>
+        <ol class="rule-steps">
+          <li><strong>Identifier n</strong> : quelle est la taille de l'entrée ? (longueur liste, valeur entier, nb nœuds graphe…)</li>
+          <li><strong>Repérer les boucles</strong> : chaque boucle qui parcourt n éléments ajoute un facteur n</li>
+          <li><strong>Analyser les boucles imbriquées</strong> : les multiplier entre elles</li>
+          <li><strong>Analyser la récursion</strong> : écrire la relation de récurrence T(n) = … + T(…)</li>
+          <li><strong>Garder le terme dominant</strong> et simplifier les constantes</li>
+        </ol>
+      </div>
+
+      <h3>Cas 1 — Boucles simples et imbriquées</h3>
+      <pre><code><span class="cm"># Une boucle → O(n)</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):          <span class="cm"># n fois</span>
+    traitement()              <span class="cm"># O(1) → total O(n)</span>
+
+<span class="cm"># Deux boucles indépendantes → O(n) + O(n) = O(n)</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n): ...       <span class="cm"># O(n)</span>
+<span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(n): ...       <span class="cm"># O(n)</span>
+                               <span class="cm"># total : O(2n) = O(n)</span>
+
+<span class="cm"># Deux boucles imbriquées → O(n²)</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):            <span class="cm"># n fois</span>
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(n):        <span class="cm"># n fois</span>
+        traitement()          <span class="cm"># O(1) → total O(n²)</span>
+
+<span class="cm"># Boucle intérieure dépendant de i → toujours O(n²) !</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n):            <span class="cm"># n fois</span>
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i):        <span class="cm"># 0+1+2+...+(n-1) = n(n-1)/2</span>
+        traitement()          <span class="cm"># → O(n²) quand même</span></code></pre>
+
+      <h3>Cas 2 — Division par 2 à chaque étape</h3>
+      <pre><code><span class="cm"># Si on divise par 2 à chaque itération → O(log n)</span>
+n_copie = n
+<span class="kw">while</span> n_copie > <span class="num">1</span>:
+    n_copie = n_copie // <span class="num">2</span>   <span class="cm"># combien de fois ? log₂(n) fois</span>
+    traitement()
+
+<span class="cm"># Exemple : pour n=1024, la boucle tourne 10 fois</span>
+<span class="cm"># 1024 → 512 → 256 → 128 → 64 → 32 → 16 → 8 → 4 → 2 → 1</span></code></pre>
+
+      <h3>Cas 3 — Récursion : relations de récurrence</h3>
+      <pre><code><span class="cm"># Récursion linéaire : T(n) = T(n-1) + O(1)</span>
+<span class="kw">def</span> <span class="fn">factorielle</span>(n):
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> <span class="num">1</span>        <span class="cm"># T(1) = O(1)</span>
+    <span class="kw">return</span> n * <span class="fn">factorielle</span>(n-<span class="num">1</span>) <span class="cm"># T(n) = T(n-1) + O(1) → O(n)</span>
+
+<span class="cm"># Diviser pour régner : T(n) = 2·T(n/2) + O(n)</span>
+<span class="kw">def</span> <span class="fn">tri_fusion</span>(lst):
+    <span class="kw">if</span> <span class="fn">len</span>(lst) <= <span class="num">1</span>: <span class="kw">return</span> lst   <span class="cm"># T(1) = O(1)</span>
+    m = <span class="fn">len</span>(lst) // <span class="num">2</span>
+    g = <span class="fn">tri_fusion</span>(lst[:m])          <span class="cm"># T(n/2)</span>
+    d = <span class="fn">tri_fusion</span>(lst[m:])          <span class="cm"># T(n/2)</span>
+    <span class="kw">return</span> <span class="fn">fusion</span>(g, d)              <span class="cm"># O(n) pour fusionner</span>
+<span class="cm"># T(n) = 2·T(n/2) + O(n) → O(n log n)  (Théorème maître)</span>
+
+<span class="cm"># Double récursion naïve : T(n) = 2·T(n-1) + O(1)</span>
+<span class="kw">def</span> <span class="fn">fib_naif</span>(n):
+    <span class="kw">if</span> n <= <span class="num">1</span>: <span class="kw">return</span> n
+    <span class="kw">return</span> <span class="fn">fib_naif</span>(n-<span class="num">1</span>) + <span class="fn">fib_naif</span>(n-<span class="num">2</span>) <span class="cm"># → O(2ⁿ) 💀</span></code></pre>
+
+      <div class="callout callout-purple" style="--callout-color:#bc8cff;border-left:4px solid #bc8cff;background:#1e1a2a;padding:1rem 1.25rem;border-radius:8px;margin:1rem 0">
+        <strong>📐 Théorème maître (simplifié) :</strong><br>
+        Pour T(n) = a·T(n/b) + O(nᶜ) :
+        <ul style="margin:.5rem 0 0;color:var(--text1)">
+          <li>Si log_b(a) &gt; c → T(n) = O(n^log_b(a))</li>
+          <li>Si log_b(a) = c → T(n) = O(nᶜ log n)</li>
+          <li>Si log_b(a) &lt; c → T(n) = O(nᶜ)</li>
+        </ul>
+        <em style="font-size:.85rem;color:var(--text2)">Tri fusion : a=2, b=2, c=1 → log₂(2)=1=c → O(n log n) ✅</em>
+      </div>
+    </section>
+
+    <!-- RÈGLES RAPIDES -->
+    <section id="regles">
+      <h2>⚡ Règles rapides à mémoriser</h2>
+      <table>
+        <thead><tr><th>Motif de code</th><th>Complexité</th><th>Explication</th></tr></thead>
+        <tbody>
+          <tr><td><code>lst[i]</code>, <code>dico[k]</code></td><td><strong>O(1)</strong></td><td>Accès direct par index/clé</td></tr>
+          <tr><td><code>for x in lst: ...</code></td><td><strong>O(n)</strong></td><td>Une itération par élément</td></tr>
+          <tr><td><code>while n > 1: n //= 2</code></td><td><strong>O(log n)</strong></td><td>Division par constante</td></tr>
+          <tr><td><code>for i: for j: ...</code></td><td><strong>O(n²)</strong></td><td>Deux boucles imbriquées</td></tr>
+          <tr><td><code>sorted(lst)</code></td><td><strong>O(n log n)</strong></td><td>Timsort Python</td></tr>
+          <tr><td><code>x in lst</code></td><td><strong>O(n)</strong></td><td>Recherche séquentielle</td></tr>
+          <tr><td><code>x in set</code> / <code>x in dict</code></td><td><strong>O(1)</strong></td><td>Table de hachage</td></tr>
+          <tr><td><code>lst.append(x)</code></td><td><strong>O(1)</strong> amorti</td><td>Ajout en fin de liste</td></tr>
+          <tr><td><code>lst.insert(0, x)</code></td><td><strong>O(n)</strong></td><td>Décale tous les éléments</td></tr>
+          <tr><td>Récursion <code>f(n-1)</code></td><td><strong>O(n)</strong></td><td>n appels récursifs</td></tr>
+          <tr><td>Récursion <code>f(n//2)</code></td><td><strong>O(log n)</strong></td><td>Profondeur log n</td></tr>
+          <tr><td>Double récursion <code>f(n-1)+f(n-2)</code></td><td><strong>O(2ⁿ)</strong></td><td>Arbre d'appels exponentiel</td></tr>
+        </tbody>
+      </table>
+    </section>
+
+    <!-- EXERCICES INTERACTIFS -->
+    <section id="exercices">
+      <h2>🎯 Exercices interactifs</h2>
+      <p>Quelle est la complexité de chaque fonction ?</p>
+      <div class="quiz-complexity" id="quiz-complexity"></div>
+    </section>
+
+    <!-- PIÈGES -->
+    <section id="pieges">
+      <h2>🚨 Pièges fréquents</h2>
+      <div class="callout callout-danger">
+        <strong>⛔ Confondre O(log n) et O(n log n)</strong><br>
+        <code>log(1000000) ≈ 20</code> opérations. <code>1000000 × 20 = 20 millions</code> opérations. Ce n'est pas du tout la même chose !
+      </div>
+      <div class="callout callout-danger">
+        <strong>⛔ Croire que O(n) + O(n) = O(2n)</strong><br>
+        Non. O(n) + O(n) = O(n). Les constantes multiplicatives disparaissent. On ne garde que la classe de croissance.
+      </div>
+      <div class="callout callout-warning">
+        <strong>⚠️ Boucle interne dépendant de i → toujours O(n²)</strong><br>
+        <code>for i in range(n): for j in range(i):</code> fait 0+1+…+(n-1) = n(n-1)/2 opérations = O(n²), pas O(n×n/2).
+      </div>
+      <div class="callout callout-warning">
+        <strong>⚠️ Complexité de <code>in</code> selon la structure</strong><br>
+        <code>x in liste</code> → O(n). <code>x in set</code> ou <code>x in dict</code> → O(1). Préférer set/dict pour les recherches fréquentes !
+      </div>
+      <div class="callout callout-info">
+        <strong>💡 Meilleur cas ≠ Pire cas</strong><br>
+        La recherche dichotomique peut trouver en 1 opération (meilleur cas O(1)), mais en O(log n) au pire. On raisonne toujours sur le <strong>pire cas</strong> sauf indication contraire.
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<div id="chart-tooltip"></div>
+
+<script src="js/main.js"></script>
+<script>
+// ── Données des courbes ──────────────────────────────────────────
+const CURVES = [
+  { label: 'O(1)',       color: '#58a6ff', fn: n => 1 },
+  { label: 'O(log n)',   color: '#3fb950', fn: n => Math.log2(n + 1) },
+  { label: 'O(n)',       color: '#d29922', fn: n => n },
+  { label: 'O(n log n)', color: '#ff7b72', fn: n => n * Math.log2(n + 1) },
+  { label: 'O(n²)',      color: '#bc8cff', fn: n => n * n },
+  { label: 'O(2ⁿ)',      color: '#ffa657', fn: n => Math.pow(2, n) },
+];
+
+const N_MAX = 30;
+const NS = Array.from({ length: N_MAX + 1 }, (_, i) => i);
+
+// ── Canvas setup ─────────────────────────────────────────────────
+const canvas = document.getElementById('complexity-chart');
+const ctx = canvas.getContext('2d');
+const tooltip = document.getElementById('chart-tooltip');
+
+let visible = CURVES.map(() => true);
+let dpr = window.devicePixelRatio || 1;
+
+function resize() {
+  const w = canvas.parentElement.clientWidth;
+  canvas.style.width = w + 'px';
+  canvas.style.height = '340px';
+  canvas.width = w * dpr;
+  canvas.height = 340 * dpr;
+  ctx.scale(dpr, dpr);
+  draw();
+}
+
+function getLogScale(val, yMax) {
+  if (val <= 0) return 0;
+  const logVal = Math.log10(val + 1);
+  const logMax = Math.log10(yMax + 1);
+  return logVal / logMax;
+}
+
+function draw() {
+  const W = canvas.width / dpr;
+  const H = canvas.height / dpr;
+  const PAD = { top: 20, right: 20, bottom: 40, left: 55 };
+  const PW = W - PAD.left - PAD.right;
+  const PH = H - PAD.top - PAD.bottom;
+
+  ctx.clearRect(0, 0, W, H);
+
+  // Y max = max visible value capped at 2^20 for display
+  const yMax = Math.min(Math.pow(2, N_MAX), 1e9);
+
+  // Grid
+  const yTicks = [1, 10, 100, 1000, 10000, 100000, 1000000, 1e9];
+  ctx.save();
+  ctx.strokeStyle = 'rgba(255,255,255,0.06)';
+  ctx.lineWidth = 1;
+  ctx.fillStyle = '#7d8590';
+  ctx.font = `10px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'right';
+  yTicks.forEach(t => {
+    const y = PAD.top + PH * (1 - getLogScale(t, yMax));
+    if (y < PAD.top || y > PAD.top + PH) return;
+    ctx.beginPath(); ctx.moveTo(PAD.left, y); ctx.lineTo(PAD.left + PW, y); ctx.stroke();
+    const label = t >= 1e9 ? '10⁹' : t >= 1e6 ? t/1e6+'M' : t >= 1000 ? t/1000+'k' : t;
+    ctx.fillText(label, PAD.left - 6, y + 4);
+  });
+
+  // X ticks
+  ctx.textAlign = 'center';
+  [0,5,10,15,20,25,30].forEach(n => {
+    const x = PAD.left + (n / N_MAX) * PW;
+    ctx.beginPath(); ctx.moveTo(x, PAD.top); ctx.lineTo(x, PAD.top + PH); ctx.stroke();
+    ctx.fillText(n, x, PAD.top + PH + 18);
+  });
+  ctx.restore();
+
+  // Axes labels
+  ctx.save();
+  ctx.fillStyle = '#7d8590';
+  ctx.font = `11px 'JetBrains Mono', monospace`;
+  ctx.textAlign = 'center';
+  ctx.fillText('n (taille entrée)', PAD.left + PW / 2, H - 2);
+  ctx.save(); ctx.translate(14, PAD.top + PH / 2); ctx.rotate(-Math.PI/2);
+  ctx.fillText('opérations (log)', 0, 0); ctx.restore();
+  ctx.restore();
+
+  // Curves
+  CURVES.forEach((c, idx) => {
+    if (!visible[idx]) return;
+    ctx.save();
+    ctx.beginPath();
+    ctx.strokeStyle = c.color;
+    ctx.lineWidth = 2.5;
+    ctx.lineJoin = 'round';
+    let started = false;
+    NS.forEach(n => {
+      const raw = c.fn(n);
+      if (!isFinite(raw) || raw > yMax * 1000) return;
+      const x = PAD.left + (n / N_MAX) * PW;
+      const y = PAD.top + PH * (1 - getLogScale(Math.min(raw, yMax), yMax));
+      if (!started) { ctx.moveTo(x, y); started = true; }
+      else ctx.lineTo(x, y);
+    });
+    ctx.stroke();
+
+    // Label at end
+    const lastN = N_MAX;
+    const lastRaw = c.fn(lastN);
+    if (isFinite(lastRaw) && lastRaw <= yMax * 1000) {
+      const x = PAD.left + PW + 4;
+      const y = PAD.top + PH * (1 - getLogScale(Math.min(lastRaw, yMax), yMax));
+      ctx.fillStyle = c.color;
+      ctx.font = `bold 10px 'JetBrains Mono', monospace`;
+      ctx.textAlign = 'left';
+      ctx.fillText(c.label, x - PW * .04, Math.max(PAD.top + 8, Math.min(PAD.top + PH - 4, y + 4)));
+    }
+    ctx.restore();
+  });
+}
+
+// ── Tooltip ──────────────────────────────────────────────────────
+canvas.addEventListener('mousemove', e => {
+  const rect = canvas.getBoundingClientRect();
+  const W = canvas.width / dpr;
+  const PAD = { top: 20, right: 20, bottom: 40, left: 55 };
+  const PW = W - PAD.left - PAD.right;
+  const mx = e.clientX - rect.left;
+  const n = Math.round(((mx - PAD.left) / PW) * N_MAX);
+  if (n < 0 || n > N_MAX) { tooltip.style.display = 'none'; return; }
+
+  let html = `<div style="font-weight:700;margin-bottom:4px;color:var(--text1)">n = ${n}</div>`;
+  CURVES.forEach((c, i) => {
+    if (!visible[i]) return;
+    const v = c.fn(n);
+    const display = !isFinite(v) ? '∞' : v > 1e12 ? '>10¹²' : v >= 1e9 ? (v/1e9).toFixed(1)+'G' : v >= 1e6 ? (v/1e6).toFixed(1)+'M' : v >= 1000 ? (v/1000).toFixed(1)+'k' : v.toFixed(v < 10 ? 2 : 0);
+    html += `<div class="tooltip-row"><span><span class="tooltip-dot" style="background:${c.color}"></span>${c.label}</span><span style="color:${c.color}">${display}</span></div>`;
+  });
+  tooltip.innerHTML = html;
+  tooltip.style.display = 'block';
+  const tx = e.clientX - rect.left + 14;
+  const ty = e.clientY - rect.top - 10;
+  tooltip.style.left = (tx + tooltip.offsetWidth > rect.width ? tx - tooltip.offsetWidth - 20 : tx) + 'px';
+  tooltip.style.top = ty + 'px';
+});
+canvas.addEventListener('mouseleave', () => { tooltip.style.display = 'none'; });
+
+// ── Toggles ───────────────────────────────────────────────────────
+document.querySelectorAll('.graph-toggle').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const idx = +btn.dataset.curve;
+    visible[idx] = !visible[idx];
+    btn.classList.toggle('active', visible[idx]);
+    draw();
+  });
+});
+
+window.addEventListener('resize', resize);
+resize();
+
+// ── Quiz interactif ───────────────────────────────────────────────
+const QUESTIONS_COMPLEXITY = [
+  {
+    code: `def f(lst):\n    total = 0\n    for x in lst:\n        total += x\n    return total`,
+    options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
+    answer: 2,
+    explain: 'Une seule boucle parcourant n éléments → O(n).'
+  },
+  {
+    code: `def f(lst):\n    for i in range(len(lst)):\n        for j in range(i, len(lst)):\n            print(lst[i], lst[j])`,
+    options: ['O(n)', 'O(n log n)', 'O(n²)', 'O(2ⁿ)'],
+    answer: 2,
+    explain: 'Deux boucles imbriquées (même si la seconde part de i) → 0+1+…+(n-1) = n(n-1)/2 → O(n²).'
+  },
+  {
+    code: `def f(n):\n    if n <= 1: return 1\n    return f(n // 2) + 1`,
+    options: ['O(1)', 'O(log n)', 'O(n)', 'O(n²)'],
+    answer: 1,
+    explain: 'On divise n par 2 à chaque appel récursif → profondeur log₂(n) → O(log n).'
+  },
+  {
+    code: `def f(n):\n    if n <= 1: return n\n    return f(n-1) + f(n-2)`,
+    options: ['O(n)', 'O(n²)', 'O(n log n)', 'O(2ⁿ)'],
+    answer: 3,
+    explain: 'Deux appels récursifs à chaque niveau → arbre d\'appels de taille 2ⁿ → O(2ⁿ).'
+  },
+  {
+    code: `def f(lst):\n    for i in range(len(lst)):\n        for j in range(len(lst)):\n            for k in range(len(lst)):\n                print(i,j,k)`,
+    options: ['O(n²)', 'O(n³)', 'O(3n)', 'O(n log n)'],
+    answer: 1,
+    explain: 'Trois boucles imbriquées de n itérations chacune → O(n³).'
+  },
+];
+
+const container = document.getElementById('quiz-complexity');
+QUESTIONS_COMPLEXITY.forEach((q, qi) => {
+  const div = document.createElement('div');
+  div.className = 'qc-question';
+  div.innerHTML = `
+    <p><strong>Fonction ${qi+1} :</strong></p>
+    <pre><code>${q.code}</code></pre>
+    <div class="qc-options">
+      ${q.options.map((o, oi) => `<button class="qc-opt" data-q="${qi}" data-o="${oi}">${o}</button>`).join('')}
+    </div>
+    <div class="qc-feedback" id="fb-${qi}"></div>
+  `;
+  container.appendChild(div);
+});
+
+document.querySelectorAll('.qc-opt').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const qi = +btn.dataset.q;
+    const oi = +btn.dataset.o;
+    const q = QUESTIONS_COMPLEXITY[qi];
+    const fb = document.getElementById('fb-' + qi);
+    document.querySelectorAll(`[data-q="${qi}"]`).forEach(b => {
+      b.disabled = true;
+      if (+b.dataset.o === q.answer) b.classList.add('correct');
+      else if (+b.dataset.o === oi) b.classList.add('wrong');
+    });
+    if (oi === q.answer) {
+      fb.className = 'qc-feedback ok';
+      fb.textContent = '✅ Correct ! ' + q.explain;
+    } else {
+      fb.className = 'qc-feedback ko';
+      fb.textContent = '❌ Raté. ' + q.explain;
+    }
+  });
+});
+</script>
+</body>
+</html>
