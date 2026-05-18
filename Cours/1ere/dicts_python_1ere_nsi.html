@@ -1,0 +1,1292 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Dictionnaires en Python — Cours 1ère NSI</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #ffffff;
+  --surface:  #f8fafc;
+  --surface2: #f1f5f9;
+  --border:   #e2e8f0;
+  --blue:     #2563eb;
+  --blue-lt:  #eff6ff;
+  --blue-dk:  #1e3a5f;
+  --green:    #059669;
+  --green-lt: #f0fdf4;
+  --orange:   #d97706;
+  --orange-lt:#fffbeb;
+  --red:      #dc2626;
+  --red-lt:   #fef2f2;
+  --purple:   #6366f1;
+  --purple-lt:#eef2ff;
+  --teal:     #0891b2;
+  --teal-lt:  #ecfeff;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --muted:    #64748b;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  font-size: 16px;
+}
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 60%, #1d4ed8 100%);
+  padding: 60px 40px 50px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content:''; position:absolute; inset:0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 70%);
+}
+.hero-badge {
+  display:inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.35);
+  color: white;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px; letter-spacing:2px; text-transform:uppercase;
+  padding:4px 14px; border-radius:20px; margin-bottom:20px;
+}
+.hero h1 {
+  font-size: clamp(28px,5.5vw,62px);
+  font-weight:900; line-height:1.1;
+  letter-spacing:-2px; margin-bottom:14px; color:white;
+}
+.hero h1 span { color:#93c5fd; }
+.hero p { color:rgba(255,255,255,0.78); font-style:italic; font-size:18px; max-width:520px; margin:0 auto; }
+/* ── NAV ── */
+.toc {
+  background: var(--surface2);
+  border-bottom: 2px solid var(--border);
+  padding:12px 28px;
+  display:flex; flex-wrap:wrap; gap:5px;
+  justify-content:center;
+  position:sticky; top:0; z-index:100;
+}
+.toc a {
+  font-family:'JetBrains Mono',monospace; font-size:11.5px;
+  color:var(--muted); text-decoration:none;
+  padding:5px 11px; border-radius:4px;
+  border:1px solid transparent; transition:all .2s;
+}
+.toc a:hover { color:var(--blue); border-color:var(--blue); background:var(--blue-lt); }
+/* ── LAYOUT ── */
+.container { max-width:920px; margin:0 auto; padding:0 28px; }
+.section { padding:56px 0 38px; border-bottom:1px solid var(--border); }
+.section:last-child { border-bottom:none; }
+/* ── SECTION HEADERS ── */
+.section-num {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:var(--blue); letter-spacing:3px; text-transform:uppercase; margin-bottom:6px;
+}
+.section h2 {
+  font-size:clamp(22px,4vw,36px); font-weight:900;
+  letter-spacing:-1px; margin-bottom:22px; line-height:1.15; color:var(--text);
+}
+.section h3 { font-size:18px; font-weight:700; color:var(--orange); margin:34px 0 12px; }
+.section h4 {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--blue-dk); margin:22px 0 8px; letter-spacing:1px;
+}
+.section p { color:var(--text2); margin-bottom:12px; }
+.section ul, .section ol { padding-left:22px; margin-bottom:12px; }
+.section li { color:var(--text2); margin-bottom:5px; }
+strong { color:var(--text); }
+p code, li code, td code, th code {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--green); background:var(--green-lt);
+  padding:1px 6px; border-radius:3px;
+}
+/* ── CODE BLOCKS (dark) ── */
+.code-block {
+  background:#0d1117; border:1px solid #2a2f45;
+  border-radius:10px; margin:18px 0; overflow:hidden;
+}
+.code-header {
+  background:#1e2333; border-bottom:1px solid #2a2f45;
+  padding:8px 16px; display:flex; align-items:center; gap:8px;
+  font-family:'JetBrains Mono',monospace; font-size:11px; color:#64748b;
+}
+.dot { width:10px; height:10px; border-radius:50%; }
+.dr{background:#ff5f56;} .dy{background:#ffbd2e;} .dg{background:#27c93f;}
+pre {
+  padding:18px 20px; overflow-x:auto;
+  font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7;
+  color:#e2e8f0;
+}
+.kw{color:#c084fc;} .fn{color:#60a5fa;} .st{color:#4ade80;}
+.cm{color:#475569;font-style:italic;} .nb{color:#fb923c;}
+.op{color:#94a3b8;} .df{color:#fbbf24;} .bi{color:#f472b6;}
+.ky{color:#f59e0b;}  /* dict key */
+/* ── INFO BOXES ── */
+.box { border-radius:10px; padding:16px 20px; margin:18px 0; border-left:4px solid; font-size:15px; }
+.box-tip   { background:var(--green-lt);  border-color:var(--green); }
+.box-warn  { background:var(--orange-lt); border-color:var(--orange); }
+.box-info  { background:var(--blue-lt);   border-color:var(--blue); }
+.box-alert { background:var(--red-lt);    border-color:var(--red); }
+.box-key   { background:var(--purple-lt); border-color:var(--purple); }
+.box-teal  { background:var(--teal-lt);   border-color:var(--teal); }
+.box-title {
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  letter-spacing:2px; text-transform:uppercase; font-weight:700; margin-bottom:7px;
+}
+.box-tip .box-title   { color:var(--green); }
+.box-warn .box-title  { color:var(--orange); }
+.box-info .box-title  { color:var(--blue); }
+.box-alert .box-title { color:var(--red); }
+.box-key .box-title   { color:var(--purple); }
+.box-teal .box-title  { color:var(--teal); }
+/* ── TABLES ── */
+table { width:100%; border-collapse:collapse; margin:18px 0; font-size:15px; }
+th {
+  background:var(--blue-dk); color:white;
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  letter-spacing:1px; text-transform:uppercase;
+  padding:9px 14px; text-align:left; border:1px solid var(--blue-dk);
+}
+td { padding:9px 14px; border:1px solid var(--border); color:var(--text2); vertical-align:top; }
+tr:nth-child(even) td { background:var(--surface); }
+/* ── FUNCTION CARDS ── */
+.fn-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin:18px 0; }
+.fn-card { border:1px solid var(--border); border-radius:8px; overflow:hidden; transition:box-shadow .2s; }
+.fn-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+.fn-card-hdr {
+  background:var(--blue-dk); color:white;
+  padding:8px 14px;
+  font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700;
+}
+.fn-card-hdr span { color:#93c5fd; font-weight:400; font-size:12px; margin-left:8px; }
+.fn-card-body { padding:11px 14px; font-size:14px; color:var(--text2); line-height:1.6; background:white; }
+.fn-card-body code {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:var(--green); background:var(--green-lt); padding:1px 5px; border-radius:3px;
+}
+.fn-card-ex {
+  background:var(--surface2); border-top:1px solid var(--border);
+  padding:8px 14px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);
+}
+/* ── COMPARE BLOCK ── */
+.compare { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0; }
+.compare-card { border:1px solid var(--border); border-radius:8px; overflow:hidden; }
+.compare-hdr { padding:8px 14px; font-family:'JetBrains Mono',monospace; font-size:13px; font-weight:700; color:white; }
+.compare-hdr.dict  { background:#1e3a5f; }
+.compare-hdr.list  { background:#1e5631; }
+.compare-body { padding:12px 14px; font-size:14px; color:var(--text2); }
+/* ── EXERCISES ── */
+.exo-card { border:1px solid var(--border); border-radius:10px; overflow:hidden; margin-bottom:22px; box-shadow:0 2px 8px rgba(0,0,0,0.04); }
+.exo-hdr { padding:12px 20px; display:flex; align-items:center; gap:14px; }
+.exo-hdr.easy   { background:linear-gradient(90deg,#1e5631,#059669); }
+.exo-hdr.medium { background:linear-gradient(90deg,#92400e,#d97706); }
+.exo-hdr.hard   { background:linear-gradient(90deg,#7f1d1d,#dc2626); }
+.exo-level { font-family:'JetBrains Mono',monospace; font-size:11px; color:rgba(255,255,255,.8); letter-spacing:2px; text-transform:uppercase; }
+.exo-title { font-weight:700; font-size:16px; color:white; }
+.exo-body { padding:20px 22px; background:white; }
+.exo-body p { margin-bottom:10px; color:var(--text2); }
+.exo-body ol { padding-left:20px; }
+.exo-body li { margin-bottom:7px; color:var(--text2); }
+.toggle-btn { display:inline-flex; align-items:center; gap:8px; cursor:pointer; margin-top:14px; padding:7px 16px; border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:12px; transition:all .2s; user-select:none; }
+.btn-hint { background:var(--blue-lt); border:1px solid #bfdbfe; color:var(--blue); }
+.btn-hint:hover { background:#dbeafe; }
+.btn-corr { background:var(--green-lt); border:1px solid #a7f3d0; color:var(--green); }
+.btn-corr:hover { background:#d1fae5; }
+.toggle-icon { font-size:10px; }
+.hint-box, .corr-box { display:none; margin-top:14px; }
+.hint-box.open, .corr-box.open { display:block; }
+.hint-box { background:var(--blue-lt); border:1px solid #bfdbfe; border-radius:7px; padding:14px 16px; }
+.corr-box { background:var(--green-lt); border:1px solid #a7f3d0; border-radius:7px; padding:14px 16px; }
+.corr-box p { color:var(--text2) !important; }
+/* ── DST SECTION ── */
+.dst-section { background:var(--red-lt); border:1px solid #fecaca; border-radius:12px; padding:34px; margin:36px 0; }
+.dst-section h2 { color:var(--red) !important; }
+.dst-section .section-num { color:var(--red) !important; }
+.checklist { list-style:none; padding:0; }
+.checklist li { padding:8px 0; border-bottom:1px solid #fecaca; display:flex; align-items:flex-start; gap:12px; color:var(--text2); }
+.checklist li:last-child { border-bottom:none; }
+.checklist li::before { content:'□'; font-size:15px; color:var(--blue); flex-shrink:0; }
+/* ── QCM ── */
+.qcm-controls { display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:22px; }
+.qcm-size-opt {
+  display:flex; align-items:center; gap:8px; cursor:pointer;
+  padding:8px 18px; border-radius:8px; border:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted);
+  transition:all .2s; user-select:none; background:white;
+}
+.qcm-size-opt:has(input:checked) { border-color:var(--blue); background:var(--blue-lt); color:var(--blue); }
+.qcm-size-opt input { accent-color:var(--blue); }
+.qcm-q { background:white; border:1px solid var(--border); border-radius:10px; padding:20px 22px; margin-bottom:14px; transition:border-color .3s; box-shadow:0 1px 4px rgba(0,0,0,0.04); }
+.qcm-q.correct { border-color:var(--green); background:var(--green-lt); }
+.qcm-q.wrong   { border-color:var(--red);   background:var(--red-lt); }
+.qcm-num { font-family:'JetBrains Mono',monospace; font-size:10px; color:var(--blue); letter-spacing:2px; text-transform:uppercase; margin-bottom:7px; }
+.qcm-question { font-size:15px; font-weight:700; color:var(--text); margin-bottom:13px; line-height:1.5; }
+.qcm-question code { font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--green); background:var(--green-lt); padding:1px 5px; border-radius:3px; }
+.qcm-opts { display:flex; flex-direction:column; gap:7px; }
+.qcm-opt { display:flex; align-items:flex-start; gap:10px; padding:9px 13px; border:1px solid var(--border); border-radius:7px; cursor:pointer; transition:all .15s; font-size:14px; color:var(--text2); background:white; }
+.qcm-opt:hover { border-color:var(--blue); background:var(--blue-lt); }
+.qcm-opt input { accent-color:var(--blue); width:14px; height:14px; flex-shrink:0; margin-top:2px; }
+.qcm-opt.opt-ok { border-color:var(--green)!important; background:var(--green-lt)!important; color:var(--green); font-weight:700; }
+.qcm-opt.opt-ko { border-color:var(--red)!important;   background:var(--red-lt)!important;   color:var(--red); }
+.qcm-opt code { font-family:'JetBrains Mono',monospace; font-size:12px; background:var(--green-lt); padding:1px 4px; border-radius:3px; color:inherit; }
+.qcm-fb { margin-top:9px; font-size:13px; font-family:'JetBrains Mono',monospace; padding:7px 11px; border-radius:5px; display:none; line-height:1.55; }
+.qcm-fb.show { display:block; }
+.qcm-fb.ok { background:var(--green-lt); color:var(--green); }
+.qcm-fb.ko { background:var(--red-lt);   color:var(--red); }
+#qcm-result { background:var(--surface2); border:1px solid var(--border); border-radius:12px; padding:26px; margin-top:22px; text-align:center; display:none; }
+.score-big { font-size:58px; font-weight:900; line-height:1; margin-bottom:6px; }
+.score-sub { color:var(--muted); font-size:14px; margin-bottom:14px; }
+.score-bar-bg { background:var(--border); border-radius:99px; height:10px; overflow:hidden; margin:14px 0; }
+.score-bar-fill { height:100%; border-radius:99px; transition:width .8s cubic-bezier(.4,0,.2,1); }
+.score-msg { font-size:17px; font-weight:700; margin-top:10px; }
+.qcm-btn { font-family:'JetBrains Mono',monospace; font-size:12px; padding:9px 20px; border-radius:7px; border:none; cursor:pointer; font-weight:700; transition:opacity .2s; }
+.qcm-btn-primary { background:var(--blue); color:white; }
+.qcm-btn-secondary { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+.qcm-btn:hover { opacity:.85; }
+footer { text-align:center; padding:38px; color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px; border-top:1px solid var(--border); }
+@media(max-width:640px){
+  .hero{padding:36px 18px 30px;} .container{padding:0 14px;}
+  pre{font-size:12px;} .compare,.fn-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">NSI · 1ère Spécialité · Python</div>
+  <h1>Les <span>Dictionnaires</span> en Python</h1>
+  <p>Cours complet — Méthodes — Exercices progressifs — QCM interactif</p>
+</div>
+
+<nav class="toc">
+  <a href="#s1">1. Introduction</a>
+  <a href="#s2">2. Créer</a>
+  <a href="#s3">3. Accès & modification</a>
+  <a href="#s4">4. Méthodes</a>
+  <a href="#s5">5. Parcours</a>
+  <a href="#s6">6. Dict. et listes</a>
+  <a href="#s7">7. Compréhension</a>
+  <a href="#s8">✏ Exercices</a>
+  <a href="#s9">⚠ Pour le DST</a>
+  <a href="#s10">🎯 QCM</a>
+</nav>
+
+<div class="container">
+
+<!-- ════════════════════════════════════
+     SECTION 1 — INTRODUCTION
+════════════════════════════════════ -->
+<div class="section" id="s1">
+  <div class="section-num">01 — Introduction</div>
+  <h2>Qu'est-ce qu'un dictionnaire ?</h2>
+
+  <p>Un <strong>dictionnaire</strong> est une structure de données qui associe des <strong>clés</strong> à des <strong>valeurs</strong>. Plutôt que d'accéder à un élément par son indice numérique (comme dans une liste), on y accède par une <strong>clé</strong> significative.</p>
+
+  <div class="box box-info">
+    <div class="box-title">📋 Définition</div>
+    Un <strong>dictionnaire</strong> Python est une collection de paires <strong>clé : valeur</strong>, non ordonnée (avant Python 3.7) puis ordonnée par ordre d'insertion (depuis Python 3.7). Les clés sont <strong>uniques</strong> et <strong>immuables</strong> (chaînes, entiers, tuples). Les valeurs peuvent être de n'importe quel type.
+  </div>
+
+  <h3>Dictionnaire vs liste — quand utiliser quoi ?</h3>
+  <div class="compare">
+    <div class="compare-card">
+      <div class="compare-hdr dict">📖 Dictionnaire — accès par clé</div>
+      <div class="compare-body">
+        <ul>
+          <li>On connaît le <strong>nom</strong> de ce qu'on cherche</li>
+          <li>Les données ont des étiquettes significatives</li>
+          <li>Accès immédiat : <code>eleve["note"]</code></li>
+        </ul>
+        <br><strong>Exemples :</strong> fiche élève, carnet de contacts, caractéristiques d'un objet.
+      </div>
+    </div>
+    <div class="compare-card">
+      <div class="compare-hdr list">📋 Liste — accès par indice</div>
+      <div class="compare-body">
+        <ul>
+          <li>On connaît la <strong>position</strong> de l'élément</li>
+          <li>Données de même nature, en séquence</li>
+          <li>Accès par position : <code>notes[2]</code></li>
+        </ul>
+        <br><strong>Exemples :</strong> notes de la classe, températures de la semaine, pixels d'une image.
+      </div>
+    </div>
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Premier exemple</span></div>
+    <pre><span class="cm"># Fiche d'un élève — dictionnaire</span>
+eleve <span class="op">=</span> {
+    <span class="ky">"nom"</span>    : <span class="st">"Dupont"</span>,
+    <span class="ky">"prenom"</span> : <span class="st">"Alice"</span>,
+    <span class="ky">"age"</span>    : <span class="nb">16</span>,
+    <span class="ky">"classe"</span> : <span class="st">"1NSI"</span>,
+    <span class="ky">"note"</span>   : <span class="nb">17.5</span>
+}
+
+<span class="fn">print</span>(eleve[<span class="ky">"nom"</span>])    <span class="cm"># 'Dupont'</span>
+<span class="fn">print</span>(eleve[<span class="ky">"note"</span>])   <span class="cm"># 17.5</span>
+<span class="fn">print</span>(<span class="fn">type</span>(eleve))     <span class="cm"># &lt;class 'dict'&gt;</span>
+<span class="fn">print</span>(<span class="fn">len</span>(eleve))      <span class="cm"># 5  (nombre de paires clé:valeur)</span></pre>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION 2 — CRÉER
+════════════════════════════════════ -->
+<div class="section" id="s2">
+  <div class="section-num">02 — Créer un dictionnaire</div>
+  <h2>Créer et initialiser un dictionnaire</h2>
+
+  <h3>Méthode 1 — Littérale (accolades)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="cm"># Dictionnaire non vide</span>
+scores <span class="op">=</span> {<span class="ky">"Alice"</span>: <span class="nb">18</span>, <span class="ky">"Bob"</span>: <span class="nb">12</span>, <span class="ky">"Clara"</span>: <span class="nb">15</span>}
+
+<span class="cm"># Dictionnaire vide</span>
+vide <span class="op">=</span> {}
+vide2 <span class="op">=</span> <span class="fn">dict</span>()   <span class="cm"># autre syntaxe</span></pre>
+  </div>
+
+  <h3>Méthode 2 — Constructeur dict()</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="cm"># Avec des arguments nommés (clés = identifiants Python)</span>
+eleve <span class="op">=</span> <span class="fn">dict</span>(nom<span class="op">=</span><span class="st">"Alice"</span>, age<span class="op">=</span><span class="nb">16</span>, note<span class="op">=</span><span class="nb">17</span>)
+
+<span class="cm"># À partir d'une liste de tuples (clé, valeur)</span>
+paires <span class="op">=</span> [(<span class="st">"a"</span>, <span class="nb">1</span>), (<span class="st">"b"</span>, <span class="nb">2</span>), (<span class="st">"c"</span>, <span class="nb">3</span>)]
+d <span class="op">=</span> <span class="fn">dict</span>(paires)   <span class="cm"># {"a": 1, "b": 2, "c": 3}</span>
+
+<span class="cm"># Avec zip() — associer deux listes</span>
+prenoms <span class="op">=</span> [<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Clara"</span>]
+notes   <span class="op">=</span> [<span class="nb">18</span>, <span class="nb">12</span>, <span class="nb">15</span>]
+scores  <span class="op">=</span> <span class="fn">dict</span>(<span class="fn">zip</span>(prenoms, notes))
+<span class="cm"># {"Alice": 18, "Bob": 12, "Clara": 15}</span></pre>
+  </div>
+
+  <h3>Méthode 3 — dict.fromkeys()</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="cm"># Initialiser toutes les clés avec la même valeur</span>
+matieres <span class="op">=</span> [<span class="st">"Maths"</span>, <span class="st">"NSI"</span>, <span class="st">"Français"</span>]
+bulletins <span class="op">=</span> <span class="fn">dict</span>.fromkeys(matieres, <span class="nb">0</span>)
+<span class="cm"># {"Maths": 0, "NSI": 0, "Français": 0}</span></pre>
+  </div>
+
+  <div class="box box-warn">
+    <div class="box-title">⚠ Les clés sont uniques</div>
+    Si une clé est définie deux fois, la <strong>deuxième valeur écrase la première</strong>.<br>
+    <code>d = {"a": 1, "b": 2, "a": 99}</code> → <code>{"a": 99, "b": 2}</code>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION 3 — ACCÈS & MODIFICATION
+════════════════════════════════════ -->
+<div class="section" id="s3">
+  <div class="section-num">03 — Accès et modification</div>
+  <h2>Accéder et modifier les données</h2>
+
+  <h3>Accès à une valeur</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>d <span class="op">=</span> {<span class="ky">"nom"</span>: <span class="st">"Alice"</span>, <span class="ky">"age"</span>: <span class="nb">16</span>, <span class="ky">"note"</span>: <span class="nb">17</span>}
+
+<span class="cm"># Méthode 1 — crochets (lève KeyError si clé absente)</span>
+<span class="fn">print</span>(d[<span class="ky">"nom"</span>])     <span class="cm"># "Alice"</span>
+<span class="cm"># print(d["absent"])  → KeyError !</span>
+
+<span class="cm"># Méthode 2 — get() (retourne None si absent, ou une valeur par défaut)</span>
+<span class="fn">print</span>(d.get(<span class="ky">"age"</span>))           <span class="cm"># 16</span>
+<span class="fn">print</span>(d.get(<span class="ky">"absent"</span>))        <span class="cm"># None</span>
+<span class="fn">print</span>(d.get(<span class="ky">"absent"</span>, <span class="nb">0</span>))     <span class="cm"># 0  (valeur par défaut)</span></pre>
+  </div>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 get() ou crochets ?</div>
+    Utilise <code>d["cle"]</code> quand tu es sûr que la clé existe. Utilise <code>d.get("cle", valeur_defaut)</code> quand la clé peut être absente — c'est plus sûr et évite les <code>KeyError</code>.
+  </div>
+
+  <h3>Tester l'existence d'une clé</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>d <span class="op">=</span> {<span class="ky">"nom"</span>: <span class="st">"Alice"</span>, <span class="ky">"age"</span>: <span class="nb">16</span>}
+
+<span class="cm"># L'opérateur 'in' teste la présence d'une CLÉ (pas d'une valeur)</span>
+<span class="fn">print</span>(<span class="ky">"nom"</span>  <span class="kw">in</span> d)   <span class="cm"># True</span>
+<span class="fn">print</span>(<span class="ky">"note"</span> <span class="kw">in</span> d)   <span class="cm"># False</span>
+<span class="fn">print</span>(<span class="st">"Alice"</span> <span class="kw">in</span> d)  <span class="cm"># False — "Alice" est une valeur, pas une clé !</span>
+
+<span class="cm"># Tester une valeur</span>
+<span class="fn">print</span>(<span class="st">"Alice"</span> <span class="kw">in</span> d.values())  <span class="cm"># True</span></pre>
+  </div>
+
+  <h3>Ajouter, modifier, supprimer</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>d <span class="op">=</span> {<span class="ky">"nom"</span>: <span class="st">"Alice"</span>, <span class="ky">"age"</span>: <span class="nb">16</span>}
+
+<span class="cm"># Ajouter une nouvelle paire clé:valeur</span>
+d[<span class="ky">"note"</span>] <span class="op">=</span> <span class="nb">17</span>
+<span class="fn">print</span>(d)  <span class="cm"># {"nom": "Alice", "age": 16, "note": 17}</span>
+
+<span class="cm"># Modifier une valeur existante</span>
+d[<span class="ky">"age"</span>] <span class="op">=</span> <span class="nb">17</span>
+<span class="fn">print</span>(d)  <span class="cm"># {"nom": "Alice", "age": 17, "note": 17}</span>
+
+<span class="cm"># Supprimer une clé avec del</span>
+<span class="kw">del</span> d[<span class="ky">"note"</span>]
+<span class="fn">print</span>(d)  <span class="cm"># {"nom": "Alice", "age": 17}</span>
+
+<span class="cm"># Supprimer et récupérer la valeur avec pop()</span>
+age <span class="op">=</span> d.pop(<span class="ky">"age"</span>)
+<span class="fn">print</span>(age)  <span class="cm"># 17</span>
+<span class="fn">print</span>(d)    <span class="cm"># {"nom": "Alice"}</span>
+
+<span class="cm"># pop() avec valeur par défaut (évite KeyError si clé absente)</span>
+val <span class="op">=</span> d.pop(<span class="ky">"absent"</span>, <span class="nb">0</span>)   <span class="cm"># retourne 0 sans erreur</span></pre>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION 4 — MÉTHODES
+════════════════════════════════════ -->
+<div class="section" id="s4">
+  <div class="section-num">04 — Méthodes à connaître</div>
+  <h2>Méthodes et fonctions essentielles</h2>
+
+  <div class="fn-grid">
+    <div class="fn-card">
+      <div class="fn-card-hdr">len() <span>→ int</span></div>
+      <div class="fn-card-body">Retourne le <strong>nombre de paires</strong> clé:valeur.</div>
+      <div class="fn-card-ex">len({"a":1,"b":2}) → 2</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">.keys() <span>→ vue</span></div>
+      <div class="fn-card-body">Retourne une <strong>vue de toutes les clés</strong>. Convertir avec <code>list()</code> si besoin.</div>
+      <div class="fn-card-ex">d.keys() → dict_keys(['a','b'])</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">.values() <span>→ vue</span></div>
+      <div class="fn-card-body">Retourne une <strong>vue de toutes les valeurs</strong>.</div>
+      <div class="fn-card-ex">d.values() → dict_values([1, 2])</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">.items() <span>→ vue</span></div>
+      <div class="fn-card-body">Retourne une vue des <strong>paires (clé, valeur)</strong> sous forme de tuples. Idéal pour les boucles.</div>
+      <div class="fn-card-ex">d.items() → dict_items([('a',1),...])</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">.get(cle, défaut) <span>→ valeur</span></div>
+      <div class="fn-card-body">Retourne la valeur pour <code>cle</code>, ou <code>défaut</code> (None par défaut) si la clé est absente. <strong>Ne lève pas d'erreur.</strong></div>
+      <div class="fn-card-ex">d.get("x", 0) → 0</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">.pop(cle, défaut) <span>→ valeur</span></div>
+      <div class="fn-card-body">Supprime la clé et <strong>retourne sa valeur</strong>. Lève KeyError si la clé est absente et qu'aucun défaut n'est fourni.</div>
+      <div class="fn-card-ex">d.pop("age") → 16</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">.update(d2) <span>→ None</span></div>
+      <div class="fn-card-body">Fusionne le dictionnaire <code>d2</code> dans le dictionnaire. Les clés existantes sont <strong>écrasées</strong>, les nouvelles sont ajoutées.</div>
+      <div class="fn-card-ex">d.update({"c":3,"a":99})</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">.copy() <span>→ dict</span></div>
+      <div class="fn-card-body">Retourne une <strong>copie superficielle</strong> du dictionnaire (indépendante pour les valeurs simples).</div>
+      <div class="fn-card-ex">d2 = d.copy()</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">.setdefault(cle, val) <span>→ valeur</span></div>
+      <div class="fn-card-body">Retourne la valeur si la clé existe. Sinon, <strong>ajoute la clé</strong> avec <code>val</code> et la retourne. Utile pour initialiser sans écraser.</div>
+      <div class="fn-card-ex">d.setdefault("score", 0)</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">.clear() <span>→ None</span></div>
+      <div class="fn-card-body">Vide le dictionnaire. La variable existe toujours mais pointe vers un dict vide.</div>
+      <div class="fn-card-ex">d.clear() → d vaut {}</div>
+    </div>
+  </div>
+
+  <h3>Tableau récapitulatif</h3>
+  <table>
+    <tr><th>Opération</th><th>Syntaxe</th><th>Résultat / effet</th></tr>
+    <tr><td>Accès (sûr)</td><td><code>d.get("cle", def)</code></td><td>Valeur ou <code>def</code> si absent</td></tr>
+    <tr><td>Accès (direct)</td><td><code>d["cle"]</code></td><td>Valeur ou <code>KeyError</code></td></tr>
+    <tr><td>Ajout / modification</td><td><code>d["cle"] = val</code></td><td>Modifie en place</td></tr>
+    <tr><td>Suppression</td><td><code>del d["cle"]</code></td><td>Supprime la clé</td></tr>
+    <tr><td>Supp. + retour</td><td><code>d.pop("cle")</code></td><td>Retourne la valeur supprimée</td></tr>
+    <tr><td>Tester une clé</td><td><code>"cle" in d</code></td><td><code>True</code> / <code>False</code></td></tr>
+    <tr><td>Toutes les clés</td><td><code>d.keys()</code></td><td>Vue des clés</td></tr>
+    <tr><td>Toutes les valeurs</td><td><code>d.values()</code></td><td>Vue des valeurs</td></tr>
+    <tr><td>Toutes les paires</td><td><code>d.items()</code></td><td>Vue de tuples (clé, valeur)</td></tr>
+    <tr><td>Fusion</td><td><code>d.update(d2)</code></td><td>Ajoute/écrase avec d2</td></tr>
+    <tr><td>Taille</td><td><code>len(d)</code></td><td>Nombre de paires</td></tr>
+  </table>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION 5 — PARCOURS
+════════════════════════════════════ -->
+<div class="section" id="s5">
+  <div class="section-num">05 — Parcours</div>
+  <h2>Parcourir un dictionnaire</h2>
+
+  <h3>Parcours par clés (par défaut)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>scores <span class="op">=</span> {<span class="ky">"Alice"</span>: <span class="nb">18</span>, <span class="ky">"Bob"</span>: <span class="nb">12</span>, <span class="ky">"Clara"</span>: <span class="nb">15</span>}
+
+<span class="cm"># for ... in d  →  parcourt les CLÉS</span>
+<span class="kw">for</span> prenom <span class="kw">in</span> scores<span class="op">:</span>
+    <span class="fn">print</span>(prenom)            <span class="cm"># Alice, Bob, Clara</span>
+
+<span class="cm"># Identique à :</span>
+<span class="kw">for</span> prenom <span class="kw">in</span> scores.keys()<span class="op">:</span>
+    <span class="fn">print</span>(prenom)</pre>
+  </div>
+
+  <h3>Parcours par valeurs</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="kw">for</span> note <span class="kw">in</span> scores.values()<span class="op">:</span>
+    <span class="fn">print</span>(note)              <span class="cm"># 18, 12, 15</span></pre>
+  </div>
+
+  <h3>Parcours par paires clé + valeur — le plus utile !</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="kw">for</span> prenom, note <span class="kw">in</span> scores.items()<span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"{prenom} a eu {note}/20"</span>)
+<span class="cm"># Alice a eu 18/20</span>
+<span class="cm"># Bob a eu 12/20</span>
+<span class="cm"># Clara a eu 15/20</span></pre>
+  </div>
+
+  <h3>Algorithmes classiques sur les dictionnaires</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Somme, moyenne, maximum, comptage</span></div>
+    <pre>scores <span class="op">=</span> {<span class="ky">"Alice"</span>: <span class="nb">18</span>, <span class="ky">"Bob"</span>: <span class="nb">12</span>, <span class="ky">"Clara"</span>: <span class="nb">15</span>}
+
+<span class="cm"># ── Somme des valeurs ────────────────────────────</span>
+total <span class="op">=</span> <span class="nb">0</span>
+<span class="kw">for</span> note <span class="kw">in</span> scores.values()<span class="op">:</span>
+    total <span class="op">+=</span> note
+<span class="fn">print</span>(total)   <span class="cm"># 45   (ou : sum(scores.values()))</span>
+
+<span class="cm"># ── Moyenne ──────────────────────────────────────</span>
+moy <span class="op">=</span> <span class="fn">sum</span>(scores.values()) <span class="op">/</span> <span class="fn">len</span>(scores)
+<span class="fn">print</span>(moy)     <span class="cm"># 15.0</span>
+
+<span class="cm"># ── Clé du maximum ───────────────────────────────</span>
+<span class="kw">def</span> <span class="df">meilleur</span>(d)<span class="op">:</span>
+    cle_max <span class="op">=</span> <span class="bi">None</span>
+    val_max <span class="op">=</span> <span class="bi">None</span>
+    <span class="kw">for</span> cle, val <span class="kw">in</span> d.items()<span class="op">:</span>
+        <span class="kw">if</span> val_max <span class="kw">is</span> <span class="bi">None</span> <span class="kw">or</span> val <span class="op">&gt;</span> val_max<span class="op">:</span>
+            cle_max, val_max <span class="op">=</span> cle, val
+    <span class="kw">return</span> cle_max
+
+<span class="fn">print</span>(meilleur(scores))   <span class="cm"># "Alice"</span>
+<span class="cm"># Ou avec max() + key= :</span>
+<span class="fn">print</span>(<span class="fn">max</span>(scores, key<span class="op">=</span>scores.get))   <span class="cm"># "Alice"</span>
+
+<span class="cm"># ── Filtrer (élèves avec note ≥ 15) ─────────────</span>
+admis <span class="op">=</span> {p: n <span class="kw">for</span> p, n <span class="kw">in</span> scores.items() <span class="kw">if</span> n <span class="op">&gt;=</span> <span class="nb">15</span>}
+<span class="fn">print</span>(admis)   <span class="cm"># {"Alice": 18, "Clara": 15}</span>
+
+<span class="cm"># ── Compter (occurrences dans une liste) ─────────</span>
+lettres <span class="op">=</span> [<span class="st">"a"</span>, <span class="st">"b"</span>, <span class="st">"a"</span>, <span class="st">"c"</span>, <span class="st">"b"</span>, <span class="st">"a"</span>]
+comptage <span class="op">=</span> {}
+<span class="kw">for</span> lettre <span class="kw">in</span> lettres<span class="op">:</span>
+    comptage[lettre] <span class="op">=</span> comptage.get(lettre, <span class="nb">0</span>) <span class="op">+</span> <span class="nb">1</span>
+<span class="fn">print</span>(comptage)   <span class="cm"># {"a": 3, "b": 2, "c": 1}</span></pre>
+  </div>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 Pattern comptage — à retenir !</div>
+    <code>d[cle] = d.get(cle, 0) + 1</code> est le pattern classique pour compter des occurrences avec un dictionnaire. Si la clé n'existe pas, <code>get</code> retourne 0, puis on ajoute 1. C'est l'équivalent d'un compteur automatique.
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION 6 — DICT ET LISTES
+════════════════════════════════════ -->
+<div class="section" id="s6">
+  <div class="section-num">06 — Dictionnaires et listes</div>
+  <h2>Combiner dictionnaires et listes</h2>
+
+  <p>En pratique, on combine très souvent les deux structures : liste de dictionnaires, dictionnaire de listes, etc.</p>
+
+  <h3>Liste de dictionnaires — tableau de données</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="cm"># Chaque élève est un dictionnaire, la classe est une liste</span>
+classe <span class="op">=</span> [
+    {<span class="ky">"nom"</span>: <span class="st">"Alice"</span>, <span class="ky">"note"</span>: <span class="nb">18</span>, <span class="ky">"mention"</span>: <span class="st">"TB"</span>},
+    {<span class="ky">"nom"</span>: <span class="st">"Bob"</span>,   <span class="ky">"note"</span>: <span class="nb">12</span>, <span class="ky">"mention"</span>: <span class="st">"AB"</span>},
+    {<span class="ky">"nom"</span>: <span class="st">"Clara"</span>, <span class="ky">"note"</span>: <span class="nb">15</span>, <span class="ky">"mention"</span>: <span class="st">"B"</span>},
+]
+
+<span class="cm"># Accéder à la note de Bob</span>
+<span class="fn">print</span>(classe[<span class="nb">1</span>][<span class="ky">"note"</span>])   <span class="cm"># 12</span>
+
+<span class="cm"># Afficher tous les noms</span>
+<span class="kw">for</span> eleve <span class="kw">in</span> classe<span class="op">:</span>
+    <span class="fn">print</span>(eleve[<span class="ky">"nom"</span>])      <span class="cm"># Alice, Bob, Clara</span>
+
+<span class="cm"># Calculer la moyenne de la classe</span>
+moy <span class="op">=</span> <span class="fn">sum</span>(e[<span class="ky">"note"</span>] <span class="kw">for</span> e <span class="kw">in</span> classe) <span class="op">/</span> <span class="fn">len</span>(classe)
+<span class="fn">print</span>(<span class="fn">round</span>(moy, <span class="nb">1</span>))       <span class="cm"># 15.0</span>
+
+<span class="cm"># Élève avec la meilleure note</span>
+top <span class="op">=</span> <span class="fn">max</span>(classe, key<span class="op">=</span><span class="kw">lambda</span> e<span class="op">:</span> e[<span class="ky">"note"</span>])
+<span class="fn">print</span>(top[<span class="ky">"nom"</span>])           <span class="cm"># "Alice"</span></pre>
+  </div>
+
+  <h3>Dictionnaire de listes — regrouper par catégorie</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="cm"># Notes par matière</span>
+notes_par_matiere <span class="op">=</span> {
+    <span class="ky">"Maths"</span>  : [<span class="nb">14</span>, <span class="nb">16</span>, <span class="nb">11</span>, <span class="nb">18</span>],
+    <span class="ky">"NSI"</span>    : [<span class="nb">17</span>, <span class="nb">15</span>, <span class="nb">19</span>, <span class="nb">13</span>],
+    <span class="ky">"Anglais"</span>: [<span class="nb">12</span>, <span class="nb">10</span>, <span class="nb">15</span>, <span class="nb">14</span>]
+}
+
+<span class="cm"># Moyenne de NSI</span>
+n_nsi <span class="op">=</span> notes_par_matiere[<span class="ky">"NSI"</span>]
+moy_nsi <span class="op">=</span> <span class="fn">sum</span>(n_nsi) <span class="op">/</span> <span class="fn">len</span>(n_nsi)
+<span class="fn">print</span>(moy_nsi)   <span class="cm"># 16.0</span>
+
+<span class="cm"># Ajouter une note en NSI</span>
+notes_par_matiere[<span class="ky">"NSI"</span>].append(<span class="nb">20</span>)
+
+<span class="cm"># Afficher toutes les moyennes</span>
+<span class="kw">for</span> matiere, notes <span class="kw">in</span> notes_par_matiere.items()<span class="op">:</span>
+    moy <span class="op">=</span> <span class="fn">round</span>(<span class="fn">sum</span>(notes) <span class="op">/</span> <span class="fn">len</span>(notes), <span class="nb">1</span>)
+    <span class="fn">print</span>(<span class="st">f"{matiere} : {moy}/20"</span>)</pre>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION 7 — COMPRÉHENSION
+════════════════════════════════════ -->
+<div class="section" id="s7">
+  <div class="section-num">07 — Compréhension de dictionnaire</div>
+  <h2>Dictionnaires en compréhension</h2>
+
+  <div class="box box-info">
+    <div class="box-title">📐 Syntaxe</div>
+    <code>{clé_expr: val_expr for variable in iterable if condition}</code><br>
+    La partie <code>if condition</code> est optionnelle.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="cm"># Carrés des entiers de 0 à 4</span>
+carres <span class="op">=</span> {x: x<span class="op">**</span><span class="nb">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">5</span>)}
+<span class="cm"># {0:0, 1:1, 2:4, 3:9, 4:16}</span>
+
+<span class="cm"># Inverser un dictionnaire (clés ↔ valeurs)</span>
+d <span class="op">=</span> {<span class="ky">"a"</span>: <span class="nb">1</span>, <span class="ky">"b"</span>: <span class="nb">2</span>, <span class="ky">"c"</span>: <span class="nb">3</span>}
+inverse <span class="op">=</span> {v: k <span class="kw">for</span> k, v <span class="kw">in</span> d.items()}
+<span class="cm"># {1: "a", 2: "b", 3: "c"}</span>
+
+<span class="cm"># Filtrer : garder seulement les notes ≥ 15</span>
+scores <span class="op">=</span> {<span class="ky">"Alice"</span>: <span class="nb">18</span>, <span class="ky">"Bob"</span>: <span class="nb">12</span>, <span class="ky">"Clara"</span>: <span class="nb">15</span>}
+admis <span class="op">=</span> {p: n <span class="kw">for</span> p, n <span class="kw">in</span> scores.items() <span class="kw">if</span> n <span class="op">&gt;=</span> <span class="nb">15</span>}
+<span class="cm"># {"Alice": 18, "Clara": 15}</span>
+
+<span class="cm"># Transformer : convertir les notes sur 20 en pourcentages</span>
+pct <span class="op">=</span> {p: <span class="fn">round</span>(n <span class="op">*</span> <span class="nb">5</span>, <span class="nb">1</span>) <span class="kw">for</span> p, n <span class="kw">in</span> scores.items()}
+<span class="cm"># {"Alice": 90.0, "Bob": 60.0, "Clara": 75.0}</span>
+
+<span class="cm"># Construire depuis deux listes avec zip</span>
+prenoms <span class="op">=</span> [<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Clara"</span>]
+notes   <span class="op">=</span> [<span class="nb">18</span>, <span class="nb">12</span>, <span class="nb">15</span>]
+d <span class="op">=</span> {p: n <span class="kw">for</span> p, n <span class="kw">in</span> <span class="fn">zip</span>(prenoms, notes)}
+<span class="cm"># {"Alice": 18, "Bob": 12, "Clara": 15}</span></pre>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION 8 — EXERCICES
+════════════════════════════════════ -->
+<div class="section" id="s8">
+  <div class="section-num">08 — Exercices</div>
+  <h2>Exercices progressifs</h2>
+  <p style="color:var(--muted);margin-bottom:20px;">5 exercices de difficulté croissante. Réfléchis avant de consulter la correction !</p>
+
+  <!-- EX 1 -->
+  <div class="exo-card">
+    <div class="exo-hdr easy">
+      <div>
+        <div class="exo-level">⭐ Niveau 1 · Exercice 1</div>
+        <div class="exo-title">Manipulation de base</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>On dispose du dictionnaire suivant représentant un film :</p>
+      <div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+      <pre>film <span class="op">=</span> {<span class="ky">"titre"</span>: <span class="st">"Interstellar"</span>, <span class="ky">"annee"</span>: <span class="nb">2014</span>, <span class="ky">"note"</span>: <span class="nb">8.6</span>, <span class="ky">"genre"</span>: <span class="st">"SF"</span>}</pre></div>
+      <ol>
+        <li>Afficher le titre du film.</li>
+        <li>Afficher le nombre de clés du dictionnaire.</li>
+        <li>Ajouter la clé <code>"realisateur"</code> avec la valeur <code>"Nolan"</code>.</li>
+        <li>Modifier la note à <code>9.0</code>.</li>
+        <li>Supprimer la clé <code>"genre"</code>.</li>
+        <li>Tester si la clé <code>"acteurs"</code> est présente, et afficher un message adapté.</li>
+        <li>Afficher toutes les clés, puis toutes les valeurs.</li>
+      </ol>
+      <div class="toggle-btn btn-corr" onclick="toggle('c1')"><span class="toggle-icon" id="ic1">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c1">
+        <div class="code-block" style="margin-top:8px;"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+        <pre>film <span class="op">=</span> {<span class="ky">"titre"</span>: <span class="st">"Interstellar"</span>, <span class="ky">"annee"</span>: <span class="nb">2014</span>, <span class="ky">"note"</span>: <span class="nb">8.6</span>, <span class="ky">"genre"</span>: <span class="st">"SF"</span>}
+
+<span class="fn">print</span>(film[<span class="ky">"titre"</span>])                     <span class="cm"># "Interstellar"</span>
+<span class="fn">print</span>(<span class="fn">len</span>(film))                          <span class="cm"># 4</span>
+film[<span class="ky">"realisateur"</span>] <span class="op">=</span> <span class="st">"Nolan"</span>
+film[<span class="ky">"note"</span>] <span class="op">=</span> <span class="nb">9.0</span>
+<span class="kw">del</span> film[<span class="ky">"genre"</span>]
+<span class="kw">if</span> <span class="ky">"acteurs"</span> <span class="kw">in</span> film<span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"La clé acteurs est présente"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"La clé acteurs est absente"</span>)
+<span class="fn">print</span>(<span class="fn">list</span>(film.keys()))                  <span class="cm"># ['titre', 'annee', 'note', 'realisateur']</span>
+<span class="fn">print</span>(<span class="fn">list</span>(film.values()))               <span class="cm"># ['Interstellar', 2014, 9.0, 'Nolan']</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX 2 -->
+  <div class="exo-card">
+    <div class="exo-hdr easy">
+      <div>
+        <div class="exo-level">⭐ Niveau 1 · Exercice 2</div>
+        <div class="exo-title">Parcours et calculs</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>On dispose des scores d'une partie de jeu vidéo :</p>
+      <div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+      <pre>scores <span class="op">=</span> {<span class="ky">"Alice"</span>: <span class="nb">4200</span>, <span class="ky">"Bob"</span>: <span class="nb">3800</span>, <span class="ky">"Clara"</span>: <span class="nb">5100</span>, <span class="ky">"David"</span>: <span class="nb">2900</span>}</pre></div>
+      <ol>
+        <li>Écrire <code>score_total(d)</code> qui retourne la somme de tous les scores.</li>
+        <li>Écrire <code>score_moyen(d)</code> qui retourne la moyenne arrondie à 1 décimale.</li>
+        <li>Écrire <code>meilleur_joueur(d)</code> qui retourne le nom du joueur avec le score le plus élevé.</li>
+        <li>Afficher tous les joueurs avec leur score, du plus élevé au plus bas.</li>
+      </ol>
+      <div class="toggle-btn btn-hint" onclick="toggle('h2')"><span class="toggle-icon" id="ih2">▶</span> Indice</div>
+      <div class="hint-box" id="h2"><p>Pour la Q4, utiliser <code>sorted(d.items(), key=lambda x: x[1], reverse=True)</code>. Pour le meilleur joueur : <code>max(d, key=d.get)</code>.</p></div>
+      <div class="toggle-btn btn-corr" onclick="toggle('c2')"><span class="toggle-icon" id="ic2">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c2">
+        <div class="code-block" style="margin-top:8px;"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+        <pre><span class="kw">def</span> <span class="df">score_total</span>(d)<span class="op">:</span>
+    <span class="kw">return</span> <span class="fn">sum</span>(d.values())
+
+<span class="kw">def</span> <span class="df">score_moyen</span>(d)<span class="op">:</span>
+    <span class="kw">return</span> <span class="fn">round</span>(<span class="fn">sum</span>(d.values()) <span class="op">/</span> <span class="fn">len</span>(d), <span class="nb">1</span>)
+
+<span class="kw">def</span> <span class="df">meilleur_joueur</span>(d)<span class="op">:</span>
+    <span class="kw">return</span> <span class="fn">max</span>(d, key<span class="op">=</span>d.get)
+
+<span class="cm"># Classement du meilleur au moins bon</span>
+classement <span class="op">=</span> <span class="fn">sorted</span>(scores.items(), key<span class="op">=</span><span class="kw">lambda</span> x<span class="op">:</span> x[<span class="nb">1</span>], reverse<span class="op">=</span><span class="bi">True</span>)
+<span class="kw">for</span> rang, (nom, score) <span class="kw">in</span> <span class="fn">enumerate</span>(classement, <span class="nb">1</span>)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"{rang}. {nom} : {score} pts"</span>)
+
+<span class="fn">print</span>(score_total(scores))    <span class="cm"># 16000</span>
+<span class="fn">print</span>(score_moyen(scores))    <span class="cm"># 4000.0</span>
+<span class="fn">print</span>(meilleur_joueur(scores)) <span class="cm"># "Clara"</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX 3 -->
+  <div class="exo-card">
+    <div class="exo-hdr medium">
+      <div>
+        <div class="exo-level">⭐⭐ Niveau 2 · Exercice 3</div>
+        <div class="exo-title">Comptage et construction</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <ol>
+        <li>Écrire <code>compter_lettres(texte)</code> qui retourne un dictionnaire comptant le nombre d'apparitions de chaque lettre (ignorer les espaces, ne pas distinguer majuscules/minuscules).</li>
+        <li>Écrire <code>compter_mots(texte)</code> qui retourne un dictionnaire comptant le nombre d'apparitions de chaque mot.</li>
+        <li>Écrire <code>lettre_plus_frequente(texte)</code> qui retourne la lettre la plus fréquente.</li>
+      </ol>
+      <p>Tester avec : <code>"le chat mange le rat et le rat mange le chat"</code></p>
+      <div class="toggle-btn btn-hint" onclick="toggle('h3')"><span class="toggle-icon" id="ih3">▶</span> Indice</div>
+      <div class="hint-box" id="h3"><p>Utiliser le pattern <code>d[x] = d.get(x, 0) + 1</code>. Pour ignorer les espaces : <code>if c != ' '</code>. Pour les minuscules : <code>texte.lower()</code>. Pour les mots : <code>texte.split()</code>.</p></div>
+      <div class="toggle-btn btn-corr" onclick="toggle('c3')"><span class="toggle-icon" id="ic3">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c3">
+        <div class="code-block" style="margin-top:8px;"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+        <pre><span class="kw">def</span> <span class="df">compter_lettres</span>(texte)<span class="op">:</span>
+    d <span class="op">=</span> {}
+    <span class="kw">for</span> c <span class="kw">in</span> texte.lower()<span class="op">:</span>
+        <span class="kw">if</span> c <span class="op">!=</span> <span class="st">" "</span><span class="op">:</span>
+            d[c] <span class="op">=</span> d.get(c, <span class="nb">0</span>) <span class="op">+</span> <span class="nb">1</span>
+    <span class="kw">return</span> d
+
+<span class="kw">def</span> <span class="df">compter_mots</span>(texte)<span class="op">:</span>
+    d <span class="op">=</span> {}
+    <span class="kw">for</span> mot <span class="kw">in</span> texte.lower().split()<span class="op">:</span>
+        d[mot] <span class="op">=</span> d.get(mot, <span class="nb">0</span>) <span class="op">+</span> <span class="nb">1</span>
+    <span class="kw">return</span> d
+
+<span class="kw">def</span> <span class="df">lettre_plus_frequente</span>(texte)<span class="op">:</span>
+    d <span class="op">=</span> compter_lettres(texte)
+    <span class="kw">return</span> <span class="fn">max</span>(d, key<span class="op">=</span>d.get)
+
+phrase <span class="op">=</span> <span class="st">"le chat mange le rat et le rat mange le chat"</span>
+<span class="fn">print</span>(compter_mots(phrase))
+<span class="cm"># {"le": 4, "chat": 2, "mange": 2, "rat": 2, "et": 1}</span>
+<span class="fn">print</span>(lettre_plus_frequente(phrase))
+<span class="cm"># "e"  (la plus fréquente)</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX 4 -->
+  <div class="exo-card">
+    <div class="exo-hdr medium">
+      <div>
+        <div class="exo-level">⭐⭐ Niveau 2 · Exercice 4</div>
+        <div class="exo-title">Liste de dictionnaires — Gestion d'un catalogue</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>On dispose d'un catalogue de livres :</p>
+      <div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+      <pre>livres <span class="op">=</span> [
+    {<span class="ky">"titre"</span>: <span class="st">"Dune"</span>,        <span class="ky">"auteur"</span>: <span class="st">"Herbert"</span>,  <span class="ky">"annee"</span>: <span class="nb">1965</span>, <span class="ky">"note"</span>: <span class="nb">9.1</span>},
+    {<span class="ky">"titre"</span>: <span class="st">"1984"</span>,        <span class="ky">"auteur"</span>: <span class="st">"Orwell"</span>,   <span class="ky">"annee"</span>: <span class="nb">1949</span>, <span class="ky">"note"</span>: <span class="nb">8.9</span>},
+    {<span class="ky">"titre"</span>: <span class="st">"Fondation"</span>,  <span class="ky">"auteur"</span>: <span class="st">"Asimov"</span>,   <span class="ky">"annee"</span>: <span class="nb">1951</span>, <span class="ky">"note"</span>: <span class="nb">8.7</span>},
+    {<span class="ky">"titre"</span>: <span class="st">"Neuromancer"</span>,<span class="ky">"auteur"</span>: <span class="st">"Gibson"</span>,   <span class="ky">"annee"</span>: <span class="nb">1984</span>, <span class="ky">"note"</span>: <span class="nb">7.8</span>},
+]</pre></div>
+      <ol>
+        <li>Écrire <code>note_moyenne(livres)</code> qui retourne la note moyenne.</li>
+        <li>Écrire <code>livres_par_decennie(livres)</code> qui retourne un dictionnaire dont les clés sont les décennies (1940, 1950…) et les valeurs des listes de titres.</li>
+        <li>Écrire <code>chercher_par_auteur(livres, auteur)</code> qui retourne la liste des titres écrits par cet auteur.</li>
+        <li>Écrire <code>trier_par_note(livres)</code> qui retourne la liste triée par note décroissante.</li>
+      </ol>
+      <div class="toggle-btn btn-hint" onclick="toggle('h4')"><span class="toggle-icon" id="ih4">▶</span> Indice</div>
+      <div class="hint-box" id="h4"><p>Pour les décennies : <code>annee - annee % 10</code> donne 1965 → 1960. Utiliser le pattern <code>d.setdefault(decennie, []).append(titre)</code>.</p></div>
+      <div class="toggle-btn btn-corr" onclick="toggle('c4')"><span class="toggle-icon" id="ic4">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c4">
+        <div class="code-block" style="margin-top:8px;"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+        <pre><span class="kw">def</span> <span class="df">note_moyenne</span>(livres)<span class="op">:</span>
+    <span class="kw">return</span> <span class="fn">round</span>(<span class="fn">sum</span>(l[<span class="ky">"note"</span>] <span class="kw">for</span> l <span class="kw">in</span> livres) <span class="op">/</span> <span class="fn">len</span>(livres), <span class="nb">2</span>)
+
+<span class="kw">def</span> <span class="df">livres_par_decennie</span>(livres)<span class="op">:</span>
+    d <span class="op">=</span> {}
+    <span class="kw">for</span> livre <span class="kw">in</span> livres<span class="op">:</span>
+        dec <span class="op">=</span> livre[<span class="ky">"annee"</span>] <span class="op">-</span> livre[<span class="ky">"annee"</span>] <span class="op">%</span> <span class="nb">10</span>
+        d.setdefault(dec, []).append(livre[<span class="ky">"titre"</span>])
+    <span class="kw">return</span> d
+
+<span class="kw">def</span> <span class="df">chercher_par_auteur</span>(livres, auteur)<span class="op">:</span>
+    <span class="kw">return</span> [l[<span class="ky">"titre"</span>] <span class="kw">for</span> l <span class="kw">in</span> livres <span class="kw">if</span> l[<span class="ky">"auteur"</span>] <span class="op">==</span> auteur]
+
+<span class="kw">def</span> <span class="df">trier_par_note</span>(livres)<span class="op">:</span>
+    <span class="kw">return</span> <span class="fn">sorted</span>(livres, key<span class="op">=</span><span class="kw">lambda</span> l<span class="op">:</span> l[<span class="ky">"note"</span>], reverse<span class="op">=</span><span class="bi">True</span>)
+
+<span class="fn">print</span>(note_moyenne(livres))           <span class="cm"># 8.62</span>
+<span class="fn">print</span>(livres_par_decennie(livres))
+<span class="cm"># {1960: ['Dune'], 1940: ['1984'], 1950: ['Fondation'], 1980: ['Neuromancer']}</span>
+<span class="fn">print</span>(chercher_par_auteur(livres, <span class="st">"Asimov"</span>))  <span class="cm"># ["Fondation"]</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX 5 -->
+  <div class="exo-card">
+    <div class="exo-hdr hard">
+      <div>
+        <div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 5</div>
+        <div class="exo-title">Problème complet — Gestion d'un réseau social</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>On modélise un mini-réseau social. Chaque utilisateur est représenté par un dictionnaire :</p>
+      <div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+      <pre>reseau <span class="op">=</span> {
+    <span class="ky">"Alice"</span>: {<span class="ky">"age"</span>: <span class="nb">17</span>, <span class="ky">"amis"</span>: [<span class="st">"Bob"</span>, <span class="st">"Clara"</span>],    <span class="ky">"posts"</span>: <span class="nb">23</span>},
+    <span class="ky">"Bob"</span>:   {<span class="ky">"age"</span>: <span class="nb">18</span>, <span class="ky">"amis"</span>: [<span class="st">"Alice"</span>, <span class="st">"David"</span>],   <span class="ky">"posts"</span>: <span class="nb">7</span>},
+    <span class="ky">"Clara"</span>: {<span class="ky">"age"</span>: <span class="nb">16</span>, <span class="ky">"amis"</span>: [<span class="st">"Alice"</span>],           <span class="ky">"posts"</span>: <span class="nb">41</span>},
+    <span class="ky">"David"</span>: {<span class="ky">"age"</span>: <span class="nb">17</span>, <span class="ky">"amis"</span>: [<span class="st">"Bob"</span>, <span class="st">"Eva"</span>],      <span class="ky">"posts"</span>: <span class="nb">15</span>},
+    <span class="ky">"Eva"</span>:   {<span class="ky">"age"</span>: <span class="nb">19</span>, <span class="ky">"amis"</span>: [<span class="st">"David"</span>],           <span class="ky">"posts"</span>: <span class="nb">3</span>},
+}</pre></div>
+      <ol>
+        <li><code>nb_amis(reseau, nom)</code> : retourne le nombre d'amis d'un utilisateur.</li>
+        <li><code>utilisateur_plus_actif(reseau)</code> : retourne le nom de l'utilisateur avec le plus de posts.</li>
+        <li><code>sont_amis(reseau, u1, u2)</code> : retourne <code>True</code> si u1 et u2 sont mutuellement amis.</li>
+        <li><code>amis_communs(reseau, u1, u2)</code> : retourne la liste des amis communs à u1 et u2.</li>
+        <li><code>statistiques(reseau)</code> : retourne un dictionnaire avec <code>"nb_utilisateurs"</code>, <code>"total_posts"</code>, <code>"age_moyen"</code> (arrondi à 1 décimale), <code>"utilisateur_plus_actif"</code>.</li>
+      </ol>
+      <div class="toggle-btn btn-hint" onclick="toggle('h5')"><span class="toggle-icon" id="ih5">▶</span> Indice</div>
+      <div class="hint-box" id="h5"><p>Pour <code>amis_communs</code> : convertir les listes d'amis en ensembles (<code>set()</code>) et utiliser l'intersection <code>&</code>, puis reconvertir en liste. Pour <code>sont_amis</code> : vérifier dans les deux sens.</p></div>
+      <div class="toggle-btn btn-corr" onclick="toggle('c5')"><span class="toggle-icon" id="ic5">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c5">
+        <div class="code-block" style="margin-top:8px;"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+        <pre><span class="kw">def</span> <span class="df">nb_amis</span>(reseau, nom)<span class="op">:</span>
+    <span class="kw">return</span> <span class="fn">len</span>(reseau[nom][<span class="ky">"amis"</span>])
+
+<span class="kw">def</span> <span class="df">utilisateur_plus_actif</span>(reseau)<span class="op">:</span>
+    <span class="kw">return</span> <span class="fn">max</span>(reseau, key<span class="op">=</span><span class="kw">lambda</span> u<span class="op">:</span> reseau[u][<span class="ky">"posts"</span>])
+
+<span class="kw">def</span> <span class="df">sont_amis</span>(reseau, u1, u2)<span class="op">:</span>
+    <span class="kw">return</span> (u2 <span class="kw">in</span> reseau[u1][<span class="ky">"amis"</span>] <span class="kw">and</span>
+            u1 <span class="kw">in</span> reseau[u2][<span class="ky">"amis"</span>])
+
+<span class="kw">def</span> <span class="df">amis_communs</span>(reseau, u1, u2)<span class="op">:</span>
+    amis1 <span class="op">=</span> <span class="fn">set</span>(reseau[u1][<span class="ky">"amis"</span>])
+    amis2 <span class="op">=</span> <span class="fn">set</span>(reseau[u2][<span class="ky">"amis"</span>])
+    <span class="kw">return</span> <span class="fn">list</span>(amis1 <span class="op">&</span> amis2)
+
+<span class="kw">def</span> <span class="df">statistiques</span>(reseau)<span class="op">:</span>
+    ages <span class="op">=</span> [reseau[u][<span class="ky">"age"</span>] <span class="kw">for</span> u <span class="kw">in</span> reseau]
+    <span class="kw">return</span> {
+        <span class="ky">"nb_utilisateurs"</span>       : <span class="fn">len</span>(reseau),
+        <span class="ky">"total_posts"</span>           : <span class="fn">sum</span>(reseau[u][<span class="ky">"posts"</span>] <span class="kw">for</span> u <span class="kw">in</span> reseau),
+        <span class="ky">"age_moyen"</span>             : <span class="fn">round</span>(<span class="fn">sum</span>(ages) <span class="op">/</span> <span class="fn">len</span>(ages), <span class="nb">1</span>),
+        <span class="ky">"utilisateur_plus_actif"</span>: utilisateur_plus_actif(reseau),
+    }
+
+<span class="fn">print</span>(nb_amis(reseau, <span class="st">"Alice"</span>))             <span class="cm"># 2</span>
+<span class="fn">print</span>(utilisateur_plus_actif(reseau))         <span class="cm"># "Clara"</span>
+<span class="fn">print</span>(sont_amis(reseau, <span class="st">"Alice"</span>, <span class="st">"Bob"</span>))    <span class="cm"># True</span>
+<span class="fn">print</span>(amis_communs(reseau, <span class="st">"Alice"</span>, <span class="st">"Bob"</span>)) <span class="cm"># [] (aucun ami commun)</span>
+<span class="fn">print</span>(statistiques(reseau))
+<span class="cm"># {"nb_utilisateurs": 5, "total_posts": 89, "age_moyen": 17.4, "utilisateur_plus_actif": "Clara"}</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION 9 — DST
+════════════════════════════════════ -->
+<div class="dst-section" id="s9">
+  <div class="section-num">09 — Checklist DST</div>
+  <h2>Ce que tu dois maîtriser pour le DST</h2>
+  <p style="color:var(--text2);margin-bottom:20px;">Assure-toi de cocher chaque point avant le jour J.</p>
+
+  <h3 style="color:var(--red);margin-top:8px;">Syntaxe de base</h3>
+  <ul class="checklist">
+    <li>Créer un dictionnaire littéral <code>{"cle": valeur}</code> et un dictionnaire vide <code>{}</code></li>
+    <li>Accéder à une valeur avec <code>d["cle"]</code> et <code>d.get("cle", defaut)</code></li>
+    <li>Ajouter ou modifier : <code>d["cle"] = nouvelle_valeur</code></li>
+    <li>Supprimer une clé : <code>del d["cle"]</code> ou <code>d.pop("cle")</code></li>
+    <li>Tester la présence d'une clé : <code>"cle" in d</code></li>
+    <li>Connaître la taille : <code>len(d)</code></li>
+  </ul>
+
+  <h3 style="color:var(--red);">Méthodes essentielles</h3>
+  <ul class="checklist">
+    <li><code>d.keys()</code> — vue des clés</li>
+    <li><code>d.values()</code> — vue des valeurs</li>
+    <li><code>d.items()</code> — vue des paires (clé, valeur)</li>
+    <li><code>d.get(cle, defaut)</code> — accès sans risque de KeyError</li>
+    <li><code>d.pop(cle)</code> — supprimer et récupérer</li>
+    <li><code>d.update(d2)</code> — fusionner deux dictionnaires</li>
+    <li><code>d.copy()</code> — copie indépendante</li>
+  </ul>
+
+  <h3 style="color:var(--red);">Parcours et algorithmes</h3>
+  <ul class="checklist">
+    <li>Parcours par clés : <code>for cle in d:</code></li>
+    <li>Parcours par valeurs : <code>for val in d.values():</code></li>
+    <li>Parcours par paires : <code>for cle, val in d.items():</code></li>
+    <li>Pattern comptage : <code>d[x] = d.get(x, 0) + 1</code></li>
+    <li>Trouver la clé du maximum : <code>max(d, key=d.get)</code></li>
+    <li>Filtrer avec compréhension : <code>{k:v for k,v in d.items() if condition}</code></li>
+    <li>Lire une valeur dans une liste de dicts : <code>liste[i]["cle"]</code></li>
+  </ul>
+
+  <div class="box box-alert" style="margin-top:20px;">
+    <div class="box-title">🚨 Erreurs classiques à éviter</div>
+    <ul>
+      <li>❌ <code>d["cle_absente"]</code> → <code>KeyError</code> ! Utiliser <code>d.get("cle", defaut)</code></li>
+      <li>❌ <code>"Alice" in d</code> teste les <strong>clés</strong>, pas les valeurs. Pour les valeurs : <code>"Alice" in d.values()</code></li>
+      <li>❌ Modifier un dictionnaire pendant qu'on le parcourt (faire une copie d'abord)</li>
+      <li>❌ Confondre <code>{}</code> (dict vide) avec <code>set()</code> (ensemble vide). <code>type({}) → dict</code></li>
+      <li>❌ <code>d.keys()</code> n'est pas une liste : utiliser <code>list(d.keys())</code> si besoin d'indexation</li>
+      <li>❌ Oublier que les clés doivent être <strong>immuables</strong> (pas de liste comme clé)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ════════════════════════════════════
+     SECTION 10 — QCM
+════════════════════════════════════ -->
+<div class="section" id="s10">
+  <div class="section-num">10 — QCM</div>
+  <h2>Quiz interactif — Les Dictionnaires en Python</h2>
+  <p style="color:var(--muted);margin-bottom:16px;">Banque de <strong style="color:var(--green)">52 questions</strong>. Choisissez le nombre de questions et lancez le tirage.</p>
+
+  <div class="qcm-controls">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)">Nombre de questions :</span>
+    <label class="qcm-size-opt" id="lbl5"><input type="radio" name="qsz" value="5" checked onchange="onSzChange()"> 5 questions</label>
+    <label class="qcm-size-opt" id="lbl10"><input type="radio" name="qsz" value="10" onchange="onSzChange()"> 10 questions</label>
+    <button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button>
+  </div>
+  <div id="qcm-questions"></div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">
+    <button class="qcm-btn qcm-btn-primary" onclick="submitQCM()" id="btn-sub">✅ Valider mes réponses</button>
+    <button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button>
+  </div>
+  <div id="qcm-result"></div>
+</div>
+
+</div><!-- /container -->
+<footer>NSI · 1ère Spécialité · Les Dictionnaires en Python · Cours complet + Exercices + QCM</footer>
+
+<script>
+function toggle(id) {
+  const el=document.getElementById(id), icon=document.getElementById('i'+id);
+  el.classList.toggle('open');
+  if(icon) icon.textContent=el.classList.contains('open')?'▼':'▶';
+}
+function onSzChange() {
+  const v5=document.querySelector('[name="qsz"][value="5"]').checked;
+  document.getElementById('lbl5').style.borderColor  = v5  ? '#2563eb':'';
+  document.getElementById('lbl10').style.borderColor = !v5 ? '#2563eb':'';
+}
+
+const BANK = [
+  // ── DÉFINITION & CRÉATION ──
+  {q:"Comment crée-t-on un dictionnaire vide en Python ?",
+   o:["[]","{}","()","dict"],a:1,
+   ex:"<code>{}</code> crée un dictionnaire vide. Attention : <code>[]</code> crée une liste vide et <code>()</code> un tuple vide. On peut aussi écrire <code>dict()</code>."},
+  {q:"Quelle est la syntaxe correcte pour créer un dictionnaire avec deux paires ?",
+   o:['{\"a\":1, \"b\":2}','["a":1, "b":2]','("a"=1, "b"=2)','{"a"=1; "b"=2}'],a:0,
+   ex:"Un dictionnaire s'écrit entre accolades avec la syntaxe <code>clé: valeur</code> séparés par des virgules."},
+  {q:"Que retourne <code>type({\"a\": 1})</code> ?",
+   o:["<class 'list'>","<class 'set'>","<class 'dict'>","<class 'tuple'>"],a:2,
+   ex:"Un dictionnaire Python est de type <code>dict</code>. <code>type({\"a\":1})</code> retourne <code>&lt;class 'dict'&gt;</code>."},
+  {q:"Quel type de données NE PEUT PAS être une clé de dictionnaire ?",
+   o:["Un entier","Une chaîne","Un tuple","Une liste"],a:3,
+   ex:"Les clés doivent être <strong>immuables</strong>. Les listes sont mutables et ne peuvent donc pas être des clés. Les entiers, chaînes et tuples sont immuables → autorisés."},
+  {q:"Les clés d'un dictionnaire sont :",
+   o:["Ordonnées par valeur croissante","Toujours des chaînes de caractères","Uniques — deux clés identiques sont impossibles","Limitées à 255 caractères"],a:2,
+   ex:"Dans un dictionnaire Python, chaque clé est <strong>unique</strong>. Si on ajoute deux fois la même clé, la deuxième valeur écrase la première."},
+  {q:"Que produit <code>dict(zip([\"a\",\"b\"],[1,2]))</code> ?",
+   o:["[\"a\",\"b\",1,2]","{\"a\":1, \"b\":2}","((\"a\",1),(\"b\",2))","Erreur"],a:1,
+   ex:"<code>zip()</code> associe les éléments deux par deux. <code>dict(zip([\"a\",\"b\"],[1,2]))</code> construit le dictionnaire <code>{\"a\":1, \"b\":2}</code>."},
+  {q:"Que vaut <code>d</code> après <code>d = dict.fromkeys([\"x\",\"y\",\"z\"], 0)</code> ?",
+   o:["{\"x\":0, \"y\":0, \"z\":0}","[\"x\",\"y\",\"z\"]","{\"x\":\"y\":\"z\":0}","Erreur"],a:0,
+   ex:"<code>fromkeys(iterable, valeur)</code> crée un dictionnaire avec les éléments de l'itérable comme clés, toutes initialisées à la même valeur."},
+
+  // ── ACCÈS ──
+  {q:"Comment accède-t-on à la valeur associée à la clé <code>\"nom\"</code> dans le dictionnaire <code>d</code> ?",
+   o:["d.nom","d(\"nom\")","d[\"nom\"]","d->nom"],a:2,
+   ex:"L'accès à une valeur se fait avec la notation crochets : <code>d[\"nom\"]</code>. Si la clé est absente, une <code>KeyError</code> est levée."},
+  {q:"Quelle erreur est levée si on accède à une clé inexistante avec <code>d[\"absent\"]</code> ?",
+   o:["ValueError","IndexError","KeyError","NameError"],a:2,
+   ex:"L'accès à une clé absente avec les crochets lève une <code>KeyError</code>. Pour éviter cela, utiliser <code>d.get(\"absent\")</code>."},
+  {q:"Que retourne <code>d.get(\"cle\", 42)</code> si <code>\"cle\"</code> n'est pas dans <code>d</code> ?",
+   o:["None","0","42","KeyError"],a:2,
+   ex:"<code>get(cle, defaut)</code> retourne la valeur par défaut (<code>42</code> ici) si la clé est absente, sans lever d'erreur."},
+  {q:"Quelle est la différence entre <code>d[\"cle\"]</code> et <code>d.get(\"cle\")</code> si la clé est absente ?",
+   o:["Aucune différence","d[\"cle\"] retourne None, get() lève une KeyError","d[\"cle\"] lève une KeyError, get() retourne None","Les deux retournent 0"],a:2,
+   ex:"<code>d[\"cle\"]</code> lève une <code>KeyError</code> si la clé est absente. <code>d.get(\"cle\")</code> retourne <code>None</code> sans erreur."},
+  {q:"Que teste <code>\"age\" in d</code> ?",
+   o:["Si la valeur \"age\" est dans d","Si la clé \"age\" est dans d","Si d contient un entier","Si d a plus de un élément"],a:1,
+   ex:"L'opérateur <code>in</code> teste la présence d'une <strong>clé</strong> dans le dictionnaire. Pour tester une valeur : <code>valeur in d.values()</code>."},
+  {q:"Pour <code>d = {\"a\":1, \"b\":2}</code>, que vaut <code>\"1\" in d</code> ?",
+   o:["True","False","Erreur","1"],a:1,
+   ex:"<code>\"1\"</code> (chaîne) n'est pas une clé de <code>d</code>. Les clés sont <code>\"a\"</code> et <code>\"b\"</code>. <code>\"1\" in d</code> vaut donc <code>False</code>."},
+
+  // ── MODIFICATION ──
+  {q:"Comment ajoute-t-on la paire <code>\"note\":17</code> au dictionnaire <code>d</code> ?",
+   o:["d.add(\"note\", 17)","d.append(\"note\", 17)","d[\"note\"] = 17","d.insert(\"note\", 17)"],a:2,
+   ex:"L'affectation <code>d[\"note\"] = 17</code> ajoute la clé si elle n'existe pas, ou modifie la valeur si elle existe déjà."},
+  {q:"Que fait <code>del d[\"cle\"]</code> ?",
+   o:["Vide le dictionnaire","Supprime la paire clé:valeur","Retourne la valeur puis la supprime","Lève une erreur si la clé est absente"],a:1,
+   ex:"<code>del d[\"cle\"]</code> supprime la paire clé:valeur. Si la clé est absente, une <code>KeyError</code> est levée."},
+  {q:"Que retourne <code>d.pop(\"age\")</code> pour <code>d = {\"nom\":\"Alice\", \"age\":16}</code> ?",
+   o:["None","\"age\"","16","{\"nom\":\"Alice\"}"],a:2,
+   ex:"<code>pop(cle)</code> supprime la clé et <strong>retourne sa valeur</strong>. Ici, la valeur de <code>\"age\"</code> est <code>16</code>."},
+  {q:"Que vaut <code>d</code> après <code>d = {\"a\":1}; d.update({\"b\":2, \"a\":99})</code> ?",
+   o:["{\"a\":1, \"b\":2}","{\"a\":99, \"b\":2}","{\"b\":2}","Erreur"],a:1,
+   ex:"<code>update()</code> ajoute les nouvelles clés et <strong>écrase</strong> les clés existantes. La clé <code>\"a\"</code> passe de 1 à 99."},
+  {q:"Que fait <code>d.setdefault(\"score\", 0)</code> si <code>\"score\"</code> est déjà dans <code>d</code> avec la valeur 5 ?",
+   o:["Écrase la valeur avec 0","Ne modifie pas d, retourne 5","Ajoute une deuxième entrée \"score\"","Lève une erreur"],a:1,
+   ex:"<code>setdefault</code> n'écrase jamais une valeur existante. Si la clé est présente, il retourne la valeur actuelle sans modifier le dictionnaire."},
+  {q:"Que vaut <code>d</code> après <code>d = {\"a\":1, \"b\":2}; d.clear()</code> ?",
+   o:["None","{\"a\":1, \"b\":2}","{}","Erreur"],a:2,
+   ex:"<code>clear()</code> vide le dictionnaire en place. La variable <code>d</code> existe toujours et pointe vers un dictionnaire vide <code>{}</code>."},
+
+  // ── MÉTHODES keys/values/items ──
+  {q:"Que retourne <code>d.keys()</code> pour <code>d = {\"a\":1, \"b\":2}</code> ?",
+   o:["[\"a\", \"b\"]","Une vue contenant \"a\" et \"b\"","(\"a\", \"b\")","Erreur"],a:1,
+   ex:"<code>keys()</code> retourne un objet <code>dict_keys</code> (vue), pas une liste. Pour obtenir une liste, utiliser <code>list(d.keys())</code>."},
+  {q:"Comment obtenir la liste de toutes les valeurs d'un dictionnaire <code>d</code> ?",
+   o:["d.values()","list(d.values())","d.vals()","d[:]"],a:1,
+   ex:"<code>d.values()</code> retourne une vue. <code>list(d.values())</code> la convertit en liste indexable. Les deux sont utiles selon le contexte."},
+  {q:"Quelle méthode retourne des paires (clé, valeur) sous forme de tuples ?",
+   o:["d.pairs()","d.tuples()","d.items()","d.zip()"],a:2,
+   ex:"<code>d.items()</code> retourne un objet <code>dict_items</code> contenant des tuples <code>(clé, valeur)</code>. Idéal pour les boucles <code>for clé, valeur in d.items()</code>."},
+  {q:"Que produit <code>len({\"x\":1, \"y\":2, \"z\":3})</code> ?",
+   o:["6","3","2","Erreur"],a:1,
+   ex:"<code>len(d)</code> retourne le nombre de paires clé:valeur. Ce dictionnaire en contient 3."},
+
+  // ── PARCOURS ──
+  {q:"Que parcourt <code>for cle in d:</code> ?",
+   o:["Les valeurs","Les paires (clé, valeur)","Les clés","Les indices"],a:2,
+   ex:"Par défaut, parcourir un dictionnaire avec <code>for</code> itère sur les <strong>clés</strong>. C'est équivalent à <code>for cle in d.keys():</code>."},
+  {q:"Quelle boucle affiche chaque prénom et son score pour <code>d = {\"Alice\":18, \"Bob\":12}</code> ?",
+   o:["for p in d: print(p, d[p])","for p, s in d: print(p, s)","for p, s in d.items(): print(p, s)","Réponses A et C sont correctes"],a:3,
+   ex:"<code>for p in d: print(p, d[p])</code> fonctionne (parcours par clé + accès). <code>for p, s in d.items():</code> est plus élégant. Les deux sont corrects."},
+  {q:"Quel est le résultat de <code>sum(d.values())</code> pour <code>d = {\"a\":3, \"b\":7, \"c\":2}</code> ?",
+   o:["12","3","7","abc"],a:0,
+   ex:"<code>d.values()</code> retourne les valeurs 3, 7, 2. <code>sum()</code> calcule 3+7+2 = <code>12</code>."},
+  {q:"Comment calculer la moyenne des valeurs d'un dictionnaire <code>d</code> ?",
+   o:["avg(d)","sum(d) / len(d)","sum(d.values()) / len(d)","mean(d.values())"],a:2,
+   ex:"Il faut <code>sum(d.values())</code> pour la somme des valeurs, et <code>len(d)</code> pour le nombre de paires. Il n'existe pas de fonction <code>avg()</code> ou <code>mean()</code> natives."},
+  {q:"Quel est le pattern classique pour compter les occurrences dans une liste avec un dictionnaire ?",
+   o:["d[x] += 1","d[x] = d[x] + 1","d[x] = d.get(x, 0) + 1","d.count(x)"],a:2,
+   ex:"<code>d.get(x, 0)</code> retourne 0 si x est absent (sans KeyError), puis on ajoute 1. C'est le pattern standard pour compter des occurrences."},
+  {q:"Comment trouver la clé associée à la valeur maximale dans un dictionnaire <code>d</code> ?",
+   o:["max(d.values())","max(d.keys())","max(d, key=d.get)","max(d.items())"],a:2,
+   ex:"<code>max(d, key=d.get)</code> retourne la <strong>clé</strong> dont la valeur (obtenue via <code>d.get</code>) est la plus grande. <code>max(d.values())</code> retournerait la valeur elle-même, pas la clé."},
+
+  // ── COMPRÉHENSION ──
+  {q:"Que produit <code>{x: x**2 for x in range(3)}</code> ?",
+   o:["{0:0, 1:1, 2:4}","[0, 1, 4]","{0, 1, 4}","Erreur"],a:0,
+   ex:"C'est une compréhension de dictionnaire. Pour x=0,1,2, on obtient {0:0, 1:1, 2:4}."},
+  {q:"Que produit <code>{v: k for k, v in {\"a\":1, \"b\":2}.items()}</code> ?",
+   o:["{\"a\":1, \"b\":2}","{1:\"a\", 2:\"b\"}","[\"a\", \"b\"]","Erreur"],a:1,
+   ex:"Cette compréhension <strong>inverse</strong> le dictionnaire : les valeurs deviennent clés et vice-versa. Résultat : <code>{1:\"a\", 2:\"b\"}</code>."},
+  {q:"Que produit <code>{p: n for p, n in scores.items() if n >= 15}</code> pour <code>scores = {\"A\":18, \"B\":12, \"C\":15}</code> ?",
+   o:["{\"A\":18}","{\"B\":12}","{\"A\":18, \"C\":15}","{\"A\":18, \"B\":12, \"C\":15}"],a:2,
+   ex:"La condition <code>n >= 15</code> filtre les paires. \"A\":18 ✅, \"B\":12 ❌, \"C\":15 ✅. Résultat : <code>{\"A\":18, \"C\":15}</code>."},
+
+  // ── DICT ET LISTES ──
+  {q:"Pour <code>L = [{\"nom\":\"Alice\",\"note\":18}, {\"nom\":\"Bob\",\"note\":12}]</code>, comment accède-t-on à la note de Bob ?",
+   o:["L[\"Bob\"][\"note\"]","L[1][\"note\"]","L[1].note","L.Bob.note"],a:1,
+   ex:"<code>L[1]</code> accède au 2ème dictionnaire (Bob), puis <code>[\"note\"]</code> accède à sa note. Résultat : <code>12</code>."},
+  {q:"Pour <code>d = {\"NSI\": [17, 15, 19]}</code>, comment ajouter <code>13</code> à la liste de NSI ?",
+   o:["d[\"NSI\"] = 13","d[\"NSI\"].append(13)","d.append(\"NSI\", 13)","d[\"NSI\"] += 13"],a:1,
+   ex:"<code>d[\"NSI\"]</code> accède à la liste. <code>.append(13)</code> y ajoute 13. Résultat : <code>{\"NSI\": [17, 15, 19, 13]}</code>."},
+  {q:"Quelle instruction crée un dictionnaire associant chaque prénom à une liste vide ?",
+   o:["dict.fromkeys([\"Alice\",\"Bob\"], [])","dict.fromkeys([\"Alice\",\"Bob\"], list())","{}","Les deux premières ont un piège — utiliser une compréhension"],a:3,
+   ex:"<code>fromkeys(L, [])</code> crée toutes les clés pointant vers la <strong>même liste</strong> (piège !). La solution correcte est <code>{nom: [] for nom in [\"Alice\", \"Bob\"]}</code>."},
+
+  // ── PIÈGES & SUBTILITÉS ──
+  {q:"Après <code>A = {\"a\":1}; B = A; B[\"a\"] = 99</code>, que vaut <code>A[\"a\"]</code> ?",
+   o:["1","99","None","KeyError"],a:1,
+   ex:"<code>B = A</code> ne crée pas une copie : B et A référencent le <strong>même dictionnaire</strong>. Modifier via B modifie aussi A."},
+  {q:"Comment créer une copie indépendante d'un dictionnaire <code>d</code> ?",
+   o:["d2 = d","d2 = copy(d)","d2 = d.copy()","d2 = dict[d]"],a:2,
+   ex:"<code>d.copy()</code> crée une copie superficielle indépendante. On peut aussi utiliser <code>dict(d)</code> ou <code>d.copy()</code>."},
+  {q:"Que vaut <code>type({})</code> ?",
+   o:["<class 'set'>","<class 'dict'>","<class 'list'>","<class 'empty'>"],a:1,
+   ex:"<code>{}</code> crée un <strong>dictionnaire</strong> vide, pas un ensemble. Pour un ensemble vide, utiliser <code>set()</code>. <code>type({})</code> retourne <code>&lt;class 'dict'&gt;</code>."},
+  {q:"Que se passe-t-il si on définit deux fois la même clé : <code>d = {\"a\":1, \"a\":99}</code> ?",
+   o:["Erreur SyntaxError","Les deux valeurs sont conservées","La deuxième valeur écrase la première","La première valeur est conservée"],a:2,
+   ex:"Python n'interdit pas la répétition de clé à la création, mais la <strong>dernière valeur l'emporte</strong>. <code>d</code> vaut <code>{\"a\": 99}</code>."},
+  {q:"Peut-on utiliser une liste comme clé de dictionnaire ?",
+   o:["Oui, toujours","Oui, si elle est de longueur 1","Non, les listes sont mutables et ne peuvent pas être des clés","Oui, si la liste contient des entiers"],a:2,
+   ex:"Les clés doivent être <strong>hashables</strong> (immuables). Les listes sont mutables → elles ne peuvent pas être des clés. Python lèvera une <code>TypeError: unhashable type: 'list'</code>."},
+  {q:"Que retourne <code>d.get(\"cle\")</code> si la clé est absente et qu'aucun défaut n'est fourni ?",
+   o:["0","\"\"","None","KeyError"],a:2,
+   ex:"Sans deuxième argument, <code>get()</code> retourne <code>None</code> si la clé est absente. Aucune erreur n'est levée."},
+
+  // ── ALGORITHMES AVANCÉS ──
+  {q:"Comment trier les paires d'un dictionnaire par valeur décroissante ?",
+   o:["d.sort(key=values)","sorted(d, key=d.get, reverse=True)","sorted(d.items(), key=lambda x: x[1], reverse=True)","d.items().sort()"],a:2,
+   ex:"<code>sorted(d.items(), key=lambda x: x[1], reverse=True)</code> trie les paires (clé, valeur) par valeur décroissante et retourne une liste de tuples."},
+  {q:"Que fait <code>max(d, key=lambda k: len(d[k]))</code> si les valeurs de d sont des listes ?",
+   o:["Retourne la valeur la plus longue","Retourne la clé dont la valeur a le plus d'éléments","Retourne le max de toutes les listes","Erreur"],a:1,
+   ex:"<code>max(d, key=...)</code> retourne une <strong>clé</strong>. Le critère est <code>len(d[k])</code>, donc on trouve la clé dont la liste associée est la plus longue."},
+  {q:"Quelle est la complexité de l'accès à une valeur dans un dictionnaire Python ?",
+   o:["O(n)","O(log n)","O(1) en moyenne","O(n²)"],a:2,
+   ex:"Les dictionnaires Python sont implémentés par des tables de hachage. L'accès par clé est en <strong>O(1) en moyenne</strong> — c'est l'un de leurs grands avantages sur les listes."},
+  {q:"Comment inverser un dictionnaire (clés ↔ valeurs) en une ligne ?",
+   o:["{d.values(): d.keys()}","dict(zip(d.values(), d.keys()))","inv = {k:v for k,v in d.items()}","Réponses B et C inversent clés et valeurs — seule B est correcte",],a:1,
+   ex:"<code>dict(zip(d.values(), d.keys()))</code> fonctionne si les valeurs sont toutes uniques. La compréhension <code>{v:k for k,v in d.items()}</code> est plus lisible."},
+  {q:"Que retourne <code>list(d)</code> pour un dictionnaire <code>d</code> ?",
+   o:["La liste des valeurs","La liste des paires","La liste des clés","Une copie du dictionnaire"],a:2,
+   ex:"Convertir un dictionnaire en liste revient à itérer dessus, ce qui parcourt les <strong>clés</strong>. <code>list(d)</code> équivaut à <code>list(d.keys())</code>."},
+  {q:"Quel est le résultat de ce code ?\n<code>d = {}\nfor c in \"aabba\":\n    d[c] = d.get(c, 0) + 1</code>",
+   o:["{\"a\":2, \"b\":2}","{\"a\":3, \"b\":2}","{\"a\":2, \"b\":3}","Erreur"],a:1,
+   ex:"On compte : a→1, a→2, b→1, b→2, a→3. Résultat : <code>{\"a\":3, \"b\":2}</code>."},
+  {q:"Que produit <code>{k: v*2 for k, v in {\"x\":3, \"y\":4}.items()}</code> ?",
+   o:["{\"x\":6, \"y\":8}","{\"x\":3, \"y\":4}","[6, 8]","{\"xx\":3, \"yy\":4}"],a:0,
+   ex:"La compréhension transforme chaque valeur en la multipliant par 2. x:3→6, y:4→8. Résultat : <code>{\"x\":6, \"y\":8}</code>."},
+  {q:"Comment fusionner deux dictionnaires <code>d1</code> et <code>d2</code> dans Python 3.9+ ?",
+   o:["d1 + d2","d1.merge(d2)","d1 | d2","d1 & d2"],a:2,
+   ex:"Depuis Python 3.9, l'opérateur <code>|</code> fusionne deux dictionnaires. Les clés de <code>d2</code> écrasent celles de <code>d1</code> en cas de conflit. Avant 3.9 : <code>{**d1, **d2}</code>."},
+  {q:"Que fait <code>d.pop(\"cle\", None)</code> si la clé est absente ?",
+   o:["Lève une KeyError","Retourne None sans erreur","Supprime tous les None","Ajoute la clé avec la valeur None"],a:1,
+   ex:"<code>pop(cle, defaut)</code> avec un deuxième argument retourne le défaut si la clé est absente, sans KeyError. Ici, il retourne <code>None</code> silencieusement."},
+];
+
+let curQs=[],submitted=false,qSz=5;
+const getSz=()=>parseInt(document.querySelector('[name="qsz"]:checked')?.value||5);
+const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
+
+function newQCM(){
+  submitted=false; qSz=getSz();
+  curQs=shuffle(BANK).slice(0,qSz);
+  const c=document.getElementById('qcm-questions'); c.innerHTML='';
+  curQs.forEach((q,qi)=>{
+    const sh=shuffle(q.o.map((t,i)=>({t,i}))); q._sh=sh;
+    const opts=sh.map((o,si)=>`<label class="qcm-opt" id="opt-${qi}-${si}"><input type="radio" name="q${qi}" value="${si}"><span>${o.t}</span></label>`).join('');
+    c.innerHTML+=`<div class="qcm-q" id="qb-${qi}"><div class="qcm-num">Question ${qi+1} / ${qSz}</div><div class="qcm-question">${q.q}</div><div class="qcm-opts">${opts}</div><div class="qcm-fb" id="fb-${qi}"></div></div>`;
+  });
+  const r=document.getElementById('qcm-result'); r.style.display='none'; r.innerHTML='';
+  const btn=document.getElementById('btn-sub'); btn.disabled=false; btn.style.opacity='1';
+  onSzChange();
+}
+function submitQCM(){
+  if(submitted)return; submitted=true; let score=0;
+  curQs.forEach((q,qi)=>{
+    const sel=document.querySelector(`input[name="q${qi}"]:checked`);
+    const block=document.getElementById(`qb-${qi}`);
+    const fb=document.getElementById(`fb-${qi}`);
+    const corrSi=q._sh.findIndex(o=>o.i===q.a);
+    document.querySelectorAll(`input[name="q${qi}"]`).forEach(r=>r.disabled=true);
+    const cl=document.getElementById(`opt-${qi}-${corrSi}`);
+    if(cl)cl.classList.add('opt-ok');
+    if(sel){
+      const chosen=parseInt(sel.value);
+      if(chosen===corrSi){score++;block.classList.add('correct');fb.className='qcm-fb show ok';fb.innerHTML='✅ Bonne réponse ! '+q.ex;}
+      else{block.classList.add('wrong');document.getElementById(`opt-${qi}-${chosen}`)?.classList.add('opt-ko');fb.className='qcm-fb show ko';fb.innerHTML='❌ Mauvaise réponse. '+q.ex;}
+    }else{block.classList.add('wrong');fb.className='qcm-fb show ko';fb.innerHTML='⚠️ Pas de réponse. '+q.ex;}
+  });
+  const pct=(score/qSz)*100,ratio=score/qSz;
+  const col=ratio<0.3?'#dc2626':ratio<0.5?'#d97706':ratio<0.7?'#ca8a04':ratio<0.9?'#059669':'#0891b2';
+  const msgs=p=>p<30?'💪 Relis le cours !':p<50?'📖 Quelques révisions s\'imposent.':p<70?'👍 Pas mal, continue !':p<90?'🎉 Très bien !':'🏆 Parfait !';
+  const note=Math.round((score/qSz)*20);
+  const r=document.getElementById('qcm-result');
+  r.style.display='block';
+  r.innerHTML=`<div class="score-big" style="color:${col}">${score}<span style="font-size:26px;opacity:.5">/${qSz}</span></div><div class="score-sub">≈ <strong>${note}/20</strong></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%;background:${col}" id="sfill"></div></div><div class="score-msg" style="color:${col}">${msgs(pct)}</div>`;
+  setTimeout(()=>{const f=document.getElementById('sfill');if(f)f.style.width=pct+'%';},80);
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+  document.getElementById('btn-sub').disabled=true;
+  document.getElementById('btn-sub').style.opacity='.5';
+}
+document.addEventListener('DOMContentLoaded',()=>{newQCM();onSzChange();});
+</script>
+</body>
+</html>

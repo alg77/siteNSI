@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Grille d'évaluation — TP04 POO Pokémon</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: white;
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    color: #1a1a2e;
+    padding: 1.2cm 1cm;
+  }
+
+  /* ── 2 grilles côte à côte sur la page ── */
+  .page-wrap {
+    display: flex;
+    flex-direction: column;
+    gap: .5cm;
+  }
+
+  .grille {
+    border: 1.5px solid #1a1a2e;
+    border-radius: 6px;
+    overflow: hidden;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+
+  /* ── En-tête ── */
+  .grille-header {
+    background: #1a1a2e;
+    color: white;
+    padding: 6px 10px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: .5rem;
+  }
+  .grille-title {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+  }
+  .grille-subtitle {
+    font-size: 9px;
+    opacity: .65;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: .06em;
+  }
+
+  /* ── Infos élève ── */
+  .student-row {
+    display: flex;
+    gap: 0;
+    border-bottom: 1px solid #dee2e6;
+  }
+  .student-field {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 10px;
+    border-right: 1px solid #dee2e6;
+    font-size: 10px;
+  }
+  .student-field:last-child { border-right: none; }
+  .student-field label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8.5px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+  .field-line {
+    flex: 1;
+    border-bottom: 1px solid #adb5bd;
+    height: 14px;
+  }
+
+  /* ── Bloc exercice ── */
+  .exo-block { border-bottom: 1px solid #dee2e6; }
+  .exo-block:last-child { border-bottom: none; }
+
+  .exo-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 10px;
+    border-bottom: 1px solid #e9ecef;
+  }
+  .exo-head-left { display: flex; align-items: center; gap: 7px; }
+  .exo-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+  }
+  .exo-name { font-weight: 700; font-size: 11px; }
+  .exo-total {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    font-weight: 600;
+    padding: 1px 8px;
+    border-radius: 10px;
+  }
+  .e1 .exo-head { background: #e8f3ff; }
+  .e1 .exo-total { background: #1971c2; color: white; }
+  .e2 .exo-head { background: #ebfbee; }
+  .e2 .exo-total { background: #2f9e44; color: white; }
+  .e3 .exo-head { background: #f3f0ff; }
+  .e3 .exo-total { background: #6741d9; color: white; }
+
+  /* ── Critères ── */
+  table.criteria {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  table.criteria tr {
+    border-bottom: 1px solid #f1f3f5;
+  }
+  table.criteria tr:last-child { border-bottom: none; }
+  table.criteria td {
+    padding: 3.5px 10px;
+    vertical-align: middle;
+    line-height: 1.4;
+  }
+  .crit-text {
+    font-size: 10.5px;
+    color: #343a40;
+    width: 100%;
+  }
+  .crit-text code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9.5px;
+    background: #f1f3f5;
+    border-radius: 2px;
+    padding: 0 3px;
+    color: #953800;
+  }
+  .crit-pts {
+    white-space: nowrap;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: #6c757d;
+    width: 2.5rem;
+    text-align: right;
+  }
+
+  /* cases à cocher */
+  .check-col {
+    width: 1.5rem;
+    text-align: center;
+    padding: 3px 4px;
+  }
+  .check-box {
+    display: inline-block;
+    width: 13px;
+    height: 13px;
+    border: 1.5px solid #adb5bd;
+    border-radius: 2px;
+    vertical-align: middle;
+  }
+
+  /* score partiel */
+  .score-col {
+    width: 2.2rem;
+    text-align: center;
+    padding: 3px 4px;
+  }
+  .score-cell {
+    display: inline-block;
+    width: 28px;
+    height: 14px;
+    border-bottom: 1px solid #adb5bd;
+  }
+
+  /* ── Pied total ── */
+  .grille-footer {
+    display: flex;
+    align-items: stretch;
+    border-top: 1.5px solid #1a1a2e;
+  }
+  .footer-obs {
+    flex: 1;
+    padding: 5px 10px;
+    border-right: 1.5px solid #1a1a2e;
+  }
+  .footer-obs-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 2px;
+  }
+  .footer-obs-lines {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 4px;
+  }
+  .obs-line {
+    border-bottom: 1px solid #dee2e6;
+    height: 12px;
+    width: 100%;
+  }
+  .footer-score {
+    width: 5.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 6px 8px;
+    gap: 4px;
+  }
+  .footer-score-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 8px;
+    color: #6c757d;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+  }
+  .footer-score-box {
+    border: 1.5px solid #1a1a2e;
+    border-radius: 4px;
+    width: 52px;
+    height: 26px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: 800;
+    color: #1a1a2e;
+  }
+  .footer-score-denom {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    color: #adb5bd;
+  }
+
+  /* ── Bouton impression ── */
+  .print-btn {
+    position: fixed; bottom: 1rem; right: 1rem;
+    background: #1a1a2e; color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem; padding: .45rem 1rem;
+    border: none; border-radius: 5px; cursor: pointer;
+    z-index: 100;
+  }
+
+  /* ── @media print ── */
+  @media print {
+    @page { size: A4; margin: 10mm 10mm 10mm 10mm; }
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+    body { padding: 0; font-size: 11px; }
+    .print-btn { display: none; }
+    .page-wrap { gap: .45cm; }
+    .grille { page-break-inside: avoid; break-inside: avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+  <!-- ═══════════════════════════════════════
+       GRILLE 1
+       ═══════════════════════════════════════ -->
+  <div class="grille">
+
+    <div class="grille-header">
+      <div>
+        <div class="grille-title">TP04 — Attrapez-les tous ! &nbsp;·&nbsp; Grille d'évaluation POO</div>
+        <div class="grille-subtitle">NSI · Terminale · Programmation Orientée Objet</div>
+      </div>
+    </div>
+
+    <!-- Infos élève -->
+    <div class="student-row">
+      <div class="student-field" style="flex:2">
+        <label>Nom &amp; Prénom</label><div class="field-line"></div>
+      </div>
+      <div class="student-field">
+        <label>Classe</label><div class="field-line"></div>
+      </div>
+      <div class="student-field">
+        <label>Groupe TP</label><div class="field-line"></div>
+      </div>
+    </div>
+
+    <!-- EXO 1 -->
+    <div class="exo-block e1">
+      <div class="exo-head">
+        <div class="exo-head-left">
+          <span class="exo-label">Exo 1</span>
+          <span class="exo-name">Mon premier Pokémon</span>
+        </div>
+        <span class="exo-total">/6</span>
+      </div>
+      <table class="criteria">
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Classe <code>Pokemon</code> définie avec <code>__init__</code> correct (nom, <code>self.</code>, pas de <code>return</code>)</td>
+          <td class="crit-pts">2 pts</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text"><code>self.</code> sur chaque attribut, <code>self</code> en 1er paramètre de chaque méthode</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Méthode <code>afficher_info</code> affiche correctement nom, type et points de vie</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">5 instances Pokémon créées et <code>afficher_info()</code> appelée sur chacune</td>
+          <td class="crit-pts">2 pts</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- EXO 2 -->
+    <div class="exo-block e2">
+      <div class="exo-head">
+        <div class="exo-head-left">
+          <span class="exo-label">Exo 2</span>
+          <span class="exo-name">Duel de Pokémon</span>
+        </div>
+        <span class="exo-total">/8</span>
+      </div>
+      <table class="criteria">
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Méthode <code>attaquer(self, cible)</code> réduit correctement les PV de la cible</td>
+          <td class="crit-pts">2 pts</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Les PV ne descendent pas sous 0 (protection gérée)</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Méthode <code>est_vaincu(self)</code> retourne le bon booléen</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Boucle de duel alternée avec condition d'arrêt correcte</td>
+          <td class="crit-pts">2 pts</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Affichage de l'état (PV) après chaque attaque + nom du gagnant à la fin</td>
+          <td class="crit-pts">2 pts</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- EXO 3 -->
+    <div class="exo-block e3">
+      <div class="exo-head">
+        <div class="exo-head-left">
+          <span class="exo-label">Exo 3</span>
+          <span class="exo-name">Tournoi de Pokémon</span>
+        </div>
+        <span class="exo-total">/6</span>
+      </div>
+      <table class="criteria">
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Sous-classes avec héritage <code>class X(Pokemon)</code> et <code>super().__init__</code> correct</td>
+          <td class="crit-pts">2 pts</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Méthode <code>attaquer</code> surchargée dans au moins une sous-classe</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Attaque spéciale avec composante aléatoire (<code>random</code>)</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Boucle tournoi : sélection aléatoire de 2 Pokémon + élimination du vaincu</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Récupération de PV après chaque duel + déclaration du champion final</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+      </table>
+    </div>
+
+    <!-- Pied -->
+    <div class="grille-footer">
+      <div class="footer-obs">
+        <div class="footer-obs-label">Observations</div>
+        <div class="footer-obs-lines">
+          <div class="obs-line"></div>
+          <div class="obs-line"></div>
+          <div class="obs-line"></div>
+        </div>
+      </div>
+      <div class="footer-score">
+        <span class="footer-score-label">Note</span>
+        <div class="footer-score-box"></div>
+        <span class="footer-score-denom">/ 20</span>
+      </div>
+    </div>
+
+  </div><!-- /grille 1 -->
+
+
+  <!-- ═══════════════════════════════════════
+       GRILLE 2  (identique)
+       ═══════════════════════════════════════ -->
+  <div class="grille">
+
+    <div class="grille-header">
+      <div>
+        <div class="grille-title">TP04 — Attrapez-les tous ! &nbsp;·&nbsp; Grille d'évaluation POO</div>
+        <div class="grille-subtitle">NSI · Terminale · Programmation Orientée Objet</div>
+      </div>
+    </div>
+
+    <div class="student-row">
+      <div class="student-field" style="flex:2">
+        <label>Nom &amp; Prénom</label><div class="field-line"></div>
+      </div>
+      <div class="student-field">
+        <label>Classe</label><div class="field-line"></div>
+      </div>
+      <div class="student-field">
+        <label>Groupe TP</label><div class="field-line"></div>
+      </div>
+    </div>
+
+    <div class="exo-block e1">
+      <div class="exo-head">
+        <div class="exo-head-left">
+          <span class="exo-label">Exo 1</span>
+          <span class="exo-name">Mon premier Pokémon</span>
+        </div>
+        <span class="exo-total">/6</span>
+      </div>
+      <table class="criteria">
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Classe <code>Pokemon</code> définie avec <code>__init__</code> correct (nom, <code>self.</code>, pas de <code>return</code>)</td>
+          <td class="crit-pts">2 pts</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text"><code>self.</code> sur chaque attribut, <code>self</code> en 1er paramètre de chaque méthode</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Méthode <code>afficher_info</code> affiche correctement nom, type et points de vie</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">5 instances Pokémon créées et <code>afficher_info()</code> appelée sur chacune</td>
+          <td class="crit-pts">2 pts</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="exo-block e2">
+      <div class="exo-head">
+        <div class="exo-head-left">
+          <span class="exo-label">Exo 2</span>
+          <span class="exo-name">Duel de Pokémon</span>
+        </div>
+        <span class="exo-total">/8</span>
+      </div>
+      <table class="criteria">
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Méthode <code>attaquer(self, cible)</code> réduit correctement les PV de la cible</td>
+          <td class="crit-pts">2 pts</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Les PV ne descendent pas sous 0 (protection gérée)</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Méthode <code>est_vaincu(self)</code> retourne le bon booléen</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Boucle de duel alternée avec condition d'arrêt correcte</td>
+          <td class="crit-pts">2 pts</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Affichage de l'état (PV) après chaque attaque + nom du gagnant à la fin</td>
+          <td class="crit-pts">2 pts</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="exo-block e3">
+      <div class="exo-head">
+        <div class="exo-head-left">
+          <span class="exo-label">Exo 3</span>
+          <span class="exo-name">Tournoi de Pokémon</span>
+        </div>
+        <span class="exo-total">/6</span>
+      </div>
+      <table class="criteria">
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Sous-classes avec héritage <code>class X(Pokemon)</code> et <code>super().__init__</code> correct</td>
+          <td class="crit-pts">2 pts</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Méthode <code>attaquer</code> surchargée dans au moins une sous-classe</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Attaque spéciale avec composante aléatoire (<code>random</code>)</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Boucle tournoi : sélection aléatoire de 2 Pokémon + élimination du vaincu</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+        <tr>
+          <td class="check-col"><span class="check-box"></span></td>
+          <td class="crit-text">Récupération de PV après chaque duel + déclaration du champion final</td>
+          <td class="crit-pts">1 pt</td>
+          <td class="score-col"><span class="score-cell"></span></td>
+        </tr>
+      </table>
+    </div>
+
+    <div class="grille-footer">
+      <div class="footer-obs">
+        <div class="footer-obs-label">Observations</div>
+        <div class="footer-obs-lines">
+          <div class="obs-line"></div>
+          <div class="obs-line"></div>
+          <div class="obs-line"></div>
+        </div>
+      </div>
+      <div class="footer-score">
+        <span class="footer-score-label">Note</span>
+        <div class="footer-score-box"></div>
+        <span class="footer-score-denom">/ 20</span>
+      </div>
+    </div>
+
+  </div><!-- /grille 2 -->
+
+</div><!-- /page-wrap -->
+
+<button class="print-btn" onclick="window.print()">⎙ Imprimer / PDF</button>
+
+</body>
+</html>

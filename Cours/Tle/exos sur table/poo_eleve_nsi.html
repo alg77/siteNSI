@@ -1,0 +1,1198 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POO Python – Exercices NSI Terminale</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #ffffff;
+    --surface: #f8f9fa;
+    --surf2:   #f1f3f5;
+    --border:  #dee2e6;
+    --text:    #1a1a2e;
+    --muted:   #6c757d;
+    --star:    #e08b00;
+
+    --c1: #1971c2;
+    --c2: #2f9e44;
+    --c3: #e67700;
+    --c4: #c92a2a;
+    --c5: #6741d9;
+
+    --answer-bg: #f1f3f5;
+    --answer-border: #ced4da;
+    --answer-line: #dee2e6;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    line-height: 1.7;
+    padding: 1.5rem 1.2rem 3rem;
+  }
+
+  /* ── HEADER ── */
+  header {
+    max-width: 820px;
+    margin: 0 auto 1.5rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 1.2rem;
+  }
+
+  .header-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 1rem;
+    flex-wrap: wrap;
+  }
+
+  .header-left .badge {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1px 7px;
+    margin-bottom: .6rem;
+    background: var(--surf2);
+  }
+
+  h1 {
+    font-size: clamp(1.3rem, 3.5vw, 1.9rem);
+    font-weight: 800;
+    line-height: 1.2;
+    color: var(--text);
+    margin-bottom: .25rem;
+  }
+  h1 em { color: var(--c5); font-style: normal; }
+  .subtitle { color: var(--muted); font-size: .82rem; }
+
+  /* Infos élève */
+  .student-box {
+    flex-shrink: 0;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: .6rem .9rem;
+    background: var(--surface);
+    min-width: 220px;
+  }
+  .student-box .field {
+    display: flex;
+    align-items: center;
+    gap: .5rem;
+    margin-bottom: .35rem;
+    font-size: .82rem;
+  }
+  .student-box .field:last-child { margin-bottom: 0; }
+  .student-box .field label {
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    min-width: 3.5rem;
+  }
+  .field-line {
+    flex: 1;
+    border-bottom: 1px solid var(--border);
+    height: 1.1rem;
+  }
+
+  /* Durée / consignes globales */
+  .global-rules {
+    max-width: 820px;
+    margin: 0 auto 1.5rem;
+    background: #fff9db;
+    border: 1px solid #ffe066;
+    border-radius: 7px;
+    padding: .6rem 1rem;
+    font-size: .82rem;
+    color: #5c3d00;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem 2rem;
+    align-items: center;
+  }
+  .global-rules strong { color: #e67700; }
+  .rule-item { display: flex; align-items: center; gap: .35rem; }
+
+  /* ── LÉGENDE ── */
+  .legend {
+    max-width: 820px;
+    margin: 0 auto 1.5rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .4rem;
+  }
+  .belt-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .67rem;
+    padding: 2px 9px;
+    border-radius: 20px;
+    border: 1px solid;
+    font-weight: 600;
+  }
+  .b1 { color: var(--c1); border-color: var(--c1); background: #e8f3ff; }
+  .b2 { color: var(--c2); border-color: var(--c2); background: #ebfbee; }
+  .b3 { color: var(--c3); border-color: var(--c3); background: #fff4e6; }
+  .b4 { color: var(--c4); border-color: var(--c4); background: #fff5f5; }
+  .b5 { color: var(--c5); border-color: var(--c5); background: #f3f0ff; }
+
+  /* ── SECTION ── */
+  .section {
+    max-width: 820px;
+    margin: 0 auto 2rem;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: .8rem;
+    margin-bottom: 1rem;
+    padding: .5rem .8rem;
+    border-radius: 6px;
+    border: 1px solid var(--border);
+  }
+  .s1 .section-header { background: #e8f3ff; border-color: #a5c8f0; }
+  .s2 .section-header { background: #ebfbee; border-color: #a3d9b1; }
+  .s3 .section-header { background: #fff4e6; border-color: #ffd8a8; }
+  .s4 .section-header { background: #fff5f5; border-color: #ffc9c9; }
+  .s5 .section-header { background: #f3f0ff; border-color: #d0bfff; }
+
+  .section-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    color: var(--muted);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+  }
+  .section-title {
+    font-size: 1rem;
+    font-weight: 800;
+    flex: 1;
+  }
+  .s1 .section-title { color: var(--c1); }
+  .s2 .section-title { color: var(--c2); }
+  .s3 .section-title { color: var(--c3); }
+  .s4 .section-title { color: var(--c4); }
+  .s5 .section-title { color: var(--c5); }
+
+  .stars { letter-spacing: .05em; font-size: .95rem; color: var(--star); }
+  .pts-total {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  /* ── EXERCICE ── */
+  .exo {
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    overflow: hidden;
+    page-break-inside: avoid;
+  }
+  .exo-head {
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+    padding: .55rem 1rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surf2);
+  }
+  .exo-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    color: var(--muted);
+    min-width: 2.8rem;
+  }
+  .exo-title { font-weight: 700; font-size: .88rem; flex: 1; }
+  .star-tag { color: var(--star); font-size: .85rem; }
+  .pts {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    color: var(--muted);
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 1px 7px;
+  }
+
+  .exo-body { padding: .85rem 1rem; }
+
+  p { margin-bottom: .5rem; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── CODE ── */
+  pre {
+    background: #f6f8fa;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .75rem .95rem;
+    overflow-x: auto;
+    margin: .65rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .78rem;
+    line-height: 1.65;
+    color: #24292f;
+  }
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .82em;
+    background: #f1f3f5;
+    border-radius: 3px;
+    padding: 1px 4px;
+    color: #953800;
+  }
+  pre code { background: none; color: inherit; padding: 0; }
+
+  .kw  { color: #cf222e; font-weight: 600; }
+  .fn  { color: #6639ba; }
+  .cl  { color: #0550ae; font-weight: 600; }
+  .sf  { color: #953800; }
+  .st  { color: #0a3069; }
+  .cm  { color: #6e7781; font-style: italic; }
+  .nb  { color: #0550ae; }
+  .op  { color: #cf222e; }
+  .err { background: #ffebe9; color: #cf222e; border-radius: 2px; padding: 0 2px; }
+
+  /* ── CONSIGNES ── */
+  .consignes {
+    border-left: 3px solid var(--c1);
+    border-radius: 0 5px 5px 0;
+    padding: .5rem .9rem;
+    margin: .6rem 0;
+    font-size: .8rem;
+    color: #343a40;
+    background: #e8f3ff;
+  }
+  .consignes strong { color: var(--text); }
+  .s2 .consignes { border-left-color: var(--c2); background: #ebfbee; }
+  .s3 .consignes { border-left-color: var(--c3); background: #fff4e6; }
+  .s4 .consignes { border-left-color: var(--c4); background: #fff5f5; }
+  .s5 .consignes { border-left-color: var(--c5); background: #f3f0ff; }
+
+  /* ── CADRE RÉPONSE ── */
+  .answer-box {
+    background: var(--answer-bg);
+    border: 1px solid var(--answer-border);
+    border-radius: 6px;
+    margin-top: .7rem;
+    overflow: hidden;
+  }
+  .answer-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .63rem;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    padding: .3rem .8rem;
+    border-bottom: 1px solid var(--answer-border);
+    background: #e9ecef;
+    display: flex;
+    justify-content: space-between;
+  }
+  .answer-lines {
+    padding: .4rem .8rem .3rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .answer-line {
+    border-bottom: 1px solid var(--answer-line);
+    height: 1.85rem;
+    width: 100%;
+  }
+  .answer-line:last-child { border-bottom: none; }
+
+  /* cadre code (quadrillé léger) */
+  .answer-code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .78rem;
+    background: var(--answer-bg);
+    border: 1px solid var(--answer-border);
+    border-radius: 6px;
+    margin-top: .7rem;
+    overflow: hidden;
+  }
+  .answer-code .answer-label {
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .code-area {
+    padding: .5rem .8rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+  .code-line {
+    display: flex;
+    align-items: flex-end;
+    gap: .5rem;
+    border-bottom: 1px solid var(--answer-line);
+    height: 1.8rem;
+  }
+  .code-line:last-child { border-bottom: none; }
+  .line-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .62rem;
+    color: #adb5bd;
+    min-width: 1.2rem;
+    text-align: right;
+    padding-bottom: .15rem;
+    user-select: none;
+  }
+  .line-space { flex: 1; }
+
+  /* ── QUESTION INLINE (compléter) ── */
+  .q-line {
+    background: #f8f9fa;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    padding: .45rem .8rem;
+    margin: .4rem 0;
+    font-size: .85rem;
+    font-family: 'JetBrains Mono', monospace;
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    flex-wrap: wrap;
+  }
+  .blank {
+    display: inline-block;
+    min-width: 100px;
+    height: 1.1rem;
+    border-bottom: 1.5px solid #adb5bd;
+    vertical-align: bottom;
+  }
+
+  /* ── BARÈME ── */
+  .bareme {
+    max-width: 820px;
+    margin: 2rem auto 0;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  .bareme-head {
+    background: var(--surf2);
+    border-bottom: 1px solid var(--border);
+    padding: .45rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .bareme-grid {
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
+    border-collapse: collapse;
+  }
+  .bareme-cell {
+    border-right: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: .35rem .5rem;
+    text-align: center;
+    font-size: .78rem;
+  }
+  .bareme-cell:last-child { border-right: none; }
+  .bareme-cell.label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    color: var(--muted);
+    background: #fafafa;
+  }
+  .bareme-cell.total-cell {
+    background: var(--surf2);
+    font-weight: 700;
+    font-size: .82rem;
+  }
+  .score-box {
+    border: 1.5px solid var(--border);
+    border-radius: 5px;
+    min-width: 4rem;
+    height: 1.5rem;
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .82rem;
+    background: white;
+    padding: 0 .4rem;
+    vertical-align: middle;
+  }
+
+  /* ── DIVIDER ── */
+  hr.div { max-width: 820px; margin: 1.5rem auto; border: none; border-top: 1px solid var(--border); }
+
+  /* ── PRINT ── */
+  .print-btn {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--surf2);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    padding: .45rem .9rem;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: .06em;
+    transition: all .2s;
+    z-index: 100;
+  }
+  .print-btn:hover { color: var(--text); border-color: var(--text); }
+
+  @media print {
+    @page { size: A4; margin: 11mm 13mm 11mm 13mm; }
+
+    * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+    body {
+      font-size: 11px;
+      line-height: 1.5;
+      padding: 0;
+      color: #000;
+    }
+
+    .print-btn { display: none; }
+
+    /* pleine largeur */
+    header, .section, .legend, .global-rules, .bareme { max-width: 100%; }
+
+    /* header compact */
+    header        { padding-bottom: .5rem; margin-bottom: .5rem; }
+    h1            { font-size: 1.25rem; }
+    .subtitle     { font-size: .72rem; }
+    .student-box  { padding: .4rem .7rem; }
+    .student-box .field { font-size: .72rem; margin-bottom: .25rem; }
+
+    /* règles & légende */
+    .global-rules { padding: .25rem .7rem; font-size: .7rem; margin-bottom: .5rem; gap: .15rem 1.2rem; }
+    .legend       { margin-bottom: .5rem; gap: .25rem; }
+    .belt-badge   { font-size: .6rem; padding: 1px 7px; }
+
+    /* sections */
+    .section        { margin-bottom: .7rem; }
+    .section-header { padding: .3rem .7rem; margin-bottom: .5rem; }
+    .section-title  { font-size: .88rem; }
+    .section-num    { font-size: .58rem; }
+
+    /* exercices — ne pas couper sauf si trop long */
+    .exo          { margin-bottom: .5rem; border-radius: 4px; break-inside: avoid; page-break-inside: avoid; }
+    .exo-head     { padding: .3rem .8rem; }
+    .exo-title    { font-size: .8rem; }
+    .exo-num      { font-size: .62rem; }
+    .pts          { font-size: .58rem; }
+    .exo-body     { padding: .5rem .8rem; }
+
+    /* exercices trop longs pour tenir → autoriser la coupure */
+    .s5 .exo      { break-inside: auto; page-break-inside: auto; }
+
+    /* code */
+    pre           { font-size: .7rem; line-height: 1.5; padding: .45rem .7rem; margin: .35rem 0; }
+    code          { font-size: .78em; }
+
+    /* consignes */
+    .consignes    { padding: .3rem .7rem; font-size: .7rem; margin: .35rem 0; }
+
+    /* cadres réponse */
+    .answer-code  { margin-top: .4rem; }
+    .answer-label { padding: .18rem .7rem; font-size: .57rem; }
+    .code-area    { padding: .25rem .7rem; }
+    .code-line    { height: 1.5rem; }
+    .line-num     { font-size: .57rem; }
+
+    /* questions inline */
+    .q-line       { padding: .3rem .7rem; font-size: .78rem; margin: .25rem 0; }
+
+    /* listes */
+    ul            { font-size: .82rem; }
+    p             { margin-bottom: .35rem; }
+
+    /* séparateurs */
+    hr.div        { margin: .8rem 0; }
+
+    /* barème */
+    .bareme       { margin-top: .7rem; break-inside: avoid; page-break-inside: avoid; }
+    .bareme-head  { padding: .25rem .8rem; font-size: .62rem; }
+    .bareme-cell  { padding: .22rem .4rem; font-size: .68rem; }
+    .score-box    { min-width: 3rem; height: 1.2rem; font-size: .72rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="header-top">
+    <div class="header-left">
+      <div class="badge">NSI · Terminale · Exercices sur table</div>
+      <h1>Programmation <em>Orientée Objet</em><br>en Python</h1>
+      <p class="subtitle">Sans ordinateur · Sans document · Sans calculatrice</p>
+    </div>
+    <div class="student-box">
+      <div class="field">
+        <label>Nom</label><div class="field-line"></div>
+      </div>
+      <div class="field">
+        <label>Prénom</label><div class="field-line"></div>
+      </div>
+      <div class="field">
+        <label>Classe</label><div class="field-line"></div>
+      </div>
+      <div class="field">
+        <label>Date</label><div class="field-line"></div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ── RÈGLES GLOBALES ── -->
+<div class="global-rules">
+  <div class="rule-item">⏱ <strong>Durée : 1h</strong></div>
+  <div class="rule-item">✏️ Écrire proprement, une instruction par ligne</div>
+  <div class="rule-item">🐍 Python uniquement — pas de pseudo-code</div>
+  <div class="rule-item">🔇 <strong>and / or / not</strong> en minuscules</div>
+  <div class="rule-item">❌ Pas de <code>new</code>, pas de <code>AND</code>, pas de <code>&&</code></div>
+</div>
+
+<!-- ── LÉGENDE ── -->
+<div class="legend">
+  <span class="belt-badge b1">★ Automatismes syntaxiques</span>
+  <span class="belt-badge b2">★★ Logique et comparaisons</span>
+  <span class="belt-badge b3">★★★ Encapsulation et méthodes</span>
+  <span class="belt-badge b4">★★★★ Listes d'objets</span>
+  <span class="belt-badge b5">★★★★★ Niveau Baccalauréat</span>
+</div>
+
+
+<!-- ════════════════════════════════════════
+     PARTIE 1 — ★ AUTOMATISMES SYNTAXIQUES
+     ════════════════════════════════════════ -->
+<section class="section s1">
+  <div class="section-header">
+    <span class="section-num">Partie 01</span>
+    <span class="section-title">Automatismes syntaxiques &nbsp;<span class="stars">★</span></span>
+    <span class="pts-total">8 points</span>
+  </div>
+
+  <!-- 1.1 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 1.1</span>
+      <span class="exo-title">Le rituel du constructeur</span>
+      <span class="star-tag">★</span>
+      <span class="pts">2 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>On veut modéliser une <strong>Voiture</strong> avec deux attributs : <code>marque</code> (chaîne de caractères) et <code>vitesse_max</code> (entier).</p>
+      <p><strong>Écris uniquement le constructeur</strong> de cette classe. Rien d'autre.</p>
+      <div class="consignes">
+        <strong>⚠ Rappels :</strong> Le constructeur s'appelle <code>__init__</code> (deux underscores de chaque côté) · Son premier paramètre est toujours <code>self</code> · Chaque attribut se déclare avec <code>self.nom = valeur</code> · Pas de <code>return</code>
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Ta réponse</span><span>2 lignes minimum</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.2 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 1.2</span>
+      <span class="exo-title">Instanciation correcte</span>
+      <span class="star-tag">★</span>
+      <span class="pts">2 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>On dispose de la classe suivante :</p>
+<pre><span class="kw">class</span> <span class="cl">Livre</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titre, pages):
+        <span class="sf">self</span>.titre = titre
+        <span class="sf">self</span>.pages = pages</pre>
+      <p><strong>Écris la ligne</strong> qui crée un objet <code>mon_livre</code> représentant <em>"Dune"</em> avec <em>412 pages</em>.</p>
+      <div class="consignes">
+        <strong>⚠ Rappel :</strong> On instancie avec <code>NomClasse(arg1, arg2)</code> — on n'écrit jamais <code>__init__</code> ni <code>self</code> lors de l'appel.
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Ta réponse</span><span>1 ligne</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.3 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 1.3</span>
+      <span class="exo-title">Chasse au bug — trouve les 3 erreurs</span>
+      <span class="star-tag">★</span>
+      <span class="pts">3 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>Le code ci-dessous contient <strong>3 erreurs de syntaxe POO</strong>. Entoure chaque erreur et écris la version corrigée dans le cadre.</p>
+<pre><span class="kw">class</span> <span class="cl">Compte</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titulaire, solde):
+        <span class="err">titulaire</span> = titulaire
+        <span class="sf">self</span>.solde = solde
+
+    <span class="kw">def</span> <span class="fn">deposer</span>(<span class="err">montant</span>):
+        <span class="sf">self</span>.solde = <span class="sf">self</span>.solde + montant
+
+    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):
+        <span class="kw">print</span>(<span class="sf">self</span>.solde <span class="err">AND</span> <span class="sf">self</span>.titulaire)</pre>
+      <div class="consignes">
+        <strong>⚠ Rappel :</strong> Toute méthode prend <code>self</code> en premier paramètre · Les attributs s'écrivent <code>self.nom</code> · Les opérateurs logiques Python sont en minuscules : <code>and</code>, <code>or</code>, <code>not</code>
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Version corrigée complète</span><span>Réécrire la classe entière</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">6</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">7</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">8</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">9</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">10</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.4 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 1.4</span>
+      <span class="exo-title">Attribut vs Variable locale</span>
+      <span class="star-tag">★</span>
+      <span class="pts">1 pt</span>
+    </div>
+    <div class="exo-body">
+      <p>On crée un objet <code>p = Point(3, 5)</code>. Complète les pointillés :</p>
+      <div class="q-line">a) Lire l'abscisse depuis <em>l'extérieur</em> de la classe :&nbsp; <code>valeur = p.</code><span class="blank"></span></div>
+      <div class="q-line">b) Lire l'abscisse depuis <em>une méthode</em> de la classe :&nbsp; <code>valeur =</code>&nbsp;<span class="blank"></span><code>.x</code></div>
+      <div class="consignes">
+        <strong>⚠ Rappel :</strong> Un attribut ne s'appelle <strong>jamais</strong> avec des parenthèses — ce n'est pas une méthode.
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- ════════════════════════════════════════
+     PARTIE 2 — ★★ LOGIQUE ET COMPARAISONS
+     ════════════════════════════════════════ -->
+<section class="section s2">
+  <div class="section-header">
+    <span class="section-num">Partie 02</span>
+    <span class="section-title">Logique et comparaisons &nbsp;<span class="stars">★★</span></span>
+    <span class="pts-total">9 points</span>
+  </div>
+
+  <!-- 2.1 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 2.1</span>
+      <span class="exo-title">Méthode de validation — Étudiant</span>
+      <span class="star-tag">★★</span>
+      <span class="pts">3 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Etudiant</code> possède deux attributs : <code>note</code> (float, 0–20) et <code>absences</code> (int).</p>
+      <p>Écris la méthode <code>est_admis(self)</code> qui retourne <code>True</code> si la note est <strong>supérieure ou égale à 10</strong> <strong>et</strong> le nombre d'absences est <strong>strictement inférieur à 5</strong>, <code>False</code> sinon.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong> Opérateurs : <code>&gt;=</code> et <code>&lt;</code> · Opérateur logique : <code>and</code> en minuscules (jamais <code>AND</code> ou <code>&amp;&amp;</code>) · Cette méthode <strong>doit</strong> comporter un <code>return</code>
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Ta réponse</span><span>2 à 5 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.2 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 2.2</span>
+      <span class="exo-title">Méthode de catégorie — Produit</span>
+      <span class="star-tag">★★</span>
+      <span class="pts">3 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Produit</code> a un attribut <code>prix</code> (float). Écris la méthode <code>categorie(self)</code> qui retourne :</p>
+      <ul style="margin-left:1.1rem;margin-bottom:.5rem;font-size:.88rem;">
+        <li><code>"économique"</code> si le prix est strictement inférieur à 20</li>
+        <li><code>"standard"</code> si le prix est entre 20 et 100 inclus</li>
+        <li><code>"premium"</code> sinon</li>
+      </ul>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong> Utiliser <code>if / elif / else</code> — pas des <code>if</code> successifs · Chaque branche contient un <code>return</code>
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Ta réponse</span><span>6 à 8 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">6</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">7</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">8</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2.3 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 2.3</span>
+      <span class="exo-title">Méthode de modification — Température</span>
+      <span class="star-tag">★★</span>
+      <span class="pts">3 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Thermostat</code> a un attribut <code>temperature</code> (float). Écris la méthode <code>chauffer(self, delta)</code> qui <strong>augmente</strong> la température de <code>delta</code> degrés, mais <strong>uniquement si</strong> le résultat ne dépasse pas 30°C.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong> Une méthode de <em>modification</em> ne renvoie rien — <strong>pas de <code>return</code></strong> · Modifier l'attribut avec <code>self.temperature = ...</code>
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Ta réponse</span><span>4 à 5 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- ════════════════════════════════════════
+     PARTIE 3 — ★★★ ENCAPSULATION
+     ════════════════════════════════════════ -->
+<section class="section s3">
+  <div class="section-header">
+    <span class="section-num">Partie 03</span>
+    <span class="section-title">Encapsulation et méthodes &nbsp;<span class="stars">★★★</span></span>
+    <span class="pts-total">9 points</span>
+  </div>
+
+  <!-- 3.1 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 3.1</span>
+      <span class="exo-title">Getter et Setter — Batterie</span>
+      <span class="star-tag">★★★</span>
+      <span class="pts">3 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Batterie</code> possède un attribut <code>charge</code> (int, entre 0 et 100). Écris :</p>
+      <ul style="margin-left:1.1rem;margin-bottom:.5rem;font-size:.88rem;">
+        <li>La méthode <code>get_charge(self)</code> qui retourne la charge actuelle.</li>
+        <li>La méthode <code>set_charge(self, nouvelle_charge)</code> qui modifie la charge <strong>seulement si</strong> <code>nouvelle_charge</code> est entre 0 et 100 inclus.</li>
+      </ul>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong> Le getter utilise <code>return</code> · Le setter <strong>n'en utilise pas</strong> · Tester avec <code>0 &lt;= nouvelle_charge &lt;= 100</code>
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Ta réponse</span><span>6 à 8 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">6</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">7</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">8</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.2 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 3.2</span>
+      <span class="exo-title">Méthode de comparaison — Rectangle</span>
+      <span class="star-tag">★★★</span>
+      <span class="pts">3 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Rectangle</code> possède deux attributs : <code>largeur</code> et <code>hauteur</code>. Écris :</p>
+      <ul style="margin-left:1.1rem;margin-bottom:.5rem;font-size:.88rem;">
+        <li>La méthode <code>aire(self)</code> qui retourne l'aire.</li>
+        <li>La méthode <code>est_plus_grand(self, autre)</code> qui retourne <code>True</code> si l'aire de <code>self</code> est <strong>strictement supérieure</strong> à l'aire de <code>autre</code>.</li>
+      </ul>
+      <div class="consignes">
+        <strong>⚠ Règle :</strong> Dans <code>est_plus_grand</code>, appelle la méthode <code>aire()</code> avec ses parenthèses sur <code>self</code> <em>et</em> sur <code>autre</code>.
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Ta réponse</span><span>6 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">6</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.3 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 3.3</span>
+      <span class="exo-title">Méthode __str__ — Affichage d'objet</span>
+      <span class="star-tag">★★★</span>
+      <span class="pts">3 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Eleve</code> a les attributs <code>nom</code> et <code>note</code>. Écris la méthode spéciale <code>__str__(self)</code> qui retourne une chaîne du type <code>"Alice : 14/20"</code>.</p>
+      <div class="consignes">
+        <strong>⚠ Règle :</strong> <code>__str__</code> doit toujours <code>return</code> une chaîne — <strong>jamais</strong> utiliser <code>print</code> à l'intérieur.
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Ta réponse</span><span>2 à 3 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- ════════════════════════════════════════
+     PARTIE 4 — ★★★★ LISTES D'OBJETS
+     ════════════════════════════════════════ -->
+<section class="section s4">
+  <div class="section-header">
+    <span class="section-num">Partie 04</span>
+    <span class="section-title">Manipulation de listes d'objets &nbsp;<span class="stars">★★★★</span></span>
+    <span class="pts-total">9 points</span>
+  </div>
+
+  <!-- 4.1 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 4.1</span>
+      <span class="exo-title">Cumul d'attributs — Bibliothèque</span>
+      <span class="star-tag">★★★★</span>
+      <span class="pts">3 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Livre</code> possède les attributs <code>titre</code> (str) et <code>pages</code> (int). On a une liste <code>bibliotheque</code> contenant plusieurs objets <code>Livre</code>.</p>
+      <p>Écris la <strong>fonction</strong> <code>total_pages(bibliotheque)</code> qui retourne le nombre total de pages de tous les livres.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong> C'est une <em>fonction</em> (hors classe), pas une méthode · Accéder à l'attribut sans parenthèses : <code>livre.pages</code> et <strong>non</strong> <code>livre.pages()</code> · Initialiser le compteur à <code>0</code> avant la boucle · Le <code>return</code> se place <strong>après</strong> la boucle
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Ta réponse</span><span>5 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.2 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 4.2</span>
+      <span class="exo-title">Appel de méthode en boucle — Promotion</span>
+      <span class="star-tag">★★★★</span>
+      <span class="pts">3 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Eleve</code> possède l'attribut <code>note</code> et la méthode <code>est_admis()</code> (retourne un booléen). Écris la fonction <code>compter_admis(promo)</code> qui prend une liste d'objets <code>Eleve</code> et retourne le nombre d'élèves admis.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong> Appeler une méthode nécessite des parenthèses : <code>eleve.est_admis()</code> · Ne pas réécrire la condition — la méthode existe, utilise-la
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Ta réponse</span><span>6 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">6</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.3 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 4.3</span>
+      <span class="exo-title">Recherche du maximum — Tournoi</span>
+      <span class="star-tag">★★★★</span>
+      <span class="pts">3 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Joueur</code> possède les attributs <code>nom</code> (str) et <code>score</code> (int). Écris la fonction <code>meilleur_joueur(joueurs)</code> qui retourne l'<strong>objet</strong> <code>Joueur</code> ayant le score le plus élevé. On suppose que la liste est non vide.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong> Initialiser le meilleur candidat avec le premier élément : <code>meilleur = joueurs[0]</code> · Retourner l'<em>objet entier</em>, pas uniquement son score
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Ta réponse</span><span>6 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">6</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="div">
+
+<!-- ════════════════════════════════════════
+     PARTIE 5 — ★★★★★ NIVEAU BAC
+     ════════════════════════════════════════ -->
+<section class="section s5">
+  <div class="section-header">
+    <span class="section-num">Partie 05</span>
+    <span class="section-title">Niveau Baccalauréat &nbsp;<span class="stars">★★★★★</span></span>
+    <span class="pts-total">15 points</span>
+  </div>
+
+  <!-- 5.1 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 5.1</span>
+      <span class="exo-title">Classe Cinéma — Moyenne pondérée</span>
+      <span class="star-tag">★★★★★</span>
+      <span class="pts">5 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>On modélise un film avec la classe suivante (partiellement écrite) :</p>
+<pre><span class="kw">class</span> <span class="cl">Film</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titre, duree, note_presse, note_public):
+        <span class="sf">self</span>.titre       = titre
+        <span class="sf">self</span>.duree       = duree        <span class="cm"># en minutes</span>
+        <span class="sf">self</span>.note_presse = note_presse  <span class="cm"># sur 10</span>
+        <span class="sf">self</span>.note_public = note_public  <span class="cm"># sur 10</span></pre>
+      <p><strong>Question 1.</strong> (2 pts) Ajoute la méthode <code>note_globale(self)</code> qui retourne la moyenne pondérée : <strong>40% presse + 60% public</strong>.</p>
+      <div class="answer-code">
+        <div class="answer-label"><span>Question 1 — note_globale</span><span>2 à 3 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+        </div>
+      </div>
+      <p style="margin-top:.7rem"><strong>Question 2.</strong> (3 pts) Écris la fonction <code>films_premium(catalogue)</code> qui prend une liste d'objets <code>Film</code> et retourne la <strong>liste</strong> de tous les films dont la note globale est supérieure ou égale à 7.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong> Appeler <code>note_globale()</code> avec ses parenthèses · Retourner une <em>liste d'objets Film</em> · Construire avec <code>resultat = []</code> puis <code>resultat.append(...)</code>
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Question 2 — films_premium</span><span>6 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">6</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.2 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 5.2</span>
+      <span class="exo-title">Classe Banque — Traitement de liste</span>
+      <span class="star-tag">★★★★★</span>
+      <span class="pts">5 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>On dispose de la classe <code>Compte</code> suivante :</p>
+<pre><span class="kw">class</span> <span class="cl">Compte</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titulaire, solde):
+        <span class="sf">self</span>.titulaire = titulaire
+        <span class="sf">self</span>.solde     = solde
+
+    <span class="kw">def</span> <span class="fn">est_debiteur</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="sf">self</span>.solde <span class="op">&lt;</span> <span class="nb">0</span>
+
+    <span class="kw">def</span> <span class="fn">prelever</span>(<span class="sf">self</span>, montant):
+        <span class="kw">if</span> montant <span class="op">&gt;</span> <span class="nb">0</span> <span class="kw">and</span> <span class="sf">self</span>.solde <span class="op">&gt;=</span> montant:
+            <span class="sf">self</span>.solde = <span class="sf">self</span>.solde <span class="op">-</span> montant</pre>
+      <p><strong>Question 1.</strong> (2 pts) Écris la fonction <code>solde_total(comptes)</code> qui retourne la somme de tous les soldes (positifs et négatifs).</p>
+      <div class="answer-code">
+        <div class="answer-label"><span>Question 1 — solde_total</span><span>5 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+        </div>
+      </div>
+      <p style="margin-top:.7rem"><strong>Question 2.</strong> (3 pts) Écris la fonction <code>titulaires_debiteurs(comptes)</code> qui retourne la <em>liste des noms</em> (attribut <code>titulaire</code>) des comptes débiteurs.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong> Utiliser la méthode <code>est_debiteur()</code> — ne pas réécrire la condition · Retourner une liste de <em>chaînes</em> (noms), pas d'objets
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Question 2 — titulaires_debiteurs</span><span>6 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">6</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.3 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 5.3</span>
+      <span class="exo-title">Classe Météo — Classe complète + analyse</span>
+      <span class="star-tag">★★★★★</span>
+      <span class="pts">5 pts</span>
+    </div>
+    <div class="exo-body">
+      <p>On modélise des relevés météorologiques. Chaque relevé possède : un <code>jour</code> (str), une <code>temperature</code> (float) et des <code>precipitations</code> (float, en mm).</p>
+      <p><strong>Question 1.</strong> (2 pts) Écris la classe <code>Releve</code> complète avec son constructeur et la méthode <code>est_pluvieux(self)</code> qui retourne <code>True</code> si les précipitations sont <strong>strictement supérieures à 5 mm</strong>.</p>
+      <div class="answer-code">
+        <div class="answer-label"><span>Question 1 — classe Releve</span><span>10 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">6</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">7</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">8</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">9</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">10</span><div class="line-space"></div></div>
+        </div>
+      </div>
+      <p style="margin-top:.7rem"><strong>Question 2.</strong> (1 pt) Écris la fonction <code>temperature_moyenne(releves)</code> qui calcule la moyenne des températures. Si la liste est vide, retourner <code>0</code>.</p>
+      <div class="consignes">
+        <strong>⚠ Règle :</strong> Protéger contre la division par zéro avec <code>if len(releves) == 0</code>
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Question 2 — temperature_moyenne</span><span>7 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">6</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">7</span><div class="line-space"></div></div>
+        </div>
+      </div>
+      <p style="margin-top:.7rem"><strong>Question 3.</strong> (2 pts) Écris la fonction <code>jours_pluvieux(releves)</code> qui retourne la liste des <em>jours</em> (attribut <code>jour</code>) où il a plu.</p>
+      <div class="consignes">
+        <strong>⚠ Règle :</strong> Appeler <code>est_pluvieux()</code> avec ses parenthèses
+      </div>
+      <div class="answer-code">
+        <div class="answer-label"><span>Question 3 — jours_pluvieux</span><span>6 lignes</span></div>
+        <div class="code-area">
+          <div class="code-line"><span class="line-num">1</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">2</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">3</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">4</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">5</span><div class="line-space"></div></div>
+          <div class="code-line"><span class="line-num">6</span><div class="line-space"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BARÈME ── -->
+<div class="bareme">
+  <div class="bareme-head">
+    <span>Barème récapitulatif</span>
+    <span>Total : 50 points</span>
+  </div>
+  <div class="bareme-grid">
+    <div class="bareme-cell label">Partie</div>
+    <div class="bareme-cell label">★ (8 pts)</div>
+    <div class="bareme-cell label">★★ (9 pts)</div>
+    <div class="bareme-cell label">★★★ (9 pts)</div>
+    <div class="bareme-cell label">★★★★ (9 pts)</div>
+    <div class="bareme-cell label">★★★★★ (15 pts)</div>
+
+    <div class="bareme-cell label">Note / pts</div>
+    <div class="bareme-cell"><span class="score-box"></span> / 8</div>
+    <div class="bareme-cell"><span class="score-box"></span> / 9</div>
+    <div class="bareme-cell"><span class="score-box"></span> / 9</div>
+    <div class="bareme-cell"><span class="score-box"></span> / 9</div>
+    <div class="bareme-cell total-cell"><span class="score-box"></span> / 15</div>
+
+    <div class="bareme-cell label" style="border-bottom:none">Total</div>
+    <div class="bareme-cell" style="grid-column:span 4;border-bottom:none;text-align:left;color:var(--muted);font-size:.78rem">
+      Note finale : <span class="score-box" style="min-width:5rem"></span> / 50 &nbsp;→&nbsp; /20 : <span class="score-box" style="min-width:5rem"></span>
+    </div>
+    <div class="bareme-cell total-cell" style="border-bottom:none"></div>
+  </div>
+</div>
+
+<button class="print-btn" onclick="window.print()">⎙ Imprimer / PDF</button>
+
+</body>
+</html>

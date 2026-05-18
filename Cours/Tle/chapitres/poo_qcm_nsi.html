@@ -1,0 +1,1077 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>QCM — POO Python · NSI Terminale</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #ffffff;
+    --surface: #f8f9fa;
+    --surf2:   #f1f3f5;
+    --border:  #dee2e6;
+    --text:    #1a1a2e;
+    --muted:   #6c757d;
+    --ok:      #2f9e44;
+    --ok-bg:   #ebfbee;
+    --ok-b:    #b2dfc0;
+    --bad:     #c92a2a;
+    --bad-bg:  #fff5f5;
+    --bad-b:   #ffc9c9;
+    --accent:  #6741d9;
+    --warn:    #e67700;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    padding: 0 0 4rem;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: sticky; top: 0; z-index: 200;
+    background: rgba(255,255,255,.95);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--border);
+    padding: .5rem 1rem;
+    display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  }
+  .nav-label { font-family: 'JetBrains Mono', monospace; font-size: .62rem; color: var(--muted); letter-spacing: .1em; text-transform: uppercase; }
+  .nav-link {
+    font-family: 'JetBrains Mono', monospace; font-size: .68rem;
+    padding: 2px 9px; border-radius: 20px; border: 1px solid var(--border);
+    color: var(--muted); text-decoration: none; transition: all .15s;
+  }
+  .nav-link:hover { color: var(--text); border-color: var(--text); background: var(--surf2); }
+  .nav-link.active { color: var(--accent); border-color: #d0bfff; background: #f3f0ff; }
+
+  /* ── HEADER ── */
+  .page-header {
+    max-width: 780px; margin: 2rem auto 1.5rem;
+    border-bottom: 2px solid var(--border); padding-bottom: 1.2rem;
+  }
+  .badge {
+    display: inline-block; font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--muted); border: 1px solid var(--border); border-radius: 4px;
+    padding: 1px 7px; margin-bottom: .6rem; background: var(--surf2);
+  }
+  h1 { font-size: clamp(1.4rem, 3.5vw, 2rem); font-weight: 800; margin-bottom: .3rem; }
+  h1 em { color: var(--accent); font-style: normal; }
+  .sub { color: var(--muted); font-size: .85rem; }
+
+  /* ── CONTROLS ── */
+  .controls {
+    max-width: 780px; margin: 0 auto 1.5rem;
+    display: flex; align-items: center; gap: .8rem; flex-wrap: wrap;
+  }
+  .ctrl-label { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--muted); letter-spacing: .06em; }
+
+  .btn-count {
+    font-family: 'JetBrains Mono', monospace; font-size: .75rem;
+    padding: .3rem .85rem; border-radius: 20px; border: 1.5px solid var(--border);
+    background: white; color: var(--muted); cursor: pointer; transition: all .15s;
+  }
+  .btn-count.selected, .btn-count:hover { border-color: var(--accent); color: var(--accent); background: #f3f0ff; }
+
+  .btn-start {
+    font-family: 'JetBrains Mono', monospace; font-size: .78rem; font-weight: 700;
+    padding: .4rem 1.4rem; border-radius: 6px; border: none;
+    background: var(--accent); color: white; cursor: pointer;
+    letter-spacing: .05em; transition: all .15s; margin-left: auto;
+  }
+  .btn-start:hover { background: #5635c0; }
+
+  /* Filtres par thème */
+  .theme-filters {
+    max-width: 780px; margin: 0 auto .8rem;
+    display: flex; gap: .35rem; flex-wrap: wrap; align-items: center;
+  }
+  .theme-label { font-family:'JetBrains Mono',monospace; font-size:.62rem; color:var(--muted); letter-spacing:.08em; text-transform:uppercase; margin-right:.2rem; }
+  .btn-theme {
+    font-family:'JetBrains Mono',monospace; font-size:.65rem;
+    padding:2px 9px; border-radius:20px; border:1.5px solid var(--border);
+    background:white; color:var(--muted); cursor:pointer; transition:all .15s;
+  }
+  .btn-theme.on { font-weight:700; }
+  .t-classe   { border-color:#a5c8f0; color:#1971c2; background:#e8f3ff; }
+  .t-init     { border-color:#a3d9b1; color:#2f9e44; background:#ebfbee; }
+  .t-methods  { border-color:#ffd8a8; color:#e67700; background:#fff4e6; }
+  .t-lists    { border-color:#ffc9c9; color:#c92a2a; background:#fff5f5; }
+  .t-inherit  { border-color:#99e9f2; color:#0c8599; background:#e3fafc; }
+
+  /* ── PROGRESS ── */
+  #progress-bar-wrap {
+    max-width: 780px; margin: 0 auto 1rem;
+    display: none;
+  }
+  .prog-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: .3rem; }
+  .prog-text { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--muted); }
+  .prog-track {
+    height: 6px; background: var(--surf2); border-radius: 3px; overflow: hidden;
+  }
+  .prog-fill {
+    height: 100%; background: var(--accent); border-radius: 3px;
+    transition: width .3s ease; width: 0%;
+  }
+
+  /* ── QUESTION CARD ── */
+  #quiz-area { max-width: 780px; margin: 0 auto; display: none; }
+
+  .q-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; overflow: hidden; margin-bottom: 1.2rem;
+  }
+  .q-head {
+    display: flex; align-items: center; gap: .7rem;
+    padding: .6rem 1.1rem; border-bottom: 1px solid var(--border);
+    background: var(--surf2);
+  }
+  .q-num { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--muted); min-width: 2rem; }
+  .q-theme-tag {
+    font-family: 'JetBrains Mono', monospace; font-size: .62rem;
+    padding: 1px 7px; border-radius: 10px; border: 1px solid;
+  }
+  .q-body { padding: .9rem 1.1rem; }
+  .q-text { font-size: .92rem; margin-bottom: .75rem; font-weight: 600; }
+
+  pre.q-code {
+    background: #f6f8fa; border: 1px solid var(--border); border-radius: 6px;
+    padding: .65rem .9rem; margin: .5rem 0 .8rem;
+    font-family: 'JetBrains Mono', monospace; font-size: .78rem; line-height: 1.6;
+    color: #24292f; overflow-x: auto;
+  }
+
+  .options { display: flex; flex-direction: column; gap: .4rem; }
+  .opt {
+    display: flex; align-items: flex-start; gap: .7rem;
+    padding: .5rem .8rem; border-radius: 6px;
+    border: 1.5px solid var(--border); cursor: pointer;
+    transition: all .15s; font-size: .88rem; background: white;
+    user-select: none;
+  }
+  .opt:hover:not(.locked) { border-color: var(--accent); background: #f3f0ff; }
+  .opt-letter {
+    font-family: 'JetBrains Mono', monospace; font-size: .72rem; font-weight: 700;
+    min-width: 1.3rem; color: var(--muted); padding-top: .05rem;
+  }
+  .opt.correct  { border-color: var(--ok-b);  background: var(--ok-bg);  }
+  .opt.wrong    { border-color: var(--bad-b); background: var(--bad-bg); }
+  .opt.correct .opt-letter { color: var(--ok); }
+  .opt.wrong   .opt-letter { color: var(--bad); }
+
+  .explanation {
+    display: none; margin-top: .75rem;
+    background: #fff9db; border: 1px solid #ffe066; border-radius: 6px;
+    padding: .6rem .9rem; font-size: .83rem; color: #5c3d00;
+  }
+  .explanation.show { display: block; }
+  .explanation strong { color: var(--warn); }
+
+  /* ── RÉSULTAT ── */
+  #result-area { max-width: 780px; margin: 0 auto; display: none; }
+  .result-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 10px; padding: 1.5rem; text-align: center;
+    margin-bottom: 1.2rem;
+  }
+  .result-score { font-size: 3rem; font-weight: 800; color: var(--accent); line-height: 1; margin-bottom: .3rem; }
+  .result-label { font-size: .9rem; color: var(--muted); margin-bottom: 1rem; }
+  .result-msg { font-size: 1rem; font-weight: 700; margin-bottom: .5rem; }
+
+  .score-bar-wrap { background: var(--surf2); border-radius: 5px; height: 10px; overflow: hidden; margin: .8rem 0; }
+  .score-bar { height: 100%; border-radius: 5px; background: var(--accent); transition: width .8s ease; }
+
+  .detail-grid {
+    display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+    gap: .5rem; margin: 1rem 0;
+  }
+  .detail-cell {
+    background: white; border: 1px solid var(--border); border-radius: 6px;
+    padding: .5rem .7rem; text-align: left;
+  }
+  .detail-cell .dc-label { font-family:'JetBrains Mono',monospace; font-size:.6rem; color:var(--muted); text-transform:uppercase; letter-spacing:.07em; margin-bottom:.2rem; }
+  .detail-cell .dc-val { font-weight: 700; font-size: .88rem; }
+  .dc-ok  { color: var(--ok); }
+  .dc-bad { color: var(--bad); }
+
+  .btn-retry {
+    font-family:'JetBrains Mono',monospace; font-size:.78rem; font-weight:700;
+    padding:.5rem 1.6rem; border-radius:6px; border:none;
+    background:var(--accent); color:white; cursor:pointer;
+    letter-spacing:.05em; transition:all .15s; margin-top:.5rem;
+  }
+  .btn-retry:hover { background:#5635c0; }
+
+  /* code inline */
+  code { font-family:'JetBrains Mono',monospace; font-size:.83em; background:#f1f3f5; border-radius:3px; padding:1px 4px; color:#953800; }
+  pre.q-code code { background:none; color:inherit; padding:0; }
+  .kw{color:#cf222e;font-weight:600} .fn{color:#6639ba} .cl{color:#0550ae;font-weight:600}
+  .sf{color:#953800} .st{color:#0a3069} .cm{color:#6e7781;font-style:italic}
+  .nb{color:#0550ae} .op{color:#cf222e}
+</style>
+</head>
+<body>
+
+<nav>
+  <span class="nav-label">POO · NSI Terminale</span>
+  <a class="nav-link active" href="poo_qcm_nsi.html">QCM</a>
+  <a class="nav-link" href="poo_cours_nsi.html">Cours</a>
+  <a class="nav-link" href="poo_revision_nsi.html">Exercices</a>
+</nav>
+
+<div class="page-header">
+  <div class="badge">NSI · Terminale · Auto-évaluation</div>
+  <h1>QCM — <em>Programmation Orientée Objet</em></h1>
+  <p class="sub">50 questions · Randomisées · Corrections expliquées · Héritage &amp; Polymorphisme inclus</p>
+</div>
+
+<!-- Filtres thématiques -->
+<div class="theme-filters">
+  <span class="theme-label">Thèmes :</span>
+  <button class="btn-theme t-classe on"  data-theme="classe"  onclick="toggleTheme(this)">Classe &amp; Objet</button>
+  <button class="btn-theme t-init on"    data-theme="init"    onclick="toggleTheme(this)">Constructeur</button>
+  <button class="btn-theme t-methods on" data-theme="methods" onclick="toggleTheme(this)">Méthodes</button>
+  <button class="btn-theme t-lists on"   data-theme="lists"   onclick="toggleTheme(this)">Listes d'objets</button>
+  <button class="btn-theme t-inherit on" data-theme="inherit" onclick="toggleTheme(this)">Héritage &amp; Polymorphisme</button>
+</div>
+
+<!-- Controls -->
+<div class="controls">
+  <span class="ctrl-label">Nombre de questions :</span>
+  <button class="btn-count selected" onclick="setCount(this,5)">5</button>
+  <button class="btn-count"          onclick="setCount(this,10)">10</button>
+  <button class="btn-count"          onclick="setCount(this,20)">20</button>
+  <button class="btn-count"          onclick="setCount(this,0)">Toutes</button>
+  <button class="btn-start" onclick="startQuiz()">▶ Commencer</button>
+</div>
+
+<!-- Barre de progression -->
+<div id="progress-bar-wrap">
+  <div class="prog-row">
+    <span class="prog-text" id="prog-text">Question 1 / 10</span>
+    <span class="prog-text" id="score-text">Score : 0</span>
+  </div>
+  <div class="prog-track"><div class="prog-fill" id="prog-fill"></div></div>
+</div>
+
+<!-- Zone quiz -->
+<div id="quiz-area"></div>
+
+<!-- Zone résultat -->
+<div id="result-area"></div>
+
+<script>
+/* ══════════════════════════════════════════════════════════
+   BANQUE DE QUESTIONS — 50 questions
+   ══════════════════════════════════════════════════════════ */
+const ALL_QUESTIONS = [
+
+  /* ── CLASSE & OBJET (10 questions) ─────────────────────── */
+  {
+    theme: "classe",
+    text: "Qu'est-ce qu'une <strong>classe</strong> en Python ?",
+    options: [
+      "Un objet créé en mémoire",
+      "Un modèle (plan) à partir duquel on crée des objets",
+      "Une variable qui contient plusieurs valeurs",
+      "Une fonction qui retourne un objet"
+    ],
+    answer: 1,
+    explanation: "Une classe est le <strong>plan</strong>, le moule. Les objets sont les instances concrètes fabriquées à partir de ce plan."
+  },
+  {
+    theme: "classe",
+    text: "Comment appelle-t-on un objet créé à partir d'une classe ?",
+    options: ["Une méthode", "Un attribut", "Une instance", "Un module"],
+    answer: 2,
+    explanation: "Un objet créé à partir d'une classe s'appelle une <strong>instance</strong>. On dit qu'on <em>instancie</em> la classe."
+  },
+  {
+    theme: "classe",
+    text: "Quelle est la convention de nommage pour une classe Python ?",
+    options: [
+      "tout_en_minuscules_avec_underscores",
+      "toutEnMinuscules",
+      "PremièreLettreMajuscule (PascalCase)",
+      "TOUT_EN_MAJUSCULES"
+    ],
+    answer: 2,
+    explanation: "Par convention PEP 8, les noms de classes utilisent le <strong>PascalCase</strong> : <code>Pokemon</code>, <code>CompteVancaire</code>, <code>VoitureElectrique</code>."
+  },
+  {
+    theme: "classe",
+    text: "Deux objets créés à partir de la même classe ont-ils les mêmes valeurs d'attributs ?",
+    options: [
+      "Oui, ils partagent exactement les mêmes attributs",
+      "Non, chaque instance a ses propres valeurs d'attributs",
+      "Oui, sauf si on utilise self",
+      "Non, ils n'ont aucun attribut en commun"
+    ],
+    answer: 1,
+    explanation: "Chaque instance est <strong>indépendante</strong>. <code>p1 = Point(3, 5)</code> et <code>p2 = Point(7, 2)</code> ont toutes les deux <code>x</code> et <code>y</code>, mais avec des valeurs différentes."
+  },
+  {
+    theme: "classe",
+    text: "Comment accède-t-on à l'attribut <code>nom</code> d'un objet <code>p</code> depuis l'extérieur de la classe ?",
+    options: ["<code>p[nom]</code>", "<code>p.get(nom)</code>", "<code>p.nom</code>", "<code>p->nom</code>"],
+    answer: 2,
+    explanation: "On utilise la notation pointée : <code>objet.attribut</code>. Les crochets sont pour les listes/dictionnaires, <code>-></code> n'existe pas en Python."
+  },
+  {
+    theme: "classe",
+    text: "Que retourne <code>type(p)</code> si <code>p = Pokemon('Pikachu', 'Électrique', 35)</code> ?",
+    options: [
+      "<code>Pokemon</code>",
+      "<code>&lt;class '__main__.Pokemon'&gt;</code>",
+      "<code>object</code>",
+      "<code>str</code>"
+    ],
+    answer: 1,
+    explanation: "<code>type()</code> retourne la classe de l'objet, affichée sous la forme <code>&lt;class '__main__.Pokemon'&gt;</code>."
+  },
+  {
+    theme: "classe",
+    text: "Quelle ligne <strong>instancie</strong> correctement la classe <code>Eleve</code> avec nom='Alice' et note=15 ?",
+    code: `<span class="kw">class</span> <span class="cl">Eleve</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom, note):
+        <span class="sf">self</span>.nom  = nom
+        <span class="sf">self</span>.note = note`,
+    options: [
+      "<code>e = Eleve.__init__('Alice', 15)</code>",
+      "<code>e = new Eleve('Alice', 15)</code>",
+      "<code>e = Eleve('Alice', 15)</code>",
+      "<code>e = Eleve(self, 'Alice', 15)</code>"
+    ],
+    answer: 2,
+    explanation: "On instancie avec <code>NomClasse(args)</code>. Python appelle <code>__init__</code> automatiquement. <code>new</code> n'existe pas en Python, et <code>self</code> n'est jamais passé manuellement."
+  },
+  {
+    theme: "classe",
+    text: "Que signifie <strong>encapsulation</strong> en POO ?",
+    options: [
+      "Mettre tout le code dans une seule fonction",
+      "Regrouper données et comportements dans un objet, et contrôler l'accès aux données",
+      "Créer plusieurs classes identiques",
+      "Convertir un objet en chaîne de caractères"
+    ],
+    answer: 1,
+    explanation: "L'<strong>encapsulation</strong> consiste à regrouper attributs et méthodes dans un objet, et à protéger les données via des getters/setters plutôt qu'un accès direct."
+  },
+  {
+    theme: "classe",
+    text: "Combien d'instances peut-on créer à partir d'une seule classe ?",
+    options: ["Une seule", "Deux au maximum", "Autant que l'on veut", "Cela dépend du constructeur"],
+    answer: 2,
+    explanation: "On peut créer <strong>autant d'instances que l'on veut</strong> à partir d'une classe. C'est l'intérêt du modèle : un seul plan, de nombreuses pièces."
+  },
+  {
+    theme: "classe",
+    text: "Que vaut <code>e.note</code> après les deux lignes suivantes ?",
+    code: `e = <span class="cl">Eleve</span>(<span class="st">'Alice'</span>, <span class="nb">15</span>)
+e.note = <span class="nb">18</span>`,
+    options: ["15", "18", "Erreur : on ne peut pas modifier un attribut", "None"],
+    answer: 1,
+    explanation: "En Python, les attributs sont <strong>modifiables directement</strong> depuis l'extérieur. Après <code>e.note = 18</code>, la valeur est bien 18. L'encapsulation via setters est une <em>bonne pratique</em>, pas une obligation."
+  },
+
+  /* ── CONSTRUCTEUR (10 questions) ───────────────────────── */
+  {
+    theme: "init",
+    text: "Quel est le nom obligatoire du constructeur en Python ?",
+    options: ["<code>constructor</code>", "<code>create</code>", "<code>__init__</code>", "<code>__new__</code>"],
+    answer: 2,
+    explanation: "Le constructeur Python s'appelle <code>__init__</code> — deux underscores avant, deux après. C'est une méthode <em>spéciale</em> (dunder method)."
+  },
+  {
+    theme: "init",
+    text: "Quel est le premier paramètre obligatoire de toute méthode de classe, y compris <code>__init__</code> ?",
+    options: ["<code>this</code>", "<code>cls</code>", "<code>self</code>", "Le nom de la classe"],
+    answer: 2,
+    explanation: "<code>self</code> est le premier paramètre de toute méthode de classe. Il représente l'instance en cours. <code>this</code> est le mot-clé équivalent en Java/C++."
+  },
+  {
+    theme: "init",
+    text: "Que se passe-t-il si on oublie <code>self.</code> devant un attribut dans <code>__init__</code> ?",
+    code: `<span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom):
+    nom = nom  <span class="cm"># sans self.</span>`,
+    options: [
+      "Python crée quand même l'attribut",
+      "Une variable locale 'nom' est créée et disparaît à la fin de __init__",
+      "Une erreur SyntaxError est levée",
+      "L'attribut est créé mais vaut None"
+    ],
+    answer: 1,
+    explanation: "Sans <code>self.</code>, on crée une <strong>variable locale</strong> qui disparaît à la fin de <code>__init__</code>. L'attribut n'existe pas sur l'objet → <code>AttributeError</code> à la première utilisation."
+  },
+  {
+    theme: "init",
+    text: "Que doit retourner le constructeur <code>__init__</code> ?",
+    options: ["<code>self</code>", "L'objet créé", "<code>True</code>", "Rien (pas de return)"],
+    answer: 3,
+    explanation: "<code>__init__</code> ne retourne <strong>jamais rien</strong>. Ajouter <code>return self</code> lève un <code>TypeError</code>. Python gère la création en interne."
+  },
+  {
+    theme: "init",
+    text: "Parmi ces définitions de constructeur, laquelle est <strong>correcte</strong> ?",
+    options: [
+      "<code>def init(self, x): self.x = x</code>",
+      "<code>def __init__(self, x): self.x = x</code>",
+      "<code>def __init__(x): self.x = x</code>",
+      "<code>def __init__(self, x): return x</code>"
+    ],
+    answer: 1,
+    explanation: "Seule la B est correcte : nom <code>__init__</code>, premier param <code>self</code>, affectation via <code>self.x</code>, pas de <code>return</code>."
+  },
+  {
+    theme: "init",
+    text: "On a <code>p = Point(3, 5)</code>. Quel est l'effet de cette ligne ?",
+    options: [
+      "Python appelle manuellement __init__ avec les arguments 3 et 5",
+      "Python crée un objet Point et appelle automatiquement __init__(self, 3, 5)",
+      "Python crée un dictionnaire avec les clés 'x' et 'y'",
+      "Python appelle __init__(Point, 3, 5)"
+    ],
+    answer: 1,
+    explanation: "Python crée l'objet, puis appelle automatiquement <code>__init__</code> en passant l'objet en tant que <code>self</code> et les arguments fournis. On n'appelle jamais <code>__init__</code> directement."
+  },
+  {
+    theme: "init",
+    text: "Comment déclarer un attribut <code>score</code> initialisé à 0 par défaut si non fourni ?",
+    options: [
+      "<code>def __init__(self, nom, score): self.score = 0</code>",
+      "<code>def __init__(self, nom, score=0): self.score = score</code>",
+      "<code>def __init__(self, nom): self.score = score or 0</code>",
+      "<code>def __init__(self, nom, score): score = 0</code>"
+    ],
+    answer: 1,
+    explanation: "On utilise une <strong>valeur par défaut</strong> dans la signature : <code>score=0</code>. Si l'appelant ne fournit pas <code>score</code>, Python utilise 0."
+  },
+  {
+    theme: "init",
+    text: "Que contient <code>e.nom</code> après ce code ?",
+    code: `<span class="kw">class</span> <span class="cl">Eleve</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom):
+        nom = nom  <span class="cm"># BUG</span>
+
+e = <span class="cl">Eleve</span>(<span class="st">"Alice"</span>)
+<span class="fn">print</span>(e.nom)`,
+    options: [
+      "<code>\"Alice\"</code>",
+      "<code>None</code>",
+      "Une erreur AttributeError",
+      "Une erreur SyntaxError"
+    ],
+    answer: 2,
+    explanation: "Puisque <code>self.nom</code> n'a jamais été assigné (seulement une variable locale <code>nom</code>), accéder à <code>e.nom</code> lève une <strong>AttributeError</strong>."
+  },
+  {
+    theme: "init",
+    text: "Peut-on calculer un attribut dans le constructeur plutôt que de le recevoir en paramètre ?",
+    code: `<span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, l, h):
+    <span class="sf">self</span>.largeur = l
+    <span class="sf">self</span>.hauteur = h
+    <span class="sf">self</span>.aire = l * h  <span class="cm"># calculé</span>`,
+    options: [
+      "Non, tous les attributs doivent venir de paramètres",
+      "Oui, on peut calculer ou dériver des attributs dans __init__",
+      "Oui mais seulement si on utilise return",
+      "Non, cela provoque une RecursionError"
+    ],
+    answer: 1,
+    explanation: "Oui, on peut <strong>calculer des attributs</strong> dans <code>__init__</code>. Ici <code>self.aire = l * h</code> est parfaitement valide."
+  },
+  {
+    theme: "init",
+    text: "Combien d'objets sont créés par ce code ?",
+    code: `<span class="kw">class</span> <span class="cl">Balle</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, couleur):
+        <span class="sf">self</span>.couleur = couleur
+
+b1 = <span class="cl">Balle</span>(<span class="st">"rouge"</span>)
+b2 = <span class="cl">Balle</span>(<span class="st">"bleue"</span>)
+b3 = b1`,
+    options: ["3", "2", "1", "0"],
+    answer: 1,
+    explanation: "<code>b3 = b1</code> ne crée <strong>pas</strong> un nouvel objet — c'est une deuxième référence vers le même objet. Il y a donc 2 objets Balle en mémoire."
+  },
+
+  /* ── MÉTHODES (10 questions) ────────────────────────────── */
+  {
+    theme: "methods",
+    text: "Quelle est la différence entre un <strong>accesseur</strong> et un <strong>mutateur</strong> ?",
+    options: [
+      "Un accesseur prend des paramètres, un mutateur non",
+      "Un accesseur retourne une valeur sans modifier l'objet ; un mutateur modifie l'objet sans return",
+      "Un accesseur s'appelle get_, un mutateur set_ obligatoirement",
+      "Il n'y a aucune différence, ce sont des synonymes"
+    ],
+    answer: 1,
+    explanation: "<strong>Accesseur (getter)</strong> : lit et retourne une valeur. <strong>Mutateur (setter)</strong> : modifie un attribut sans retourner quoi que ce soit."
+  },
+  {
+    theme: "methods",
+    text: "Que retourne l'expression <code>r.aire</code> (sans parenthèses) si <code>aire</code> est une méthode ?",
+    options: [
+      "La valeur de l'aire calculée",
+      "0",
+      "Une référence à l'objet méthode (pas le résultat)",
+      "Une erreur AttributeError"
+    ],
+    answer: 2,
+    explanation: "Sans <code>()</code>, on obtient l'<strong>objet méthode lui-même</strong>, pas le résultat de son exécution. C'est un bug silencieux très courant."
+  },
+  {
+    theme: "methods",
+    text: "Quelle méthode spéciale est appelée automatiquement par <code>print(obj)</code> ?",
+    options: ["<code>__print__</code>", "<code>__repr__</code>", "<code>__str__</code>", "<code>__display__</code>"],
+    answer: 2,
+    explanation: "<code>__str__</code> est appelée par <code>print()</code> et <code>str()</code>. Elle doit toujours <code>return</code> une chaîne. <code>__repr__</code> est pour la représentation de débogage."
+  },
+  {
+    theme: "methods",
+    text: "Un mutateur doit-il contenir un <code>return</code> ?",
+    options: [
+      "Oui, il retourne toujours self",
+      "Oui, il retourne la nouvelle valeur",
+      "Non, il modifie l'attribut et ne retourne rien",
+      "Oui si la modification a réussi"
+    ],
+    answer: 2,
+    explanation: "Un <strong>mutateur ne retourne rien</strong>. Son rôle est uniquement de modifier un attribut. Ajouter un <code>return</code> est une erreur de conception."
+  },
+  {
+    theme: "methods",
+    text: "Quel opérateur logique est <strong>invalide</strong> en Python dans une condition ?",
+    options: ["<code>and</code>", "<code>or</code>", "<code>&&</code>", "<code>not</code>"],
+    answer: 2,
+    explanation: "<code>&&</code> est la syntaxe de C/Java/JavaScript. En Python, l'opérateur logique ET s'écrit <code>and</code> (en minuscules)."
+  },
+  {
+    theme: "methods",
+    text: "Quelle méthode est <strong>correctement</strong> écrite ?",
+    options: [
+      "<code>def est_admis(self): return self.note >= 10 AND self.absences < 5</code>",
+      "<code>def est_admis(self): return self.note >= 10 and self.absences < 5</code>",
+      "<code>def est_admis(self): return self.note => 10 and self.absences < 5</code>",
+      "<code>def est_admis(): return self.note >= 10 and self.absences < 5</code>"
+    ],
+    answer: 1,
+    explanation: "La B est correcte : <code>>=</code> (pas <code>=></code>), <code>and</code> minuscule, <code>self</code> comme premier paramètre."
+  },
+  {
+    theme: "methods",
+    text: "Que retourne <code>__str__</code> dans cet exemple, et quel problème y a-t-il ?",
+    code: `<span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+    <span class="fn">print</span>(<span class="sf">self</span>.nom + <span class="st">" : "</span> + <span class="sf">self</span>.note)`,
+    options: [
+      "Retourne la chaîne 'Alice : 15', pas de problème",
+      "Retourne None car print() ne retourne rien ; et erreur de type car note est un int",
+      "Retourne None car il manque return ; note est int donc concatenation impossible sans str()",
+      "Lève une AttributeError"
+    ],
+    answer: 2,
+    explanation: "Double problème : <code>print()</code> retourne <code>None</code> (il faut <code>return</code>) ; et <code>self.note</code> est un entier qu'on ne peut pas concaténer directement à une chaîne → <code>TypeError</code>. Il faut <code>return self.nom + ' : ' + str(self.note)</code>."
+  },
+  {
+    theme: "methods",
+    text: "Dans une méthode qui compare deux objets, comment appeler la méthode <code>aire()</code> sur l'objet passé en paramètre ?",
+    code: `<span class="kw">def</span> <span class="fn">est_plus_grand</span>(<span class="sf">self</span>, autre):
+    <span class="kw">return</span> ???`,
+    options: [
+      "<code>self.aire > autre.aire</code>",
+      "<code>self.aire() > autre.aire</code>",
+      "<code>self.aire() > autre.aire()</code>",
+      "<code>aire(self) > aire(autre)</code>"
+    ],
+    answer: 2,
+    explanation: "<code>aire</code> est une méthode → parenthèses obligatoires des deux côtés. <code>autre.aire</code> sans <code>()</code> compare des références de méthodes, pas des valeurs."
+  },
+  {
+    theme: "methods",
+    text: "Qu'est-ce que le chaînage de comparaisons <code>0 <= val <= 100</code> en Python ?",
+    options: [
+      "Une erreur de syntaxe",
+      "Équivalent à <code>val >= 0 or val <= 100</code>",
+      "Équivalent à <code>val >= 0 and val <= 100</code>",
+      "Équivalent à <code>0 <= val</code> seulement"
+    ],
+    answer: 2,
+    explanation: "Python autorise le <strong>chaînage de comparaisons</strong>. <code>0 <= val <= 100</code> est strictement équivalent à <code>val >= 0 and val <= 100</code>. C'est plus lisible."
+  },
+  {
+    theme: "methods",
+    text: "Quelle est la bonne façon de modifier <code>self.temperature</code> en ajoutant <code>delta</code> ?",
+    options: [
+      "<code>temperature = self.temperature + delta</code>",
+      "<code>self.temperature = temperature + delta</code>",
+      "<code>self.temperature = self.temperature + delta</code>",
+      "<code>return self.temperature + delta</code>"
+    ],
+    answer: 2,
+    explanation: "Il faut <code>self.</code> des deux côtés : on lit <code>self.temperature</code> (valeur actuelle), on ajoute <code>delta</code>, et on réassigne à <code>self.temperature</code>."
+  },
+
+  /* ── LISTES D'OBJETS (10 questions) ─────────────────────── */
+  {
+    theme: "lists",
+    text: "Comment accéder à l'attribut <code>pages</code> du 2e livre d'une liste <code>biblio</code> ?",
+    options: [
+      "<code>biblio[1].pages()</code>",
+      "<code>biblio[1].pages</code>",
+      "<code>biblio.pages[1]</code>",
+      "<code>get_pages(biblio[1])</code>"
+    ],
+    answer: 1,
+    explanation: "<code>biblio[1]</code> donne le 2e objet (index 1). <code>.pages</code> accède à l'attribut. Pas de parenthèses — ce n'est pas une méthode."
+  },
+  {
+    theme: "lists",
+    text: "Quelle fonction calcule correctement la somme de l'attribut <code>score</code> d'une liste de joueurs ?",
+    options: [
+      "<code>def total(j): return j.score</code>",
+      "<code>def total(j): t=0; for x in j: t+=x.score(); return t</code>",
+      "<code>def total(joueurs): t=0\n  for j in joueurs: t+=j.score\n  return t</code>",
+      "<code>def total(joueurs): for j in joueurs: return j.score</code>"
+    ],
+    answer: 2,
+    explanation: "La C est correcte : accumulateur initialisé à 0, boucle sur la liste, <code>j.score</code> sans parenthèses (attribut), <code>return</code> <em>après</em> la boucle."
+  },
+  {
+    theme: "lists",
+    text: "Que renvoie cette fonction à cause du <code>return</code> mal placé ?",
+    code: `<span class="kw">def</span> <span class="fn">somme</span>(eleves):
+    total = <span class="nb">0</span>
+    <span class="kw">for</span> e <span class="kw">in</span> eleves:
+        total += e.note
+        <span class="kw">return</span> total  <span class="cm"># dans la boucle</span>`,
+    options: [
+      "La somme de toutes les notes",
+      "0",
+      "La note du premier élève uniquement",
+      "Une erreur IndexError"
+    ],
+    answer: 2,
+    explanation: "Le <code>return</code> est à l'intérieur de la boucle. Python sort dès la <strong>première itération</strong> et retourne la note du premier élève seulement."
+  },
+  {
+    theme: "lists",
+    text: "Pourquoi <code>if e.est_admis:</code> est-il toujours vrai même si l'élève n'est pas admis ?",
+    options: [
+      "Parce que la méthode retourne toujours True",
+      "Parce que l'objet méthode lui-même (sans ()) est toujours truthy",
+      "Parce que Python évalue les méthodes à True par défaut",
+      "C'est une erreur de syntaxe, pas un bug silencieux"
+    ],
+    answer: 1,
+    explanation: "Sans <code>()</code>, <code>e.est_admis</code> est un <strong>objet méthode</strong>, pas son résultat. Tout objet non-None est truthy en Python → la condition est toujours vraie. Bug silencieux redoutable."
+  },
+  {
+    theme: "lists",
+    text: "Pour chercher l'objet avec la valeur maximale d'un attribut, avec quoi initialise-t-on la variable <code>meilleur</code> ?",
+    options: [
+      "<code>meilleur = 0</code>",
+      "<code>meilleur = None</code>",
+      "<code>meilleur = liste[0]</code>",
+      "<code>meilleur = max(liste)</code>"
+    ],
+    answer: 2,
+    explanation: "On initialise avec le <strong>premier objet de la liste</strong> (<code>liste[0]</code>). Initialiser avec <code>0</code> ou <code>None</code> provoque une <code>AttributeError</code> lors de la comparaison des attributs."
+  },
+  {
+    theme: "lists",
+    text: "Dans <code>titulaires_debiteurs(comptes)</code>, que doit contenir la liste retournée ?",
+    code: `<span class="kw">for</span> c <span class="kw">in</span> comptes:
+    <span class="kw">if</span> c.<span class="fn">est_debiteur</span>():
+        resultat.<span class="fn">append</span>(???)`,
+    options: [
+      "<code>c</code> — l'objet Compte entier",
+      "<code>c.titulaire</code> — le nom (chaîne)",
+      "<code>c.solde</code> — le solde",
+      "<code>c.est_debiteur()</code> — True"
+    ],
+    answer: 1,
+    explanation: "La consigne demande les <strong>noms</strong> (attribut <code>titulaire</code>). On appende <code>c.titulaire</code>, une chaîne de caractères, pas l'objet entier."
+  },
+  {
+    theme: "lists",
+    text: "Quelle ligne ajoute correctement un objet <code>Eleve</code> à une liste <code>promo</code> ?",
+    options: [
+      "<code>promo = promo + Eleve('Alice', 15)</code>",
+      "<code>promo.add(Eleve('Alice', 15))</code>",
+      "<code>promo.append(Eleve('Alice', 15))</code>",
+      "<code>promo[len(promo)] = Eleve('Alice', 15)</code>"
+    ],
+    answer: 2,
+    explanation: "<code>list.append(element)</code> est la méthode standard pour ajouter un élément en fin de liste. <code>add</code> n'existe pas sur les listes (c'est pour les sets)."
+  },
+  {
+    theme: "lists",
+    text: "Quelle est la différence entre retourner <code>c</code> et retourner <code>c.titulaire</code> dans une boucle de filtrage ?",
+    options: [
+      "Aucune différence, Python convertit automatiquement",
+      "<code>c</code> retourne l'objet entier (accès à tous ses attributs) ; <code>c.titulaire</code> retourne seulement le nom (chaîne)",
+      "<code>c</code> est plus rapide à retourner",
+      "<code>c.titulaire</code> crée une copie de l'objet"
+    ],
+    answer: 1,
+    explanation: "Retourner <code>c</code> donne un <strong>objet Compte</strong> avec tous ses attributs. Retourner <code>c.titulaire</code> donne uniquement la <strong>chaîne du nom</strong>. Le choix dépend de ce que l'appelant a besoin."
+  },
+  {
+    theme: "lists",
+    text: "Que vaut <code>len(admis)</code> après ce code si tous les élèves ont note >= 10 ?",
+    code: `eleves = [<span class="cl">Eleve</span>(<span class="st">"A"</span>, <span class="nb">12</span>), <span class="cl">Eleve</span>(<span class="st">"B"</span>, <span class="nb">15</span>), <span class="cl">Eleve</span>(<span class="st">"C"</span>, <span class="nb">11</span>)]
+admis = []
+<span class="kw">for</span> e <span class="kw">in</span> eleves:
+    <span class="kw">if</span> e.note <span class="op">&gt;=</span> <span class="nb">10</span>:
+        admis.<span class="fn">append</span>(e)`,
+    options: ["0", "1", "2", "3"],
+    answer: 3,
+    explanation: "Tous les trois ont note >= 10 (12, 15, 11). Chacun est appended à <code>admis</code>. <code>len(admis) == 3</code>."
+  },
+  {
+    theme: "lists",
+    text: "Quelle est la syntaxe correcte pour calculer la moyenne des notes d'une liste d'élèves ?",
+    options: [
+      "<code>return sum(e.note for e in eleves) / len(eleves)</code>",
+      "<code>return sum(e.note() for e in eleves) / len(eleves)</code>",
+      "<code>return average(eleves.note)</code>",
+      "<code>return eleves.note / len(eleves)</code>"
+    ],
+    answer: 0,
+    explanation: "<code>note</code> est un attribut → pas de <code>()</code>. On peut utiliser une <em>generator expression</em> dans <code>sum()</code>. Il n'y a pas de fonction <code>average()</code> en Python natif."
+  },
+
+  /* ── HÉRITAGE & POLYMORPHISME (10 questions) ────────────── */
+  {
+    theme: "inherit",
+    text: "Quelle syntaxe crée une sous-classe <code>PokemonFeu</code> héritant de <code>Pokemon</code> ?",
+    options: [
+      "<code>class PokemonFeu inherits Pokemon:</code>",
+      "<code>class PokemonFeu extends Pokemon:</code>",
+      "<code>class PokemonFeu(Pokemon):</code>",
+      "<code>class PokemonFeu < Pokemon:</code>"
+    ],
+    answer: 2,
+    explanation: "En Python, l'héritage se déclare en mettant le nom de la classe parent <strong>entre parenthèses</strong> : <code>class Enfant(Parent):</code>. Les mots-clés <code>inherits</code>, <code>extends</code> n'existent pas en Python."
+  },
+  {
+    theme: "inherit",
+    text: "Qu'est-ce que <code>super()</code> permet de faire ?",
+    options: [
+      "Créer une super-instance de la classe",
+      "Accéder aux méthodes et attributs de la classe parent",
+      "Rendre une méthode plus rapide",
+      "Vérifier qu'un objet est une instance valide"
+    ],
+    answer: 1,
+    explanation: "<code>super()</code> retourne un objet proxy qui délègue les appels de méthodes à la <strong>classe parent</strong>. Utilisé principalement dans <code>__init__</code> pour initialiser les attributs hérités."
+  },
+  {
+    theme: "inherit",
+    text: "Que se passe-t-il si on omet <code>super().__init__()</code> dans le constructeur d'une sous-classe ?",
+    options: [
+      "Python l'appelle automatiquement",
+      "Les attributs définis dans le constructeur parent ne sont jamais créés → AttributeError possible",
+      "La sous-classe est ignorée",
+      "Un warning est affiché mais le code fonctionne"
+    ],
+    answer: 1,
+    explanation: "Sans <code>super().__init__()</code>, le constructeur parent <strong>n'est jamais exécuté</strong>. Les attributs qu'il aurait créés n'existent pas → <code>AttributeError</code> à la première utilisation."
+  },
+  {
+    theme: "inherit",
+    text: "Une instance de <code>PokemonFeu</code> peut-elle appeler une méthode définie <strong>uniquement</strong> dans <code>Pokemon</code> ?",
+    options: [
+      "Non, elle ne connaît que ses propres méthodes",
+      "Oui, car elle hérite de toutes les méthodes de Pokemon",
+      "Oui, mais seulement si on appelle super() avant",
+      "Non, sauf si on redéfinit la méthode dans PokemonFeu"
+    ],
+    answer: 1,
+    explanation: "C'est le principe de l'héritage : <code>PokemonFeu</code> hérite <strong>automatiquement</strong> de toutes les méthodes de <code>Pokemon</code>. Inutile de les réécrire."
+  },
+  {
+    theme: "inherit",
+    text: "Qu'est-ce que la <strong>surcharge</strong> (override) d'une méthode ?",
+    options: [
+      "Appeler une méthode avec trop d'arguments",
+      "Redéfinir dans la sous-classe une méthode déjà présente dans le parent",
+      "Supprimer une méthode héritée",
+      "Appeler une méthode deux fois de suite"
+    ],
+    answer: 1,
+    explanation: "La <strong>surcharge</strong> consiste à <em>redéfinir</em> dans la sous-classe une méthode héritée du parent. Python utilisera la version de la sous-classe en priorité."
+  },
+  {
+    theme: "inherit",
+    text: "Que retourne <code>isinstance(salameche, Pokemon)</code> si <code>salameche = PokemonFeu('Salamèche', 39)</code> ?",
+    options: ["<code>False</code>", "<code>True</code>", "<code>None</code>", "Une erreur TypeError"],
+    answer: 1,
+    explanation: "<code>isinstance</code> retourne <code>True</code> si l'objet est une instance de la classe <strong>ou d'une de ses sous-classes</strong>. Un <code>PokemonFeu</code> est aussi un <code>Pokemon</code>."
+  },
+  {
+    theme: "inherit",
+    text: "Dans quel ordre Python cherche-t-il une méthode <code>attaquer</code> appelée sur un <code>PokemonElectrique</code> ?",
+    options: [
+      "D'abord dans Pokemon, puis dans PokemonElectrique",
+      "D'abord dans PokemonElectrique, puis dans Pokemon si non trouvée",
+      "Uniquement dans Pokemon",
+      "Uniquement dans PokemonElectrique"
+    ],
+    answer: 1,
+    explanation: "Python applique la <strong>résolution de méthode (MRO)</strong> : il cherche d'abord dans la classe <em>réelle</em> de l'objet (ici <code>PokemonElectrique</code>), puis remonte vers le parent si nécessaire."
+  },
+  {
+    theme: "inherit",
+    text: "Comment la sous-classe peut-elle <strong>étendre</strong> une méthode parent (garder son comportement ET ajouter le sien) ?",
+    options: [
+      "En réécrivant entièrement la méthode dans la sous-classe",
+      "En appelant <code>super().methode()</code> puis en ajoutant le comportement spécifique",
+      "En utilisant le mot-clé <code>extend</code>",
+      "C'est impossible, on doit choisir entre l'un et l'autre"
+    ],
+    answer: 1,
+    explanation: "On appelle <code>super().methode()</code> pour exécuter la logique du parent, puis on ajoute le comportement spécifique à la sous-classe. Exemple : attaque normale puis effet de paralysie."
+  },
+  {
+    theme: "inherit",
+    text: "Qu'est-ce que le <strong>polymorphisme</strong> permet concrètement ?",
+    options: [
+      "D'avoir plusieurs classes avec le même nom",
+      "D'appeler la même méthode sur des objets de types différents et d'obtenir des comportements adaptés à chaque type",
+      "De créer des objets sans constructeur",
+      "De partager des attributs entre plusieurs instances"
+    ],
+    answer: 1,
+    explanation: "Le polymorphisme permet d'écrire <code>for p in equipe: p.attaquer(cible)</code> — chaque Pokémon applique <strong>sa propre version</strong> de <code>attaquer</code>, qu'il soit Feu, Eau ou Électrique."
+  },
+  {
+    theme: "inherit",
+    text: "Quel est le problème dans ce code de sous-classe ?",
+    code: `<span class="kw">class</span> <span class="cl">PokemonFeu</span>(<span class="cl">Pokemon</span>):
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom, pdv):
+        <span class="sf">self</span>.flammes = <span class="nb">3</span>
+        <span class="cm"># super().__init__ oublié</span>`,
+    options: [
+      "Pas de problème, Python initialise nom et pdv automatiquement",
+      "self.flammes ne peut pas être défini avant super()",
+      "Les attributs nom et pdv de Pokemon ne sont jamais créés → AttributeError",
+      "La méthode __init__ ne peut pas être redéfinie dans une sous-classe"
+    ],
+    answer: 2,
+    explanation: "Sans <code>super().__init__(nom, 'Feu', pdv)</code>, les attributs <code>self.nom</code>, <code>self.type</code>, <code>self.pdv</code> définis dans <code>Pokemon.__init__</code> n'existent jamais. Toute tentative d'y accéder lève une <code>AttributeError</code>."
+  }
+];
+
+/* ══════════════════════════════════════════════════════════
+   ÉTAT DU QUIZ
+   ══════════════════════════════════════════════════════════ */
+let selectedCount = 5;
+let activeThemes = new Set(["classe","init","methods","lists","inherit"]);
+let currentQuestions = [];
+let currentIdx = 0;
+let score = 0;
+let answered = [];
+
+/* ══════════════════════════════════════════════════════════
+   CONTRÔLES
+   ══════════════════════════════════════════════════════════ */
+function setCount(btn, n) {
+  document.querySelectorAll('.btn-count').forEach(b => b.classList.remove('selected'));
+  btn.classList.add('selected');
+  selectedCount = n;
+}
+
+function toggleTheme(btn) {
+  const t = btn.dataset.theme;
+  if (activeThemes.has(t)) {
+    if (activeThemes.size === 1) return; // garder au moins 1
+    activeThemes.delete(t);
+    btn.classList.remove('on');
+  } else {
+    activeThemes.add(t);
+    btn.classList.add('on');
+  }
+}
+
+/* ══════════════════════════════════════════════════════════
+   DÉMARRAGE
+   ══════════════════════════════════════════════════════════ */
+function shuffle(arr) {
+  const a = [...arr];
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startQuiz() {
+  const pool = shuffle(ALL_QUESTIONS.filter(q => activeThemes.has(q.theme)));
+  currentQuestions = selectedCount === 0 ? pool : pool.slice(0, Math.min(selectedCount, pool.length));
+  currentIdx = 0; score = 0; answered = [];
+
+  document.getElementById('progress-bar-wrap').style.display = 'block';
+  document.getElementById('quiz-area').style.display = 'block';
+  document.getElementById('result-area').style.display = 'none';
+
+  renderQuestion();
+  window.scrollTo({top: 0, behavior: 'smooth'});
+}
+
+/* ══════════════════════════════════════════════════════════
+   RENDU D'UNE QUESTION
+   ══════════════════════════════════════════════════════════ */
+const THEME_META = {
+  classe:  { label: 'Classe & Objet',          cls: 't-classe' },
+  init:    { label: 'Constructeur',             cls: 't-init' },
+  methods: { label: 'Méthodes',                 cls: 't-methods' },
+  lists:   { label: "Listes d'objets",          cls: 't-lists' },
+  inherit: { label: 'Héritage & Polymorphisme', cls: 't-inherit' },
+};
+
+function renderQuestion() {
+  const total = currentQuestions.length;
+  updateProgress();
+
+  if (currentIdx >= total) { showResult(); return; }
+
+  const q = currentQuestions[currentIdx];
+  const tm = THEME_META[q.theme];
+  const letters = ['A', 'B', 'C', 'D'];
+
+  const codeBlock = q.code ? `<pre class="q-code">${q.code}</pre>` : '';
+
+  const optsHtml = q.options.map((opt, i) => `
+    <div class="opt" id="opt-${i}" onclick="selectAnswer(${i})">
+      <span class="opt-letter">${letters[i]}.</span>
+      <span>${opt}</span>
+    </div>`).join('');
+
+  document.getElementById('quiz-area').innerHTML = `
+    <div class="q-card">
+      <div class="q-head">
+        <span class="q-num">Q${currentIdx + 1} / ${total}</span>
+        <span class="q-theme-tag ${tm.cls}">${tm.label}</span>
+      </div>
+      <div class="q-body">
+        <div class="q-text">${q.text}</div>
+        ${codeBlock}
+        <div class="options">${optsHtml}</div>
+        <div class="explanation" id="expl"></div>
+      </div>
+    </div>`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   SÉLECTION D'UNE RÉPONSE
+   ══════════════════════════════════════════════════════════ */
+function selectAnswer(idx) {
+  const q = currentQuestions[currentIdx];
+  if (answered[currentIdx] !== undefined) return; // déjà répondu
+  answered[currentIdx] = idx;
+
+  const isCorrect = idx === q.answer;
+  if (isCorrect) score++;
+
+  // Verrouiller toutes les options
+  document.querySelectorAll('.opt').forEach(o => o.classList.add('locked'));
+  // Colorier
+  document.getElementById(`opt-${q.answer}`).classList.add('correct');
+  if (!isCorrect) document.getElementById(`opt-${idx}`).classList.add('wrong');
+
+  // Explication
+  const expl = document.getElementById('expl');
+  expl.innerHTML = `<strong>${isCorrect ? '✓ Correct !' : '✗ Incorrect.'}</strong> ${q.explanation}`;
+  expl.classList.add('show');
+
+  updateProgress();
+
+  // Bouton suivant
+  const btnLabel = currentIdx < currentQuestions.length - 1 ? 'Question suivante →' : 'Voir les résultats →';
+  document.getElementById('quiz-area').insertAdjacentHTML('beforeend',
+    `<div style="text-align:right;margin-top:.5rem">
+       <button class="btn-start" onclick="nextQuestion()">${btnLabel}</button>
+     </div>`);
+}
+
+function nextQuestion() {
+  currentIdx++;
+  renderQuestion();
+  window.scrollTo({top: document.getElementById('quiz-area').offsetTop - 80, behavior: 'smooth'});
+}
+
+function updateProgress() {
+  const total = currentQuestions.length;
+  const done = answered.filter(a => a !== undefined).length;
+  const pct = total > 0 ? (done / total) * 100 : 0;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-text').textContent = `Question ${Math.min(currentIdx + 1, total)} / ${total}`;
+  document.getElementById('score-text').textContent = `Score : ${score} / ${done}`;
+}
+
+/* ══════════════════════════════════════════════════════════
+   RÉSULTATS
+   ══════════════════════════════════════════════════════════ */
+function showResult() {
+  document.getElementById('quiz-area').style.display = 'none';
+  document.getElementById('progress-bar-wrap').style.display = 'none';
+
+  const total = currentQuestions.length;
+  const pct = Math.round((score / total) * 100);
+  const barColor = pct >= 70 ? 'var(--ok)' : pct >= 50 ? 'var(--warn)' : 'var(--bad)';
+
+  let msg, emoji;
+  if (pct === 100) { msg = "Score parfait ! Maîtrise totale."; emoji = "🏆"; }
+  else if (pct >= 80) { msg = "Excellent travail ! Très bonne maîtrise."; emoji = "🎉"; }
+  else if (pct >= 60) { msg = "Bon niveau. Quelques points à consolider."; emoji = "👍"; }
+  else if (pct >= 40) { msg = "Des lacunes à combler. Relis le cours !"; emoji = "📖"; }
+  else { msg = "Résultat insuffisant. Reprends depuis le début."; emoji = "💪"; }
+
+  // Stats par thème
+  const themeStats = {};
+  currentQuestions.forEach((q, i) => {
+    if (!themeStats[q.theme]) themeStats[q.theme] = {ok: 0, total: 0};
+    themeStats[q.theme].total++;
+    if (answered[i] === q.answer) themeStats[q.theme].ok++;
+  });
+
+  const detailHtml = Object.entries(themeStats).map(([t, s]) => {
+    const tm = THEME_META[t];
+    const p = Math.round((s.ok / s.total) * 100);
+    const cls = p >= 70 ? 'dc-ok' : 'dc-bad';
+    return `<div class="detail-cell">
+      <div class="dc-label">${tm.label}</div>
+      <div class="dc-val ${cls}">${s.ok}/${s.total} (${p}%)</div>
+    </div>`;
+  }).join('');
+
+  const ra = document.getElementById('result-area');
+  ra.style.display = 'block';
+  ra.innerHTML = `
+    <div class="result-card">
+      <div class="result-score">${emoji} ${score}/${total}</div>
+      <div class="result-label">${pct}% de bonnes réponses</div>
+      <div class="score-bar-wrap">
+        <div class="score-bar" style="width:${pct}%;background:${barColor}"></div>
+      </div>
+      <div class="result-msg">${msg}</div>
+      ${Object.keys(themeStats).length > 1 ? `<div class="detail-grid">${detailHtml}</div>` : ''}
+      <button class="btn-retry" onclick="startQuiz()">↺ Recommencer</button>
+      &nbsp;
+      <button class="btn-retry" style="background:#343a40" onclick="location.reload()">⚙ Changer les options</button>
+    </div>`;
+
+  window.scrollTo({top: ra.offsetTop - 80, behavior: 'smooth'});
+}
+</script>
+</body>
+</html>

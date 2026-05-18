@@ -1,0 +1,1491 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Listes en Python — Cours 1ère NSI</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #ffffff;
+  --surface:  #f8fafc;
+  --surface2: #f1f5f9;
+  --border:   #e2e8f0;
+  --blue:     #2563eb;
+  --blue-lt:  #eff6ff;
+  --blue-dk:  #1e3a5f;
+  --green:    #059669;
+  --green-lt: #f0fdf4;
+  --orange:   #d97706;
+  --orange-lt:#fffbeb;
+  --red:      #dc2626;
+  --red-lt:   #fef2f2;
+  --purple:   #6366f1;
+  --purple-lt:#eef2ff;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --muted:    #64748b;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  font-size: 16px;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 60%, #1d4ed8 100%);
+  padding: 60px 40px 50px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 70%);
+}
+.hero-badge {
+  display:inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.35);
+  color: white;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px; letter-spacing:2px; text-transform:uppercase;
+  padding:4px 14px; border-radius:20px; margin-bottom:20px;
+}
+.hero h1 {
+  font-size: clamp(32px,6vw,66px);
+  font-weight:900; line-height:1.1;
+  letter-spacing:-2px; margin-bottom:14px; color:white;
+}
+.hero h1 span { color:#93c5fd; }
+.hero p {
+  color:rgba(255,255,255,0.78);
+  font-style:italic; font-size:18px;
+  max-width:520px; margin:0 auto;
+}
+
+/* ── NAV ── */
+.toc {
+  background: var(--surface2);
+  border-bottom: 2px solid var(--border);
+  padding:12px 28px;
+  display:flex; flex-wrap:wrap; gap:5px;
+  justify-content:center;
+  position:sticky; top:0; z-index:100;
+}
+.toc a {
+  font-family:'JetBrains Mono',monospace; font-size:11.5px;
+  color:var(--muted); text-decoration:none;
+  padding:5px 11px; border-radius:4px;
+  border:1px solid transparent; transition:all .2s;
+}
+.toc a:hover { color:var(--blue); border-color:var(--blue); background:var(--blue-lt); }
+
+/* ── LAYOUT ── */
+.container { max-width:920px; margin:0 auto; padding:0 28px; }
+.section { padding:56px 0 38px; border-bottom:1px solid var(--border); }
+.section:last-child { border-bottom:none; }
+
+/* ── SECTION HEADERS ── */
+.section-num {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:var(--blue); letter-spacing:3px; text-transform:uppercase; margin-bottom:6px;
+}
+.section h2 {
+  font-size:clamp(22px,4vw,36px); font-weight:900;
+  letter-spacing:-1px; margin-bottom:22px; line-height:1.15; color:var(--text);
+}
+.section h3 {
+  font-size:18px; font-weight:700; color:var(--orange);
+  margin:34px 0 12px;
+}
+.section h4 {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--blue-dk); margin:22px 0 8px; letter-spacing:1px;
+}
+.section p { color:var(--text2); margin-bottom:12px; }
+.section ul, .section ol { padding-left:22px; margin-bottom:12px; }
+.section li { color:var(--text2); margin-bottom:5px; }
+strong { color:var(--text); }
+p code, li code, td code, th code {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--green); background:var(--green-lt);
+  padding:1px 6px; border-radius:3px;
+}
+
+/* ── CODE BLOCKS (dark, intentional) ── */
+.code-block {
+  background:#0d1117; border:1px solid #2a2f45;
+  border-radius:10px; margin:18px 0; overflow:hidden;
+}
+.code-header {
+  background:#1e2333; border-bottom:1px solid #2a2f45;
+  padding:8px 16px; display:flex; align-items:center; gap:8px;
+  font-family:'JetBrains Mono',monospace; font-size:11px; color:#64748b;
+}
+.dot { width:10px; height:10px; border-radius:50%; }
+.dr{background:#ff5f56;} .dy{background:#ffbd2e;} .dg{background:#27c93f;}
+pre {
+  padding:18px 20px; overflow-x:auto;
+  font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7;
+  color:#e2e8f0;
+}
+/* Python syntax */
+.kw  { color:#c084fc; }   /* keyword */
+.fn  { color:#60a5fa; }   /* built-in function */
+.st  { color:#4ade80; }   /* string */
+.cm  { color:#475569; font-style:italic; } /* comment */
+.nb  { color:#fb923c; }   /* number */
+.op  { color:#94a3b8; }   /* operator */
+.df  { color:#fbbf24; }   /* def name */
+.bi  { color:#f472b6; }   /* bool / None */
+
+/* ── INFO BOXES ── */
+.box {
+  border-radius:10px; padding:16px 20px;
+  margin:18px 0; border-left:4px solid; font-size:15px;
+}
+.box-tip   { background:var(--green-lt);  border-color:var(--green); }
+.box-warn  { background:var(--orange-lt); border-color:var(--orange); }
+.box-info  { background:var(--blue-lt);   border-color:var(--blue); }
+.box-alert { background:var(--red-lt);    border-color:var(--red); }
+.box-key   { background:var(--purple-lt); border-color:var(--purple); }
+.box-title {
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  letter-spacing:2px; text-transform:uppercase; font-weight:700; margin-bottom:7px;
+}
+.box-tip .box-title   { color:var(--green); }
+.box-warn .box-title  { color:var(--orange); }
+.box-info .box-title  { color:var(--blue); }
+.box-alert .box-title { color:var(--red); }
+.box-key .box-title   { color:var(--purple); }
+
+/* ── TABLES ── */
+table { width:100%; border-collapse:collapse; margin:18px 0; font-size:15px; }
+th {
+  background:var(--blue-dk); color:white;
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  letter-spacing:1px; text-transform:uppercase;
+  padding:9px 14px; text-align:left; border:1px solid var(--blue-dk);
+}
+td { padding:9px 14px; border:1px solid var(--border); color:var(--text2); vertical-align:top; }
+tr:nth-child(even) td { background:var(--surface); }
+
+/* ── FUNCTION CARDS ── */
+.fn-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin:18px 0; }
+.fn-card {
+  border:1px solid var(--border); border-radius:8px; overflow:hidden;
+  transition:box-shadow .2s;
+}
+.fn-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+.fn-card-hdr {
+  background:var(--blue-dk); color:white;
+  padding:8px 14px;
+  font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700;
+}
+.fn-card-hdr span { color:#93c5fd; font-weight:400; font-size:12px; margin-left:8px; }
+.fn-card-body { padding:11px 14px; font-size:14px; color:var(--text2); line-height:1.6; background:white; }
+.fn-card-body code {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:var(--green); background:var(--green-lt);
+  padding:1px 5px; border-radius:3px;
+}
+.fn-card-ex {
+  background:var(--surface2); border-top:1px solid var(--border);
+  padding:8px 14px;
+  font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);
+}
+
+/* ── EXERCISES ── */
+.exo-card {
+  border:1px solid var(--border); border-radius:10px;
+  overflow:hidden; margin-bottom:22px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.exo-hdr { padding:12px 20px; display:flex; align-items:center; gap:14px; }
+.exo-hdr.easy   { background:linear-gradient(90deg,#1e5631,#059669); }
+.exo-hdr.medium { background:linear-gradient(90deg,#92400e,#d97706); }
+.exo-hdr.hard   { background:linear-gradient(90deg,#7f1d1d,#dc2626); }
+.exo-level {
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  color:rgba(255,255,255,.8); letter-spacing:2px; text-transform:uppercase;
+}
+.exo-title { font-weight:700; font-size:16px; color:white; }
+.exo-body { padding:20px 22px; background:white; }
+.exo-body p { margin-bottom:10px; color:var(--text2); }
+.exo-body ol { padding-left:20px; }
+.exo-body li { margin-bottom:7px; color:var(--text2); }
+
+.toggle-btn {
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+  margin-top:14px; padding:7px 16px; border-radius:6px;
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  transition:all .2s; user-select:none;
+}
+.btn-hint { background:var(--blue-lt); border:1px solid #bfdbfe; color:var(--blue); }
+.btn-hint:hover { background:#dbeafe; }
+.btn-corr { background:var(--green-lt); border:1px solid #a7f3d0; color:var(--green); }
+.btn-corr:hover { background:#d1fae5; }
+.toggle-icon { font-size:10px; }
+.hint-box, .corr-box { display:none; margin-top:14px; }
+.hint-box.open, .corr-box.open { display:block; }
+.hint-box { background:var(--blue-lt); border:1px solid #bfdbfe; border-radius:7px; padding:14px 16px; }
+.corr-box { background:var(--green-lt); border:1px solid #a7f3d0; border-radius:7px; padding:14px 16px; }
+.corr-box p { color:var(--text2) !important; }
+
+/* ── DST SECTION ── */
+.dst-section {
+  background:var(--red-lt); border:1px solid #fecaca;
+  border-radius:12px; padding:34px; margin:36px 0;
+}
+.dst-section h2 { color:var(--red) !important; }
+.dst-section .section-num { color:var(--red) !important; }
+.checklist { list-style:none; padding:0; }
+.checklist li {
+  padding:8px 0; border-bottom:1px solid #fecaca;
+  display:flex; align-items:flex-start; gap:12px; color:var(--text2);
+}
+.checklist li:last-child { border-bottom:none; }
+.checklist li::before { content:'□'; font-size:15px; color:var(--blue); flex-shrink:0; }
+
+/* ── QCM ── */
+.qcm-controls {
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:22px;
+}
+.qcm-size-opt {
+  display:flex; align-items:center; gap:8px; cursor:pointer;
+  padding:8px 18px; border-radius:8px;
+  border:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted);
+  transition:all .2s; user-select:none; background:white;
+}
+.qcm-size-opt:has(input:checked) { border-color:var(--blue); background:var(--blue-lt); color:var(--blue); }
+.qcm-size-opt input { accent-color:var(--blue); }
+.qcm-q {
+  background:white; border:1px solid var(--border);
+  border-radius:10px; padding:20px 22px; margin-bottom:14px;
+  transition:border-color .3s; box-shadow:0 1px 4px rgba(0,0,0,0.04);
+}
+.qcm-q.correct { border-color:var(--green); background:var(--green-lt); }
+.qcm-q.wrong   { border-color:var(--red);   background:var(--red-lt); }
+.qcm-num {
+  font-family:'JetBrains Mono',monospace; font-size:10px;
+  color:var(--blue); letter-spacing:2px; text-transform:uppercase; margin-bottom:7px;
+}
+.qcm-question { font-size:15px; font-weight:700; color:var(--text); margin-bottom:13px; line-height:1.5; }
+.qcm-question code {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--green); background:var(--green-lt); padding:1px 5px; border-radius:3px;
+}
+.qcm-opts { display:flex; flex-direction:column; gap:7px; }
+.qcm-opt {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:9px 13px; border:1px solid var(--border);
+  border-radius:7px; cursor:pointer; transition:all .15s;
+  font-size:14px; color:var(--text2); background:white;
+}
+.qcm-opt:hover { border-color:var(--blue); background:var(--blue-lt); }
+.qcm-opt input { accent-color:var(--blue); width:14px; height:14px; flex-shrink:0; margin-top:2px; }
+.qcm-opt.opt-ok  { border-color:var(--green)!important; background:var(--green-lt)!important; color:var(--green); font-weight:700; }
+.qcm-opt.opt-ko  { border-color:var(--red)!important;   background:var(--red-lt)!important;   color:var(--red); }
+.qcm-opt code { font-family:'JetBrains Mono',monospace; font-size:12px; background:var(--green-lt); padding:1px 4px; border-radius:3px; color:inherit; }
+.qcm-fb {
+  margin-top:9px; font-size:13px; font-family:'JetBrains Mono',monospace;
+  padding:7px 11px; border-radius:5px; display:none; line-height:1.55;
+}
+.qcm-fb.show { display:block; }
+.qcm-fb.ok { background:var(--green-lt); color:var(--green); }
+.qcm-fb.ko { background:var(--red-lt);   color:var(--red); }
+#qcm-result {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:12px; padding:26px; margin-top:22px; text-align:center; display:none;
+}
+.score-big { font-size:58px; font-weight:900; line-height:1; margin-bottom:6px; }
+.score-sub { color:var(--muted); font-size:14px; margin-bottom:14px; }
+.score-bar-bg { background:var(--border); border-radius:99px; height:10px; overflow:hidden; margin:14px 0; }
+.score-bar-fill { height:100%; border-radius:99px; transition:width .8s cubic-bezier(.4,0,.2,1); }
+.score-msg { font-size:17px; font-weight:700; margin-top:10px; }
+.qcm-btn {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  padding:9px 20px; border-radius:7px; border:none; cursor:pointer;
+  font-weight:700; transition:opacity .2s;
+}
+.qcm-btn-primary { background:var(--blue); color:white; }
+.qcm-btn-secondary { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+.qcm-btn:hover { opacity:.85; }
+
+footer {
+  text-align:center; padding:38px;
+  color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;
+  border-top:1px solid var(--border);
+}
+@media(max-width:640px){
+  .hero{padding:36px 18px 30px;}
+  .container{padding:0 14px;}
+  pre{font-size:12px;}
+  .fn-grid{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HERO ═══════════ -->
+<div class="hero">
+  <div class="hero-badge">NSI · 1ère Spécialité · Python</div>
+  <h1>Les <span>Listes</span> en Python</h1>
+  <p>Cours complet — Fonctions — Exercices progressifs — QCM interactif</p>
+</div>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav class="toc">
+  <a href="#s1">1. Introduction</a>
+  <a href="#s2">2. Créer une liste</a>
+  <a href="#s3">3. Accès & indices</a>
+  <a href="#s4">4. Modifier</a>
+  <a href="#s5">5. Fonctions & méthodes</a>
+  <a href="#s6">6. Parcours</a>
+  <a href="#s7">7. Listes en compréhension</a>
+  <a href="#s8">8. Listes imbriquées</a>
+  <a href="#s9">✏ Exercices</a>
+  <a href="#s10">⚠ Pour le DST</a>
+  <a href="#s11">🎯 QCM</a>
+</nav>
+
+<div class="container">
+
+<!-- ═══════════════════════════════════════════
+     SECTION 1 — INTRODUCTION
+═══════════════════════════════════════════ -->
+<div class="section" id="s1">
+  <div class="section-num">01 — Introduction</div>
+  <h2>Qu'est-ce qu'une liste ?</h2>
+
+  <p>En Python, une <strong>liste</strong> est une structure de données qui permet de stocker <strong>plusieurs valeurs dans une seule variable</strong>, dans un ordre défini. C'est l'une des structures les plus utilisées en programmation.</p>
+
+  <div class="box box-info">
+    <div class="box-title">📋 Définition</div>
+    Une <strong>liste</strong> est une <strong>séquence ordonnée et modifiable</strong> d'éléments. Les éléments peuvent être de n'importe quel type : entiers, flottants, chaînes, booléens, voire d'autres listes.
+  </div>
+
+  <h3>Pourquoi utiliser des listes ?</h3>
+  <ul>
+    <li>Stocker les notes d'une classe, les températures d'une semaine, les pixels d'une image…</li>
+    <li>Manipuler de grandes quantités de données avec des boucles</li>
+    <li>Construire des algorithmes de tri, de recherche, de calcul statistique</li>
+  </ul>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Exemples de listes</span></div>
+    <pre><span class="cm"># Une liste d'entiers</span>
+notes <span class="op">=</span> [<span class="nb">14</span>, <span class="nb">17</span>, <span class="nb">9</span>, <span class="nb">12</span>, <span class="nb">18</span>]
+
+<span class="cm"># Une liste de chaînes de caractères</span>
+prenoms <span class="op">=</span> [<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Clara"</span>]
+
+<span class="cm"># Une liste mixte (plusieurs types)</span>
+infos <span class="op">=</span> [<span class="st">"Alice"</span>, <span class="nb">17</span>, <span class="bi">True</span>]
+
+<span class="cm"># Une liste vide</span>
+vide <span class="op">=</span> []
+
+<span class="cm"># Afficher une liste</span>
+<span class="fn">print</span>(notes)       <span class="cm"># [14, 17, 9, 12, 18]</span>
+<span class="fn">print</span>(<span class="fn">type</span>(notes))  <span class="cm"># &lt;class 'list'&gt;</span>
+<span class="fn">print</span>(<span class="fn">len</span>(notes))   <span class="cm"># 5  (nombre d'éléments)</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 2 — CRÉER UNE LISTE
+═══════════════════════════════════════════ -->
+<div class="section" id="s2">
+  <div class="section-num">02 — Créer une liste</div>
+  <h2>Créer et initialiser une liste</h2>
+
+  <h3>Méthode 1 — Littérale (entre crochets)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>notes <span class="op">=</span> [<span class="nb">14</span>, <span class="nb">17</span>, <span class="nb">9</span>, <span class="nb">12</span>, <span class="nb">18</span>]  <span class="cm"># liste de 5 éléments</span>
+vide  <span class="op">=</span> []                        <span class="cm"># liste vide</span></pre>
+  </div>
+
+  <h3>Méthode 2 — Avec list() et range()</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="cm"># Convertir un range en liste</span>
+entiers <span class="op">=</span> <span class="fn">list</span>(<span class="fn">range</span>(<span class="nb">5</span>))      <span class="cm"># [0, 1, 2, 3, 4]</span>
+pairs   <span class="op">=</span> <span class="fn">list</span>(<span class="fn">range</span>(<span class="nb">0</span>, <span class="nb">11</span>, <span class="nb">2</span>)) <span class="cm"># [0, 2, 4, 6, 8, 10]</span>
+
+<span class="cm"># Convertir une chaîne en liste de caractères</span>
+lettres <span class="op">=</span> <span class="fn">list</span>(<span class="st">"NSI"</span>)           <span class="cm"># ['N', 'S', 'I']</span></pre>
+  </div>
+
+  <h3>Méthode 3 — Répétition (initialisation)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="cm"># Créer une liste de 10 zéros</span>
+zeros <span class="op">=</span> [<span class="nb">0</span>] <span class="op">*</span> <span class="nb">10</span>         <span class="cm"># [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]</span>
+
+<span class="cm"># Créer une liste de 5 chaînes vides</span>
+cases <span class="op">=</span> [<span class="st">""</span>] <span class="op">*</span> <span class="nb">5</span>         <span class="cm"># ['', '', '', '', '']</span></pre>
+  </div>
+
+  <h3>Méthode 4 — Construction par ajout progressif</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>ma_liste <span class="op">=</span> []
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">5</span>)<span class="op">:</span>
+    ma_liste.append(i <span class="op">**</span> <span class="nb">2</span>)
+<span class="cm"># ma_liste vaut [0, 1, 4, 9, 16]</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 3 — ACCÈS & INDICES
+═══════════════════════════════════════════ -->
+<div class="section" id="s3">
+  <div class="section-num">03 — Accès & indices</div>
+  <h2>Accéder aux éléments</h2>
+
+  <p>Les éléments d'une liste sont numérotés par des <strong>indices</strong> qui commencent à <code>0</code>.</p>
+
+  <div class="box box-warn">
+    <div class="box-title">⚠ Règle fondamentale</div>
+    Le premier élément a l'indice <strong>0</strong>, le deuxième l'indice <strong>1</strong>… Pour une liste de longueur <strong>n</strong>, le dernier élément a l'indice <strong>n−1</strong>.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Indices positifs et négatifs</span></div>
+    <pre>notes <span class="op">=</span> [<span class="nb">14</span>, <span class="nb">17</span>, <span class="nb">9</span>, <span class="nb">12</span>, <span class="nb">18</span>]
+<span class="cm">#         0    1   2    3    4    ← indices positifs</span>
+<span class="cm">#        -5   -4  -3   -2   -1   ← indices négatifs</span>
+
+<span class="fn">print</span>(notes[<span class="nb">0</span>])   <span class="cm"># 14  (premier élément)</span>
+<span class="fn">print</span>(notes[<span class="nb">2</span>])   <span class="cm"># 9</span>
+<span class="fn">print</span>(notes[<span class="nb">4</span>])   <span class="cm"># 18  (dernier, indice = len-1)</span>
+<span class="fn">print</span>(notes[<span class="op">-</span><span class="nb">1</span>])  <span class="cm"># 18  (dernier avec indice négatif)</span>
+<span class="fn">print</span>(notes[<span class="op">-</span><span class="nb">2</span>])  <span class="cm"># 12  (avant-dernier)</span></pre>
+  </div>
+
+  <h3>Slicing — Extraction d'une sous-liste</h3>
+  <p>La syntaxe <code>liste[debut:fin]</code> extrait une sous-liste (le dernier indice est <strong>exclu</strong>).</p>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>notes <span class="op">=</span> [<span class="nb">14</span>, <span class="nb">17</span>, <span class="nb">9</span>, <span class="nb">12</span>, <span class="nb">18</span>]
+
+<span class="fn">print</span>(notes[<span class="nb">1</span>:<span class="nb">4</span>])   <span class="cm"># [17, 9, 12]  (indices 1, 2, 3)</span>
+<span class="fn">print</span>(notes[:<span class="nb">3</span>])    <span class="cm"># [14, 17, 9]  (du début à l'indice 2)</span>
+<span class="fn">print</span>(notes[<span class="nb">2</span>:])    <span class="cm"># [9, 12, 18]  (de l'indice 2 à la fin)</span>
+<span class="fn">print</span>(notes[:])     <span class="cm"># [14, 17, 9, 12, 18]  (copie complète)</span>
+<span class="fn">print</span>(notes[::<span class="nb">2</span>])   <span class="cm"># [14, 9, 18]  (un élément sur deux)</span></pre>
+  </div>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 Longueur d'une liste</div>
+    <code>len(liste)</code> retourne le nombre d'éléments. Très utile pour accéder au dernier élément : <code>liste[len(liste)-1]</code> ou simplement <code>liste[-1]</code>.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 4 — MODIFIER UNE LISTE
+═══════════════════════════════════════════ -->
+<div class="section" id="s4">
+  <div class="section-num">04 — Modifier une liste</div>
+  <h2>Modifier le contenu d'une liste</h2>
+
+  <div class="box box-key">
+    <div class="box-title">🔑 Les listes sont mutables</div>
+    Contrairement aux chaînes de caractères, les listes sont <strong>mutables</strong> : on peut modifier leurs éléments directement par affectation.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Modification d'éléments</span></div>
+    <pre>notes <span class="op">=</span> [<span class="nb">14</span>, <span class="nb">17</span>, <span class="nb">9</span>, <span class="nb">12</span>, <span class="nb">18</span>]
+
+<span class="cm"># Modifier un élément par son indice</span>
+notes[<span class="nb">2</span>] <span class="op">=</span> <span class="nb">15</span>
+<span class="fn">print</span>(notes)  <span class="cm"># [14, 17, 15, 12, 18]</span>
+
+<span class="cm"># Modifier une tranche</span>
+notes[<span class="nb">0</span>:<span class="nb">2</span>] <span class="op">=</span> [<span class="nb">10</span>, <span class="nb">11</span>]
+<span class="fn">print</span>(notes)  <span class="cm"># [10, 11, 15, 12, 18]</span></pre>
+  </div>
+
+  <h3>Ajouter et supprimer des éléments</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>fruits <span class="op">=</span> [<span class="st">"pomme"</span>, <span class="st">"banane"</span>, <span class="st">"cerise"</span>]
+
+<span class="cm"># Ajouter en fin de liste</span>
+fruits.append(<span class="st">"datte"</span>)
+<span class="fn">print</span>(fruits)  <span class="cm"># ['pomme', 'banane', 'cerise', 'datte']</span>
+
+<span class="cm"># Insérer à un indice précis</span>
+fruits.insert(<span class="nb">1</span>, <span class="st">"abricot"</span>)
+<span class="fn">print</span>(fruits)  <span class="cm"># ['pomme', 'abricot', 'banane', 'cerise', 'datte']</span>
+
+<span class="cm"># Supprimer par valeur (première occurrence)</span>
+fruits.remove(<span class="st">"banane"</span>)
+<span class="fn">print</span>(fruits)  <span class="cm"># ['pomme', 'abricot', 'cerise', 'datte']</span>
+
+<span class="cm"># Supprimer et récupérer le dernier élément</span>
+dernier <span class="op">=</span> fruits.pop()
+<span class="fn">print</span>(dernier)  <span class="cm"># 'datte'</span>
+<span class="fn">print</span>(fruits)   <span class="cm"># ['pomme', 'abricot', 'cerise']</span>
+
+<span class="cm"># Supprimer par indice</span>
+<span class="kw">del</span> fruits[<span class="nb">0</span>]
+<span class="fn">print</span>(fruits)  <span class="cm"># ['abricot', 'cerise']</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 5 — FONCTIONS & MÉTHODES
+═══════════════════════════════════════════ -->
+<div class="section" id="s5">
+  <div class="section-num">05 — Fonctions & méthodes</div>
+  <h2>Fonctions et méthodes à connaître</h2>
+
+  <p>Python fournit de nombreuses fonctions et méthodes pour manipuler les listes. Les <strong>fonctions</strong> s'appliquent avec <code>fonction(liste)</code>, les <strong>méthodes</strong> avec <code>liste.methode()</code>.</p>
+
+  <h3>Fonctions natives (built-in)</h3>
+  <div class="fn-grid">
+    <div class="fn-card">
+      <div class="fn-card-hdr">len() <span>→ int</span></div>
+      <div class="fn-card-body">Retourne le <strong>nombre d'éléments</strong> de la liste.</div>
+      <div class="fn-card-ex">len([3, 1, 4, 1, 5]) → 5</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">sum() <span>→ nombre</span></div>
+      <div class="fn-card-body">Calcule la <strong>somme</strong> de tous les éléments (types numériques).</div>
+      <div class="fn-card-ex">sum([3, 1, 4, 1, 5]) → 14</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">min() <span>→ élément</span></div>
+      <div class="fn-card-body">Retourne le <strong>plus petit</strong> élément de la liste.</div>
+      <div class="fn-card-ex">min([3, 1, 4, 1, 5]) → 1</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">max() <span>→ élément</span></div>
+      <div class="fn-card-body">Retourne le <strong>plus grand</strong> élément de la liste.</div>
+      <div class="fn-card-ex">max([3, 1, 4, 1, 5]) → 5</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">sorted() <span>→ list</span></div>
+      <div class="fn-card-body">Retourne une <strong>nouvelle liste triée</strong>. La liste originale n'est pas modifiée. Option : <code>reverse=True</code> pour l'ordre décroissant.</div>
+      <div class="fn-card-ex">sorted([3,1,4]) → [1,3,4]</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">reversed() <span>→ itérateur</span></div>
+      <div class="fn-card-body">Retourne un itérateur en ordre inverse. Utiliser <code>list(reversed(...))</code> pour obtenir une liste.</div>
+      <div class="fn-card-ex">list(reversed([1,2,3])) → [3,2,1]</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">enumerate() <span>→ itérateur</span></div>
+      <div class="fn-card-body">Itère en fournissant <strong>l'indice et la valeur</strong> simultanément. Très utile dans les boucles for.</div>
+      <div class="fn-card-ex">for i, v in enumerate(L): ...</div>
+    </div>
+    <div class="fn-card">
+      <div class="fn-card-hdr">in <span>→ bool</span></div>
+      <div class="fn-card-body">Teste si une valeur est <strong>présente</strong> dans la liste. Retourne <code>True</code> ou <code>False</code>.</div>
+      <div class="fn-card-ex">3 in [1,2,3,4] → True</div>
+    </div>
+  </div>
+
+  <h3>Méthodes des listes</h3>
+  <table>
+    <tr><th>Méthode</th><th>Description</th><th>Exemple</th></tr>
+    <tr><td><code>append(x)</code></td><td>Ajoute <code>x</code> en fin de liste</td><td><code>L.append(5)</code></td></tr>
+    <tr><td><code>insert(i, x)</code></td><td>Insère <code>x</code> à l'indice <code>i</code></td><td><code>L.insert(0, 99)</code></td></tr>
+    <tr><td><code>remove(x)</code></td><td>Supprime la 1ère occurrence de <code>x</code> (erreur si absent)</td><td><code>L.remove(5)</code></td></tr>
+    <tr><td><code>pop(i)</code></td><td>Supprime et retourne l'élément d'indice <code>i</code> (dernier par défaut)</td><td><code>L.pop()</code></td></tr>
+    <tr><td><code>index(x)</code></td><td>Retourne l'indice de la 1ère occurrence de <code>x</code></td><td><code>L.index(17)</code></td></tr>
+    <tr><td><code>count(x)</code></td><td>Compte le nombre d'occurrences de <code>x</code></td><td><code>L.count(0)</code></td></tr>
+    <tr><td><code>sort()</code></td><td>Trie la liste <strong>en place</strong> (modifie la liste)</td><td><code>L.sort()</code></td></tr>
+    <tr><td><code>reverse()</code></td><td>Inverse l'ordre <strong>en place</strong></td><td><code>L.reverse()</code></td></tr>
+    <tr><td><code>extend(L2)</code></td><td>Ajoute tous les éléments de <code>L2</code> à la fin</td><td><code>L.extend([6,7])</code></td></tr>
+    <tr><td><code>copy()</code></td><td>Retourne une <strong>copie superficielle</strong> de la liste</td><td><code>L2 = L.copy()</code></td></tr>
+    <tr><td><code>clear()</code></td><td>Vide la liste (la rend vide)</td><td><code>L.clear()</code></td></tr>
+  </table>
+
+  <div class="box box-alert">
+    <div class="box-title">🚨 sort() vs sorted()</div>
+    <code>L.sort()</code> modifie la liste <strong>en place</strong> et ne retourne rien (<code>None</code>).<br>
+    <code>sorted(L)</code> retourne une <strong>nouvelle liste triée</strong> sans modifier <code>L</code>.<br>
+    Erreur classique : <code>L = L.sort()</code> → L vaut <code>None</code> !
+  </div>
+
+  <h3>Concaténation et copie</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="cm"># Concaténation avec +</span>
+L1 <span class="op">=</span> [<span class="nb">1</span>, <span class="nb">2</span>, <span class="nb">3</span>]
+L2 <span class="op">=</span> [<span class="nb">4</span>, <span class="nb">5</span>]
+L3 <span class="op">=</span> L1 <span class="op">+</span> L2          <span class="cm"># [1, 2, 3, 4, 5]</span>
+
+<span class="cm"># ⚠ Piège : affectation simple ≠ copie !</span>
+A <span class="op">=</span> [<span class="nb">1</span>, <span class="nb">2</span>, <span class="nb">3</span>]
+B <span class="op">=</span> A               <span class="cm"># B et A pointent vers le MÊME objet</span>
+B[<span class="nb">0</span>] <span class="op">=</span> <span class="nb">99</span>
+<span class="fn">print</span>(A)            <span class="cm"># [99, 2, 3]  ← A est aussi modifiée !</span>
+
+<span class="cm"># ✅ Copie correcte</span>
+C <span class="op">=</span> A.copy()        <span class="cm"># ou C = A[:]  ou C = list(A)</span>
+C[<span class="nb">0</span>] <span class="op">=</span> <span class="nb">0</span>
+<span class="fn">print</span>(A)            <span class="cm"># [99, 2, 3]  ← A n'est pas modifiée</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 6 — PARCOURS
+═══════════════════════════════════════════ -->
+<div class="section" id="s6">
+  <div class="section-num">06 — Parcours</div>
+  <h2>Parcourir une liste</h2>
+
+  <h3>Parcours par valeur (for ... in)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>notes <span class="op">=</span> [<span class="nb">14</span>, <span class="nb">17</span>, <span class="nb">9</span>, <span class="nb">12</span>, <span class="nb">18</span>]
+
+<span class="kw">for</span> note <span class="kw">in</span> notes<span class="op">:</span>
+    <span class="fn">print</span>(note)        <span class="cm"># affiche 14, puis 17, 9, 12, 18</span>
+
+<span class="cm"># ✅ À utiliser quand on n'a pas besoin de l'indice</span></pre>
+  </div>
+
+  <h3>Parcours par indice (for ... in range)</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>notes <span class="op">=</span> [<span class="nb">14</span>, <span class="nb">17</span>, <span class="nb">9</span>, <span class="nb">12</span>, <span class="nb">18</span>]
+
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(notes))<span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"notes[{i}] = {notes[i]}"</span>)
+
+<span class="cm"># ✅ Indispensable pour modifier les éléments ou comparer notes[i] et notes[i+1]</span></pre>
+  </div>
+
+  <h3>Parcours avec enumerate() — indice ET valeur</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>notes <span class="op">=</span> [<span class="nb">14</span>, <span class="nb">17</span>, <span class="nb">9</span>, <span class="nb">12</span>, <span class="nb">18</span>]
+
+<span class="kw">for</span> i, note <span class="kw">in</span> <span class="fn">enumerate</span>(notes)<span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">f"Élève {i} : {note}/20"</span>)
+<span class="cm"># Élève 0 : 14/20</span>
+<span class="cm"># Élève 1 : 17/20  ...</span></pre>
+  </div>
+
+  <h3>Calculs classiques sur une liste — à maîtriser !</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Somme, moyenne, maximum, comptage</span></div>
+    <pre>notes <span class="op">=</span> [<span class="nb">14</span>, <span class="nb">17</span>, <span class="nb">9</span>, <span class="nb">12</span>, <span class="nb">18</span>]
+
+<span class="cm"># ── Somme manuelle ──────────────────────────────</span>
+<span class="kw">def</span> <span class="df">somme</span>(L)<span class="op">:</span>
+    s <span class="op">=</span> <span class="nb">0</span>
+    <span class="kw">for</span> x <span class="kw">in</span> L<span class="op">:</span>
+        s <span class="op">=</span> s <span class="op">+</span> x   <span class="cm"># ou s += x</span>
+    <span class="kw">return</span> s
+
+<span class="fn">print</span>(somme(notes))  <span class="cm"># 70</span>
+<span class="cm"># Avec built-in : print(sum(notes))  # 70</span>
+
+<span class="cm"># ── Moyenne ─────────────────────────────────────</span>
+<span class="kw">def</span> <span class="df">moyenne</span>(L)<span class="op">:</span>
+    <span class="kw">if</span> <span class="fn">len</span>(L) <span class="op">==</span> <span class="nb">0</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="bi">None</span>   <span class="cm"># éviter division par zéro</span>
+    <span class="kw">return</span> somme(L) <span class="op">/</span> <span class="fn">len</span>(L)
+
+<span class="fn">print</span>(moyenne(notes))  <span class="cm"># 14.0</span>
+
+<span class="cm"># ── Maximum manuel ──────────────────────────────</span>
+<span class="kw">def</span> <span class="df">maximum</span>(L)<span class="op">:</span>
+    maxi <span class="op">=</span> L[<span class="nb">0</span>]          <span class="cm"># initialiser avec le 1er élément</span>
+    <span class="kw">for</span> x <span class="kw">in</span> L<span class="op">:</span>
+        <span class="kw">if</span> x <span class="op">&gt;</span> maxi<span class="op">:</span>
+            maxi <span class="op">=</span> x
+    <span class="kw">return</span> maxi
+
+<span class="fn">print</span>(maximum(notes))  <span class="cm"># 18</span>
+
+<span class="cm"># ── Comptage (éléments supérieurs à 10) ─────────</span>
+<span class="kw">def</span> <span class="df">compter_sup</span>(L, seuil)<span class="op">:</span>
+    compteur <span class="op">=</span> <span class="nb">0</span>
+    <span class="kw">for</span> x <span class="kw">in</span> L<span class="op">:</span>
+        <span class="kw">if</span> x <span class="op">&gt;</span> seuil<span class="op">:</span>
+            compteur <span class="op">+=</span> <span class="nb">1</span>
+    <span class="kw">return</span> compteur
+
+<span class="fn">print</span>(compter_sup(notes, <span class="nb">10</span>))  <span class="cm"># 4</span>
+
+<span class="cm"># ── Recherche d'un élément (présence) ───────────</span>
+<span class="kw">def</span> <span class="df">est_present</span>(L, valeur)<span class="op">:</span>
+    <span class="kw">for</span> x <span class="kw">in</span> L<span class="op">:</span>
+        <span class="kw">if</span> x <span class="op">==</span> valeur<span class="op">:</span>
+            <span class="kw">return</span> <span class="bi">True</span>
+    <span class="kw">return</span> <span class="bi">False</span>   <span class="cm"># non trouvé après toute la liste</span></pre>
+  </div>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 Bonnes pratiques</div>
+    <ul>
+      <li>Pour calculer la somme ou la moyenne, initialise le compteur à <code>0</code> <strong>avant</strong> la boucle.</li>
+      <li>Pour le maximum ou minimum, initialise avec <code>L[0]</code> (pas avec <code>0</code> !).</li>
+      <li>Une fonction qui cherche un élément doit retourner <code>False</code> <strong>après</strong> la boucle (pas à l'intérieur).</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 7 — LISTES EN COMPRÉHENSION
+═══════════════════════════════════════════ -->
+<div class="section" id="s7">
+  <div class="section-num">07 — Compréhension de liste</div>
+  <h2>Listes en compréhension</h2>
+
+  <div class="box box-info">
+    <div class="box-title">📐 Syntaxe</div>
+    <code>nouvelle_liste = [expression for variable in iterable if condition]</code><br>
+    La partie <code>if condition</code> est <strong>optionnelle</strong>.
+  </div>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Exemples progressifs</span></div>
+    <pre><span class="cm"># Carrés des entiers de 0 à 4</span>
+carres <span class="op">=</span> [x<span class="op">**</span><span class="nb">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">5</span>)]
+<span class="cm"># → [0, 1, 4, 9, 16]</span>
+
+<span class="cm"># Doubler chaque élément d'une liste</span>
+notes    <span class="op">=</span> [<span class="nb">14</span>, <span class="nb">17</span>, <span class="nb">9</span>, <span class="nb">12</span>, <span class="nb">18</span>]
+doubles  <span class="op">=</span> [n <span class="op">*</span> <span class="nb">2</span> <span class="kw">for</span> n <span class="kw">in</span> notes]
+<span class="cm"># → [28, 34, 18, 24, 36]</span>
+
+<span class="cm"># Garder uniquement les notes ≥ 10</span>
+admis <span class="op">=</span> [n <span class="kw">for</span> n <span class="kw">in</span> notes <span class="kw">if</span> n <span class="op">&gt;=</span> <span class="nb">10</span>]
+<span class="cm"># → [14, 17, 12, 18]</span>
+
+<span class="cm"># Convertir une liste de chaînes en majuscules</span>
+mots <span class="op">=</span> [<span class="st">"nsi"</span>, <span class="st">"python"</span>, <span class="st">"liste"</span>]
+MOTS <span class="op">=</span> [m.upper() <span class="kw">for</span> m <span class="kw">in</span> mots]
+<span class="cm"># → ['NSI', 'PYTHON', 'LISTE']</span>
+
+<span class="cm"># Équivalent avec boucle for classique</span>
+doubles_v2 <span class="op">=</span> []
+<span class="kw">for</span> n <span class="kw">in</span> notes<span class="op">:</span>
+    doubles_v2.append(n <span class="op">*</span> <span class="nb">2</span>)   <span class="cm"># identique à la compréhension</span></pre>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 8 — LISTES IMBRIQUÉES
+═══════════════════════════════════════════ -->
+<div class="section" id="s8">
+  <div class="section-num">08 — Listes imbriquées</div>
+  <h2>Listes de listes (tableaux 2D)</h2>
+
+  <p>Une liste peut contenir d'autres listes. On obtient ainsi un <strong>tableau à deux dimensions</strong> (lignes × colonnes), très utile pour représenter des matrices, des grilles ou des tableaux de données.</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Matrice 3×3</span></div>
+    <pre>matrice <span class="op">=</span> [
+    [<span class="nb">1</span>, <span class="nb">2</span>, <span class="nb">3</span>],   <span class="cm"># ligne 0</span>
+    [<span class="nb">4</span>, <span class="nb">5</span>, <span class="nb">6</span>],   <span class="cm"># ligne 1</span>
+    [<span class="nb">7</span>, <span class="nb">8</span>, <span class="nb">9</span>]    <span class="cm"># ligne 2</span>
+]
+
+<span class="cm"># Accès : matrice[ligne][colonne]</span>
+<span class="fn">print</span>(matrice[<span class="nb">0</span>])      <span class="cm"># [1, 2, 3]  (1ère ligne)</span>
+<span class="fn">print</span>(matrice[<span class="nb">1</span>][<span class="nb">2</span>])  <span class="cm"># 6  (ligne 1, colonne 2)</span>
+<span class="fn">print</span>(matrice[<span class="nb">2</span>][<span class="nb">0</span>])  <span class="cm"># 7  (ligne 2, colonne 0)</span>
+
+<span class="cm"># Parcourir toute la matrice</span>
+<span class="kw">for</span> ligne <span class="kw">in</span> matrice<span class="op">:</span>
+    <span class="kw">for</span> valeur <span class="kw">in</span> ligne<span class="op">:</span>
+        <span class="fn">print</span>(valeur, end<span class="op">=</span><span class="st">" "</span>)
+    <span class="fn">print</span>()   <span class="cm"># retour à la ligne entre les lignes</span>
+
+<span class="cm"># Créer une matrice de zéros 3×4</span>
+mat_zeros <span class="op">=</span> [[<span class="nb">0</span>] <span class="op">*</span> <span class="nb">4</span> <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">3</span>)]
+<span class="cm"># [[0,0,0,0], [0,0,0,0], [0,0,0,0]]</span></pre>
+  </div>
+
+  <div class="box box-alert">
+    <div class="box-title">🚨 Piège : copie de liste 2D</div>
+    <code>[[0]*4]*3</code> crée 3 références vers la <strong>même</strong> ligne ! Modifier une ligne modifie toutes les autres. Utiliser la compréhension : <code>[[0]*4 for _ in range(3)]</code>.
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 9 — EXERCICES
+═══════════════════════════════════════════ -->
+<div class="section" id="s9">
+  <div class="section-num">09 — Exercices</div>
+  <h2>Exercices progressifs</h2>
+  <p style="color:var(--muted);margin-bottom:20px;">5 exercices de difficulté croissante. Réfléchis avant de consulter la correction !</p>
+
+  <!-- EX 1 -->
+  <div class="exo-card">
+    <div class="exo-hdr easy">
+      <div>
+        <div class="exo-level">⭐ Niveau 1 · Exercice 1</div>
+        <div class="exo-title">Manipulation de base</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>On dispose de la liste <code>temperatures = [23, 18, 25, 31, 19, 27, 22]</code> représentant les températures (en °C) d'une semaine.</p>
+      <ol>
+        <li>Afficher le premier et le dernier élément.</li>
+        <li>Afficher la longueur de la liste.</li>
+        <li>Afficher la sous-liste des 3 premiers jours.</li>
+        <li>Modifier la température du mercredi (indice 2) à <code>20</code>.</li>
+        <li>Ajouter la température du dimanche : <code>21</code>.</li>
+        <li>Afficher la liste triée dans l'ordre croissant <strong>sans modifier</strong> la liste originale.</li>
+      </ol>
+      <div class="toggle-btn btn-corr" onclick="toggle('c1')"><span class="toggle-icon" id="ic1">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c1">
+        <div class="code-block" style="margin-top:8px;">
+          <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+          <pre>temperatures <span class="op">=</span> [<span class="nb">23</span>, <span class="nb">18</span>, <span class="nb">25</span>, <span class="nb">31</span>, <span class="nb">19</span>, <span class="nb">27</span>, <span class="nb">22</span>]
+
+<span class="fn">print</span>(temperatures[<span class="nb">0</span>])          <span class="cm"># 23  (lundi)</span>
+<span class="fn">print</span>(temperatures[<span class="op">-</span><span class="nb">1</span>])         <span class="cm"># 22  (dimanche si 7 jours)</span>
+<span class="fn">print</span>(<span class="fn">len</span>(temperatures))        <span class="cm"># 7</span>
+<span class="fn">print</span>(temperatures[:<span class="nb">3</span>])         <span class="cm"># [23, 18, 25]</span>
+temperatures[<span class="nb">2</span>] <span class="op">=</span> <span class="nb">20</span>
+temperatures.append(<span class="nb">21</span>)
+<span class="fn">print</span>(<span class="fn">sorted</span>(temperatures))     <span class="cm"># liste triée, original intact</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX 2 -->
+  <div class="exo-card">
+    <div class="exo-hdr easy">
+      <div>
+        <div class="exo-level">⭐ Niveau 1 · Exercice 2</div>
+        <div class="exo-title">Somme, moyenne, min, max</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>Écrire les fonctions suivantes en utilisant une <strong>boucle for</strong> (sans utiliser <code>sum()</code>, <code>min()</code>, <code>max()</code>) :</p>
+      <ol>
+        <li><code>calculer_somme(L)</code> : retourne la somme de tous les éléments de <code>L</code>.</li>
+        <li><code>calculer_moyenne(L)</code> : retourne la moyenne des éléments (attention à la liste vide).</li>
+        <li><code>trouver_minimum(L)</code> : retourne le plus petit élément.</li>
+        <li><code>trouver_maximum(L)</code> : retourne le plus grand élément.</li>
+      </ol>
+      <p>Tester avec <code>notes = [14, 17, 9, 12, 18, 11, 15]</code>.</p>
+      <div class="toggle-btn btn-hint" onclick="toggle('h2')"><span class="toggle-icon" id="ih2">▶</span> Indice</div>
+      <div class="hint-box" id="h2"><p>Pour la somme, initialise <code>s = 0</code>. Pour le maximum, initialise <code>maxi = L[0]</code> (pas 0 !). Pour la moyenne, vérifie <code>len(L) != 0</code> avant de diviser.</p></div>
+      <div class="toggle-btn btn-corr" onclick="toggle('c2')"><span class="toggle-icon" id="ic2">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c2">
+        <div class="code-block" style="margin-top:8px;">
+          <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+          <pre><span class="kw">def</span> <span class="df">calculer_somme</span>(L)<span class="op">:</span>
+    s <span class="op">=</span> <span class="nb">0</span>
+    <span class="kw">for</span> x <span class="kw">in</span> L<span class="op">:</span>
+        s <span class="op">+=</span> x
+    <span class="kw">return</span> s
+
+<span class="kw">def</span> <span class="df">calculer_moyenne</span>(L)<span class="op">:</span>
+    <span class="kw">if</span> <span class="fn">len</span>(L) <span class="op">==</span> <span class="nb">0</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="bi">None</span>
+    <span class="kw">return</span> calculer_somme(L) <span class="op">/</span> <span class="fn">len</span>(L)
+
+<span class="kw">def</span> <span class="df">trouver_minimum</span>(L)<span class="op">:</span>
+    mini <span class="op">=</span> L[<span class="nb">0</span>]
+    <span class="kw">for</span> x <span class="kw">in</span> L<span class="op">:</span>
+        <span class="kw">if</span> x <span class="op">&lt;</span> mini<span class="op">:</span>
+            mini <span class="op">=</span> x
+    <span class="kw">return</span> mini
+
+<span class="kw">def</span> <span class="df">trouver_maximum</span>(L)<span class="op">:</span>
+    maxi <span class="op">=</span> L[<span class="nb">0</span>]
+    <span class="kw">for</span> x <span class="kw">in</span> L<span class="op">:</span>
+        <span class="kw">if</span> x <span class="op">&gt;</span> maxi<span class="op">:</span>
+            maxi <span class="op">=</span> x
+    <span class="kw">return</span> maxi
+
+notes <span class="op">=</span> [<span class="nb">14</span>, <span class="nb">17</span>, <span class="nb">9</span>, <span class="nb">12</span>, <span class="nb">18</span>, <span class="nb">11</span>, <span class="nb">15</span>]
+<span class="fn">print</span>(calculer_somme(notes))    <span class="cm"># 96</span>
+<span class="fn">print</span>(calculer_moyenne(notes))  <span class="cm"># 13.71...</span>
+<span class="fn">print</span>(trouver_minimum(notes))   <span class="cm"># 9</span>
+<span class="fn">print</span>(trouver_maximum(notes))   <span class="cm"># 18</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX 3 -->
+  <div class="exo-card">
+    <div class="exo-hdr medium">
+      <div>
+        <div class="exo-level">⭐⭐ Niveau 2 · Exercice 3</div>
+        <div class="exo-title">Recherche et filtrage</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>Écrire les fonctions suivantes :</p>
+      <ol>
+        <li><code>compter_pairs(L)</code> : retourne le nombre d'entiers pairs dans <code>L</code>.</li>
+        <li><code>inverser(L)</code> : retourne une <strong>nouvelle</strong> liste avec les éléments dans l'ordre inverse, <strong>sans utiliser</strong> <code>reverse()</code> ni le slicing <code>[::-1]</code>.</li>
+        <li><code>indice_maxi(L)</code> : retourne l'<strong>indice</strong> de l'élément maximum de <code>L</code> (en cas d'ex-æquo, retourner le premier).</li>
+        <li><code>occurrences(L, val)</code> : retourne le nombre de fois que <code>val</code> apparaît dans <code>L</code>, sans utiliser <code>.count()</code>.</li>
+      </ol>
+      <div class="toggle-btn btn-hint" onclick="toggle('h3')"><span class="toggle-icon" id="ih3">▶</span> Indice</div>
+      <div class="hint-box" id="h3"><p>Pour <code>inverser</code>, utilise un parcours par indice en décrémentant de <code>len(L)-1</code> jusqu'à <code>0</code>. Pour <code>indice_maxi</code>, mémorise l'indice <code>i_maxi</code> et compare à chaque étape.</p></div>
+      <div class="toggle-btn btn-corr" onclick="toggle('c3')"><span class="toggle-icon" id="ic3">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c3">
+        <div class="code-block" style="margin-top:8px;">
+          <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+          <pre><span class="kw">def</span> <span class="df">compter_pairs</span>(L)<span class="op">:</span>
+    cpt <span class="op">=</span> <span class="nb">0</span>
+    <span class="kw">for</span> x <span class="kw">in</span> L<span class="op">:</span>
+        <span class="kw">if</span> x <span class="op">%</span> <span class="nb">2</span> <span class="op">==</span> <span class="nb">0</span><span class="op">:</span>
+            cpt <span class="op">+=</span> <span class="nb">1</span>
+    <span class="kw">return</span> cpt
+
+<span class="kw">def</span> <span class="df">inverser</span>(L)<span class="op">:</span>
+    res <span class="op">=</span> []
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(L) <span class="op">-</span> <span class="nb">1</span>, <span class="op">-</span><span class="nb">1</span>, <span class="op">-</span><span class="nb">1</span>)<span class="op">:</span>
+        res.append(L[i])
+    <span class="kw">return</span> res
+
+<span class="kw">def</span> <span class="df">indice_maxi</span>(L)<span class="op">:</span>
+    i_maxi <span class="op">=</span> <span class="nb">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">1</span>, <span class="fn">len</span>(L))<span class="op">:</span>
+        <span class="kw">if</span> L[i] <span class="op">&gt;</span> L[i_maxi]<span class="op">:</span>
+            i_maxi <span class="op">=</span> i
+    <span class="kw">return</span> i_maxi
+
+<span class="kw">def</span> <span class="df">occurrences</span>(L, val)<span class="op">:</span>
+    cpt <span class="op">=</span> <span class="nb">0</span>
+    <span class="kw">for</span> x <span class="kw">in</span> L<span class="op">:</span>
+        <span class="kw">if</span> x <span class="op">==</span> val<span class="op">:</span>
+            cpt <span class="op">+=</span> <span class="nb">1</span>
+    <span class="kw">return</span> cpt</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX 4 -->
+  <div class="exo-card">
+    <div class="exo-hdr medium">
+      <div>
+        <div class="exo-level">⭐⭐ Niveau 2 · Exercice 4</div>
+        <div class="exo-title">Construction et transformation</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>Écrire les fonctions suivantes en utilisant des <strong>listes en compréhension</strong> quand c'est possible :</p>
+      <ol>
+        <li><code>multiples(n, limite)</code> : retourne la liste des multiples de <code>n</code> entre <code>1</code> et <code>limite</code> inclus.</li>
+        <li><code>notes_sur_20(L, total)</code> : convertit une liste de notes sur <code>total</code> en notes sur 20 (résultat arrondi à 1 décimale).</li>
+        <li><code>supprimer_doublons(L)</code> : retourne une nouvelle liste sans doublons, en conservant l'ordre d'apparition.</li>
+        <li><code>fusionner_tries(L1, L2)</code> : étant données deux listes <strong>triées</strong>, retourne une liste fusionnée triée sans utiliser <code>sort()</code>.</li>
+      </ol>
+      <div class="toggle-btn btn-hint" onclick="toggle('h4')"><span class="toggle-icon" id="ih4">▶</span> Indice</div>
+      <div class="hint-box" id="h4"><p>Pour <code>supprimer_doublons</code>, utilise une liste résultat et la condition <code>if x not in res</code>. Pour la fusion, utilise deux indices <code>i</code> et <code>j</code> et compare <code>L1[i]</code> à <code>L2[j]</code>.</p></div>
+      <div class="toggle-btn btn-corr" onclick="toggle('c4')"><span class="toggle-icon" id="ic4">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c4">
+        <div class="code-block" style="margin-top:8px;">
+          <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+          <pre><span class="kw">def</span> <span class="df">multiples</span>(n, limite)<span class="op">:</span>
+    <span class="kw">return</span> [x <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">1</span>, limite <span class="op">+</span> <span class="nb">1</span>) <span class="kw">if</span> x <span class="op">%</span> n <span class="op">==</span> <span class="nb">0</span>]
+
+<span class="kw">def</span> <span class="df">notes_sur_20</span>(L, total)<span class="op">:</span>
+    <span class="kw">return</span> [<span class="fn">round</span>(n <span class="op">*</span> <span class="nb">20</span> <span class="op">/</span> total, <span class="nb">1</span>) <span class="kw">for</span> n <span class="kw">in</span> L]
+
+<span class="kw">def</span> <span class="df">supprimer_doublons</span>(L)<span class="op">:</span>
+    res <span class="op">=</span> []
+    <span class="kw">for</span> x <span class="kw">in</span> L<span class="op">:</span>
+        <span class="kw">if</span> x <span class="kw">not</span> <span class="kw">in</span> res<span class="op">:</span>
+            res.append(x)
+    <span class="kw">return</span> res
+
+<span class="kw">def</span> <span class="df">fusionner_tries</span>(L1, L2)<span class="op">:</span>
+    res <span class="op">=</span> []
+    i, j <span class="op">=</span> <span class="nb">0</span>, <span class="nb">0</span>
+    <span class="kw">while</span> i <span class="op">&lt;</span> <span class="fn">len</span>(L1) <span class="kw">and</span> j <span class="op">&lt;</span> <span class="fn">len</span>(L2)<span class="op">:</span>
+        <span class="kw">if</span> L1[i] <span class="op">&lt;=</span> L2[j]<span class="op">:</span>
+            res.append(L1[i]); i <span class="op">+=</span> <span class="nb">1</span>
+        <span class="kw">else</span><span class="op">:</span>
+            res.append(L2[j]); j <span class="op">+=</span> <span class="nb">1</span>
+    res.extend(L1[i:])   <span class="cm"># ajouter les restes</span>
+    res.extend(L2[j:])
+    <span class="kw">return</span> res
+
+<span class="fn">print</span>(multiples(<span class="nb">3</span>, <span class="nb">20</span>))           <span class="cm"># [3,6,9,12,15,18]</span>
+<span class="fn">print</span>(notes_sur_20([<span class="nb">12</span>,<span class="nb">15</span>,<span class="nb">8</span>], <span class="nb">25</span>))  <span class="cm"># [9.6, 12.0, 6.4]</span>
+<span class="fn">print</span>(supprimer_doublons([<span class="nb">1</span>,<span class="nb">2</span>,<span class="nb">1</span>,<span class="nb">3</span>,<span class="nb">2</span>]))  <span class="cm"># [1, 2, 3]</span>
+<span class="fn">print</span>(fusionner_tries([<span class="nb">1</span>,<span class="nb">3</span>,<span class="nb">5</span>],[<span class="nb">2</span>,<span class="nb">4</span>,<span class="nb">6</span>]))  <span class="cm"># [1,2,3,4,5,6]</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX 5 -->
+  <div class="exo-card">
+    <div class="exo-hdr hard">
+      <div>
+        <div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 5</div>
+        <div class="exo-title">Problème complet — Gestion de notes</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>On souhaite analyser les résultats d'une classe. On dispose de deux listes de même longueur :</p>
+      <div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+      <pre>eleves <span class="op">=</span> [<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Clara"</span>, <span class="st">"David"</span>, <span class="st">"Eva"</span>]
+notes  <span class="op">=</span> [<span class="nb">16</span>, <span class="nb">9</span>, <span class="nb">14</span>, <span class="nb">11</span>, <span class="nb">18</span>]</pre></div>
+      <ol>
+        <li>Écrire <code>moyenne_classe(notes)</code> qui retourne la moyenne arrondie à 2 décimales.</li>
+        <li>Écrire <code>meilleur_eleve(eleves, notes)</code> qui retourne le prénom de l'élève ayant la meilleure note.</li>
+        <li>Écrire <code>eleves_admis(eleves, notes, seuil)</code> qui retourne la liste des prénoms des élèves ayant une note ≥ <code>seuil</code>.</li>
+        <li>Écrire <code>bilan(eleves, notes)</code> qui affiche pour chaque élève : son prénom, sa note, et si c'est au-dessus ou en dessous de la moyenne.</li>
+        <li>Écrire <code>rang(eleves, notes, prenom)</code> qui retourne le rang (position) d'un élève dans le classement (1 = meilleur).</li>
+      </ol>
+      <div class="toggle-btn btn-hint" onclick="toggle('h5')"><span class="toggle-icon" id="ih5">▶</span> Indice</div>
+      <div class="hint-box" id="h5"><p>Pour <code>meilleur_eleve</code>, utilise <code>indice_maxi</code> (exercice 3). Pour <code>rang</code>, trie les notes dans l'ordre décroissant et cherche la position de la note de l'élève.</p></div>
+      <div class="toggle-btn btn-corr" onclick="toggle('c5')"><span class="toggle-icon" id="ic5">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c5">
+        <div class="code-block" style="margin-top:8px;">
+          <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+          <pre>eleves <span class="op">=</span> [<span class="st">"Alice"</span>, <span class="st">"Bob"</span>, <span class="st">"Clara"</span>, <span class="st">"David"</span>, <span class="st">"Eva"</span>]
+notes  <span class="op">=</span> [<span class="nb">16</span>, <span class="nb">9</span>, <span class="nb">14</span>, <span class="nb">11</span>, <span class="nb">18</span>]
+
+<span class="kw">def</span> <span class="df">moyenne_classe</span>(notes)<span class="op">:</span>
+    <span class="kw">return</span> <span class="fn">round</span>(<span class="fn">sum</span>(notes) <span class="op">/</span> <span class="fn">len</span>(notes), <span class="nb">2</span>)
+
+<span class="kw">def</span> <span class="df">meilleur_eleve</span>(eleves, notes)<span class="op">:</span>
+    i_maxi <span class="op">=</span> <span class="nb">0</span>
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">1</span>, <span class="fn">len</span>(notes))<span class="op">:</span>
+        <span class="kw">if</span> notes[i] <span class="op">&gt;</span> notes[i_maxi]<span class="op">:</span>
+            i_maxi <span class="op">=</span> i
+    <span class="kw">return</span> eleves[i_maxi]
+
+<span class="kw">def</span> <span class="df">eleves_admis</span>(eleves, notes, seuil)<span class="op">:</span>
+    <span class="kw">return</span> [eleves[i] <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(notes))
+            <span class="kw">if</span> notes[i] <span class="op">&gt;=</span> seuil]
+
+<span class="kw">def</span> <span class="df">bilan</span>(eleves, notes)<span class="op">:</span>
+    moy <span class="op">=</span> moyenne_classe(notes)
+    <span class="fn">print</span>(<span class="st">f"Moyenne de la classe : {moy}"</span>)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(eleves))<span class="op">:</span>
+        statut <span class="op">=</span> <span class="st">"✅"</span> <span class="kw">if</span> notes[i] <span class="op">&gt;=</span> moy <span class="kw">else</span> <span class="st">"❌"</span>
+        <span class="fn">print</span>(<span class="st">f"{statut} {eleves[i]} : {notes[i]}/20"</span>)
+
+<span class="kw">def</span> <span class="df">rang</span>(eleves, notes, prenom)<span class="op">:</span>
+    i <span class="op">=</span> eleves.index(prenom)
+    note_eleve <span class="op">=</span> notes[i]
+    notes_triees <span class="op">=</span> <span class="fn">sorted</span>(notes, reverse<span class="op">=</span><span class="bi">True</span>)
+    <span class="kw">return</span> notes_triees.index(note_eleve) <span class="op">+</span> <span class="nb">1</span>  <span class="cm"># +1 car rang commence à 1</span>
+
+<span class="fn">print</span>(moyenne_classe(notes))              <span class="cm"># 13.6</span>
+<span class="fn">print</span>(meilleur_eleve(eleves, notes))      <span class="cm"># Eva</span>
+<span class="fn">print</span>(eleves_admis(eleves, notes, <span class="nb">10</span>))   <span class="cm"># ['Alice', 'Clara', 'David', 'Eva']</span>
+bilan(eleves, notes)
+<span class="fn">print</span>(rang(eleves, notes, <span class="st">"Clara"</span>))      <span class="cm"># 3</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 10 — POUR LE DST
+═══════════════════════════════════════════ -->
+<div class="dst-section" id="s10">
+  <div class="section-num">10 — Checklist DST</div>
+  <h2>Ce que tu dois maîtriser pour le DST</h2>
+  <p style="color:var(--text2);margin-bottom:20px;">Assure-toi de cocher chaque point avant le jour J.</p>
+
+  <h3 style="color:var(--red);margin-top:8px;">Syntaxe de base</h3>
+  <ul class="checklist">
+    <li>Créer une liste littérale, une liste vide, une liste avec <code>list(range(...))</code></li>
+    <li>Accéder à un élément par son indice positif <code>L[i]</code> et négatif <code>L[-1]</code></li>
+    <li>Extraire une sous-liste avec le slicing <code>L[a:b]</code></li>
+    <li>Modifier un élément : <code>L[i] = nouvelle_valeur</code></li>
+    <li>Connaître la longueur : <code>len(L)</code></li>
+    <li>Tester l'appartenance : <code>x in L</code></li>
+  </ul>
+
+  <h3 style="color:var(--red);">Méthodes essentielles</h3>
+  <ul class="checklist">
+    <li><code>append(x)</code> — ajouter en fin</li>
+    <li><code>insert(i, x)</code> — insérer à un indice</li>
+    <li><code>remove(x)</code> — supprimer par valeur</li>
+    <li><code>pop()</code> — supprimer et retourner le dernier</li>
+    <li><code>sort()</code> — trier en place ; <code>sorted(L)</code> — nouvelle liste triée</li>
+    <li><code>index(x)</code> — trouver l'indice d'une valeur</li>
+    <li><code>count(x)</code> — compter les occurrences</li>
+  </ul>
+
+  <h3 style="color:var(--red);">Parcours et algorithmes</h3>
+  <ul class="checklist">
+    <li>Parcours par valeur : <code>for x in L:</code></li>
+    <li>Parcours par indice : <code>for i in range(len(L)):</code></li>
+    <li>Écrire une fonction qui calcule la somme (accumulateur initialisé à 0)</li>
+    <li>Écrire une fonction qui calcule la moyenne (gérer la liste vide)</li>
+    <li>Écrire une fonction qui cherche le maximum (initialiser avec <code>L[0]</code>)</li>
+    <li>Compter les éléments vérifiant une condition (accumulateur <code>cpt = 0</code>)</li>
+    <li>Rechercher un élément et retourner <code>True</code>/<code>False</code></li>
+    <li>Construire une liste résultat avec <code>append</code> dans une boucle</li>
+  </ul>
+
+  <div class="box box-alert" style="margin-top:20px;">
+    <div class="box-title">🚨 Erreurs classiques à éviter</div>
+    <ul>
+      <li>❌ <code>maxi = 0</code> pour initialiser le maximum (que faire si tous les éléments sont négatifs ?)</li>
+      <li>❌ Retourner <code>False</code> à l'intérieur de la boucle de recherche au lieu d'après</li>
+      <li>❌ <code>L = L.sort()</code> → L vaut <code>None</code> ! Utiliser <code>L.sort()</code> sans affectation</li>
+      <li>❌ Modifier une liste pendant qu'on la parcourt (utiliser une copie)</li>
+      <li>❌ <code>L[len(L)]</code> → IndexError ! Le dernier indice est <code>len(L)-1</code></li>
+      <li>❌ Confondre <code>remove(x)</code> (par valeur) et <code>pop(i)</code> (par indice)</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════════════
+     SECTION 11 — QCM
+═══════════════════════════════════════════ -->
+<div class="section" id="s11">
+  <div class="section-num">11 — QCM</div>
+  <h2>Quiz interactif — Les Listes en Python</h2>
+  <p style="color:var(--muted);margin-bottom:16px;">Banque de <strong style="color:var(--green)">52 questions</strong>. Choisissez le nombre de questions et lancez le tirage.</p>
+
+  <div class="qcm-controls">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)">Nombre de questions :</span>
+    <label class="qcm-size-opt" id="lbl5"><input type="radio" name="qsz" value="5" checked onchange="onSzChange()"> 5 questions</label>
+    <label class="qcm-size-opt" id="lbl10"><input type="radio" name="qsz" value="10" onchange="onSzChange()"> 10 questions</label>
+    <button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button>
+  </div>
+
+  <div id="qcm-questions"></div>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">
+    <button class="qcm-btn qcm-btn-primary" onclick="submitQCM()" id="btn-sub">✅ Valider mes réponses</button>
+    <button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button>
+  </div>
+  <div id="qcm-result"></div>
+</div>
+
+</div><!-- /container -->
+<footer>NSI · 1ère Spécialité · Les Listes en Python · Cours complet + Exercices + QCM</footer>
+
+<script>
+// ── TOGGLE ──────────────────────────────────────────
+function toggle(id) {
+  const el = document.getElementById(id);
+  const icon = document.getElementById('i'+id);
+  el.classList.toggle('open');
+  if(icon) icon.textContent = el.classList.contains('open') ? '▼' : '▶';
+}
+function onSzChange() {
+  const v5 = document.querySelector('[name="qsz"][value="5"]').checked;
+  document.getElementById('lbl5').style.borderColor  = v5  ? '#2563eb' : '';
+  document.getElementById('lbl10').style.borderColor = !v5 ? '#2563eb' : '';
+}
+
+// ── 52 QUESTIONS ────────────────────────────────────
+const BANK = [
+  // ── CRÉATION ──
+  {q:"Quelle est la syntaxe correcte pour créer une liste vide en Python ?",
+   o:["list()","[]","{}","()"],a:1,
+   ex:"<code>[]</code> crée une liste vide. On peut aussi écrire <code>list()</code>. <code>{}</code> crée un dictionnaire, <code>()</code> un tuple."},
+
+  {q:"Que retourne <code>list(range(4))</code> ?",
+   o:["[1, 2, 3, 4]","[0, 1, 2, 3]","[0, 1, 2, 3, 4]","range(4)"],a:1,
+   ex:"<code>range(n)</code> génère les entiers de 0 à n-1. <code>list(range(4))</code> donne <code>[0, 1, 2, 3]</code>."},
+
+  {q:"Que produit <code>[0] * 3</code> ?",
+   o:["[0, 0, 0]","[0, 3]","[0, 1, 2]","[3]"],a:0,
+   ex:"L'opérateur <code>*</code> sur une liste répète ses éléments. <code>[0] * 3</code> donne <code>[0, 0, 0]</code>."},
+
+  {q:"Quelle est la valeur de <code>type([1, 2, 3])</code> ?",
+   o:["<class 'tuple'>","<class 'array'>","<class 'list'>","<class 'set'>"],a:2,
+   ex:"En Python, les listes sont de type <code>list</code>. <code>type([1,2,3])</code> retourne <code>&lt;class 'list'&gt;</code>."},
+
+  {q:"Que contient la liste créée par <code>list('abc')</code> ?",
+   o:["['abc']","['a', 'b', 'c']","[97, 98, 99]","['a,b,c']"],a:1,
+   ex:"<code>list()</code> appliqué à une chaîne crée une liste de caractères. <code>list('abc')</code> donne <code>['a', 'b', 'c']</code>."},
+
+  // ── INDICES & ACCÈS ──
+  {q:"Quelle est la valeur de <code>L[0]</code> si <code>L = [10, 20, 30]</code> ?",
+   o:["20","10","30","IndexError"],a:1,
+   ex:"Les indices commencent à 0. <code>L[0]</code> est le premier élément, soit <code>10</code>."},
+
+  {q:"Que retourne <code>L[-1]</code> pour <code>L = [5, 8, 3]</code> ?",
+   o:["5","8","3","IndexError"],a:2,
+   ex:"L'indice <code>-1</code> désigne le dernier élément. Pour <code>[5, 8, 3]</code>, <code>L[-1]</code> vaut <code>3</code>."},
+
+  {q:"Quelle est la valeur de <code>L[1:3]</code> si <code>L = [10, 20, 30, 40, 50]</code> ?",
+   o:["[10, 20, 30]","[20, 30]","[20, 30, 40]","[10, 20]"],a:1,
+   ex:"<code>L[a:b]</code> extrait les éléments d'indice <code>a</code> à <code>b-1</code> inclus. <code>L[1:3]</code> donne <code>[20, 30]</code>."},
+
+  {q:"Que produit <code>L[::-1]</code> pour <code>L = [1, 2, 3]</code> ?",
+   o:["[1, 2, 3]","[3, 2, 1]","[-1, -2, -3]","[]"],a:1,
+   ex:"<code>[::-1]</code> est un slicing avec un pas de -1 : il parcourt la liste à l'envers. Résultat : <code>[3, 2, 1]</code>."},
+
+  {q:"Pour <code>L = [4, 8, 15, 16, 23]</code>, que vaut <code>L[-2]</code> ?",
+   o:["23","15","16","4"],a:2,
+   ex:"<code>L[-2]</code> est l'avant-dernier élément. Pour cette liste, c'est <code>16</code>."},
+
+  {q:"Quelle erreur se produit lors de l'accès <code>L[5]</code> si <code>L = [1, 2, 3]</code> ?",
+   o:["ValueError","TypeError","IndexError","NameError"],a:2,
+   ex:"Un accès à un indice hors des bornes lève une <code>IndexError</code>. Pour une liste de 3 éléments, les indices valides sont 0, 1, 2 (ou -1, -2, -3)."},
+
+  // ── len, sum, min, max ──
+  {q:"Que retourne <code>len([1, 2, 3, 4])</code> ?",
+   o:["3","4","5","6"],a:1,
+   ex:"<code>len()</code> retourne le nombre d'éléments. La liste <code>[1, 2, 3, 4]</code> en contient <code>4</code>."},
+
+  {q:"Que retourne <code>sum([2, 4, 6])</code> ?",
+   o:["6","12","24","246"],a:1,
+   ex:"<code>sum()</code> calcule la somme de tous les éléments. 2 + 4 + 6 = <code>12</code>."},
+
+  {q:"Pour calculer la moyenne d'une liste L en Python, on écrit :",
+   o:["sum(L) / len(L)","sum(L) / count(L)","avg(L)","mean(L)"],a:0,
+   ex:"La moyenne se calcule en divisant la somme par le nombre d'éléments : <code>sum(L) / len(L)</code>. Il n'y a pas de fonction <code>avg()</code> ou <code>mean()</code> natives."},
+
+  {q:"Que retourne <code>min([3, 1, 4, 1, 5])</code> ?",
+   o:["3","1","4","5"],a:1,
+   ex:"<code>min()</code> retourne le plus petit élément. Le minimum de <code>[3, 1, 4, 1, 5]</code> est <code>1</code>."},
+
+  {q:"Que retourne <code>max([3, 1, 4, 1, 5])</code> ?",
+   o:["3","4","5","1"],a:2,
+   ex:"<code>max()</code> retourne le plus grand élément. Le maximum de <code>[3, 1, 4, 1, 5]</code> est <code>5</code>."},
+
+  // ── MÉTHODES ──
+  {q:"Que fait <code>L.append(7)</code> ?",
+   o:["Insère 7 au début","Ajoute 7 à la fin","Remplace le dernier élément par 7","Insère 7 à l'indice 7"],a:1,
+   ex:"<code>append(x)</code> ajoute l'élément <code>x</code> à la <strong>fin</strong> de la liste. La liste est modifiée en place."},
+
+  {q:"Quelle est la différence entre <code>L.sort()</code> et <code>sorted(L)</code> ?",
+   o:["Aucune différence","sort() trie en place (modifie L), sorted() retourne une nouvelle liste","sorted() trie en place, sort() retourne une copie","sort() est plus rapide que sorted()"],a:1,
+   ex:"<code>L.sort()</code> modifie L en place et retourne <code>None</code>. <code>sorted(L)</code> laisse L intacte et retourne une nouvelle liste triée."},
+
+  {q:"Que retourne <code>L.pop()</code> pour <code>L = [1, 2, 3]</code> ?",
+   o:["1","2","3","None"],a:2,
+   ex:"<code>pop()</code> sans argument supprime <strong>et retourne</strong> le dernier élément. Pour <code>[1, 2, 3]</code>, elle retourne <code>3</code> et L devient <code>[1, 2]</code>."},
+
+  {q:"Que fait <code>L.remove(5)</code> si 5 n'est pas dans la liste ?",
+   o:["Ne fait rien","Supprime le premier élément","Lève une ValueError","Retourne False"],a:2,
+   ex:"<code>remove(x)</code> lève une <code>ValueError</code> si <code>x</code> n'est pas dans la liste. Il faut vérifier avec <code>if x in L</code> avant."},
+
+  {q:"Que retourne <code>[1, 2, 3].index(2)</code> ?",
+   o:["2","1","0","True"],a:1,
+   ex:"<code>index(x)</code> retourne l'indice de la première occurrence de x. <code>2</code> est à l'indice <code>1</code>."},
+
+  {q:"Que retourne <code>[1, 2, 1, 3, 1].count(1)</code> ?",
+   o:["1","2","3","5"],a:2,
+   ex:"<code>count(x)</code> compte le nombre d'occurrences de x. <code>1</code> apparaît 3 fois dans <code>[1, 2, 1, 3, 1]</code>."},
+
+  {q:"Que vaut L après <code>L = [1, 2]; L.extend([3, 4])</code> ?",
+   o:["[1, 2, [3, 4]]","[1, 2, 3, 4]","[[1, 2], [3, 4]]","[3, 4]"],a:1,
+   ex:"<code>extend()</code> ajoute chaque élément de la liste argument à la fin de L, un par un. L vaut donc <code>[1, 2, 3, 4]</code>."},
+
+  {q:"Que vaut L après <code>L = [3, 1, 2]; L.sort()</code> ?",
+   o:["[3, 1, 2]","[1, 2, 3]","None","sorted([3, 1, 2])"],a:1,
+   ex:"<code>sort()</code> trie la liste <strong>en place</strong> dans l'ordre croissant par défaut. L vaut donc <code>[1, 2, 3]</code>."},
+
+  {q:"Quelle instruction insère 0 au début de <code>L = [1, 2, 3]</code> ?",
+   o:["L.append(0)","L.add(0, 0)","L.insert(0, 0)","L.prepend(0)"],a:2,
+   ex:"<code>insert(i, x)</code> insère x à l'indice i. <code>L.insert(0, 0)</code> insère <code>0</code> à l'indice <code>0</code> (avant tous les autres éléments)."},
+
+  // ── MODIFICATION & COPIE ──
+  {q:"Après <code>A = [1, 2, 3]; B = A; B[0] = 99</code>, que vaut A ?",
+   o:["[1, 2, 3]","[99, 2, 3]","[1, 99, 3]","[99]"],a:1,
+   ex:"<code>B = A</code> ne crée pas une copie : B et A pointent vers le <strong>même objet</strong>. Modifier B modifie aussi A."},
+
+  {q:"Comment créer une vraie copie indépendante de la liste L ?",
+   o:["B = L","B = copy(L)","B = L.copy()","B = [L]"],a:2,
+   ex:"<code>L.copy()</code> crée une copie superficielle indépendante. On peut aussi utiliser <code>L[:]</code> ou <code>list(L)</code>."},
+
+  {q:"Que vaut L après <code>L = [1, 2, 3]; del L[1]</code> ?",
+   o:["[1, 3]","[2, 3]","[1, 2]","[1, 2, 3]"],a:0,
+   ex:"<code>del L[i]</code> supprime l'élément à l'indice i. <code>del L[1]</code> supprime <code>2</code>, donc L devient <code>[1, 3]</code>."},
+
+  // ── PARCOURS ──
+  {q:"Quelle boucle affiche chaque élément de L = [10, 20, 30] ?",
+   o:["for i in len(L): print(L)","for x in L: print(x)","for x = L: print(x)","while x in L: print(x)"],a:1,
+   ex:"<code>for x in L:</code> est le parcours par valeur. À chaque itération, x prend la valeur d'un élément de L."},
+
+  {q:"Quel est le résultat de ce code ?\n<code>s = 0\nfor x in [1, 2, 3, 4]: s += x\nprint(s)</code>",
+   o:["10","24","4","0"],a:0,
+   ex:"On accumule : s = 0+1+2+3+4 = <code>10</code>. C'est le pattern classique du calcul de somme."},
+
+  {q:"Pour parcourir une liste L avec son indice et sa valeur simultanément, on utilise :",
+   o:["for i, x in L:","for i, x in zip(range(len(L)), L):","for i, x in enumerate(L):","for i in range(L):"],a:2,
+   ex:"<code>enumerate(L)</code> retourne des couples (indice, valeur). C'est la façon idiomatique de Python pour avoir l'indice et la valeur ensemble."},
+
+  {q:"Que fait ce code ?\n<code>maxi = L[0]\nfor x in L:\n    if x > maxi:\n        maxi = x</code>",
+   o:["Calcule la somme","Trouve le minimum","Trie la liste","Trouve le maximum"],a:3,
+   ex:"Ce code implémente la recherche du maximum. On initialise <code>maxi</code> avec le premier élément, puis on compare chaque élément."},
+
+  {q:"Pourquoi initialise-t-on le maximum avec <code>L[0]</code> plutôt qu'avec <code>0</code> ?",
+   o:["C'est plus rapide","Pour éviter une erreur si tous les éléments sont négatifs","C'est obligatoire en Python","Pour que la boucle commence à l'indice 1"],a:1,
+   ex:"Si tous les éléments sont négatifs (ex. [-5, -3, -1]), initialiser avec 0 donnerait le mauvais résultat (0 ne serait jamais remplacé). Initialiser avec L[0] est toujours correct."},
+
+  {q:"Quelle erreur contient cette recherche ?\n<code>def chercher(L, val):\n    for x in L:\n        if x == val: return True\n        else: return False</code>",
+   o:["Aucune erreur","return False est dans la boucle : la fonction s'arrête dès le 1er élément","La boucle for est incorrecte","return True est mal placé"],a:1,
+   ex:"Le <code>return False</code> est à l'intérieur du <code>else</code> de la boucle, donc la fonction s'arrête après avoir testé seulement le premier élément. Il faut mettre <code>return False</code> <strong>après</strong> la boucle."},
+
+  // ── COMPRÉHENSION ──
+  {q:"Que produit <code>[x**2 for x in range(4)]</code> ?",
+   o:["[1, 4, 9, 16]","[0, 1, 4, 9]","[0, 1, 2, 3]","[0, 1, 4, 9, 16]"],a:1,
+   ex:"<code>range(4)</code> génère 0, 1, 2, 3. On calcule x² pour chaque : 0, 1, 4, 9. Résultat : <code>[0, 1, 4, 9]</code>."},
+
+  {q:"Que produit <code>[x for x in [1,2,3,4,5] if x % 2 == 0]</code> ?",
+   o:["[1, 3, 5]","[2, 4]","[1, 2, 3, 4, 5]","[0, 2, 4]"],a:1,
+   ex:"La condition <code>x % 2 == 0</code> filtre les éléments pairs. Résultat : <code>[2, 4]</code>."},
+
+  {q:"Comment s'écrit en compréhension : 'liste des doubles de L' ?",
+   o:["[x for x * 2 in L]","[x * 2 for x in L]","[2 * L for x in L]","double(L)"],a:1,
+   ex:"La syntaxe est <code>[expression for variable in iterable]</code>. L'expression est <code>x * 2</code>, l'itérable est <code>L</code>."},
+
+  {q:"Quelle est l'équivalence boucle for de <code>[n**2 for n in L if n > 0]</code> ?",
+   o:["res=[]; for n in L: res.append(n**2)","res=[]; for n in L:\n    if n>0: res.append(n**2)","for n in L if n>0: res.append(n**2)","res=[n**2 for n in L]"],a:1,
+   ex:"La compréhension avec condition est équivalente à une boucle for avec un if à l'intérieur, suivi d'un append."},
+
+  // ── LISTES IMBRIQUÉES ──
+  {q:"Pour <code>M = [[1,2],[3,4],[5,6]]</code>, que vaut <code>M[1][0]</code> ?",
+   o:["1","2","3","4"],a:2,
+   ex:"<code>M[1]</code> est la 2ème sous-liste : <code>[3, 4]</code>. <code>M[1][0]</code> est son premier élément : <code>3</code>."},
+
+  {q:"Combien d'éléments contient <code>[[1,2,3],[4,5,6]]</code> au premier niveau ?",
+   o:["6","3","2","1"],a:2,
+   ex:"Au premier niveau, la liste contient <strong>2 éléments</strong> : <code>[1,2,3]</code> et <code>[4,5,6]</code>. <code>len([[1,2,3],[4,5,6]])</code> vaut 2."},
+
+  {q:"Quelle instruction crée correctement une matrice 2×3 de zéros ?",
+   o:["[[0]*3]*2","[[0]*2]*3","[[0]*3 for _ in range(2)]","[0]*6"],a:2,
+   ex:"<code>[[0]*3]*2</code> crée 2 références vers la même ligne (piège !). <code>[[0]*3 for _ in range(2)]</code> crée 2 listes indépendantes."},
+
+  // ── PIÈGES ──
+  {q:"Que vaut L après <code>L = [1, 2, 3]; L = L.sort()</code> ?",
+   o:["[1, 2, 3]","[3, 2, 1]","None","Erreur"],a:2,
+   ex:"<code>L.sort()</code> trie en place et retourne <code>None</code>. En faisant <code>L = L.sort()</code>, on écrase L avec <code>None</code> !"},
+
+  {q:"Que vaut L après <code>L = [1, 2, 3]; M = L; M.append(4)</code> ?",
+   o:["[1, 2, 3]","[1, 2, 3, 4]","[4]","Erreur"],a:1,
+   ex:"<code>M = L</code> ne copie pas la liste : M et L pointent vers le même objet. Ajouter un élément via M le fait aussi dans L."},
+
+  {q:"Que retourne <code>[1, 2] + [3, 4]</code> ?",
+   o:["[1, 2, 3, 4]","[[1,2],[3,4]]","[4, 6]","Erreur"],a:0,
+   ex:"L'opérateur <code>+</code> concatène deux listes. <code>[1,2] + [3,4]</code> donne <code>[1, 2, 3, 4]</code>."},
+
+  {q:"Que vaut <code>3 in [1, 2, 3, 4]</code> ?",
+   o:["3","True","False","2"],a:1,
+   ex:"L'opérateur <code>in</code> teste l'appartenance. <code>3 in [1,2,3,4]</code> retourne <code>True</code> car 3 est bien dans la liste."},
+
+  {q:"Que produit <code>sorted([3, 1, 2], reverse=True)</code> ?",
+   o:["[1, 2, 3]","[3, 2, 1]","[-3, -1, -2]","Erreur"],a:1,
+   ex:"<code>reverse=True</code> dans <code>sorted()</code> trie dans l'ordre <strong>décroissant</strong>. Résultat : <code>[3, 2, 1]</code>."},
+
+  {q:"Quelle est la valeur de L après <code>L = [1,2,3]; L.insert(1, 99)</code> ?",
+   o:["[1, 99, 2, 3]","[99, 1, 2, 3]","[1, 2, 99, 3]","[1, 2, 3, 99]"],a:0,
+   ex:"<code>insert(1, 99)</code> insère 99 <strong>à l'indice 1</strong>, en décalant les éléments suivants. L devient <code>[1, 99, 2, 3]</code>."},
+
+  // ── ALGORITHMES ──
+  {q:"Quelle fonction retourne le nombre d'éléments strictement positifs d'une liste ?",
+   o:["def f(L): return sum(L > 0)","def f(L):\n  c=0\n  for x in L:\n    if x>0: c+=1\n  return c","def f(L): return len(L > 0)","def f(L): return count(L, x > 0)"],a:1,
+   ex:"Il faut parcourir la liste et incrémenter un compteur pour chaque élément positif. La syntaxe <code>sum(L > 0)</code> ne fonctionne pas sur une liste Python classique."},
+
+  {q:"Pour chercher si val est dans L sans utiliser 'in', on utilise :",
+   o:["def f(L,v):\n  for x in L:\n    if x==v: return True\n  return False","def f(L,v):\n  for x in L:\n    if x==v: return True\n    return False","def f(L,v):\n  if L.find(v): return True","def f(L,v): return L.search(v)"],a:0,
+   ex:"Le return False doit être <strong>après</strong> la boucle (pas dans le else). Si on trouve val, on retourne True immédiatement. Si on sort de la boucle sans l'avoir trouvé, on retourne False."},
+
+  {q:"Quel est le résultat de ce code ?\n<code>L = [2, 5, 1, 8, 3]\nresultat = L[0]\nfor x in L:\n    if x < resultat:\n        resultat = x\nprint(resultat)</code>",
+   o:["8","2","1","5"],a:2,
+   ex:"Ce code cherche le minimum. On initialise avec L[0]=2, puis on compare avec chaque élément. 1 < 2, donc résultat vaut finalement <code>1</code>."},
+
+  {q:"Comment construire la liste [0, 2, 4, 6, 8] en une ligne ?",
+   o:["list(range(0, 10, 2))","list(range(0, 8, 2))","[x for x in range(10) if x*2]","[0, 2, 4, 6, 8] uniquement"],a:0,
+   ex:"<code>range(0, 10, 2)</code> génère 0, 2, 4, 6, 8 (de 0 à 9 avec un pas de 2). <code>list()</code> le convertit en liste."},
+
+  {q:"Quelle est la bonne façon de supprimer tous les éléments d'une liste L ?",
+   o:["L = None","del L","L.clear()","L.remove(L)"],a:2,
+   ex:"<code>L.clear()</code> vide la liste en gardant la variable L (qui pointe désormais vers une liste vide). <code>del L</code> supprimerait la variable, et <code>L = None</code> ferait pointer L vers None."},
+
+  {q:"Que retourne <code>len([[1,2],[3,4,5],[6]])</code> ?",
+   o:["6","3","2","7"],a:1,
+   ex:"La liste contient 3 éléments au premier niveau : <code>[1,2]</code>, <code>[3,4,5]</code>, <code>[6]</code>. <code>len()</code> retourne donc <code>3</code>."},
+
+  {q:"Comment accéder au dernier élément d'une liste L sans connaître sa taille ?",
+   o:["L[last]","L[len(L)]","L[-1]","L.last()"],a:2,
+   ex:"<code>L[-1]</code> accède au dernier élément avec un indice négatif. C'est l'équivalent de <code>L[len(L)-1]</code>, mais plus concis."},
+
+  {q:"Que produit <code>[str(x) for x in [1, 2, 3]]</code> ?",
+   o:["[1, 2, 3]","['1', '2', '3']","['str(1)', 'str(2)', 'str(3)']","Erreur"],a:1,
+   ex:"La compréhension applique <code>str()</code> à chaque entier, convertissant la liste d'entiers en liste de chaînes : <code>['1', '2', '3']</code>."},
+
+  {q:"Quelle est la valeur de <code>L[2:2]</code> pour n'importe quelle liste L ?",
+   o:["L[2]","[]","None","IndexError"],a:1,
+   ex:"Un slicing avec debut == fin donne toujours une liste vide <code>[]</code>. Il n'y a aucun élément entre l'indice 2 et l'indice 2 (exclu)."},
+
+  {q:"Que fait <code>L = sorted(L, reverse=True)</code> comparé à <code>L.sort(reverse=True)</code> ?",
+   o:["Exactement la même chose","sorted() crée une nouvelle liste, sort() modifie en place — le résultat final de L est identique","sorted() est plus lent","sort() fonctionne avec reverse=True mais pas sorted()"],a:1,
+   ex:"Les deux tris L par ordre décroissant. La différence : <code>sorted()</code> crée un nouvel objet (puis on le réassigne à L), <code>sort()</code> modifie L directement en place. Le résultat pour L est le même."},
+];
+
+// ── ENGINE ──────────────────────────────────────
+let curQs = [], submitted = false, qSz = 5;
+const getSz = () => parseInt(document.querySelector('[name="qsz"]:checked')?.value||5);
+const shuffle = a => { const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; };
+
+function newQCM() {
+  submitted = false; qSz = getSz();
+  curQs = shuffle(BANK).slice(0, qSz);
+  const c = document.getElementById('qcm-questions'); c.innerHTML = '';
+  curQs.forEach((q,qi) => {
+    const sh = shuffle(q.o.map((t,i) => ({t,i}))); q._sh = sh;
+    const opts = sh.map((o,si) => `<label class="qcm-opt" id="opt-${qi}-${si}"><input type="radio" name="q${qi}" value="${si}"><span>${o.t}</span></label>`).join('');
+    c.innerHTML += `<div class="qcm-q" id="qb-${qi}"><div class="qcm-num">Question ${qi+1} / ${qSz}</div><div class="qcm-question">${q.q}</div><div class="qcm-opts">${opts}</div><div class="qcm-fb" id="fb-${qi}"></div></div>`;
+  });
+  const r = document.getElementById('qcm-result'); r.style.display='none'; r.innerHTML='';
+  const btn = document.getElementById('btn-sub'); btn.disabled=false; btn.style.opacity='1';
+  document.getElementById('qcm-result').style.display='none';
+  onSzChange();
+}
+
+function submitQCM() {
+  if(submitted) return; submitted = true; let score = 0;
+  curQs.forEach((q,qi) => {
+    const sel = document.querySelector(`input[name="q${qi}"]:checked`);
+    const block = document.getElementById(`qb-${qi}`);
+    const fb = document.getElementById(`fb-${qi}`);
+    const corrSi = q._sh.findIndex(o => o.i === q.a);
+    document.querySelectorAll(`input[name="q${qi}"]`).forEach(r => r.disabled=true);
+    const cl = document.getElementById(`opt-${qi}-${corrSi}`);
+    if(cl) cl.classList.add('opt-ok');
+    if(sel) {
+      const chosen = parseInt(sel.value);
+      if(chosen === corrSi) { score++; block.classList.add('correct'); fb.className='qcm-fb show ok'; fb.innerHTML='✅ Bonne réponse ! '+q.ex; }
+      else { block.classList.add('wrong'); document.getElementById(`opt-${qi}-${chosen}`)?.classList.add('opt-ko'); fb.className='qcm-fb show ko'; fb.innerHTML='❌ Mauvaise réponse. '+q.ex; }
+    } else { block.classList.add('wrong'); fb.className='qcm-fb show ko'; fb.innerHTML='⚠️ Pas de réponse. '+q.ex; }
+  });
+  const pct = (score/qSz)*100, ratio = score/qSz;
+  const col = ratio<0.3?'#dc2626':ratio<0.5?'#d97706':ratio<0.7?'#ca8a04':ratio<0.9?'#059669':'#0891b2';
+  const msgs = p => p<30?'💪 Relis le cours !':p<50?'📖 Quelques révisions s\'imposent.':p<70?'👍 Pas mal, continue !':p<90?'🎉 Très bien !':'🏆 Parfait, maîtrise totale !';
+  const note = Math.round((score/qSz)*20);
+  const r = document.getElementById('qcm-result');
+  r.style.display='block';
+  r.innerHTML=`<div class="score-big" style="color:${col}">${score}<span style="font-size:26px;opacity:.5">/${qSz}</span></div><div class="score-sub">≈ <strong>${note}/20</strong></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%;background:${col}" id="sfill"></div></div><div class="score-msg" style="color:${col}">${msgs(pct)}</div>`;
+  setTimeout(()=>{ const f=document.getElementById('sfill'); if(f) f.style.width=pct+'%'; }, 80);
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+  document.getElementById('btn-sub').disabled=true;
+  document.getElementById('btn-sub').style.opacity='.5';
+}
+
+document.addEventListener('DOMContentLoaded', () => { newQCM(); onSzChange(); });
+</script>
+</body>
+</html>
