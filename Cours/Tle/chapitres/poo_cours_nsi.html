@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POO Python – Cours NSI Terminale</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:       #ffffff;
+    --surface:  #f8f9fa;
+    --surface2: #f1f3f5;
+    --border:   #dee2e6;
+    --text:     #1a1a2e;
+    --muted:    #6c757d;
+
+    /* couleurs thématiques par notion */
+    --c-class:  #1971c2;  /* classe / structure */
+    --c-init:   #2f9e44;  /* constructeur */
+    --c-method: #e67700;  /* méthodes */
+    --c-list:   #c92a2a;  /* listes d'objets */
+    --c-adv:    #6741d9;  /* notions avancées */
+
+    --ok:       #f0faf2;
+    --ok-b:     #b2dfc0;
+    --ok-h:     #d3f9d8;
+    --ok-t:     #2f9e44;
+
+    --bad:      #fff5f5;
+    --bad-b:    #ffc9c9;
+    --bad-h:    #ffe3e3;
+    --bad-t:    #c92a2a;
+
+    --warn:     #fff9db;
+    --warn-b:   #ffe066;
+    --warn-t:   #e67700;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    line-height: 1.75;
+    padding: 2rem 1rem 5rem;
+  }
+
+  /* ── NAV FIXE ── */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 200;
+    background: rgba(255,255,255,.95);
+    backdrop-filter: blur(6px);
+    border-bottom: 1px solid var(--border);
+    padding: .5rem 0;
+  }
+  .nav-inner {
+    max-width: 900px;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+    gap: .3rem;
+    flex-wrap: wrap;
+    padding: 0 1rem;
+  }
+  .nav-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    color: var(--muted);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-right: .4rem;
+    white-space: nowrap;
+  }
+  .nav-link {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    padding: 2px 9px;
+    border-radius: 20px;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    text-decoration: none;
+    transition: all .15s;
+    white-space: nowrap;
+  }
+  .nav-link:hover { color: var(--text); border-color: var(--text); background: var(--surface2); }
+  .nav-link.n1 { border-color: #a5c8f0; color: var(--c-class); }
+  .nav-link.n2 { border-color: #a3d9b1; color: var(--c-init); }
+  .nav-link.n3 { border-color: #ffd8a8; color: var(--c-method); }
+  .nav-link.n4 { border-color: #ffc9c9; color: var(--c-list); }
+  .nav-link.n5 { border-color: #d0bfff; color: var(--c-adv); }
+  .nav-sep { color: var(--border); margin: 0 .1rem; }
+
+  /* ── HEADER ── */
+  header {
+    max-width: 900px;
+    margin: 2rem auto 2.5rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+  .badge-top {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin-bottom: .8rem;
+    background: var(--surface2);
+  }
+  h1 {
+    font-size: clamp(1.6rem, 4vw, 2.4rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: .4rem;
+  }
+  h1 em { color: var(--c-adv); font-style: normal; }
+  .subtitle { color: var(--muted); font-size: .9rem; }
+
+  /* ── PAGE LAYOUT ── */
+  .page { max-width: 900px; margin: 0 auto; }
+
+  /* ── CHAPTER ── */
+  .chapter {
+    margin-bottom: 3rem;
+    scroll-margin-top: 80px;
+  }
+  .chapter-header {
+    display: flex;
+    align-items: baseline;
+    gap: .9rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: .65rem;
+    margin-bottom: 1.5rem;
+  }
+  .ch-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    color: var(--muted);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    padding-top: .15rem;
+  }
+  .ch-title {
+    font-size: 1.25rem;
+    font-weight: 800;
+  }
+  .ch-accent { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: .35rem; position: relative; top: -1px; }
+  .c1 .ch-accent { background: var(--c-class); }
+  .c2 .ch-accent { background: var(--c-init); }
+  .c3 .ch-accent { background: var(--c-method); }
+  .c4 .ch-accent { background: var(--c-list); }
+  .c5 .ch-accent { background: var(--c-adv); }
+
+  /* ── CONCEPT CARD ── */
+  .concept {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    margin-bottom: 1.4rem;
+    overflow: hidden;
+  }
+  .concept-head {
+    padding: .7rem 1.2rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+    display: flex;
+    align-items: center;
+    gap: .6rem;
+  }
+  .concept-icon { font-size: 1rem; }
+  .concept-title { font-weight: 700; font-size: .95rem; flex: 1; }
+  .concept-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .65rem;
+    color: var(--muted);
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .concept-body { padding: 1rem 1.2rem; }
+
+  p { margin-bottom: .65rem; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── CODE BLOCKS ── */
+  pre {
+    background: #f6f8fa;
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: .9rem 1.1rem;
+    overflow-x: auto;
+    margin: .8rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .82rem;
+    line-height: 1.7;
+    color: #24292f;
+  }
+  code { font-family: 'JetBrains Mono', monospace; font-size: .85em; color: #953800; background: #fff4e6; border-radius: 3px; padding: 1px 4px; }
+  pre code { background: none; color: inherit; padding: 0; border-radius: 0; }
+
+  /* Syntax highlighting — GitHub Light */
+  .kw  { color: #cf222e; font-weight: 600; }
+  .fn  { color: #6639ba; }
+  .cl  { color: #0550ae; font-weight: 600; }
+  .sf  { color: #953800; }
+  .st  { color: #0a3069; }
+  .cm  { color: #6e7781; font-style: italic; }
+  .nb  { color: #0550ae; }
+  .op  { color: #cf222e; }
+  .dec { color: #6639ba; font-style: italic; }
+
+  /* code annotations */
+  .ann {
+    display: inline-block;
+    background: #fff9db;
+    border: 1px solid #ffe066;
+    border-radius: 3px;
+    font-family: 'Syne', sans-serif;
+    font-size: .72rem;
+    font-style: normal;
+    color: #805700;
+    padding: 0 5px;
+    margin-left: .4rem;
+    vertical-align: middle;
+  }
+
+  /* ── COMPARAISON BON/MAUVAIS ── */
+  .compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: .75rem;
+    margin: .8rem 0;
+  }
+  @media (max-width: 620px) { .compare { grid-template-columns: 1fr; } }
+
+  .compare-block { border-radius: 7px; overflow: hidden; border: 1px solid; }
+  .compare-block.good { border-color: var(--ok-b); }
+  .compare-block.bad  { border-color: var(--bad-b); }
+
+  .compare-head {
+    padding: .35rem .8rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    font-weight: 700;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  .good .compare-head { background: var(--ok-h);  color: var(--ok-t);  border-bottom: 1px solid var(--ok-b); }
+  .bad  .compare-head { background: var(--bad-h); color: var(--bad-t); border-bottom: 1px solid var(--bad-b); }
+
+  .compare-block pre { margin: 0; border-radius: 0; border: none; }
+  .good pre { background: var(--ok); }
+  .bad  pre { background: var(--bad); }
+
+  /* token erreur */
+  .err { background: #ffebe9; color: #cf222e; text-decoration: underline wavy #cf222e; border-radius: 2px; padding: 0 2px; }
+  .fix { background: #dafbe1; color: #1a7f37; border-radius: 2px; padding: 0 2px; }
+
+  /* ── PIÈGE CARD ── */
+  .piege-card {
+    background: var(--bad);
+    border: 1px solid var(--bad-b);
+    border-radius: 8px;
+    overflow: hidden;
+    margin: .9rem 0;
+  }
+  .piege-head {
+    background: var(--bad-h);
+    border-bottom: 1px solid var(--bad-b);
+    padding: .4rem 1rem;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    font-weight: 700;
+    color: var(--bad-t);
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    gap: .4rem;
+  }
+  .piege-body { padding: .75rem 1rem; font-size: .88rem; }
+  .piege-body p { margin-bottom: .4rem; }
+
+  /* ── RÈGLE D'OR ── */
+  .regle {
+    background: var(--warn);
+    border: 1px solid var(--warn-b);
+    border-radius: 8px;
+    padding: .75rem 1rem;
+    margin: .9rem 0;
+    font-size: .88rem;
+    color: #5c3d00;
+  }
+  .regle strong { color: var(--warn-t); }
+
+  /* ── RÉSUMÉ VISUEL ── */
+  .recap-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+    gap: .75rem;
+    margin: .9rem 0;
+  }
+  .recap-cell {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 7px;
+    padding: .7rem .9rem;
+  }
+  .recap-cell .label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    color: var(--muted);
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    margin-bottom: .25rem;
+  }
+  .recap-cell .val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .82rem;
+    color: var(--text);
+    font-weight: 600;
+  }
+
+  /* ── TABLE ── */
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: .8rem 0;
+    font-size: .85rem;
+  }
+  th {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    padding: .5rem .8rem;
+    text-align: left;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  td {
+    border: 1px solid var(--border);
+    padding: .45rem .8rem;
+    vertical-align: top;
+  }
+  tr:nth-child(even) td { background: var(--surface); }
+
+  /* ── PROGRESSION STEPS ── */
+  .steps { margin: .8rem 0; }
+  .step {
+    display: flex;
+    gap: .9rem;
+    margin-bottom: .7rem;
+    align-items: flex-start;
+  }
+  .step-num {
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--text);
+    color: white;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: .2rem;
+  }
+  .step-content { flex: 1; }
+  .step-content strong { display: block; margin-bottom: .15rem; }
+
+  /* ── PRINT BTN ── */
+  .print-btn {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    padding: .5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: .06em;
+    transition: all .2s;
+    z-index: 100;
+  }
+  .print-btn:hover { color: var(--text); border-color: var(--text); }
+
+  hr.divider {
+    max-width: 900px;
+    margin: 2.5rem auto;
+    border: none;
+    border-top: 1px solid var(--border);
+  }
+
+  @media print {
+    body { font-size: 12px; padding: 0; }
+    nav, .print-btn { display: none; }
+    .chapter { page-break-inside: avoid; }
+    pre { background: #f6f8fa !important; }
+    .good pre { background: var(--ok) !important; }
+    .bad  pre { background: var(--bad) !important; }
+    header, .page { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── NAV ── -->
+<nav>
+  <div class="nav-inner">
+    <span class="nav-label">Cours POO</span>
+    <a class="nav-link n1" href="#ch1">1. La classe</a>
+    <a class="nav-link n2" href="#ch2">2. Constructeur</a>
+    <a class="nav-link n3" href="#ch3">3. Méthodes</a>
+    <a class="nav-link n4" href="#ch4">4. Listes d'objets</a>
+    <a class="nav-link n5" href="#ch5">5. Notions avancées</a>
+    <span class="nav-sep">·</span>
+    <a class="nav-link" href="poo_revision_nsi.html" style="color:var(--c-adv);border-color:#d0bfff">→ Exercices</a>
+  </div>
+</nav>
+
+<!-- ── HEADER ── -->
+<header>
+  <div class="badge-top">NSI · Terminale · Cours complet</div>
+  <h1>Programmation <em>Orientée Objet</em><br>en Python</h1>
+  <p class="subtitle">Cours progressif avec exemples annotés · Pièges identifiés · Référence baccalauréat</p>
+</header>
+
+<div class="page">
+
+<!-- ══════════════════════════════════════════════
+     CHAPITRE 1 — LA CLASSE
+     ══════════════════════════════════════════════ -->
+<section class="chapter c1" id="ch1">
+  <div class="chapter-header">
+    <span class="ch-num">CHAPITRE 01</span>
+    <span class="ch-title"><span class="ch-accent"></span>La classe : modéliser le réel</span>
+  </div>
+
+  <!-- 1.1 Pourquoi la POO ? -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">🔭</span>
+      <span class="concept-title">1.1 — Pourquoi la Programmation Orientée Objet ?</span>
+      <span class="concept-tag">Fondement</span>
+    </div>
+    <div class="concept-body">
+      <p>En programmation procédurale classique, on manipule des données <em>séparées</em> des fonctions qui les traitent. La POO regroupe <strong>données</strong> (attributs) et <strong>comportements</strong> (méthodes) dans une seule entité : l'<strong>objet</strong>.</p>
+      <p>Exemple concret : modéliser un compte bancaire.</p>
+      <div class="compare">
+        <div class="compare-block bad">
+          <div class="compare-head">✗ Sans POO — données éparpillées</div>
+<pre>titulaire = <span class="st">"Alice"</span>
+solde = <span class="nb">1500</span>
+
+<span class="kw">def</span> <span class="fn">deposer</span>(solde, montant):
+    <span class="kw">return</span> solde + montant
+
+<span class="kw">def</span> <span class="fn">afficher</span>(titulaire, solde):
+    <span class="fn">print</span>(titulaire, solde)
+<span class="cm"># Données et fonctions séparées,
+# rien n'empêche de mélanger
+# des soldes de comptes différents</span></pre>
+        </div>
+        <div class="compare-block good">
+          <div class="compare-head">✓ Avec POO — tout regroupé</div>
+<pre><span class="kw">class</span> <span class="cl">Compte</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titulaire, solde):
+        <span class="sf">self</span>.titulaire = titulaire
+        <span class="sf">self</span>.solde = solde
+
+    <span class="kw">def</span> <span class="fn">deposer</span>(<span class="sf">self</span>, montant):
+        <span class="sf">self</span>.solde += montant
+
+    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):
+        <span class="fn">print</span>(<span class="sf">self</span>.titulaire, <span class="sf">self</span>.solde)
+<span class="cm"># Données et comportements liés</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.2 Classe vs Objet -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">🏗️</span>
+      <span class="concept-title">1.2 — Classe et objet : le moule et la pièce</span>
+      <span class="concept-tag">Vocabulaire fondamental</span>
+    </div>
+    <div class="concept-body">
+      <div class="recap-grid">
+        <div class="recap-cell">
+          <div class="label">Classe</div>
+          <div class="val">Le moule / le plan</div>
+          <div style="font-size:.82rem;color:var(--muted);margin-top:.2rem">Défini une seule fois avec <code>class</code></div>
+        </div>
+        <div class="recap-cell">
+          <div class="label">Objet / Instance</div>
+          <div class="val">La pièce fabriquée</div>
+          <div style="font-size:.82rem;color:var(--muted);margin-top:.2rem">Créé autant de fois qu'on veut</div>
+        </div>
+        <div class="recap-cell">
+          <div class="label">Attribut</div>
+          <div class="val">Une donnée propre à chaque objet</div>
+          <div style="font-size:.82rem;color:var(--muted);margin-top:.2rem">Accédé via <code>objet.attribut</code></div>
+        </div>
+        <div class="recap-cell">
+          <div class="label">Méthode</div>
+          <div class="val">Un comportement de l'objet</div>
+          <div style="font-size:.82rem;color:var(--muted);margin-top:.2rem">Appelé via <code>objet.methode()</code></div>
+        </div>
+      </div>
+
+<pre><span class="kw">class</span> <span class="cl">Voiture</span>:             <span class="ann">← définition du moule (une seule fois)</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, marque, couleur):
+        <span class="sf">self</span>.marque  = marque
+        <span class="sf">self</span>.couleur = couleur
+
+v1 = <span class="cl">Voiture</span>(<span class="st">"Renault"</span>, <span class="st">"rouge"</span>)  <span class="ann">← instance 1</span>
+v2 = <span class="cl">Voiture</span>(<span class="st">"Peugeot"</span>, <span class="st">"bleue"</span>)  <span class="ann">← instance 2</span>
+
+<span class="cm"># v1 et v2 sont deux objets INDÉPENDANTS</span>
+<span class="fn">print</span>(v1.marque)   <span class="cm"># "Renault"</span>
+<span class="fn">print</span>(v2.marque)   <span class="cm"># "Peugeot"</span></pre>
+
+      <div class="regle">
+        <strong>⚑ Règle d'écriture :</strong> le nom d'une classe commence toujours par une <strong>majuscule</strong> (<code>Voiture</code>, <code>Compte</code>, <code>Eleve</code>). Le nom d'un objet commence par une minuscule (<code>v1</code>, <code>mon_compte</code>).
+      </div>
+    </div>
+  </div>
+
+  <!-- 1.3 Anatomie -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">🔬</span>
+      <span class="concept-title">1.3 — Anatomie d'une classe Python</span>
+      <span class="concept-tag">Structure</span>
+    </div>
+    <div class="concept-body">
+<pre><span class="kw">class</span> <span class="cl">NomClasse</span>:                        <span class="ann">← 1. mot-clé class + nom + deux-points</span>
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, param1, param2): <span class="ann">← 2. constructeur (toujours en premier)</span>
+        <span class="sf">self</span>.attribut1 = param1          <span class="ann">← 3. déclaration des attributs</span>
+        <span class="sf">self</span>.attribut2 = param2
+
+    <span class="kw">def</span> <span class="fn">ma_methode</span>(<span class="sf">self</span>):               <span class="ann">← 4. méthodes (après le constructeur)</span>
+        <span class="kw">return</span> <span class="sf">self</span>.attribut1</pre>
+
+      <p>Tout le corps de la classe est <strong>indenté d'un niveau</strong> sous le mot-clé <code>class</code>. Chaque méthode est indenté d'un niveau supplémentaire.</p>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════
+     CHAPITRE 2 — LE CONSTRUCTEUR
+     ══════════════════════════════════════════════ -->
+<section class="chapter c2" id="ch2">
+  <div class="chapter-header">
+    <span class="ch-num">CHAPITRE 02</span>
+    <span class="ch-title"><span class="ch-accent"></span>Le constructeur <code>__init__</code></span>
+  </div>
+
+  <!-- 2.1 Rôle -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">🔧</span>
+      <span class="concept-title">2.1 — Rôle et syntaxe du constructeur</span>
+      <span class="concept-tag">Incontournable</span>
+    </div>
+    <div class="concept-body">
+      <p>Le constructeur est la méthode automatiquement appelée par Python au moment de la <strong>création d'un objet</strong>. Son rôle : <strong>initialiser les attributs</strong> de l'objet.</p>
+
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-content">
+            <strong>Nom imposé : <code>__init__</code></strong>
+            Deux underscores avant et deux après. Ni plus ni moins. C'est une convention Python pour les méthodes spéciales.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-content">
+            <strong>Premier paramètre toujours <code>self</code></strong>
+            <code>self</code> représente l'objet en cours de création. Python le passe automatiquement — on n'écrit jamais <code>self</code> lors de l'appel.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-content">
+            <strong>Déclarer chaque attribut avec <code>self.nom = valeur</code></strong>
+            Sans <code>self.</code>, la variable est locale et disparaît à la fin du constructeur.
+          </div>
+        </div>
+        <div class="step">
+          <div class="step-num">4</div>
+          <div class="step-content">
+            <strong>Jamais de <code>return</code></strong>
+            Le constructeur ne retourne jamais rien. Python gère ça en interne.
+          </div>
+        </div>
+      </div>
+
+<pre><span class="kw">class</span> <span class="cl">Eleve</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom, note):
+        <span class="sf">self</span>.nom  = nom    <span class="cm"># attribut "nom" accessible partout dans la classe</span>
+        <span class="sf">self</span>.note = note   <span class="cm"># attribut "note"</span>
+        <span class="cm"># Pas de return !</span>
+
+<span class="cm"># Instanciation — on NE passe PAS self</span>
+e1 = <span class="cl">Eleve</span>(<span class="st">"Alice"</span>, <span class="nb">15</span>)
+e2 = <span class="cl">Eleve</span>(<span class="st">"Bob"</span>,   <span class="nb">11</span>)
+
+<span class="fn">print</span>(e1.nom)    <span class="cm"># "Alice"</span>
+<span class="fn">print</span>(e2.note)   <span class="cm"># 11</span></pre>
+    </div>
+  </div>
+
+  <!-- 2.2 Pièges constructeur -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">⚡</span>
+      <span class="concept-title">2.2 — Les 5 pièges du constructeur</span>
+      <span class="concept-tag">Erreurs fréquentes</span>
+    </div>
+    <div class="concept-body">
+
+      <!-- PIÈGE A -->
+      <div class="piege-card">
+        <div class="piege-head">⚡ Piège A — Oublier les doubles underscores</div>
+        <div class="piege-body">
+          <div class="compare">
+            <div class="compare-block bad">
+              <div class="compare-head">✗ Faux</div>
+<pre><span class="kw">def</span> <span class="fn"><span class="err">init</span></span>(<span class="sf">self</span>, nom):
+    <span class="sf">self</span>.nom = nom
+<span class="cm"># Python ne le reconnaît pas
+# comme constructeur → aucune erreur
+# mais l'objet sera vide !</span></pre>
+            </div>
+            <div class="compare-block good">
+              <div class="compare-head">✓ Correct</div>
+<pre><span class="kw">def</span> <span class="fn"><span class="fix">__init__</span></span>(<span class="sf">self</span>, nom):
+    <span class="sf">self</span>.nom = nom
+<span class="cm"># __ avant ET __ après</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIÈGE B -->
+      <div class="piege-card">
+        <div class="piege-head">⚡ Piège B — Oublier <code>self.</code> devant un attribut</div>
+        <div class="piege-body">
+          <div class="compare">
+            <div class="compare-block bad">
+              <div class="compare-head">✗ Faux — variable locale, pas un attribut</div>
+<pre><span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom, note):
+    <span class="err">nom</span>  = nom    <span class="cm"># variable locale !</span>
+    <span class="err">note</span> = note   <span class="cm"># disparaît à la fin de __init__</span>
+
+e = Eleve(<span class="st">"Alice"</span>, <span class="nb">15</span>)
+<span class="fn">print</span>(e.nom)  <span class="cm"># AttributeError !</span></pre>
+            </div>
+            <div class="compare-block good">
+              <div class="compare-head">✓ Correct — attribut d'instance</div>
+<pre><span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom, note):
+    <span class="sf">self</span>.<span class="fix">nom</span>  = nom   <span class="cm"># attribut, survit à __init__</span>
+    <span class="sf">self</span>.<span class="fix">note</span> = note
+
+e = Eleve(<span class="st">"Alice"</span>, <span class="nb">15</span>)
+<span class="fn">print</span>(e.nom)  <span class="cm"># "Alice" ✓</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIÈGE C -->
+      <div class="piege-card">
+        <div class="piege-head">⚡ Piège C — Mettre un <code>return</code> dans le constructeur</div>
+        <div class="piege-body">
+          <div class="compare">
+            <div class="compare-block bad">
+              <div class="compare-head">✗ Faux</div>
+<pre><span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom):
+    <span class="sf">self</span>.nom = nom
+    <span class="err">return self</span>  <span class="cm"># TypeError immédiat</span></pre>
+            </div>
+            <div class="compare-block good">
+              <div class="compare-head">✓ Correct</div>
+<pre><span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom):
+    <span class="sf">self</span>.nom = nom
+    <span class="cm"># pas de return : Python fait ça</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIÈGE D -->
+      <div class="piege-card">
+        <div class="piege-head">⚡ Piège D — Passer <code>self</code> lors de l'instanciation</div>
+        <div class="piege-body">
+          <div class="compare">
+            <div class="compare-block bad">
+              <div class="compare-head">✗ Faux</div>
+<pre>e = <span class="cl">Eleve</span>(<span class="err">self</span>, <span class="st">"Alice"</span>, <span class="nb">15</span>)
+<span class="cm"># self est passé automatiquement
+# → trop d'arguments → TypeError</span></pre>
+            </div>
+            <div class="compare-block good">
+              <div class="compare-head">✓ Correct</div>
+<pre>e = <span class="cl">Eleve</span>(<span class="st">"Alice"</span>, <span class="nb">15</span>)
+<span class="cm"># on fournit seulement les paramètres
+# après self dans __init__</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- PIÈGE E -->
+      <div class="piege-card">
+        <div class="piege-head">⚡ Piège E — Appeler <code>__init__</code> manuellement pour créer un objet</div>
+        <div class="piege-body">
+          <div class="compare">
+            <div class="compare-block bad">
+              <div class="compare-head">✗ Faux — jamais faire ça</div>
+<pre>e = <span class="cl">Eleve</span>.<span class="err">__init__</span>(<span class="st">"Alice"</span>, <span class="nb">15</span>)
+<span class="cm"># __init__ est appelé automatiquement
+# par Python lors de Eleve(...)</span></pre>
+            </div>
+            <div class="compare-block good">
+              <div class="compare-head">✓ Correct</div>
+<pre>e = <span class="cl">Eleve</span>(<span class="st">"Alice"</span>, <span class="nb">15</span>)
+<span class="cm"># NomClasse(args) = instanciation</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- 2.3 Exemple progressif -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">📈</span>
+      <span class="concept-title">2.3 — Exemple progressif : de simple à complet</span>
+      <span class="concept-tag">Progression</span>
+    </div>
+    <div class="concept-body">
+      <p><strong>Étape 1 — classe minimale</strong> (un seul attribut)</p>
+<pre><span class="kw">class</span> <span class="cl">Point</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, x):
+        <span class="sf">self</span>.x = x
+
+p = <span class="cl">Point</span>(<span class="nb">3</span>)
+<span class="fn">print</span>(p.x)   <span class="cm"># 3</span></pre>
+
+      <p><strong>Étape 2 — deux attributs</strong></p>
+<pre><span class="kw">class</span> <span class="cl">Point</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, x, y):
+        <span class="sf">self</span>.x = x
+        <span class="sf">self</span>.y = y
+
+p = <span class="cl">Point</span>(<span class="nb">3</span>, <span class="nb">7</span>)
+<span class="fn">print</span>(p.x, p.y)   <span class="cm"># 3 7</span></pre>
+
+      <p><strong>Étape 3 — attribut calculé à l'initialisation</strong></p>
+<pre><span class="kw">class</span> <span class="cl">Rectangle</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, largeur, hauteur):
+        <span class="sf">self</span>.largeur = largeur
+        <span class="sf">self</span>.hauteur = hauteur
+        <span class="sf">self</span>.aire    = largeur * hauteur  <span class="ann">← calculé à la création</span>
+
+r = <span class="cl">Rectangle</span>(<span class="nb">4</span>, <span class="nb">6</span>)
+<span class="fn">print</span>(r.aire)   <span class="cm"># 24 — pas besoin d'appeler une méthode</span></pre>
+
+      <p><strong>Étape 4 — attribut avec valeur par défaut</strong></p>
+<pre><span class="kw">class</span> <span class="cl">Compte</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titulaire, solde=<span class="nb">0</span>):  <span class="ann">← valeur par défaut</span>
+        <span class="sf">self</span>.titulaire = titulaire
+        <span class="sf">self</span>.solde = solde
+
+c1 = <span class="cl">Compte</span>(<span class="st">"Alice"</span>, <span class="nb">500</span>)   <span class="cm"># solde = 500</span>
+c2 = <span class="cl">Compte</span>(<span class="st">"Bob"</span>)           <span class="cm"># solde = 0 par défaut</span></pre>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════
+     CHAPITRE 3 — LES MÉTHODES
+     ══════════════════════════════════════════════ -->
+<section class="chapter c3" id="ch3">
+  <div class="chapter-header">
+    <span class="ch-num">CHAPITRE 03</span>
+    <span class="ch-title"><span class="ch-accent"></span>Les méthodes de classe</span>
+  </div>
+
+  <!-- 3.1 Types de méthodes -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">🗂️</span>
+      <span class="concept-title">3.1 — Les 3 familles de méthodes</span>
+      <span class="concept-tag">Taxonomie</span>
+    </div>
+    <div class="concept-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Famille</th>
+            <th>Rôle</th>
+            <th>Utilise <code>return</code> ?</th>
+            <th>Exemple</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><strong>Accesseur</strong> (getter)</td>
+            <td>Lire et retourner un attribut (ou un calcul)</td>
+            <td>✅ Oui, toujours</td>
+            <td><code>get_solde()</code>, <code>aire()</code></td>
+          </tr>
+          <tr>
+            <td><strong>Mutateur</strong> (setter)</td>
+            <td>Modifier un attribut</td>
+            <td>❌ Non, jamais</td>
+            <td><code>deposer()</code>, <code>set_note()</code></td>
+          </tr>
+          <tr>
+            <td><strong>Spéciale</strong> (dunder)</td>
+            <td>Comportement built-in (affichage, comparaison…)</td>
+            <td>✅ Oui (<code>__str__</code> retourne une chaîne)</td>
+            <td><code>__str__()</code>, <code>__len__()</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- 3.2 Accesseurs -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">👁️</span>
+      <span class="concept-title">3.2 — Les accesseurs : lire sans modifier</span>
+      <span class="concept-tag">Getter</span>
+    </div>
+    <div class="concept-body">
+<pre><span class="kw">class</span> <span class="cl">Rectangle</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, l, h):
+        <span class="sf">self</span>.largeur = l
+        <span class="sf">self</span>.hauteur = h
+
+    <span class="kw">def</span> <span class="fn">aire</span>(<span class="sf">self</span>):                        <span class="ann">← accesseur</span>
+        <span class="kw">return</span> <span class="sf">self</span>.largeur * <span class="sf">self</span>.hauteur  <span class="ann">← return obligatoire</span>
+
+    <span class="kw">def</span> <span class="fn">perimetre</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="nb">2</span> * (<span class="sf">self</span>.largeur + <span class="sf">self</span>.hauteur)
+
+r = <span class="cl">Rectangle</span>(<span class="nb">4</span>, <span class="nb">6</span>)
+<span class="fn">print</span>(r.<span class="fn">aire</span>())       <span class="cm"># 24  — appel avec ()</span>
+<span class="fn">print</span>(r.<span class="fn">perimetre</span>())  <span class="cm"># 20  — appel avec ()</span></pre>
+
+      <div class="piege-card">
+        <div class="piege-head">⚡ Piège — Attribut vs Méthode : les parenthèses</div>
+        <div class="piege-body">
+          <div class="compare">
+            <div class="compare-block bad">
+              <div class="compare-head">✗ Sans parenthèses — référence à la méthode</div>
+<pre>r.aire       <span class="cm"># &lt;bound method...&gt;</span>
+             <span class="cm"># C'est l'objet "méthode", pas le résultat</span>
+
+<span class="kw">if</span> r.<span class="err">aire</span> <span class="op">&gt;</span> <span class="nb">10</span>:  <span class="cm"># TypeError !</span>
+    ...</pre>
+            </div>
+            <div class="compare-block good">
+              <div class="compare-head">✓ Avec parenthèses — appel, résultat retourné</div>
+<pre>r.<span class="fix">aire()</span>      <span class="cm"># 24</span>
+
+<span class="kw">if</span> r.<span class="fix">aire()</span> <span class="op">&gt;</span> <span class="nb">10</span>:  <span class="cm"># True</span>
+    ...</pre>
+            </div>
+          </div>
+          <p style="margin-top:.6rem">
+            <strong>Règle mnémotechnique :</strong> un <strong>attribut</strong> est une donnée → <code>objet.attribut</code> (pas de parenthèses).
+            Une <strong>méthode</strong> est une action → <code>objet.methode()</code> (parenthèses obligatoires).
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.3 Mutateurs -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">✏️</span>
+      <span class="concept-title">3.3 — Les mutateurs : modifier l'état de l'objet</span>
+      <span class="concept-tag">Setter</span>
+    </div>
+    <div class="concept-body">
+<pre><span class="kw">class</span> <span class="cl">Compte</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titulaire, solde):
+        <span class="sf">self</span>.titulaire = titulaire
+        <span class="sf">self</span>.solde = solde
+
+    <span class="kw">def</span> <span class="fn">deposer</span>(<span class="sf">self</span>, montant):             <span class="ann">← mutateur, pas de return</span>
+        <span class="kw">if</span> montant <span class="op">&gt;</span> <span class="nb">0</span>:
+            <span class="sf">self</span>.solde = <span class="sf">self</span>.solde + montant
+
+    <span class="kw">def</span> <span class="fn">retirer</span>(<span class="sf">self</span>, montant):
+        <span class="kw">if</span> montant <span class="op">&gt;</span> <span class="nb">0</span> <span class="kw">and</span> <span class="sf">self</span>.solde <span class="op">&gt;=</span> montant:
+            <span class="sf">self</span>.solde -= montant
+
+    <span class="kw">def</span> <span class="fn">get_solde</span>(<span class="sf">self</span>):                    <span class="ann">← accesseur</span>
+        <span class="kw">return</span> <span class="sf">self</span>.solde
+
+c = <span class="cl">Compte</span>(<span class="st">"Alice"</span>, <span class="nb">1000</span>)
+c.<span class="fn">deposer</span>(<span class="nb">500</span>)             <span class="cm"># modifie c.solde</span>
+<span class="fn">print</span>(c.<span class="fn">get_solde</span>())       <span class="cm"># 1500</span></pre>
+
+      <div class="piege-card">
+        <div class="piege-head">⚡ Piège — Ajouter un <code>return</code> à un mutateur</div>
+        <div class="piege-body">
+          <div class="compare">
+            <div class="compare-block bad">
+              <div class="compare-head">✗ Faux — mutateur ne retourne rien</div>
+<pre><span class="kw">def</span> <span class="fn">deposer</span>(<span class="sf">self</span>, montant):
+    <span class="sf">self</span>.solde += montant
+    <span class="err">return self.solde</span>  <span class="cm"># inutile et trompeur</span>
+
+<span class="cm"># L'appelant croit avoir le solde
+# mais peut oublier de le récupérer</span></pre>
+            </div>
+            <div class="compare-block good">
+              <div class="compare-head">✓ Correct</div>
+<pre><span class="kw">def</span> <span class="fn">deposer</span>(<span class="sf">self</span>, montant):
+    <span class="sf">self</span>.solde += montant
+    <span class="cm"># fin : on modifie, on ne retourne pas</span>
+
+<span class="cm"># Pour lire ensuite, on utilise
+# le getter get_solde()</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.4 Méthodes spéciales -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">✨</span>
+      <span class="concept-title">3.4 — La méthode spéciale <code>__str__</code></span>
+      <span class="concept-tag">Dunder methods</span>
+    </div>
+    <div class="concept-body">
+      <p><code>__str__</code> est appelée automatiquement par Python quand on passe un objet à <code>print()</code> ou <code>str()</code>. Elle doit <strong>retourner une chaîne</strong>.</p>
+
+<pre><span class="kw">class</span> <span class="cl">Eleve</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom, note):
+        <span class="sf">self</span>.nom  = nom
+        <span class="sf">self</span>.note = note
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.nom}<span class="st"> — </span>{<span class="sf">self</span>.note}<span class="st">/20"</span>
+
+e = <span class="cl">Eleve</span>(<span class="st">"Alice"</span>, <span class="nb">15</span>)
+<span class="fn">print</span>(e)   <span class="cm"># Alice — 15/20   (Python appelle e.__str__ automatiquement)</span></pre>
+
+      <div class="piege-card">
+        <div class="piege-head">⚡ Piège — Mettre <code>print()</code> dans <code>__str__</code></div>
+        <div class="piege-body">
+          <div class="compare">
+            <div class="compare-block bad">
+              <div class="compare-head">✗ Faux — print retourne None</div>
+<pre><span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+    <span class="err">print</span>(<span class="sf">self</span>.nom)
+    <span class="cm"># retourne None implicitement
+    # → TypeError quand Python attend str</span></pre>
+            </div>
+            <div class="compare-block good">
+              <div class="compare-head">✓ Correct</div>
+<pre><span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+    <span class="kw">return</span> <span class="sf">self</span>.nom
+    <span class="cm"># return une chaîne, toujours</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3.5 Opérateurs logiques -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">🔗</span>
+      <span class="concept-title">3.5 — Opérateurs logiques et de comparaison</span>
+      <span class="concept-tag">Syntaxe Python</span>
+    </div>
+    <div class="concept-body">
+      <table>
+        <thead>
+          <tr><th>Opération</th><th>Python ✓</th><th>Erreurs fréquentes ✗</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>ET logique</td><td><code>and</code></td><td><code class="err">AND</code>, <code class="err">&amp;&amp;</code></td></tr>
+          <tr><td>OU logique</td><td><code>or</code></td><td><code class="err">OR</code>, <code class="err">||</code></td></tr>
+          <tr><td>NON logique</td><td><code>not</code></td><td><code class="err">NOT</code>, <code class="err">!</code></td></tr>
+          <tr><td>Supérieur ou égal</td><td><code>&gt;=</code></td><td><code class="err">=&gt;</code></td></tr>
+          <tr><td>Inférieur ou égal</td><td><code>&lt;=</code></td><td><code class="err">=&lt;</code></td></tr>
+          <tr><td>Égalité</td><td><code>==</code></td><td><code class="err">=</code> (affectation !)</td></tr>
+          <tr><td>Différence</td><td><code>!=</code></td><td><code class="err">&lt;&gt;</code></td></tr>
+        </tbody>
+      </table>
+
+<pre><span class="kw">class</span> <span class="cl">Etudiant</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, note, absences):
+        <span class="sf">self</span>.note     = note
+        <span class="sf">self</span>.absences = absences
+
+    <span class="kw">def</span> <span class="fn">est_admis</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="sf">self</span>.note <span class="op">&gt;=</span> <span class="nb">10</span> <span class="kw">and</span> <span class="sf">self</span>.absences <span class="op">&lt;</span> <span class="nb">5</span>
+        <span class="cm"># and en minuscules — >= sans espace entre les deux caractères</span>
+
+    <span class="kw">def</span> <span class="fn">mention</span>(<span class="sf">self</span>):
+        <span class="kw">if</span> <span class="sf">self</span>.note <span class="op">&gt;=</span> <span class="nb">16</span>:
+            <span class="kw">return</span> <span class="st">"Très bien"</span>
+        <span class="kw">elif</span> <span class="sf">self</span>.note <span class="op">&gt;=</span> <span class="nb">14</span>:
+            <span class="kw">return</span> <span class="st">"Bien"</span>
+        <span class="kw">elif</span> <span class="sf">self</span>.note <span class="op">&gt;=</span> <span class="nb">12</span>:
+            <span class="kw">return</span> <span class="st">"Assez bien"</span>
+        <span class="kw">elif</span> <span class="sf">self</span>.note <span class="op">&gt;=</span> <span class="nb">10</span>:
+            <span class="kw">return</span> <span class="st">"Passable"</span>
+        <span class="kw">else</span>:
+            <span class="kw">return</span> <span class="st">"Ajourné"</span></pre>
+
+      <div class="regle">
+        <strong>⚑ Règle :</strong> <code>elif</code> hérite des conditions précédentes. Après <code>if self.note &gt;= 16</code>, le premier <code>elif</code> n'a pas besoin de tester <code>self.note &lt; 16</code> — c'est déjà implicite.
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════
+     CHAPITRE 4 — LISTES D'OBJETS
+     ══════════════════════════════════════════════ -->
+<section class="chapter c4" id="ch4">
+  <div class="chapter-header">
+    <span class="ch-num">CHAPITRE 04</span>
+    <span class="ch-title"><span class="ch-accent"></span>Manipuler des listes d'objets</span>
+  </div>
+
+  <!-- 4.1 Créer une liste -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">📋</span>
+      <span class="concept-title">4.1 — Créer et remplir une liste d'objets</span>
+      <span class="concept-tag">Construction</span>
+    </div>
+    <div class="concept-body">
+      <p>Une liste d'objets se construit exactement comme une liste d'entiers, mais chaque élément est une instance de classe.</p>
+
+<pre><span class="kw">class</span> <span class="cl">Eleve</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom, note):
+        <span class="sf">self</span>.nom  = nom
+        <span class="sf">self</span>.note = note
+
+<span class="cm"># Méthode 1 — liste construite manuellement</span>
+promo = [
+    <span class="cl">Eleve</span>(<span class="st">"Alice"</span>, <span class="nb">15</span>),
+    <span class="cl">Eleve</span>(<span class="st">"Bob"</span>,   <span class="nb">9</span>),
+    <span class="cl">Eleve</span>(<span class="st">"Clara"</span>, <span class="nb">12</span>),
+]
+
+<span class="cm"># Méthode 2 — ajout progressif avec append</span>
+promo = []
+promo.<span class="fn">append</span>(<span class="cl">Eleve</span>(<span class="st">"Alice"</span>, <span class="nb">15</span>))
+promo.<span class="fn">append</span>(<span class="cl">Eleve</span>(<span class="st">"Bob"</span>,   <span class="nb">9</span>))
+
+<span class="cm"># Accès à un élément</span>
+<span class="fn">print</span>(promo[<span class="nb">0</span>].nom)    <span class="cm"># "Alice"</span>
+<span class="fn">print</span>(promo[<span class="nb">1</span>].note)   <span class="cm"># 9</span></pre>
+    </div>
+  </div>
+
+  <!-- 4.2 Parcourir -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">🔄</span>
+      <span class="concept-title">4.2 — Parcourir : extraire et cumuler</span>
+      <span class="concept-tag">Pattern fondamental</span>
+    </div>
+    <div class="concept-body">
+      <p>Le pattern le plus courant au bac : <strong>accumulateur + boucle</strong>.</p>
+
+<pre><span class="cm"># ── Calculer la somme d'un attribut ──────────────────────────</span>
+<span class="kw">def</span> <span class="fn">somme_notes</span>(promo):
+    total = <span class="nb">0</span>                        <span class="ann">← accumulateur initialisé AVANT la boucle</span>
+    <span class="kw">for</span> eleve <span class="kw">in</span> promo:              <span class="ann">← eleve est un objet Eleve</span>
+        total = total + eleve.note   <span class="ann">← attribut → PAS de ()
+</span>    <span class="kw">return</span> total                     <span class="ann">← return APRÈS la boucle
+
+</span>
+<span class="cm"># ── Calculer une moyenne ─────────────────────────────────────</span>
+<span class="kw">def</span> <span class="fn">moyenne</span>(promo):
+    <span class="kw">if</span> <span class="fn">len</span>(promo) <span class="op">==</span> <span class="nb">0</span>:
+        <span class="kw">return</span> <span class="nb">0</span>                     <span class="cm"># éviter la division par zéro</span>
+    total = <span class="nb">0</span>
+    <span class="kw">for</span> e <span class="kw">in</span> promo:
+        total += e.note
+    <span class="kw">return</span> total / <span class="fn">len</span>(promo)
+
+<span class="cm"># ── Construire une sous-liste filtrée ────────────────────────</span>
+<span class="kw">def</span> <span class="fn">eleves_admis</span>(promo):
+    admis = []                       <span class="ann">← résultat initialisé vide</span>
+    <span class="kw">for</span> e <span class="kw">in</span> promo:
+        <span class="kw">if</span> e.note <span class="op">&gt;=</span> <span class="nb">10</span>:
+            admis.<span class="fn">append</span>(e)         <span class="ann">← on ajoute l'objet entier</span>
+    <span class="kw">return</span> admis</pre>
+
+      <div class="piege-card">
+        <div class="piege-head">⚡ Piège — return à l'intérieur de la boucle</div>
+        <div class="piege-body">
+          <div class="compare">
+            <div class="compare-block bad">
+              <div class="compare-head">✗ Faux — boucle interrompue au 1er élément</div>
+<pre><span class="kw">def</span> <span class="fn">somme_notes</span>(promo):
+    total = <span class="nb">0</span>
+    <span class="kw">for</span> e <span class="kw">in</span> promo:
+        total += e.note
+        <span class="err">return total</span>  <span class="cm"># sort dès le 1er élève !</span></pre>
+            </div>
+            <div class="compare-block good">
+              <div class="compare-head">✓ Correct — return après la boucle</div>
+<pre><span class="kw">def</span> <span class="fn">somme_notes</span>(promo):
+    total = <span class="nb">0</span>
+    <span class="kw">for</span> e <span class="kw">in</span> promo:
+        total += e.note
+    <span class="kw">return</span> total  <span class="cm"># après la boucle</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.3 Appeler des méthodes en boucle -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">⚙️</span>
+      <span class="concept-title">4.3 — Appeler des méthodes sur des objets en boucle</span>
+      <span class="concept-tag">Méthode vs Attribut</span>
+    </div>
+    <div class="concept-body">
+      <p>Quand un objet possède une méthode qui calcule quelque chose, on l'appelle <strong>avec des parenthèses</strong> dans la boucle, exactement comme à l'extérieur.</p>
+
+<pre><span class="kw">class</span> <span class="cl">Eleve</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom, note, absences):
+        <span class="sf">self</span>.nom      = nom
+        <span class="sf">self</span>.note     = note
+        <span class="sf">self</span>.absences = absences
+
+    <span class="kw">def</span> <span class="fn">est_admis</span>(<span class="sf">self</span>):       <span class="cm"># méthode → () à l'appel</span>
+        <span class="kw">return</span> <span class="sf">self</span>.note <span class="op">&gt;=</span> <span class="nb">10</span> <span class="kw">and</span> <span class="sf">self</span>.absences <span class="op">&lt;</span> <span class="nb">5</span>
+
+<span class="kw">def</span> <span class="fn">compter_admis</span>(promo):
+    n = <span class="nb">0</span>
+    <span class="kw">for</span> e <span class="kw">in</span> promo:
+        <span class="kw">if</span> e.<span class="fn">est_admis</span>():   <span class="ann">← () obligatoires : c'est une méthode
+</span>            n += <span class="nb">1</span>
+    <span class="kw">return</span> n</pre>
+
+      <div class="piege-card">
+        <div class="piege-head">⚡ Piège — Oublier les () sur une méthode booléenne</div>
+        <div class="piege-body">
+<pre><span class="kw">for</span> e <span class="kw">in</span> promo:
+    <span class="kw">if</span> e.<span class="err">est_admis</span>:          <span class="cm"># sans () → évalue l'objet méthode</span>
+        ...                  <span class="cm"># un objet méthode est TOUJOURS truthy</span>
+                             <span class="cm"># → tous les élèves "passent" le test</span>
+                             <span class="cm"># → bug silencieux, aucune erreur Python !</span></pre>
+          <p style="margin-top:.5rem;font-size:.85rem">C'est le piège le plus insidieux : <strong>pas de message d'erreur</strong>, mais le résultat est toujours faux.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 4.4 Recherche du max -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">🏆</span>
+      <span class="concept-title">4.4 — Recherche du maximum / minimum</span>
+      <span class="concept-tag">Pattern avancé</span>
+    </div>
+    <div class="concept-body">
+      <p>Pattern classique au baccalauréat : trouver l'objet ayant la valeur d'attribut la plus grande (ou petite).</p>
+
+<pre><span class="kw">def</span> <span class="fn">meilleur</span>(promo):
+    <span class="cm"># Étape 1 : initialiser le "champion" avec le 1er élément</span>
+    champion = promo[<span class="nb">0</span>]              <span class="ann">← c'est un objet Eleve, pas un entier</span>
+
+    <span class="cm"># Étape 2 : parcourir à partir du 2e (ou de tous, ça marche aussi)</span>
+    <span class="kw">for</span> e <span class="kw">in</span> promo:
+        <span class="kw">if</span> e.note <span class="op">&gt;</span> champion.note:   <span class="ann">← comparer les attributs</span>
+            champion = e             <span class="ann">← mémoriser l'objet, pas juste la note</span>
+
+    <span class="kw">return</span> champion                  <span class="ann">← retourner l'objet entier</span>
+
+m = <span class="fn">meilleur</span>(promo)
+<span class="fn">print</span>(m.nom, m.note)  <span class="cm"># on peut accéder à tous ses attributs</span></pre>
+
+      <div class="piege-card">
+        <div class="piege-head">⚡ Piège — Initialiser avec 0 ou None au lieu du premier objet</div>
+        <div class="piege-body">
+          <div class="compare">
+            <div class="compare-block bad">
+              <div class="compare-head">✗ Faux</div>
+<pre>champion = <span class="err">0</span>
+<span class="kw">for</span> e <span class="kw">in</span> promo:
+    <span class="kw">if</span> e.note <span class="op">&gt;</span> champion.note:
+        <span class="cm"># AttributeError : int n'a pas .note</span></pre>
+            </div>
+            <div class="compare-block good">
+              <div class="compare-head">✓ Correct</div>
+<pre>champion = promo[<span class="nb">0</span>]  <span class="cm"># objet Eleve</span>
+<span class="kw">for</span> e <span class="kw">in</span> promo:
+    <span class="kw">if</span> e.note <span class="op">&gt;</span> champion.note:
+        champion = e  <span class="cm"># ✓</span></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ══════════════════════════════════════════════
+     CHAPITRE 5 — NOTIONS AVANCÉES
+     ══════════════════════════════════════════════ -->
+<section class="chapter c5" id="ch5">
+  <div class="chapter-header">
+    <span class="ch-num">CHAPITRE 05</span>
+    <span class="ch-title"><span class="ch-accent"></span>Notions avancées (niveau Bac)</span>
+  </div>
+
+  <!-- 5.1 Interaction entre objets -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">🔀</span>
+      <span class="concept-title">5.1 — Objets passés en paramètre d'une méthode</span>
+      <span class="concept-tag">Interaction d'objets</span>
+    </div>
+    <div class="concept-body">
+      <p>Une méthode peut prendre un <strong>autre objet</strong> de la même classe (ou d'une autre) en paramètre.</p>
+
+<pre><span class="kw">class</span> <span class="cl">Rectangle</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, l, h):
+        <span class="sf">self</span>.largeur = l
+        <span class="sf">self</span>.hauteur = h
+
+    <span class="kw">def</span> <span class="fn">aire</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="sf">self</span>.largeur * <span class="sf">self</span>.hauteur
+
+    <span class="kw">def</span> <span class="fn">est_plus_grand</span>(<span class="sf">self</span>, autre):   <span class="ann">← autre est aussi un Rectangle</span>
+        <span class="kw">return</span> <span class="sf">self</span>.<span class="fn">aire</span>() <span class="op">&gt;</span> autre.<span class="fn">aire</span>()
+        <span class="cm"># aire() sur self ET sur autre — parenthèses des deux côtés !</span>
+
+r1 = <span class="cl">Rectangle</span>(<span class="nb">4</span>, <span class="nb">6</span>)   <span class="cm"># aire = 24</span>
+r2 = <span class="cl">Rectangle</span>(<span class="nb">3</span>, <span class="nb">9</span>)   <span class="cm"># aire = 27</span>
+<span class="fn">print</span>(r1.<span class="fn">est_plus_grand</span>(r2))  <span class="cm"># False</span></pre>
+    </div>
+  </div>
+
+  <!-- 5.2 Encapsulation -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">🔒</span>
+      <span class="concept-title">5.2 — Encapsulation et getter/setter</span>
+      <span class="concept-tag">Bonne pratique</span>
+    </div>
+    <div class="concept-body">
+      <p>L'<strong>encapsulation</strong> consiste à protéger les attributs en les rendant accessibles uniquement via des méthodes dédiées (getters et setters), plutôt qu'en les modifiant directement de l'extérieur.</p>
+
+<pre><span class="kw">class</span> <span class="cl">Batterie</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, charge):
+        <span class="sf">self</span>.charge = charge   <span class="cm"># 0 à 100</span>
+
+    <span class="kw">def</span> <span class="fn">get_charge</span>(<span class="sf">self</span>):         <span class="ann">← accesseur</span>
+        <span class="kw">return</span> <span class="sf">self</span>.charge
+
+    <span class="kw">def</span> <span class="fn">set_charge</span>(<span class="sf">self</span>, val):    <span class="ann">← mutateur avec validation</span>
+        <span class="kw">if</span> <span class="nb">0</span> <span class="op">&lt;=</span> val <span class="op">&lt;=</span> <span class="nb">100</span>:
+            <span class="sf">self</span>.charge = val
+        <span class="cm"># si val invalide : on ignore (ou on lève une erreur)</span>
+
+b = <span class="cl">Batterie</span>(<span class="nb">50</span>)
+b.<span class="fn">set_charge</span>(<span class="nb">80</span>)         <span class="cm"># OK</span>
+b.<span class="fn">set_charge</span>(<span class="nb">150</span>)        <span class="cm"># ignoré : hors plage</span>
+<span class="fn">print</span>(b.<span class="fn">get_charge</span>())    <span class="cm"># 80</span></pre>
+
+      <div class="regle">
+        <strong>⚑ À retenir :</strong> <code>0 &lt;= val &lt;= 100</code> est une syntaxe Python valide pour enchaîner des comparaisons (équivalent à <code>val &gt;= 0 and val &lt;= 100</code>). Elle est plus lisible et conseillée.
+      </div>
+    </div>
+  </div>
+
+  <!-- 5.3 Classe complète modèle -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">🏛️</span>
+      <span class="concept-title">5.3 — Classe complète modèle (niveau baccalauréat)</span>
+      <span class="concept-tag">Référence</span>
+    </div>
+    <div class="concept-body">
+      <p>Voici la structure cible à maîtriser pour le bac. Tous les éléments sont présents et bien ordonnés.</p>
+
+<pre><span class="kw">class</span> <span class="cl">Film</span>:
+    <span class="cm"># ① Constructeur — initialise les attributs</span>
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titre, duree, note):
+        <span class="sf">self</span>.titre = titre   <span class="cm"># str</span>
+        <span class="sf">self</span>.duree = duree   <span class="cm"># int, en minutes</span>
+        <span class="sf">self</span>.note  = note    <span class="cm"># float, sur 10</span>
+
+    <span class="cm"># ② Accesseurs — retournent sans modifier</span>
+    <span class="kw">def</span> <span class="fn">get_titre</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="sf">self</span>.titre
+
+    <span class="kw">def</span> <span class="fn">est_long</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="sf">self</span>.duree <span class="op">&gt;</span> <span class="nb">120</span>
+
+    <span class="kw">def</span> <span class="fn">categorie</span>(<span class="sf">self</span>):
+        <span class="kw">if</span> <span class="sf">self</span>.note <span class="op">&gt;=</span> <span class="nb">8</span>:
+            <span class="kw">return</span> <span class="st">"Chef-d'œuvre"</span>
+        <span class="kw">elif</span> <span class="sf">self</span>.note <span class="op">&gt;=</span> <span class="nb">6</span>:
+            <span class="kw">return</span> <span class="st">"Bon film"</span>
+        <span class="kw">else</span>:
+            <span class="kw">return</span> <span class="st">"Décevant"</span>
+
+    <span class="cm"># ③ Méthode spéciale — représentation textuelle</span>
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.titre}<span class="st"> (</span>{<span class="sf">self</span>.duree}<span class="st"> min) — </span>{<span class="sf">self</span>.note}<span class="st">/10"</span>
+
+
+<span class="cm"># ④ Fonctions hors classe — traitent des listes</span>
+<span class="kw">def</span> <span class="fn">films_recommandes</span>(catalogue):
+    <span class="kw">return</span> [f <span class="kw">for</span> f <span class="kw">in</span> catalogue <span class="kw">if</span> f.note <span class="op">&gt;=</span> <span class="nb">7</span>]
+
+<span class="kw">def</span> <span class="fn">note_moyenne</span>(catalogue):
+    <span class="kw">if</span> <span class="fn">len</span>(catalogue) <span class="op">==</span> <span class="nb">0</span>:
+        <span class="kw">return</span> <span class="nb">0</span>
+    total = <span class="nb">0</span>
+    <span class="kw">for</span> f <span class="kw">in</span> catalogue:
+        total += f.note
+    <span class="kw">return</span> total / <span class="fn">len</span>(catalogue)</pre>
+    </div>
+  </div>
+
+  <!-- 5.4 Récapitulatif pièges -->
+  <div class="concept">
+    <div class="concept-head">
+      <span class="concept-icon">🗺️</span>
+      <span class="concept-title">5.4 — Carte des pièges à éviter (récapitulatif)</span>
+      <span class="concept-tag">Synthèse</span>
+    </div>
+    <div class="concept-body">
+      <table>
+        <thead>
+          <tr>
+            <th>Situation</th>
+            <th>Erreur fréquente</th>
+            <th>Bonne pratique</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Nom du constructeur</td>
+            <td><code class="err">def init(self)</code></td>
+            <td><code>def __init__(self)</code></td>
+          </tr>
+          <tr>
+            <td>Déclarer un attribut</td>
+            <td><code class="err">nom = valeur</code> (local)</td>
+            <td><code>self.nom = valeur</code></td>
+          </tr>
+          <tr>
+            <td>Constructeur</td>
+            <td><code class="err">return self</code> à la fin</td>
+            <td>Pas de <code>return</code></td>
+          </tr>
+          <tr>
+            <td>Instanciation</td>
+            <td><code class="err">Classe.__init__("x")</code></td>
+            <td><code>Classe("x")</code></td>
+          </tr>
+          <tr>
+            <td>Lire un attribut</td>
+            <td><code class="err">objet.attribut()</code></td>
+            <td><code>objet.attribut</code></td>
+          </tr>
+          <tr>
+            <td>Appeler une méthode</td>
+            <td><code class="err">objet.methode</code></td>
+            <td><code>objet.methode()</code></td>
+          </tr>
+          <tr>
+            <td>Opérateur logique</td>
+            <td><code class="err">AND</code>, <code class="err">OR</code>, <code class="err">&&</code></td>
+            <td><code>and</code>, <code>or</code></td>
+          </tr>
+          <tr>
+            <td>Mutateur</td>
+            <td><code class="err">return self.attribut</code></td>
+            <td>Pas de <code>return</code></td>
+          </tr>
+          <tr>
+            <td>Méthode booléenne en boucle</td>
+            <td><code class="err">if e.est_admis</code></td>
+            <td><code>if e.est_admis()</code></td>
+          </tr>
+          <tr>
+            <td>Chercher le max dans une liste</td>
+            <td>Initialiser avec <code class="err">0</code> ou <code class="err">None</code></td>
+            <td>Initialiser avec <code>liste[0]</code></td>
+          </tr>
+          <tr>
+            <td><code>return</code> dans une boucle cumulative</td>
+            <td>Return <em>dans</em> la boucle</td>
+            <td>Return <em>après</em> la boucle</td>
+          </tr>
+          <tr>
+            <td><code>__str__</code></td>
+            <td><code class="err">print(self.nom)</code> dedans</td>
+            <td><code>return str(self.nom)</code></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</section>
+
+</div><!-- .page -->
+
+<button class="print-btn" onclick="window.print()">⎙ Imprimer / PDF</button>
+
+</body>
+</html>

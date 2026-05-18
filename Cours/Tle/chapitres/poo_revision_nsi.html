@@ -1,0 +1,1062 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>POO Python – Fiche de Révision NSI Terminale</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:        #ffffff;
+    --surface:   #f8f9fa;
+    --surface2:  #f1f3f5;
+    --border:    #dee2e6;
+    --text:      #1a1a2e;
+    --muted:     #6c757d;
+    --star:      #e08b00;
+
+    --c-white:   #1971c2;   /* ★ */
+    --c-yellow:  #2f9e44;   /* ★★ */
+    --c-orange:  #e67700;   /* ★★★ */
+    --c-brown:   #c92a2a;   /* ★★★★ */
+    --c-black:   #6741d9;   /* ★★★★★ */
+
+    --corrige:   #f0faf2;
+    --piege:     #fff5f5;
+    --rule:      #e9ecef;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    line-height: 1.7;
+    padding: 2rem 1rem 4rem;
+  }
+
+  /* ── HEADER ── */
+  header {
+    max-width: 860px;
+    margin: 0 auto 2.5rem;
+    border-bottom: 2px solid var(--border);
+    padding-bottom: 1.5rem;
+  }
+  .badge-top {
+    display: inline-block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 2px 8px;
+    margin-bottom: .8rem;
+    background: var(--surface2);
+  }
+  h1 {
+    font-size: clamp(1.5rem, 4vw, 2.2rem);
+    font-weight: 800;
+    line-height: 1.15;
+    color: var(--text);
+    margin-bottom: .5rem;
+  }
+  h1 span { color: var(--c-black); }
+  .subtitle { color: var(--muted); font-size: .9rem; }
+
+  /* ── LEGEND BELTS ── */
+  .legend {
+    max-width: 860px;
+    margin: 0 auto 2rem;
+    display: flex;
+    flex-wrap: wrap;
+    gap: .5rem;
+  }
+  .belt-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    padding: 3px 10px;
+    border-radius: 20px;
+    border: 1px solid;
+    font-weight: 600;
+  }
+  .b1 { color: var(--c-white);  border-color: var(--c-white);  background: #e8f3ff; }
+  .b2 { color: var(--c-yellow); border-color: var(--c-yellow); background: #ebfbee; }
+  .b3 { color: var(--c-orange); border-color: var(--c-orange); background: #fff4e6; }
+  .b4 { color: var(--c-brown);  border-color: var(--c-brown);  background: #fff5f5; }
+  .b5 { color: var(--c-black);  border-color: var(--c-black);  background: #f3f0ff; }
+
+  /* ── SECTION ── */
+  .section {
+    max-width: 860px;
+    margin: 0 auto 2.5rem;
+  }
+  .section-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1.25rem;
+    padding-bottom: .75rem;
+    border-bottom: 1px solid var(--border);
+  }
+  .section-number {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .7rem;
+    color: var(--muted);
+    letter-spacing: .1em;
+  }
+  .section-title {
+    font-size: 1.15rem;
+    font-weight: 700;
+  }
+  .stars { color: var(--star); letter-spacing: .05em; font-size: 1.05rem; }
+  .level-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    color: var(--muted);
+    margin-left: auto;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+
+  /* ── EXERCISE CARD ── */
+  .exo {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    margin-bottom: 1.2rem;
+    overflow: hidden;
+  }
+  .exo-head {
+    display: flex;
+    align-items: center;
+    gap: .75rem;
+    padding: .75rem 1.1rem;
+    border-bottom: 1px solid var(--border);
+    background: var(--surface2);
+  }
+  .exo-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    color: var(--muted);
+    min-width: 3rem;
+  }
+  .exo-title {
+    font-weight: 700;
+    font-size: .92rem;
+    flex: 1;
+  }
+  .star-tag { color: var(--star); }
+  .exo-body { padding: 1rem 1.1rem; }
+
+  p { margin-bottom: .6rem; }
+  p:last-child { margin-bottom: 0; }
+
+  /* ── CONSIGNES ── */
+  .consignes {
+    background: #e8f3ff;
+    border-left: 3px solid var(--c-white);
+    border-radius: 0 5px 5px 0;
+    padding: .6rem 1rem;
+    margin: .75rem 0;
+    font-size: .85rem;
+    color: #343a40;
+  }
+  .consignes strong { color: var(--text); }
+
+  .s2 .consignes { border-left-color: var(--c-yellow); background: #ebfbee; }
+  .s3 .consignes { border-left-color: var(--c-orange); background: #fff4e6; }
+  .s4 .consignes { border-left-color: var(--c-brown);  background: #fff5f5; }
+  .s5 .consignes { border-left-color: var(--c-black);  background: #f3f0ff; }
+
+  /* ── CODE ── */
+  pre {
+    background: #f6f8fa;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: .85rem 1rem;
+    overflow-x: auto;
+    margin: .75rem 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .82rem;
+    line-height: 1.65;
+    color: #24292f;
+  }
+  code { font-family: 'JetBrains Mono', monospace; font-size: .85em; }
+  .kw   { color: #cf222e; }  /* keyword */
+  .fn   { color: #6639ba; }  /* function/method name */
+  .cl   { color: #0550ae; }  /* class */
+  .sf   { color: #953800; }  /* self */
+  .st   { color: #0a3069; }  /* string */
+  .cm   { color: #6e7781; font-style: italic; }  /* comment */
+  .nb   { color: #0550ae; }  /* number/bool */
+  .op   { color: #cf222e; }  /* operator */
+  .err  { background: #ffebe9; color: #cf222e; text-decoration: underline wavy #cf222e; border-radius: 2px; padding: 0 2px; }
+
+  /* ── TOGGLE CORRIGÉ ── */
+  .toggle-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: .4rem;
+    cursor: pointer;
+    background: white;
+    border: 1px solid var(--border);
+    border-radius: 5px;
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .75rem;
+    padding: .35rem .75rem;
+    margin-top: .6rem;
+    transition: all .2s;
+    letter-spacing: .04em;
+  }
+  .toggle-btn:hover { border-color: var(--c-black); color: var(--c-black); background: #f3f0ff; }
+  .toggle-btn .arrow { transition: transform .25s; display: inline-block; }
+  .toggle-btn.open .arrow { transform: rotate(90deg); }
+
+  .corrige {
+    display: none;
+    margin-top: .75rem;
+    border-radius: 6px;
+    overflow: hidden;
+    border: 1px solid #b2dfc0;
+  }
+  .corrige.visible { display: block; }
+
+  .corrige-head {
+    background: #d3f9d8;
+    padding: .5rem 1rem;
+    font-size: .72rem;
+    font-family: 'JetBrains Mono', monospace;
+    color: #2f9e44;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    border-bottom: 1px solid #b2dfc0;
+  }
+  .corrige-body { background: var(--corrige); padding: .85rem 1rem; }
+
+  .piege {
+    background: var(--piege);
+    border: 1px solid #ffc9c9;
+    border-radius: 6px;
+    padding: .65rem 1rem;
+    margin-top: .75rem;
+    font-size: .83rem;
+  }
+  .piege-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .68rem;
+    color: #c92a2a;
+    font-weight: 700;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    margin-bottom: .3rem;
+  }
+
+  /* ── QUESTION LINE ── */
+  .question {
+    background: #f1f3f5;
+    border-left: 3px solid var(--border);
+    border-radius: 0 5px 5px 0;
+    padding: .6rem 1rem;
+    margin: .5rem 0;
+    font-size: .9rem;
+  }
+
+  .blank {
+    display: inline-block;
+    min-width: 80px;
+    border-bottom: 1px solid #adb5bd;
+    color: var(--bg);
+    background: var(--bg);
+    border-radius: 2px;
+    user-select: none;
+  }
+
+  /* ── DIVIDER ── */
+  .divider {
+    max-width: 860px;
+    margin: 2rem auto;
+    border: none;
+    border-top: 1px solid var(--rule);
+  }
+
+  /* ── PRINT ── */
+  .print-btn {
+    position: fixed;
+    bottom: 1.5rem;
+    right: 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: .72rem;
+    padding: .5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    letter-spacing: .06em;
+    transition: all .2s;
+    z-index: 100;
+  }
+  .print-btn:hover { color: var(--text); border-color: var(--text); }
+
+  @media print {
+    body { background: white; color: #111; font-size: 12px; }
+    .print-btn { display: none; }
+    .corrige { display: block !important; }
+    .toggle-btn { display: none; }
+    pre { background: #f6f8fa; color: #24292f; border: 1px solid #d0d7de; }
+    .kw { color: #cf222e; } .fn { color: #6639ba; } .cl { color: #0550ae; }
+    .sf { color: #953800; } .st { color: #0a3069; } .cm { color: #6e7781; font-style: italic; }
+    .nb { color: #0550ae; } .op { color: #cf222e; }
+    .err { text-decoration: none; background: #ffebe9; color: #cf222e; }
+    header, .section { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="badge-top">NSI · Terminale · Révision post-DST</div>
+  <h1>Programmation <span>Orientée Objet</span><br>en Python</h1>
+  <p class="subtitle">Fiche de révision progressive · Exercices sur table (sans ordinateur)</p>
+  <p style="margin-top:.75rem"><a href="poo_cours_nsi.html" style="font-family:'JetBrains Mono',monospace;font-size:.75rem;color:var(--c-black);border:1px solid #d0bfff;background:#f3f0ff;border-radius:5px;padding:3px 10px;text-decoration:none;">← Cours POO</a></p>
+</header>
+
+<div class="legend">
+  <span class="belt-badge b1">★ Automatismes syntaxiques</span>
+  <span class="belt-badge b2">★★ Logique et comparaisons</span>
+  <span class="belt-badge b3">★★★ Encapsulation et méthodes</span>
+  <span class="belt-badge b4">★★★★ Listes d'objets</span>
+  <span class="belt-badge b5">★★★★★ Niveau Baccalauréat</span>
+</div>
+
+<!-- ════════════════════════════════════════════════════
+     PARTIE 1 — ★  AUTOMATISMES SYNTAXIQUES
+     ════════════════════════════════════════════════════ -->
+<section class="section s1">
+  <div class="section-header">
+    <span class="section-number">PARTIE 01</span>
+    <span class="section-title">Automatismes syntaxiques &nbsp;<span class="stars">★</span></span>
+    <span class="level-label">Réflexe avant tout raisonnement</span>
+  </div>
+
+  <!-- EXO 1.1 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 1.1</span>
+      <span class="exo-title">Le rituel du constructeur</span>
+      <span class="star-tag">★</span>
+    </div>
+    <div class="exo-body">
+      <p>On veut modéliser une <strong>Voiture</strong> avec deux attributs : <code>marque</code> (chaîne) et <code>vitesse_max</code> (entier).</p>
+      <p><strong>Écris uniquement le constructeur</strong> de cette classe. Rien d'autre.</p>
+
+      <div class="consignes">
+        <strong>⚠ Règles :</strong><br>
+        – Le constructeur s'appelle obligatoirement <code>__init__</code> (deux underscores de chaque côté).<br>
+        – Son premier paramètre est toujours <code>self</code> — jamais le nom de la classe.<br>
+        – Chaque attribut se déclare avec <code>self.nom_attribut = valeur</code> — le <code>self.</code> est obligatoire.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, marque, vitesse_max):
+    <span class="sf">self</span>.marque      = marque       <span class="cm"># attribut lié à l'instance</span>
+    <span class="sf">self</span>.vitesse_max = vitesse_max  <span class="cm"># pas de "int vitesse_max" : pas de typage</span></pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques à verbaliser</div>
+            Écrire <code>def init(self, ...)</code> sans les doubles underscores → Python ignore le constructeur.<br>
+            Écrire <code>self = marque</code> au lieu de <code>self.marque = marque</code> → erreur de sémantique totale.<br>
+            Ajouter un <code>return</code> → le constructeur ne renvoie jamais rien (il est <em>void</em>).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXO 1.2 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 1.2</span>
+      <span class="exo-title">Instanciation correcte</span>
+      <span class="star-tag">★</span>
+    </div>
+    <div class="exo-body">
+      <p>On dispose de la classe suivante :</p>
+<pre><span class="kw">class</span> <span class="cl">Livre</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titre, pages):
+        <span class="sf">self</span>.titre = titre
+        <span class="sf">self</span>.pages = pages</pre>
+      <p><strong>Écris la ligne</strong> qui crée un objet <code>mon_livre</code> représentant "Dune" avec 412 pages.</p>
+      <div class="consignes">
+        <strong>⚠ Règle :</strong> On instancie avec <code>NomClasse(arg1, arg2)</code> — pas besoin d'écrire <code>__init__</code> ni <code>self</code> à l'extérieur.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre>mon_livre = <span class="cl">Livre</span>(<span class="st">"Dune"</span>, <span class="nb">412</span>)
+<span class="cm"># Python appelle automatiquement __init__ avec self = mon_livre</span></pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Écrire <code>Livre.__init__("Dune", 412)</code> → on n'appelle jamais <code>__init__</code> manuellement.<br>
+            Écrire <code>mon_livre = new Livre(...)</code> → <code>new</code> n'existe pas en Python (confusion avec Java/JS).
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXO 1.3 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 1.3</span>
+      <span class="exo-title">Chasse au bug — self oublié</span>
+      <span class="star-tag">★</span>
+    </div>
+    <div class="exo-body">
+      <p>Le code ci-dessous contient <strong>3 erreurs de syntaxe POO</strong>. Entoure-les et écris la version corrigée.</p>
+<pre><span class="kw">class</span> <span class="cl">Compte</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titulaire, solde):
+        <span class="err">titulaire</span> = titulaire    <span class="cm"># bug 1</span>
+        <span class="sf">self</span>.solde = solde
+
+    <span class="kw">def</span> <span class="fn">deposer</span>(<span class="err">montant</span>):       <span class="cm"># bug 2</span>
+        <span class="sf">self</span>.solde = <span class="sf">self</span>.solde + montant
+
+    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):
+        <span class="kw">print</span>(<span class="sf">self</span>.solde <span class="err">AND</span> <span class="sf">self</span>.titulaire)  <span class="cm"># bug 3</span></pre>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong> Toute méthode de classe prend <code>self</code> en premier paramètre. Les opérateurs logiques Python sont en <strong>minuscules</strong> : <code>and</code>, <code>or</code>, <code>not</code>.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="kw">class</span> <span class="cl">Compte</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titulaire, solde):
+        <span class="sf">self</span>.titulaire = titulaire  <span class="cm"># bug 1 : self. manquant</span>
+        <span class="sf">self</span>.solde = solde
+
+    <span class="kw">def</span> <span class="fn">deposer</span>(<span class="sf">self</span>, montant):   <span class="cm"># bug 2 : self manquant en 1er paramètre</span>
+        <span class="sf">self</span>.solde = <span class="sf">self</span>.solde + montant
+
+    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):
+        <span class="kw">print</span>(<span class="sf">self</span>.solde, <span class="sf">self</span>.titulaire)  <span class="cm"># bug 3 : AND → virgule ou autre logique valide</span></pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Bug 1 : sans <code>self.</code>, on crée une variable locale qui disparaît à la fin de <code>__init__</code>.<br>
+            Bug 2 : Python passera l'objet en argument implicite → décalage de tous les paramètres → <code>TypeError</code>.<br>
+            Bug 3 : <code>AND</code> en majuscules est une <em>variable non définie</em> en Python, pas un opérateur.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXO 1.4 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 1.4</span>
+      <span class="exo-title">Attribut vs Variable locale</span>
+      <span class="star-tag">★</span>
+    </div>
+    <div class="exo-body">
+      <p>On crée un objet <code>p = Point(3, 5)</code>. <strong>Complète les pointillés</strong> pour accéder à son abscisse :</p>
+      <div class="question">a) Pour lire l'abscisse depuis l'extérieur de la classe : <code>valeur = p.<span class="blank">.........</span></code></div>
+      <div class="question">b) Pour lire l'abscisse <em>depuis une méthode</em> de la classe : <code>valeur = <span class="blank">.........</span>.x</code></div>
+      <div class="consignes">
+        <strong>⚠ Règle :</strong> Un attribut n'est jamais appelé avec des parenthèses — ce n'est pas une méthode.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="cm"># a) depuis l'extérieur</span>
+valeur = p.x         <span class="cm"># nom_objet.nom_attribut (pas de parenthèses !)</span>
+
+<span class="cm"># b) depuis une méthode</span>
+valeur = <span class="sf">self</span>.x      <span class="cm"># self remplace le nom de l'objet à l'intérieur de la classe</span></pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Écrire <code>p.x()</code> → Python cherche une <em>méthode</em> appelée <code>x</code> → <code>TypeError: 'int' object is not callable</code>.<br>
+            Écrire <code>x</code> seul dans une méthode (sans <code>self.</code>) → Python cherche une variable globale, pas l'attribut.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════════════════
+     PARTIE 2 — ★★  LOGIQUE ET COMPARAISONS
+     ════════════════════════════════════════════════════ -->
+<section class="section s2">
+  <div class="section-header">
+    <span class="section-number">PARTIE 02</span>
+    <span class="section-title">Logique et comparaisons &nbsp;<span class="stars">★★</span></span>
+    <span class="level-label">Méthodes avec conditions</span>
+  </div>
+
+  <!-- EXO 2.1 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 2.1</span>
+      <span class="exo-title">Méthode de validation — Étudiant</span>
+      <span class="star-tag">★★</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Etudiant</code> possède deux attributs : <code>note</code> (float, 0–20) et <code>absences</code> (int).</p>
+      <p>Écris la méthode <code>est_admis(self)</code> qui retourne <code>True</code> si la note est <strong>supérieure ou égale à 10</strong> <strong>et</strong> le nombre d'absences est <strong>strictement inférieur à 5</strong>, <code>False</code> sinon.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong><br>
+        – Opérateurs de comparaison : <code>&gt;=</code> et <code>&lt;</code> (pas de <code>=&gt;</code> ou <code>&lt;=&gt;</code>).<br>
+        – Opérateur logique : <code>and</code> en minuscules (jamais <code>AND</code> ou <code>&amp;&amp;</code>).<br>
+        – Cette méthode <strong>doit</strong> utiliser un <code>return</code>.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="kw">def</span> <span class="fn">est_admis</span>(<span class="sf">self</span>):
+    <span class="kw">return</span> <span class="sf">self</span>.note <span class="op">&gt;=</span> <span class="nb">10</span> <span class="kw">and</span> <span class="sf">self</span>.absences <span class="op">&lt;</span> <span class="nb">5</span>
+    <span class="cm"># On peut aussi écrire :</span>
+    <span class="kw">if</span> <span class="sf">self</span>.note <span class="op">&gt;=</span> <span class="nb">10</span> <span class="kw">and</span> <span class="sf">self</span>.absences <span class="op">&lt;</span> <span class="nb">5</span>:
+        <span class="kw">return</span> <span class="nb">True</span>
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="nb">False</span></pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            <code>AND</code> majuscule → <code>NameError</code>. <code>&amp;&amp;</code> → <code>SyntaxError</code>.<br>
+            Écrire <code>10 &lt;= self.note</code> est valide mais moins lisible — à déconseiller en copie.<br>
+            Oublier <code>self.</code> devant <code>note</code> ou <code>absences</code> → <code>NameError</code>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXO 2.2 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 2.2</span>
+      <span class="exo-title">Méthode de catégorie — Produit</span>
+      <span class="star-tag">★★</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Produit</code> a un attribut <code>prix</code> (float). Écris la méthode <code>categorie(self)</code> qui retourne :</p>
+      <ul style="margin-left:1.2rem; margin-bottom:.6rem; font-size:.9rem;">
+        <li><code>"économique"</code> si le prix est strictement inférieur à 20</li>
+        <li><code>"standard"</code> si le prix est entre 20 et 100 inclus</li>
+        <li><code>"premium"</code> sinon</li>
+      </ul>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong><br>
+        – Utilise des <code>if / elif / else</code> imbriqués, pas des <code>if</code> successifs.<br>
+        – Une seule sortie de méthode : chaque branche contient un <code>return</code>.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="kw">def</span> <span class="fn">categorie</span>(<span class="sf">self</span>):
+    <span class="kw">if</span> <span class="sf">self</span>.prix <span class="op">&lt;</span> <span class="nb">20</span>:
+        <span class="kw">return</span> <span class="st">"économique"</span>
+    <span class="kw">elif</span> <span class="sf">self</span>.prix <span class="op">&lt;=</span> <span class="nb">100</span>:   <span class="cm"># implicitement prix >= 20 ici</span>
+        <span class="kw">return</span> <span class="st">"standard"</span>
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="st">"premium"</span></pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Utiliser <code>if ... if ... if</code> au lieu de <code>elif</code> → tous les blocs s'évaluent indépendamment, plusieurs <code>return</code> possibles.<br>
+            Oublier que <code>elif self.prix &lt;= 100</code> hérite déjà de la condition précédente <code>prix >= 20</code>.<br>
+            Retourner un entier <code>0</code>/<code>1</code>/<code>2</code> au lieu d'une chaîne → la méthode ne répond pas au contrat demandé.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXO 2.3 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 2.3</span>
+      <span class="exo-title">Méthode de modification — Température</span>
+      <span class="star-tag">★★</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Thermostat</code> a un attribut <code>temperature</code> (float). Écris la méthode <code>chauffer(self, delta)</code> qui <strong>augmente</strong> la température de <code>delta</code> degrés, mais <strong>uniquement si</strong> le résultat ne dépasse pas 30°C.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong><br>
+        – Une méthode de <em>modification</em> ne renvoie rien (<strong>pas de <code>return</code></strong>).<br>
+        – On modifie l'attribut avec <code>self.temperature = ...</code>
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="kw">def</span> <span class="fn">chauffer</span>(<span class="sf">self</span>, delta):
+    <span class="kw">if</span> <span class="sf">self</span>.temperature <span class="op">+</span> delta <span class="op">&lt;=</span> <span class="nb">30</span>:
+        <span class="sf">self</span>.temperature = <span class="sf">self</span>.temperature <span class="op">+</span> delta
+    <span class="cm"># Pas de return : la méthode modifie l'état, elle ne renvoie rien</span></pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Écrire <code>return self.temperature</code> → on ne renvoie pas l'attribut modifié dans une méthode mutateur.<br>
+            Écrire <code>temperature = self.temperature + delta</code> (sans <code>self.</code>) → variable locale perdue, l'attribut reste inchangé.<br>
+            Tester <code>if delta &lt;= 30</code> au lieu de <code>if self.temperature + delta &lt;= 30</code> → la condition est incorrecte.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════════════════
+     PARTIE 3 — ★★★  ENCAPSULATION ET MÉTHODES
+     ════════════════════════════════════════════════════ -->
+<section class="section s3">
+  <div class="section-header">
+    <span class="section-number">PARTIE 03</span>
+    <span class="section-title">Encapsulation et méthodes &nbsp;<span class="stars">★★★</span></span>
+    <span class="level-label">Lire et écrire les attributs proprement</span>
+  </div>
+
+  <!-- EXO 3.1 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 3.1</span>
+      <span class="exo-title">Getter et Setter — Batterie</span>
+      <span class="star-tag">★★★</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Batterie</code> possède un attribut <code>charge</code> (int, entre 0 et 100). Écris :</p>
+      <ul style="margin-left:1.2rem; margin-bottom:.6rem; font-size:.9rem;">
+        <li>La méthode <code>get_charge(self)</code> qui retourne la charge actuelle.</li>
+        <li>La méthode <code>set_charge(self, nouvelle_charge)</code> qui modifie la charge <strong>seulement si</strong> <code>nouvelle_charge</code> est entre 0 et 100 inclus.</li>
+      </ul>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong><br>
+        – Le getter utilise <code>return</code> — le setter <strong>n'en utilise pas</strong>.<br>
+        – On teste avec <code>0 &lt;= nouvelle_charge &lt;= 100</code> (enchaînement de comparaisons valide en Python).
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="kw">def</span> <span class="fn">get_charge</span>(<span class="sf">self</span>):
+    <span class="kw">return</span> <span class="sf">self</span>.charge           <span class="cm"># accesseur : retourne l'attribut</span>
+
+<span class="kw">def</span> <span class="fn">set_charge</span>(<span class="sf">self</span>, nouvelle_charge):
+    <span class="kw">if</span> <span class="nb">0</span> <span class="op">&lt;=</span> nouvelle_charge <span class="op">&lt;=</span> <span class="nb">100</span>:
+        <span class="sf">self</span>.charge = nouvelle_charge  <span class="cm"># mutateur : modifie sans return</span></pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Confondre <code>get_charge()</code> et <code>self.charge</code> à l'appel : appeler la méthode nécessite des parenthèses <code>b.get_charge()</code>, pas <code>b.get_charge</code>.<br>
+            Écrire <code>nouvelle_charge &gt;= 0 AND nouvelle_charge &lt;= 100</code> → <code>AND</code> invalide + redondant avec la syntaxe Python.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXO 3.2 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 3.2</span>
+      <span class="exo-title">Méthode de comparaison — Rectangle</span>
+      <span class="star-tag">★★★</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Rectangle</code> possède deux attributs : <code>largeur</code> et <code>hauteur</code>. Écris :</p>
+      <ul style="margin-left:1.2rem; margin-bottom:.6rem; font-size:.9rem;">
+        <li>La méthode <code>aire(self)</code> qui retourne l'aire.</li>
+        <li>La méthode <code>est_plus_grand(self, autre)</code> qui retourne <code>True</code> si <strong>l'aire de self est strictement supérieure</strong> à l'aire de <code>autre</code>.</li>
+      </ul>
+      <div class="consignes">
+        <strong>⚠ Règle :</strong> Dans <code>est_plus_grand</code>, appelle la méthode <code>aire()</code> avec des parenthèses — ce n'est pas un attribut.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="kw">def</span> <span class="fn">aire</span>(<span class="sf">self</span>):
+    <span class="kw">return</span> <span class="sf">self</span>.largeur <span class="op">*</span> <span class="sf">self</span>.hauteur
+
+<span class="kw">def</span> <span class="fn">est_plus_grand</span>(<span class="sf">self</span>, autre):
+    <span class="kw">return</span> <span class="sf">self</span>.<span class="fn">aire</span>() <span class="op">&gt;</span> autre.<span class="fn">aire</span>()
+    <span class="cm"># aire() → méthode → parenthèses OBLIGATOIRES</span>
+    <span class="cm"># autre est aussi un objet Rectangle : on lui applique la même méthode</span></pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Écrire <code>self.aire &gt; autre.aire</code> (sans parenthèses) → on compare <em>des références de méthodes</em>, pas des entiers → résultat toujours <code>True</code> car les objets "méthode" sont distincts.<br>
+            Recalculer manuellement <code>self.largeur * self.hauteur</code> dans <code>est_plus_grand</code> → code dupliqué, jamais réutiliser ce qu'une méthode fait déjà.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXO 3.3 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 3.3</span>
+      <span class="exo-title">Méthode __str__ — Affichage d'objet</span>
+      <span class="star-tag">★★★</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Eleve</code> a les attributs <code>nom</code> et <code>note</code>. Écris la méthode spéciale <code>__str__(self)</code> qui retourne une chaîne du type <code>"Alice : 14/20"</code>.</p>
+      <div class="consignes">
+        <strong>⚠ Règle :</strong> <code>__str__</code> doit toujours <code>return</code> une chaîne — jamais utiliser <code>print</code> à l'intérieur.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+    <span class="kw">return</span> <span class="sf">self</span>.nom <span class="op">+</span> <span class="st">" : "</span> <span class="op">+</span> <span class="fn">str</span>(<span class="sf">self</span>.note) <span class="op">+</span> <span class="st">"/20"</span>
+    <span class="cm"># Ou avec f-string (Python 3.6+) :</span>
+    <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.nom}<span class="st"> : </span>{<span class="sf">self</span>.note}<span class="st">/20"</span></pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Écrire <code>print(self.nom + ...)</code> dans <code>__str__</code> → <code>print</code> retourne <code>None</code>, pas une chaîne.<br>
+            Concaténer sans <code>str(self.note)</code> → <code>TypeError: can only concatenate str (not "int") to str</code>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════════════════
+     PARTIE 4 — ★★★★  LISTES D'OBJETS
+     ════════════════════════════════════════════════════ -->
+<section class="section s4">
+  <div class="section-header">
+    <span class="section-number">PARTIE 04</span>
+    <span class="section-title">Manipulation de listes d'objets &nbsp;<span class="stars">★★★★</span></span>
+    <span class="level-label">Boucles sur des tableaux d'instances</span>
+  </div>
+
+  <!-- EXO 4.1 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 4.1</span>
+      <span class="exo-title">Cumul d'attributs — Bibliothèque</span>
+      <span class="star-tag">★★★★</span>
+    </div>
+    <div class="exo-body">
+      <p>On dispose de la classe <code>Livre</code> avec les attributs <code>titre</code> (str) et <code>pages</code> (int). On a une liste <code>bibliotheque</code> contenant plusieurs objets <code>Livre</code>.</p>
+      <p>Écris la <strong>fonction</strong> <code>total_pages(bibliotheque)</code> qui retourne le nombre total de pages de tous les livres.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong><br>
+        – C'est une <em>fonction</em> (hors classe), pas une méthode.<br>
+        – On accède à l'attribut <code>pages</code> sans parenthèses : <code>livre.pages</code>, pas <code>livre.pages()</code>.<br>
+        – Initialiser le compteur à <code>0</code> avant la boucle.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="kw">def</span> <span class="fn">total_pages</span>(bibliotheque):
+    total = <span class="nb">0</span>                          <span class="cm"># accumulateur initialisé à 0</span>
+    <span class="kw">for</span> livre <span class="kw">in</span> bibliotheque:         <span class="cm"># livre est un objet Livre</span>
+        total = total <span class="op">+</span> livre.pages    <span class="cm"># attribut → pas de parenthèses !</span>
+    <span class="kw">return</span> total</pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Écrire <code>livre.pages()</code> → <code>TypeError: 'int' object is not callable</code> — <code>pages</code> est un attribut, pas une méthode.<br>
+            Oublier d'initialiser <code>total = 0</code> → <code>NameError</code> ou résultat faux.<br>
+            Écrire <code>for i in range(len(bibliotheque))</code> puis <code>bibliotheque[i].pages</code> → fonctionne, mais boucle <code>for x in liste</code> est plus pythonique et attendue au bac.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXO 4.2 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 4.2</span>
+      <span class="exo-title">Appel de méthode en boucle — Promotion</span>
+      <span class="star-tag">★★★★</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Eleve</code> possède l'attribut <code>note</code> et la méthode <code>est_admis()</code> (sans paramètre autre que self, retourne un booléen).</p>
+      <p>Écris la fonction <code>compter_admis(promo)</code> qui prend une liste d'objets <code>Eleve</code> et retourne le nombre d'élèves admis.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong><br>
+        – Appeler une méthode nécessite des parenthèses : <code>eleve.est_admis()</code>.<br>
+        – Ne pas réécrire la condition interne de <code>est_admis</code> — la méthode existe, utilise-la.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="kw">def</span> <span class="fn">compter_admis</span>(promo):
+    compteur = <span class="nb">0</span>
+    <span class="kw">for</span> eleve <span class="kw">in</span> promo:
+        <span class="kw">if</span> eleve.<span class="fn">est_admis</span>():          <span class="cm"># méthode → parenthèses obligatoires</span>
+            compteur = compteur <span class="op">+</span> <span class="nb">1</span>
+    <span class="kw">return</span> compteur</pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Écrire <code>if eleve.est_admis</code> (sans parenthèses) → la condition est <em>toujours</em> vraie : un objet méthode est truthy.<br>
+            Réécrire <code>if eleve.note &gt;= 10</code> au lieu d'appeler <code>est_admis()</code> → duplication de logique et non-respect de l'encapsulation.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXO 4.3 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 4.3</span>
+      <span class="exo-title">Recherche du maximum — Tournoi</span>
+      <span class="star-tag">★★★★</span>
+    </div>
+    <div class="exo-body">
+      <p>La classe <code>Joueur</code> possède les attributs <code>nom</code> (str) et <code>score</code> (int). Écris la fonction <code>meilleur_joueur(joueurs)</code> qui retourne l'<strong>objet</strong> <code>Joueur</code> ayant le score le plus élevé. On suppose que la liste est non vide.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong><br>
+        – Initialise ton meilleur candidat avec le premier élément de la liste : <code>meilleur = joueurs[0]</code>.<br>
+        – Retourne l'<em>objet entier</em>, pas uniquement son score.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="kw">def</span> <span class="fn">meilleur_joueur</span>(joueurs):
+    meilleur = joueurs[<span class="nb">0</span>]              <span class="cm"># objet Joueur initial</span>
+    <span class="kw">for</span> j <span class="kw">in</span> joueurs:
+        <span class="kw">if</span> j.score <span class="op">&gt;</span> meilleur.score:   <span class="cm"># compare les attributs</span>
+            meilleur = j               <span class="cm"># on mémorise l'objet, pas juste le score</span>
+    <span class="kw">return</span> meilleur                    <span class="cm"># retourne l'objet complet</span></pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Initialiser <code>meilleur = 0</code> → on compare un entier à un objet → <code>AttributeError</code>.<br>
+            Retourner <code>meilleur.score</code> au lieu de <code>meilleur</code> → on perd le nom et l'objet complet.<br>
+            Écrire <code>meilleur = None</code> et oublier de gérer le cas initial → <code>AttributeError: 'NoneType' has no attribute 'score'</code>.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<hr class="divider">
+
+<!-- ════════════════════════════════════════════════════
+     PARTIE 5 — ★★★★★  NIVEAU BAC
+     ════════════════════════════════════════════════════ -->
+<section class="section s5">
+  <div class="section-header">
+    <span class="section-number">PARTIE 05</span>
+    <span class="section-title">Niveau Baccalauréat &nbsp;<span class="stars">★★★★★</span></span>
+    <span class="level-label">Classe complète · Calculs complexes · Contexte réel</span>
+  </div>
+
+  <!-- EXO 5.1 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 5.1</span>
+      <span class="exo-title">Classe Cinéma — Moyenne pondérée</span>
+      <span class="star-tag">★★★★★</span>
+    </div>
+    <div class="exo-body">
+      <p>On modélise un film avec la classe suivante (partiellement écrite) :</p>
+<pre><span class="kw">class</span> <span class="cl">Film</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titre, duree, note_presse, note_public):
+        <span class="sf">self</span>.titre       = titre
+        <span class="sf">self</span>.duree       = duree        <span class="cm"># en minutes</span>
+        <span class="sf">self</span>.note_presse = note_presse  <span class="cm"># sur 10</span>
+        <span class="sf">self</span>.note_public = note_public  <span class="cm"># sur 10</span></pre>
+      <p><strong>Question 1.</strong> Ajoute la méthode <code>note_globale(self)</code> qui retourne la moyenne pondérée : 40% presse + 60% public.</p>
+      <p><strong>Question 2.</strong> Écris la fonction <code>films_premium(catalogue)</code> qui prend une liste d'objets <code>Film</code> et retourne la <strong>liste</strong> de tous les films dont la note globale est supérieure ou égale à 7.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong><br>
+        – Dans <code>films_premium</code>, appelle <code>note_globale()</code> avec ses parenthèses.<br>
+        – La fonction retourne une <em>liste</em> d'objets <code>Film</code>, pas leurs titres.<br>
+        – Construis la liste résultat avec <code>resultat = []</code> puis <code>resultat.append(...)</code>.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="cm"># Question 1 — méthode de la classe Film</span>
+<span class="kw">def</span> <span class="fn">note_globale</span>(<span class="sf">self</span>):
+    <span class="kw">return</span> <span class="nb">0.4</span> <span class="op">*</span> <span class="sf">self</span>.note_presse <span class="op">+</span> <span class="nb">0.6</span> <span class="op">*</span> <span class="sf">self</span>.note_public
+
+<span class="cm"># Question 2 — fonction hors classe</span>
+<span class="kw">def</span> <span class="fn">films_premium</span>(catalogue):
+    resultat = []
+    <span class="kw">for</span> film <span class="kw">in</span> catalogue:
+        <span class="kw">if</span> film.<span class="fn">note_globale</span>() <span class="op">&gt;=</span> <span class="nb">7</span>:   <span class="cm"># méthode → parenthèses</span>
+            resultat.<span class="fn">append</span>(film)       <span class="cm"># on ajoute l'objet Film entier</span>
+    <span class="kw">return</span> resultat</pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Écrire <code>film.note_globale &gt;= 7</code> → compare une référence de méthode à un entier → <code>TypeError</code>.<br>
+            Appender <code>film.titre</code> → on stocke des chaînes, pas des objets → l'appelant ne peut plus accéder aux autres attributs.<br>
+            Mélanger 40% et 60% → lire l'énoncé : presse est minoritaire dans la pondération ici.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXO 5.2 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 5.2</span>
+      <span class="exo-title">Classe Banque — Méthode de classe + traitement de liste</span>
+      <span class="star-tag">★★★★★</span>
+    </div>
+    <div class="exo-body">
+      <p>On modélise un compte bancaire :</p>
+<pre><span class="kw">class</span> <span class="cl">Compte</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titulaire, solde):
+        <span class="sf">self</span>.titulaire = titulaire
+        <span class="sf">self</span>.solde     = solde
+
+    <span class="kw">def</span> <span class="fn">est_debiteur</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="sf">self</span>.solde <span class="op">&lt;</span> <span class="nb">0</span>
+
+    <span class="kw">def</span> <span class="fn">prelever</span>(<span class="sf">self</span>, montant):
+        <span class="kw">if</span> montant <span class="op">&gt;</span> <span class="nb">0</span> <span class="kw">and</span> <span class="sf">self</span>.solde <span class="op">&gt;=</span> montant:
+            <span class="sf">self</span>.solde = <span class="sf">self</span>.solde <span class="op">-</span> montant</pre>
+      <p><strong>Question 1.</strong> Écris la fonction <code>solde_total(comptes)</code> qui retourne la somme de tous les soldes de la liste (comptes positifs <em>et</em> négatifs).</p>
+      <p><strong>Question 2.</strong> Écris la fonction <code>titulaires_debiteurs(comptes)</code> qui retourne la <em>liste des noms</em> (attribut <code>titulaire</code>) des comptes débiteurs.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong><br>
+        – Dans Q2, utilise la méthode <code>est_debiteur()</code> — ne réécris pas la condition.<br>
+        – Q2 retourne une liste de <em>chaînes</em> (noms), pas d'objets Compte.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="cm"># Question 1</span>
+<span class="kw">def</span> <span class="fn">solde_total</span>(comptes):
+    total = <span class="nb">0</span>
+    <span class="kw">for</span> c <span class="kw">in</span> comptes:
+        total = total <span class="op">+</span> c.solde   <span class="cm"># attribut : pas de parenthèses</span>
+    <span class="kw">return</span> total
+
+<span class="cm"># Question 2</span>
+<span class="kw">def</span> <span class="fn">titulaires_debiteurs</span>(comptes):
+    debiteurs = []
+    <span class="kw">for</span> c <span class="kw">in</span> comptes:
+        <span class="kw">if</span> c.<span class="fn">est_debiteur</span>():           <span class="cm"># méthode → parenthèses</span>
+            debiteurs.<span class="fn">append</span>(c.titulaire)  <span class="cm"># attribut : pas de parenthèses</span>
+    <span class="kw">return</span> debiteurs</pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Dans Q1 : <code>c.solde()</code> → <code>TypeError</code> — <code>solde</code> est un attribut.<br>
+            Dans Q2 : <code>c.est_debiteur</code> sans <code>()</code> → comparaison d'une référence de méthode, toujours <code>True</code>.<br>
+            Dans Q2 : appender <code>c</code> (l'objet) au lieu de <code>c.titulaire</code> (le nom) → la liste contiendrait des objets Compte, pas des chaînes.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- EXO 5.3 -->
+  <div class="exo">
+    <div class="exo-head">
+      <span class="exo-num">Exo 5.3</span>
+      <span class="exo-title">Classe Météo — Classe complète + analyse</span>
+      <span class="star-tag">★★★★★</span>
+    </div>
+    <div class="exo-body">
+      <p>On veut modéliser des relevés météorologiques. Chaque relevé a : un <code>jour</code> (str), une <code>temperature</code> (float) et des <code>precipitations</code> (float, en mm).</p>
+      <p><strong>Question 1.</strong> Écris la classe <code>Releve</code> complète avec son constructeur et la méthode <code>est_pluvieux(self)</code> qui retourne <code>True</code> si les précipitations dépassent strictement 5 mm.</p>
+      <p><strong>Question 2.</strong> Écris la fonction <code>temperature_moyenne(releves)</code> qui calcule et retourne la moyenne des températures. Si la liste est vide, retourner <code>0</code>.</p>
+      <p><strong>Question 3.</strong> Écris la fonction <code>jours_pluvieux(releves)</code> qui retourne la liste des <em>jours</em> (attribut <code>jour</code>) où il a plu.</p>
+      <div class="consignes">
+        <strong>⚠ Règles :</strong><br>
+        – Q2 : protège contre la division par zéro avec <code>if len(releves) == 0</code>.<br>
+        – Q3 : appelle <code>est_pluvieux()</code> avec ses parenthèses.
+      </div>
+
+      <button class="toggle-btn" onclick="toggle(this)"><span class="arrow">▶</span> Voir le corrigé</button>
+      <div class="corrige">
+        <div class="corrige-head">✓ Corrigé commenté</div>
+        <div class="corrige-body">
+<pre><span class="cm"># Question 1 — Classe complète</span>
+<span class="kw">class</span> <span class="cl">Releve</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, jour, temperature, precipitations):
+        <span class="sf">self</span>.jour          = jour
+        <span class="sf">self</span>.temperature   = temperature
+        <span class="sf">self</span>.precipitations = precipitations
+
+    <span class="kw">def</span> <span class="fn">est_pluvieux</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="sf">self</span>.precipitations <span class="op">&gt;</span> <span class="nb">5</span>
+
+<span class="cm"># Question 2</span>
+<span class="kw">def</span> <span class="fn">temperature_moyenne</span>(releves):
+    <span class="kw">if</span> <span class="fn">len</span>(releves) <span class="op">==</span> <span class="nb">0</span>:
+        <span class="kw">return</span> <span class="nb">0</span>
+    total = <span class="nb">0</span>
+    <span class="kw">for</span> r <span class="kw">in</span> releves:
+        total = total <span class="op">+</span> r.temperature
+    <span class="kw">return</span> total <span class="op">/</span> <span class="fn">len</span>(releves)
+
+<span class="cm"># Question 3</span>
+<span class="kw">def</span> <span class="fn">jours_pluvieux</span>(releves):
+    jours = []
+    <span class="kw">for</span> r <span class="kw">in</span> releves:
+        <span class="kw">if</span> r.<span class="fn">est_pluvieux</span>():       <span class="cm"># méthode → parenthèses</span>
+            jours.<span class="fn">append</span>(r.jour)   <span class="cm"># attribut → pas de parenthèses</span>
+    <span class="kw">return</span> jours</pre>
+          <div class="piege">
+            <div class="piege-label">⚡ Pièges classiques</div>
+            Q1 : oublier l'un des trois <code>self.attribut = parametre</code> → l'attribut sera inaccessible ensuite → <code>AttributeError</code>.<br>
+            Q2 : diviser sans vérifier la longueur → <code>ZeroDivisionError</code> si liste vide.<br>
+            Q3 : appender <code>r</code> (l'objet entier) au lieu de <code>r.jour</code> (la chaîne) → mélange des types dans la liste retournée.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</section>
+
+<button class="print-btn" onclick="window.print()">⎙ Imprimer / PDF</button>
+
+<script>
+function toggle(btn) {
+  btn.classList.toggle('open');
+  const corrige = btn.nextElementSibling;
+  corrige.classList.toggle('visible');
+  btn.querySelector('.arrow').textContent = corrige.classList.contains('visible') ? '▼' : '▶';
+}
+</script>
+</body>
+</html>

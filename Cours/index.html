@@ -8,8 +8,8 @@
     body {
       margin: 0;
       font-family: Arial, sans-serif;
-      background: linear-gradient(135deg, #0f172a, #1e293b);
-      color: #e2e8f0;
+      background: #ffffff;
+      color: #1e293b;
     }
     .container {
       max-width: 1100px;
@@ -19,16 +19,17 @@
     .back-link {
       display: inline-block;
       margin-bottom: 24px;
-      color: #93c5fd;
+      color: #2563eb;
       text-decoration: none;
       font-weight: bold;
     }
     h1 {
       font-size: clamp(2rem, 5vw, 3.2rem);
       margin-bottom: 10px;
+      color: #0f172a;
     }
     .intro {
-      color: #cbd5e1;
+      color: #475569;
       max-width: 760px;
       line-height: 1.7;
       margin-bottom: 32px;
@@ -39,11 +40,16 @@
       gap: 24px;
     }
     .card {
-      background: rgba(15, 23, 42, 0.72);
-      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
       border-radius: 18px;
       padding: 26px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.25);
+      box-shadow: 0 4px 20px rgba(0,0,0,0.07);
+      transition: box-shadow .2s, transform .2s;
+    }
+    .card:hover {
+      box-shadow: 0 8px 32px rgba(0,0,0,0.12);
+      transform: translateY(-2px);
     }
     .badge {
       display: inline-block;
@@ -51,31 +57,38 @@
       font-weight: bold;
       letter-spacing: 0.08em;
       text-transform: uppercase;
-      color: #86efac;
-      background: rgba(34,197,94,0.12);
+      color: #16a34a;
+      background: #dcfce7;
       padding: 6px 10px;
       border-radius: 999px;
       margin-bottom: 14px;
+    }
+    .badge.terminale {
+      color: #7c3aed;
+      background: #ede9fe;
     }
     h2 {
       margin-top: 0;
       margin-bottom: 10px;
       font-size: 1.4rem;
+      color: #0f172a;
     }
     p {
-      color: #cbd5e1;
+      color: #475569;
       line-height: 1.7;
     }
     .btn {
       display: inline-block;
       margin-top: 14px;
       padding: 12px 18px;
-      background: #38bdf8;
-      color: #082032;
+      background: #2563eb;
+      color: #ffffff;
       font-weight: bold;
       text-decoration: none;
       border-radius: 12px;
+      transition: background .2s;
     }
+    .btn:hover { background: #1d4ed8; }
     .muted {
       opacity: .85;
       font-size: .95rem;
@@ -98,7 +111,14 @@
       </div>
 
       <div class="card">
-        <div class="badge">Terminale NSI</div>
+        <div class="badge">1ère NSI</div>
+        <h2>Architecture matérielle &amp; Systèmes d'exploitation</h2>
+        <p>Composants, mémoires, CPU, Von Neumann, Linux, commandes, système de fichiers, droits et permissions. Exercices progressifs et QCM.</p>
+        <a class="btn" href="1ere/archi_systemes_1ere_nsi.html">Ouvrir le cours</a>
+      </div>
+
+      <div class="card">
+        <div class="badge terminale">Terminale NSI</div>
         <h2>Mini-site regroupant tous les chapitres à connaître pour le Bac (en cours)</h2>
         <p>Cours, exercices et QCM pour réviser le Bac.</p>
         <a class="btn" href="Tle/index.html">Ouvrir le cours</a>

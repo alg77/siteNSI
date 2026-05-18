@@ -1,0 +1,1644 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Architecture matérielle & Systèmes d'exploitation — 1ère NSI</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=DM+Sans:ital,wght@0,300;0,400;0,600;0,700;1,300&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root {
+  --rouge:    #C0392B;
+  --rouge-dk: #922B21;
+  --rouge-lt: #FADBD8;
+  --rouge-bg: #FEF5F4;
+  --bleu:     #1A5276;
+  --bleu-lt:  #D6EAF8;
+  --vert:     #1E5631;
+  --vert-lt:  #D5F5E3;
+  --orange:   #D35400;
+  --orange-lt:#FDEBD0;
+  --grey:     #5D6D7E;
+  --lgrey:    #F4F6F7;
+  --dgrey:    #2C3E50;
+  --border:   #D5D8DC;
+  --white:    #FFFFFF;
+  --black:    #1A1A1A;
+  --code-bg:  #1E2837;
+  --code-txt: #A8D8EA;
+}
+
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+
+body {
+  font-family: 'DM Sans', system-ui, sans-serif;
+  background: #FAFAFA;
+  color: var(--black);
+  line-height: 1.75;
+  font-size: 16px;
+}
+
+/* ── HERO ── */
+.hero {
+  background: var(--rouge);
+  color: white;
+  padding: 48px 40px 40px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::after {
+  content:'';
+  position:absolute; right:-60px; top:-60px;
+  width:320px; height:320px;
+  background: rgba(255,255,255,0.06);
+  border-radius: 50%;
+}
+.hero-badge {
+  display:inline-block;
+  background: rgba(255,255,255,0.18);
+  border: 1px solid rgba(255,255,255,0.35);
+  color: white;
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px; letter-spacing:2px; text-transform:uppercase;
+  padding:3px 12px; border-radius:20px; margin-bottom:14px;
+}
+.hero h1 {
+  font-family:'DM Serif Display',Georgia,serif;
+  font-size: clamp(28px,5vw,52px);
+  font-weight:400; line-height:1.1;
+  margin-bottom:10px;
+}
+.hero h1 em { font-style:italic; opacity:.85; }
+.hero-sub { font-size:16px; opacity:.8; font-weight:300; }
+
+/* ── NAV ── */
+.toc {
+  background: var(--dgrey);
+  padding: 10px 28px;
+  display:flex; flex-wrap:wrap; gap:4px;
+  position:sticky; top:0; z-index:100;
+}
+.toc a {
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  color:#BFC9CA; text-decoration:none;
+  padding:4px 10px; border-radius:4px;
+  transition:all .2s; white-space:nowrap;
+  border:1px solid transparent;
+}
+.toc a:hover { color:white; border-color:rgba(255,255,255,.25); background:rgba(255,255,255,.08); }
+
+/* ── LAYOUT ── */
+.container { max-width:960px; margin:0 auto; padding:0 24px; }
+.section { padding:52px 0 36px; border-bottom:2px solid var(--border); }
+.section:last-child { border-bottom:none; }
+
+/* ── SECTION HEADERS ── */
+.section-banner {
+  background: var(--rouge);
+  color: white;
+  padding: 10px 20px;
+  border-radius: 4px;
+  margin-bottom: 28px;
+  display:flex; align-items:center; gap:12px;
+}
+.section-banner .num {
+  background: rgba(255,255,255,.2);
+  border-radius:3px;
+  padding:2px 10px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px; font-weight:700;
+}
+.section-banner h2 {
+  font-family:'DM Serif Display',serif;
+  font-size:20px; font-weight:400;
+  letter-spacing:.3px;
+}
+
+.subsection {
+  background: var(--bleu-lt);
+  border-left:4px solid var(--bleu);
+  padding:8px 16px;
+  margin:32px 0 16px;
+  border-radius:0 4px 4px 0;
+}
+.subsection h3 {
+  font-family:'DM Sans',sans-serif;
+  font-size:15px; font-weight:700;
+  color: var(--bleu); letter-spacing:.5px;
+  text-transform:uppercase;
+}
+
+/* ── DEF PILLS ── */
+.def-pill {
+  display:inline-block;
+  background: var(--rouge);
+  color:white;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px; font-weight:700;
+  padding:2px 10px; border-radius:3px;
+  margin-bottom:6px;
+}
+
+/* ── DEFINITION BLOCKS (mimic PDF style) ── */
+.def-grid {
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:0;
+  border:1px solid var(--border);
+  border-radius:6px;
+  overflow:hidden;
+  margin:18px 0;
+}
+.def-grid-hdr {
+  background: var(--rouge);
+  color:white;
+  font-family:'DM Sans',sans-serif;
+  font-weight:700; font-size:14px;
+  padding:10px 16px;
+  text-align:center;
+}
+.def-cell {
+  padding:12px 16px;
+  border-top:1px solid var(--border);
+  font-size:15px;
+  vertical-align:top;
+  line-height:1.6;
+}
+.def-cell:nth-child(odd) { background:#FFF; border-right:1px solid var(--border); }
+.def-cell:nth-child(even) { background:var(--lgrey); }
+.def-cell strong { color:var(--rouge); }
+
+/* ── MEMORY CARDS ── */
+.mem-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:14px;
+  margin:18px 0;
+}
+.mem-card {
+  border:1px solid var(--border);
+  border-radius:8px; overflow:hidden;
+}
+.mem-card-hdr {
+  background: var(--rouge);
+  color:white; font-weight:700; font-size:13px;
+  padding:8px 14px;
+  font-family:'JetBrains Mono',monospace;
+  letter-spacing:.5px;
+}
+.mem-card-body { padding:12px 14px; font-size:14px; line-height:1.65; }
+.mem-card-body em { font-style:italic; color:var(--grey); font-size:13px; }
+.mem-spec {
+  margin-top:8px; padding-top:8px;
+  border-top:1px dashed var(--border);
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px; color:var(--grey);
+}
+
+/* ── CPU DIAGRAM ── */
+.cpu-diagram {
+  background: var(--lgrey);
+  border:1px solid var(--border);
+  border-radius:8px; padding:20px;
+  margin:18px 0;
+  display:flex; gap:20px; align-items:stretch; flex-wrap:wrap;
+}
+.cpu-box {
+  background:white; border:2px solid var(--bleu);
+  border-radius:6px; padding:14px;
+  flex:1; min-width:160px;
+}
+.cpu-box h4 { color:var(--bleu); font-size:13px; font-weight:700; margin-bottom:6px; font-family:'JetBrains Mono',monospace; }
+.cpu-arrow { display:flex; align-items:center; font-size:22px; color:var(--rouge); font-weight:700; }
+
+/* ── VON NEUMANN ── */
+.vn-diagram {
+  background: var(--lgrey);
+  border:2px solid var(--rouge);
+  border-radius:8px; padding:24px;
+  margin:18px 0;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px;
+}
+.vn-grid {
+  display:grid;
+  grid-template-columns:1fr auto 1fr auto 1fr;
+  gap:12px; align-items:center;
+}
+.vn-block {
+  background:white; border:2px solid var(--bleu);
+  border-radius:6px; padding:12px;
+  text-align:center; font-weight:700;
+  color:var(--bleu);
+}
+.vn-block.mem { border-color:var(--rouge); color:var(--rouge); }
+.vn-block.io  { border-color:var(--vert);  color:var(--vert); }
+.vn-arrow { color:var(--rouge); font-size:18px; font-weight:700; text-align:center; }
+
+/* ── OS FAMILIES ── */
+.os-grid {
+  display:grid; grid-template-columns:1fr 1fr; gap:14px; margin:18px 0;
+}
+.os-card {
+  border:2px solid var(--border); border-radius:8px; overflow:hidden;
+}
+.os-card-hdr { padding:10px 16px; font-weight:700; font-size:15px; color:white; }
+.os-card-hdr.windows { background:#0078D4; }
+.os-card-hdr.linux   { background:#E95420; }
+.os-card-body { padding:12px 16px; font-size:14px; line-height:1.65; }
+
+/* ── COMMAND TABLE ── */
+.cmd-table { width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+.cmd-table th {
+  background:var(--rouge); color:white;
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  padding:9px 14px; text-align:left;
+  border:1px solid var(--rouge-dk);
+}
+.cmd-table td { padding:9px 14px; border:1px solid var(--border); vertical-align:top; }
+.cmd-table tr:nth-child(even) td { background:var(--lgrey); }
+.cmd-table td:first-child {
+  font-family:'JetBrains Mono',monospace;
+  font-weight:700; color:var(--rouge);
+  background:var(--rouge-lt); font-size:13px;
+}
+td.desc { color:var(--dgrey); }
+
+/* ── CODE / TERMINAL ── */
+.terminal {
+  background: var(--code-bg);
+  border-radius:8px; overflow:hidden;
+  margin:16px 0;
+}
+.terminal-bar {
+  background:#151D28;
+  padding:7px 14px;
+  display:flex; align-items:center; gap:8px;
+  font-family:'JetBrains Mono',monospace; font-size:11px; color:#6B7888;
+}
+.tdot { width:10px; height:10px; border-radius:50%; }
+.tr { background:#FF5F56; }
+.ty { background:#FFBD2E; }
+.tg { background:#27C93F; }
+pre.cmd {
+  font-family:'JetBrains Mono',monospace;
+  font-size:13.5px; line-height:1.7;
+  padding:16px 20px; color:#E8EBF0;
+  overflow-x:auto;
+}
+pre.cmd .prompt { color:#27C93F; }
+pre.cmd .comment { color:#637082; font-style:italic; }
+pre.cmd .output { color:#A8D8EA; }
+pre.cmd .err { color:#FF5F56; }
+pre.cmd .hilite { color:#FFD700; font-weight:700; }
+
+/* ── FILE TREE ── */
+.filetree {
+  background: var(--code-bg);
+  border-radius:8px; padding:18px 20px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px; line-height:1.8;
+  margin:16px 0; overflow-x:auto;
+}
+.ft-root  { color:#FFD700; font-weight:700; }
+.ft-dir   { color:#60A5FA; }
+.ft-file  { color:#A8D8EA; }
+.ft-line  { color:#4A5568; }
+
+/* ── PERMISSIONS ── */
+.perms-box {
+  background: var(--code-bg);
+  border-radius:8px; padding:18px 22px;
+  font-family:'JetBrains Mono',monospace;
+  font-size:13px; margin:16px 0; overflow-x:auto;
+}
+.perm-str { font-size:17px; letter-spacing:2px; }
+.p-d  { color:#FFD700; }
+.p-r  { color:#4ADE80; }
+.p-w  { color:#60A5FA; }
+.p-x  { color:#F97316; }
+.p-no { color:#4A5568; }
+
+/* ── BOXES ── */
+.box { border-radius:8px; padding:14px 18px; margin:16px 0; border-left:4px solid; font-size:15px; }
+.box-def  { background:var(--rouge-bg); border-color:var(--rouge); }
+.box-tip  { background:var(--bleu-lt);  border-color:var(--bleu); }
+.box-ex   { background:var(--vert-lt);  border-color:var(--vert); }
+.box-warn { background:var(--orange-lt);border-color:var(--orange); }
+.box-title {
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  letter-spacing:2px; text-transform:uppercase; font-weight:700; margin-bottom:6px;
+}
+.box-def .box-title  { color:var(--rouge); }
+.box-tip .box-title  { color:var(--bleu); }
+.box-ex .box-title   { color:var(--vert); }
+.box-warn .box-title { color:var(--orange); }
+
+/* ── INLINE CODE ── */
+p code, li code, td code {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  background:var(--rouge-lt); color:var(--rouge-dk);
+  padding:1px 6px; border-radius:3px;
+}
+
+/* ── TABLES ── */
+table.std { width:100%; border-collapse:collapse; margin:16px 0; font-size:14px; }
+table.std th {
+  background:var(--rouge); color:white;
+  padding:9px 14px; text-align:left; border:1px solid var(--rouge-dk);
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+}
+table.std td { padding:9px 14px; border:1px solid var(--border); }
+table.std tr:nth-child(even) td { background:var(--lgrey); }
+
+/* ── PERMS TABLE ── */
+.perms-table { width:100%; border-collapse:collapse; margin:16px 0; font-size:13px; }
+.perms-table th {
+  background:var(--dgrey); color:white;
+  padding:8px 12px; border:1px solid #333;
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  text-transform:uppercase; letter-spacing:1px;
+}
+.perms-table td {
+  padding:8px 12px; border:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  text-align:center;
+}
+.perms-table td.desc { font-family:'DM Sans',sans-serif; text-align:left; font-size:14px; }
+.perms-table td.pval { font-weight:700; color:var(--rouge); }
+
+/* ── GENERAL TEXT ── */
+.section p { color:var(--dgrey); margin-bottom:12px; line-height:1.75; }
+.section ul, .section ol { padding-left:22px; margin-bottom:12px; }
+.section li { color:var(--dgrey); margin-bottom:5px; }
+strong { color:var(--black); }
+
+/* ── EXERCISES ── */
+.exo-card {
+  border:1px solid var(--border); border-radius:8px;
+  overflow:hidden; margin-bottom:22px;
+}
+.exo-card-hdr {
+  display:flex; align-items:center; gap:14px;
+  padding:12px 18px;
+}
+.exo-card-hdr.easy   { background: linear-gradient(90deg, #1E5631, #27AE60); }
+.exo-card-hdr.medium { background: linear-gradient(90deg, #D35400, #E67E22); }
+.exo-card-hdr.hard   { background: linear-gradient(90deg, #922B21, #C0392B); }
+.exo-level {
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  color:rgba(255,255,255,.8); letter-spacing:2px; text-transform:uppercase;
+}
+.exo-title { font-weight:700; font-size:16px; color:white; }
+.exo-body { padding:20px 22px; }
+.exo-body p { margin-bottom:10px; color:var(--dgrey); }
+.exo-body ol { padding-left:20px; }
+.exo-body li { margin-bottom:8px; color:var(--dgrey); }
+
+.toggle-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  cursor:pointer; margin-top:14px;
+  padding:7px 16px;
+  border-radius:6px; font-family:'JetBrains Mono',monospace; font-size:12px;
+  transition:all .2s; user-select:none;
+}
+.btn-hint { background:rgba(26,82,118,.1); border:1px solid rgba(26,82,118,.25); color:var(--bleu); }
+.btn-hint:hover { background:rgba(26,82,118,.18); }
+.btn-corr { background:rgba(30,86,49,.1); border:1px solid rgba(30,86,49,.25); color:var(--vert); }
+.btn-corr:hover { background:rgba(30,86,49,.18); }
+.toggle-icon { font-size:10px; }
+.hint-box, .corr-box { display:none; margin-top:14px; }
+.hint-box.open, .corr-box.open { display:block; }
+.hint-box { background:var(--bleu-lt); border:1px solid rgba(26,82,118,.2); border-radius:6px; padding:14px; }
+.corr-box { background:var(--vert-lt); border:1px solid rgba(30,86,49,.2); border-radius:6px; padding:14px; }
+
+/* ── QCM ── */
+.qcm-controls {
+  display:flex; align-items:center; gap:14px;
+  flex-wrap:wrap; margin-bottom:22px;
+}
+.qcm-size-opt {
+  display:flex; align-items:center; gap:8px; cursor:pointer;
+  padding:8px 18px; border-radius:8px;
+  border:2px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--grey);
+  transition:all .2s; user-select:none;
+}
+.qcm-size-opt:has(input:checked) {
+  border-color:var(--rouge); background:var(--rouge-lt); color:var(--rouge);
+}
+.qcm-size-opt input { accent-color:var(--rouge); }
+.qcm-btn {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  padding:9px 20px; border-radius:6px; border:none; cursor:pointer;
+  font-weight:700; transition:opacity .2s;
+}
+.qcm-btn-primary { background:var(--rouge); color:white; }
+.qcm-btn-secondary { background:var(--lgrey); color:var(--dgrey); border:1px solid var(--border); }
+.qcm-btn:hover { opacity:.85; }
+.qcm-q {
+  background:white; border:1px solid var(--border);
+  border-radius:8px; padding:20px 22px; margin-bottom:14px;
+  transition:border-color .3s;
+}
+.qcm-q.correct { border-color:#27AE60; background:#EAFAF1; }
+.qcm-q.wrong   { border-color:#C0392B; background:#FDEDEC; }
+.qcm-num {
+  font-family:'JetBrains Mono',monospace; font-size:10px;
+  color:var(--rouge); letter-spacing:2px; text-transform:uppercase; margin-bottom:7px;
+}
+.qcm-question { font-size:15px; font-weight:600; margin-bottom:13px; line-height:1.5; color:var(--black); }
+.qcm-question code { font-family:'JetBrains Mono',monospace; font-size:13px; background:var(--rouge-lt); color:var(--rouge-dk); padding:1px 5px; border-radius:3px; }
+.qcm-opts { display:flex; flex-direction:column; gap:7px; }
+.qcm-opt {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:9px 13px; border:1px solid var(--border);
+  border-radius:7px; cursor:pointer; transition:all .15s;
+  font-size:14px; color:var(--dgrey);
+}
+.qcm-opt:hover { border-color:var(--rouge); background:var(--rouge-bg); }
+.qcm-opt input { accent-color:var(--rouge); width:14px; height:14px; flex-shrink:0; margin-top:2px; }
+.qcm-opt.opt-ok  { border-color:#27AE60 !important; background:#D5F5E3 !important; color:var(--vert); font-weight:600; }
+.qcm-opt.opt-ko  { border-color:#C0392B !important; background:#FADBD8 !important; color:var(--rouge-dk); }
+.qcm-opt code { font-family:'JetBrains Mono',monospace; font-size:12px; background:var(--rouge-lt); padding:1px 5px; border-radius:3px; color:inherit; }
+.qcm-fb {
+  margin-top:10px; font-size:13px;
+  font-family:'JetBrains Mono',monospace;
+  padding:7px 11px; border-radius:5px; display:none; line-height:1.55;
+}
+.qcm-fb.show { display:block; }
+.qcm-fb.ok { background:rgba(39,174,96,.12); color:#1E5631; }
+.qcm-fb.ko { background:rgba(192,57,43,.1); color:var(--rouge-dk); }
+#qcm-result {
+  background:var(--dgrey); color:white;
+  border-radius:10px; padding:26px; text-align:center;
+  margin-top:22px; display:none;
+}
+.score-big { font-family:'DM Serif Display',serif; font-size:58px; line-height:1; margin-bottom:6px; }
+.score-sub { font-size:14px; opacity:.7; margin-bottom:16px; }
+.score-bar-bg { background:rgba(255,255,255,.2); border-radius:99px; height:10px; overflow:hidden; margin:14px 0; }
+.score-bar-fill { height:100%; border-radius:99px; transition:width .8s cubic-bezier(.4,0,.2,1); }
+.score-msg { font-size:17px; font-weight:700; }
+
+footer {
+  text-align:center; padding:36px;
+  color:var(--grey); font-family:'JetBrains Mono',monospace; font-size:11px;
+  border-top:2px solid var(--border);
+}
+
+@media(max-width:640px) {
+  .hero { padding:32px 18px 28px; }
+  .container { padding:0 14px; }
+  .mem-grid, .os-grid, .def-grid { grid-template-columns:1fr; }
+  .vn-grid { grid-template-columns:1fr; }
+  pre.cmd { font-size:12px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ════ HERO ════ -->
+<div class="hero">
+  <div class="hero-badge">NSI · 1ère Spécialité · Thème 5</div>
+  <h1>Architecture matérielle<br><em>&amp; Systèmes d'exploitation</em></h1>
+  <p class="hero-sub">Cours complet — Exercices progressifs — QCM interactif</p>
+</div>
+
+<!-- ════ NAV ════ -->
+<nav class="toc">
+  <a href="#s1">1. Composants</a>
+  <a href="#s2">2. Mémoires</a>
+  <a href="#s3">3. Processeur</a>
+  <a href="#s4">4. Von Neumann</a>
+  <a href="#s5">5. Systèmes d'exploitation</a>
+  <a href="#s6">6. Ligne de commande</a>
+  <a href="#s7">7. Système de fichiers</a>
+  <a href="#s8">8. Droits & permissions</a>
+  <a href="#s9">✏ Exercices</a>
+  <a href="#s10">🎯 QCM</a>
+</nav>
+
+<div class="container">
+
+<!-- ══════════════════════════════════════════════
+     SECTION 1 — COMPOSANTS
+══════════════════════════════════════════════ -->
+<div class="section" id="s1">
+  <div class="section-banner"><span class="num">1</span><h2>Architecture matérielle — Principaux composants</h2></div>
+
+  <div class="subsection"><h3>Périphériques</h3></div>
+
+  <div class="def-grid">
+    <div class="def-grid-hdr">DÉFINITIONS</div>
+    <div class="def-grid-hdr">EXEMPLES</div>
+    <div class="def-cell"><span class="def-pill">Périphérique</span><br>Dispositif connecté à une machine qui lui ajoute des fonctionnalités et lui permet d'interagir avec l'utilisateur.</div>
+    <div class="def-cell">Clavier, souris, écran, webcam, disque dur externe…</div>
+    <div class="def-cell"><span class="def-pill">Périphérique d'entrée</span><br>Permet à la machine d'<strong>obtenir</strong> des informations de l'extérieur.</div>
+    <div class="def-cell">Clavier, souris, touchpad, webcam, micro, scanner, manette de jeu.</div>
+    <div class="def-cell"><span class="def-pill">Périphérique de sortie</span><br>Permet d'<strong>envoyer</strong> des informations à l'extérieur de la machine.</div>
+    <div class="def-cell">Écran, hauts-parleurs, imprimante, casque audio.</div>
+    <div class="def-cell"><span class="def-pill">Périphérique d'entrée/sortie</span><br>Peut à la fois <strong>lire</strong> et <strong>écrire</strong> des informations.</div>
+    <div class="def-cell">Disque dur (HDD), SSD, clé USB, carte réseau, écran tactile.</div>
+  </div>
+
+  <div class="subsection"><h3>Carte mère et bus</h3></div>
+
+  <div class="box box-def">
+    <div class="box-title">🔌 Carte mère</div>
+    Circuit imprimé central qui assure la <strong>liaison entre tous les composants</strong> d'un ordinateur : processeur, mémoire vive, cartes d'extension et ports de connexion.
+  </div>
+
+  <div class="box box-tip">
+    <div class="box-title">🚌 Bus</div>
+    Un <strong>bus</strong> est un dispositif de transmission de données (câble ou piste électronique) qui relie les composants entre eux. On distingue le bus de données, le bus d'adresses et le bus de contrôle.
+  </div>
+
+  <div class="box box-tip">
+    <div class="box-title">🃏 Cartes d'extension</div>
+    Une <strong>carte d'extension</strong> (ou carte fille) permet d'ajouter des fonctionnalités à une machine. Elle est connectée à la carte mère via un bus. Exemples : carte graphique (GPU), carte réseau, carte son.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 2 — MÉMOIRES
+══════════════════════════════════════════════ -->
+<div class="section" id="s2">
+  <div class="section-banner"><span class="num">2</span><h2>Les mémoires</h2></div>
+
+  <p>La mémoire permet de <strong>stocker des données et des programmes</strong>. On distingue deux grands types :</p>
+  <ul>
+    <li><strong>Mémoire volatile</strong> : perd son contenu lors de la mise hors tension (ex. RAM).</li>
+    <li><strong>Mémoire persistante</strong> : conserve son contenu sans alimentation électrique (ex. disque dur, ROM).</li>
+  </ul>
+
+  <div class="subsection"><h3>Unités de capacité</h3></div>
+
+  <table class="std">
+    <tr><th>Unité</th><th>Abréviation</th><th>Équivalence</th></tr>
+    <tr><td>Kilo-octet</td><td><code>Ko</code></td><td>10³ octets = 1 000 octets</td></tr>
+    <tr><td>Méga-octet</td><td><code>Mo</code></td><td>10⁶ octets = 1 000 Ko</td></tr>
+    <tr><td>Giga-octet</td><td><code>Go</code></td><td>10⁹ octets = 1 000 Mo</td></tr>
+    <tr><td>Téra-octet</td><td><code>To</code></td><td>10¹² octets = 1 000 Go</td></tr>
+    <tr><td>Péta-octet</td><td><code>Po</code></td><td>10¹⁵ octets = 1 000 To</td></tr>
+  </table>
+
+  <div class="subsection"><h3>Les 4 types de mémoire</h3></div>
+
+  <div class="mem-grid">
+    <div class="mem-card">
+      <div class="mem-card-hdr">1. Mémoire de masse (stockage)</div>
+      <div class="mem-card-body">
+        Stockage <strong>long terme</strong> de grandes quantités de données. Technologies : <strong>HDD</strong> (électromécanique) ou <strong>SSD / clé USB</strong> (semi-conducteurs). Mémoire <strong>persistante</strong>.
+        <div class="mem-spec">Capacité : jusqu'à 10 To (HDD)<br>Vitesse : jusqu'à 500 Mo/s (SSD)</div>
+        <em>Volatile : NON</em>
+      </div>
+    </div>
+    <div class="mem-card">
+      <div class="mem-card-hdr">2. Mémoire vive (RAM)</div>
+      <div class="mem-card-body">
+        Espace principal de stockage du microprocesseur <strong>en cours de fonctionnement</strong>. Appelée RAM (<em>Random Access Memory</em>) car le temps d'accès est faible et ne dépend pas de l'emplacement. Mémoire <strong>volatile</strong>.
+        <div class="mem-spec">Capacité : jusqu'à 32 Go<br>Vitesse : jusqu'à 2 Go/s</div>
+        <em>Volatile : OUI — perdue à l'extinction</em>
+      </div>
+    </div>
+    <div class="mem-card">
+      <div class="mem-card-hdr">3. Mémoire cache</div>
+      <div class="mem-card-body">
+        Petites mémoires très rapides situées entre la RAM et le processeur. Évite le <strong>goulot d'étranglement</strong> en conservant les données fréquemment consultées. Très coûteuse, faible capacité. Hiérarchie : L1 (le plus rapide) → L2 → L3.
+        <div class="mem-spec">Capacité : quelques Ko (L1) à quelques Mo (L2)<br>Vitesse : jusqu'à 5 Go/s</div>
+        <em>Volatile : OUI</em>
+      </div>
+    </div>
+    <div class="mem-card">
+      <div class="mem-card-hdr">4. Mémoire morte (ROM)</div>
+      <div class="mem-card-body">
+        Mémoire <strong>persistante</strong> dont le contenu est fixé à la fabrication. Contient les instructions de démarrage de la machine (<em>firmware</em>, BIOS/UEFI). Impossible à effacer par l'utilisateur. ROM = <em>Read-Only Memory</em>.
+        <div class="mem-spec">Capacité : quelques Mo</div>
+        <em>Volatile : NON</em>
+      </div>
+    </div>
+  </div>
+
+  <div class="box box-warn">
+    <div class="box-title">⚠ Piège classique</div>
+    RAM ≠ disque dur. La <strong>RAM</strong> est rapide, volatile et de faible capacité (espace de travail). Le <strong>disque dur</strong> est lent, persistant et de grande capacité (stockage).
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 3 — PROCESSEUR
+══════════════════════════════════════════════ -->
+<div class="section" id="s3">
+  <div class="section-banner"><span class="num">3</span><h2>Le processeur (CPU)</h2></div>
+
+  <div class="box box-def">
+    <div class="box-title">🧠 Définition</div>
+    Le <strong>processeur</strong> ou UCT (Unité Centrale de Traitement), en anglais <strong>CPU</strong> (<em>Central Processing Unit</em>), est le composant essentiel qui <strong>exécute les instructions machine</strong> des programmes informatiques.
+  </div>
+
+  <div class="subsection"><h3>Les 3 composants du CPU</h3></div>
+
+  <div class="cpu-diagram">
+    <div class="cpu-box">
+      <h4>ALU</h4>
+      <strong>Unité arithmétique et logique</strong><br>
+      <span style="font-size:13px;color:var(--grey)">Exécute tous les calculs arithmétiques (+, -, ×, /) et logiques (ET, OU, NON) du processeur.</span>
+    </div>
+    <div class="cpu-arrow">⇄</div>
+    <div class="cpu-box">
+      <h4>Registres</h4>
+      <strong>Mémoire interne du CPU</strong><br>
+      <span style="font-size:13px;color:var(--grey)">Mémorisent en très petite quantité les données et instructions en cours de traitement. Mémoire la plus rapide de l'ordinateur.</span>
+    </div>
+    <div class="cpu-arrow">⇄</div>
+    <div class="cpu-box">
+      <h4>Unité de contrôle</h4>
+      <strong>Chef d'orchestre du CPU</strong><br>
+      <span style="font-size:13px;color:var(--grey)">Séquence et coordonne les opérations : récupère les instructions et données en mémoire, les envoie à l'ALU, gère le résultat.</span>
+    </div>
+  </div>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 À retenir</div>
+    La <strong>fréquence d'horloge</strong> (en GHz) détermine le nombre d'opérations par seconde. Un CPU moderne possède plusieurs <strong>cœurs</strong>, permettant l'exécution parallèle de plusieurs tâches.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 4 — VON NEUMANN
+══════════════════════════════════════════════ -->
+<div class="section" id="s4">
+  <div class="section-banner"><span class="num">4</span><h2>Architecture de Von Neumann</h2></div>
+
+  <div class="box box-def">
+    <div class="box-title">📐 Définition</div>
+    L'architecture de <strong>Von Neumann</strong> (1945) est le modèle fondateur de l'ordinateur moderne : le <strong>programme et les données sont stockés dans la même mémoire</strong>. La quasi-totalité des ordinateurs actuels repose encore sur ce modèle.
+  </div>
+
+  <div class="subsection"><h3>Les 4 parties de l'architecture de Von Neumann</h3></div>
+
+  <div class="vn-diagram">
+    <p style="color:#A8D8EA;font-size:12px;margin-bottom:14px;text-transform:uppercase;letter-spacing:1px;">Modèle de Von Neumann</p>
+    <div class="vn-grid">
+      <div class="vn-block mem">
+        🗃 Mémoire<br><span style="font-size:11px;font-weight:400">Programme + Données</span>
+      </div>
+      <div class="vn-arrow">⇄</div>
+      <div style="display:flex;flex-direction:column;gap:10px">
+        <div class="vn-block">
+          Unité de contrôle<br><span style="font-size:11px;font-weight:400">Séquençage</span>
+        </div>
+        <div class="vn-block">
+          ALU<br><span style="font-size:11px;font-weight:400">Calculs</span>
+        </div>
+      </div>
+      <div class="vn-arrow">⇄</div>
+      <div class="vn-block io">
+        Entrées / Sorties<br><span style="font-size:11px;font-weight:400">Périphériques</span>
+      </div>
+    </div>
+    <p style="color:#637082;font-size:11px;margin-top:12px">L'unité de contrôle + l'ALU forment aujourd'hui le CPU.</p>
+  </div>
+
+  <table class="std">
+    <tr><th>Partie</th><th>Rôle</th><th>Équivalent matériel</th></tr>
+    <tr><td><strong>UAL / ALU</strong></td><td>Effectuer les opérations de base (calculs arithmétiques et logiques)</td><td>Cœur du CPU</td></tr>
+    <tr><td><strong>Unité de contrôle</strong></td><td>Séquencer les opérations, récupérer instructions et données</td><td>CPU (chef d'orchestre)</td></tr>
+    <tr><td><strong>Mémoire</strong></td><td>Stocker programme et données (mémoire unifiée)</td><td>RAM + disque dur</td></tr>
+    <tr><td><strong>Entrées/Sorties</strong></td><td>Communiquer avec le monde extérieur</td><td>Périphériques</td></tr>
+  </table>
+
+  <div class="box box-tip">
+    <div class="box-title">🔑 Spécificité fondamentale</div>
+    Dans le modèle de Von Neumann, <strong>les instructions sont traitées de la même façon que les données</strong>. C'est ce qui permet à un programme de modifier un autre programme.
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 5 — SYSTÈMES D'EXPLOITATION
+══════════════════════════════════════════════ -->
+<div class="section" id="s5">
+  <div class="section-banner"><span class="num">5</span><h2>Systèmes d'exploitation</h2></div>
+
+  <div class="box box-def">
+    <div class="box-title">💿 Définition</div>
+    Un <strong>système d'exploitation</strong> ou <strong>OS</strong> (<em>Operating System</em>) est un ensemble de programmes qui gère les ressources matérielles et logicielles d'un ordinateur. Il sert d'<strong>intermédiaire entre les logiciels d'application et le matériel</strong>.
+  </div>
+
+  <div class="subsection"><h3>Fonctions d'un OS</h3></div>
+
+  <p>Un système d'exploitation :</p>
+  <ul>
+    <li><strong>Exécute</strong> des programmes ;</li>
+    <li><strong>Lit et écrit</strong> des informations dans les mémoires ;</li>
+    <li><strong>Gère les fichiers</strong> et protège le système de fichiers ;</li>
+    <li><strong>Gère les périphériques</strong> via des pilotes (drivers) ;</li>
+    <li><strong>Communique</strong> entre ordinateurs via le réseau ;</li>
+    <li><strong>Détecte et gère les erreurs</strong> matérielles et logicielles ;</li>
+    <li><strong>Gère les droits</strong> et les permissions des utilisateurs.</li>
+  </ul>
+
+  <div class="box box-tip">
+    <div class="box-title">🚀 Démarrage</div>
+    Au démarrage, le <strong>firmware</strong> (stocké en ROM) s'exécute en premier, puis charge et lance le système d'exploitation depuis le disque dur.
+  </div>
+
+  <div class="subsection"><h3>Logiciel libre vs propriétaire</h3></div>
+
+  <div class="def-grid">
+    <div class="def-grid-hdr">Logiciel LIBRE (free software)</div>
+    <div class="def-grid-hdr">Logiciel PROPRIÉTAIRE</div>
+    <div class="def-cell">L'utilisateur a la liberté d'<strong>exécuter, copier, distribuer, étudier, modifier et améliorer</strong> le logiciel. Son code source est accessible.</div>
+    <div class="def-cell">Le code source <strong>appartient à son éditeur</strong>. Il n'est ni accessible, ni distribuable, ni modifiable. L'utilisation est encadrée par une licence commerciale.</div>
+    <div class="def-cell">Exemples : <strong>Linux, Firefox, VLC</strong>, LibreOffice. Un logiciel libre n'est pas forcément gratuit.</div>
+    <div class="def-cell">Exemples : <strong>Windows, macOS, Adobe Photoshop</strong>. Un logiciel propriétaire n'est pas forcément payant (ex. Snapchat est gratuit mais propriétaire).</div>
+  </div>
+
+  <div class="subsection"><h3>Familles de systèmes d'exploitation</h3></div>
+
+  <div class="os-grid">
+    <div class="os-card">
+      <div class="os-card-hdr windows">🪟 Windows — Microsoft</div>
+      <div class="os-card-body">
+        <ul>
+          <li>Système <strong>propriétaire</strong> (code source fermé)</li>
+          <li>>70% de parts de marché sur PC (2021)</li>
+          <li>Utilisé sur PC, tablettes, consoles Xbox</li>
+          <li>Licence payante pour les utilisateurs</li>
+        </ul>
+      </div>
+    </div>
+    <div class="os-card">
+      <div class="os-card-hdr linux">🐧 Unix / Linux</div>
+      <div class="os-card-body">
+        <ul>
+          <li>Système <strong>libre et open source</strong></li>
+          <li>Descendants : macOS, iOS, Android, GNU/Linux</li>
+          <li>Utilisé dans les serveurs, smartphones, supercalculateurs</li>
+          <li>Code source accessible en ligne</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 6 — LIGNE DE COMMANDE
+══════════════════════════════════════════════ -->
+<div class="section" id="s6">
+  <div class="section-banner"><span class="num">6</span><h2>Interface en ligne de commande (CLI)</h2></div>
+
+  <div class="box box-def">
+    <div class="box-title">💻 Définition</div>
+    Une <strong>interface en ligne de commande</strong> est une interface textuelle entre l'utilisateur et la machine. L'utilisateur saisit des commandes au clavier, l'OS exécute et affiche les résultats. L'interpréteur de commandes s'appelle le <strong>Shell</strong>.
+  </div>
+
+  <div class="subsection"><h3>Syntaxe du prompt</h3></div>
+
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tdot tr"></span><span class="tdot ty"></span><span class="tdot tg"></span><span style="margin-left:8px">Terminal — Shell bash</span></div>
+    <pre class="cmd"><span class="comment"># Syntaxe du prompt pour un utilisateur standard :</span>
+<span class="prompt">nom_utilisateur@nom_machine:répertoire_courant$</span>
+
+<span class="comment"># Exemple : Paul utilise l'ordinateur PC_Paul, répertoire courant = home</span>
+<span class="prompt">Paul@PC_Paul:home$</span>
+
+<span class="comment"># Syntaxe du super-utilisateur (root = tous les droits) :</span>
+<span class="prompt">root@nom_machine:répertoire_courant#</span></pre>
+  </div>
+
+  <div class="subsection"><h3>Commandes de base Linux/Unix</h3></div>
+
+  <table class="cmd-table">
+    <tr><th>Commande</th><th>De l'anglais</th><th>Description</th><th>Exemple</th></tr>
+    <tr>
+      <td>ls</td><td class="desc"><em>list</em></td>
+      <td class="desc">Affiche le contenu du répertoire courant</td>
+      <td class="desc"><code>ls</code> / <code>ls -l</code> (détails) / <code>ls -d</code> (dossiers)</td>
+    </tr>
+    <tr>
+      <td>pwd</td><td class="desc"><em>print working directory</em></td>
+      <td class="desc">Affiche le chemin du répertoire courant</td>
+      <td class="desc"><code>pwd</code> → <code>/home/Angie/NSI</code></td>
+    </tr>
+    <tr>
+      <td>cd</td><td class="desc"><em>change directory</em></td>
+      <td class="desc">Change le répertoire courant</td>
+      <td class="desc"><code>cd NSI</code> / <code>cd ..</code> / <code>cd ~</code></td>
+    </tr>
+    <tr>
+      <td>mkdir</td><td class="desc"><em>make directory</em></td>
+      <td class="desc">Crée un répertoire vide</td>
+      <td class="desc"><code>mkdir OS</code></td>
+    </tr>
+    <tr>
+      <td>mv</td><td class="desc"><em>move</em></td>
+      <td class="desc">Déplace ou renomme un fichier/répertoire</td>
+      <td class="desc"><code>mv Types NSI/Types</code></td>
+    </tr>
+    <tr>
+      <td>cp</td><td class="desc"><em>copy</em></td>
+      <td class="desc">Copie un fichier ou répertoire</td>
+      <td class="desc"><code>cp Modules NSI/</code></td>
+    </tr>
+    <tr>
+      <td>rm</td><td class="desc"><em>remove</em></td>
+      <td class="desc">Supprime un fichier (<code>-r</code> pour répertoire)</td>
+      <td class="desc"><code>rm fichier.txt</code> / <code>rm -r Dossier</code></td>
+    </tr>
+    <tr>
+      <td>cat</td><td class="desc"><em>catenate</em></td>
+      <td class="desc">Affiche le contenu d'un fichier</td>
+      <td class="desc"><code>cat Modules</code></td>
+    </tr>
+    <tr>
+      <td>man</td><td class="desc"><em>manual</em></td>
+      <td class="desc">Affiche le manuel d'une commande</td>
+      <td class="desc"><code>man rm</code></td>
+    </tr>
+  </table>
+
+  <div class="box box-ex">
+    <div class="box-title">💡 Raccourcis utiles</div>
+    <ul>
+      <li><code>~</code> : raccourci vers le répertoire personnel de l'utilisateur (<code>cd ~</code>)</li>
+      <li><code>*</code> : remplace n'importe quelle chaîne (ex. <code>cp TP*.py /TP_Python</code>)</li>
+      <li><code>Tab</code> : auto-complétion du nom de fichier/répertoire</li>
+      <li><code>man commande</code> : affiche toute la documentation d'une commande</li>
+    </ul>
+  </div>
+
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tdot tr"></span><span class="tdot ty"></span><span class="tdot tg"></span><span style="margin-left:8px">Exemple de session</span></div>
+    <pre class="cmd"><span class="prompt">Angie@PC:~$</span> ls
+<span class="output">Encodage  Jeux  NSI  Types  Danse  Math</span>
+<span class="prompt">Angie@PC:~$</span> cd NSI
+<span class="prompt">Angie@PC:~/NSI$</span> ls
+<span class="output">Modules</span>
+<span class="prompt">Angie@PC:~/NSI$</span> mkdir OS
+<span class="prompt">Angie@PC:~/NSI$</span> ls
+<span class="output">Modules  OS</span>
+<span class="prompt">Angie@PC:~/NSI$</span> cat Modules
+<span class="output">T1: Représentation des données
+T2: Algorithmique
+T3: Langages et programmation
+...</span>
+<span class="prompt">Angie@PC:~/NSI$</span> mv ../Types NSI/Types   <span class="comment"># déplace Types dans NSI</span>
+<span class="prompt">Angie@PC:~/NSI$</span> cp Modules Programmation/Modules  <span class="comment"># copie Modules</span>
+<span class="prompt">Angie@PC:~/NSI$</span> rm Modules  <span class="comment"># supprime l'original</span></pre>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 7 — SYSTÈME DE FICHIERS
+══════════════════════════════════════════════ -->
+<div class="section" id="s7">
+  <div class="section-banner"><span class="num">7</span><h2>Système de fichiers Linux</h2></div>
+
+  <p>Sous Linux, les données sont organisées en <strong>arborescence</strong> de répertoires et de fichiers. Le sommet de l'arborescence s'appelle le <strong>répertoire racine</strong>, noté <code>/</code>.</p>
+
+  <div class="subsection"><h3>Arborescence de référence</h3></div>
+
+  <div class="filetree">
+<pre><span class="ft-root">/</span>  ← Racine (répertoire le plus haut)
+<span class="ft-line">├──</span> <span class="ft-dir">usr</span>/          ← Programmes utilisateurs
+<span class="ft-line">├──</span> <span class="ft-dir">etc</span>/          ← Fichiers de configuration du système
+<span class="ft-line">├──</span> <span class="ft-dir">dev</span>/          ← Fichiers de périphériques
+<span class="ft-line">├──</span> <span class="ft-dir">tmp</span>/          ← Fichiers temporaires
+<span class="ft-line">├──</span> <span class="ft-dir">bin</span>/          ← Commandes système Unix (ls, cd, cp…)
+<span class="ft-line">│   └──</span> <span class="ft-dir">bin</span>/      ← Sous-répertoire bin de bin
+<span class="ft-line">└──</span> <span class="ft-dir">home</span>/         ← Répertoires personnels des utilisateurs
+<span class="ft-line">    ├──</span> <span class="ft-dir">Angie</span>/    ← Répertoire personnel d'Angie
+<span class="ft-line">    │   ├──</span> <span class="ft-dir">NSI</span>/
+<span class="ft-line">    │   │   └──</span> <span class="ft-file">Modules</span>
+<span class="ft-line">    │   ├──</span> <span class="ft-dir">Jeux</span>/
+<span class="ft-line">    │   │   ├──</span> <span class="ft-dir">Personnages</span>/
+<span class="ft-line">    │   │   ├──</span> <span class="ft-dir">Mondes</span>/
+<span class="ft-line">    │   │   └──</span> <span class="ft-dir">Saisons</span>/
+<span class="ft-line">    │   │       ├──</span> <span class="ft-file">Saison1</span>
+<span class="ft-line">    │   │       ├──</span> <span class="ft-file">Saison2</span>
+<span class="ft-line">    │   │       └──</span> <span class="ft-file">Saison3</span>
+<span class="ft-line">    │   └──</span> <span class="ft-dir">Danse</span>/
+<span class="ft-line">    │       └──</span> <span class="ft-file">Photo</span>
+<span class="ft-line">    └──</span> <span class="ft-dir">Matéi</span>/    ← Répertoire personnel de Matéi
+<span class="ft-line">        ├──</span> <span class="ft-dir">Jeux</span>/
+<span class="ft-line">        └──</span> <span class="ft-dir">Exos</span>/
+<span class="ft-line">            ├──</span> <span class="ft-file">Exo1</span>
+<span class="ft-line">            └──</span> <span class="ft-file">Exo2</span></pre>
+  </div>
+
+  <div class="subsection"><h3>Chemins d'accès</h3></div>
+
+  <div class="def-grid">
+    <div class="def-grid-hdr">DÉFINITIONS</div>
+    <div class="def-grid-hdr">EXEMPLES (arbre ci-dessus)</div>
+    <div class="def-cell"><span class="def-pill">Répertoire racine</span><br>Noté <code>/</code>, c'est le répertoire le plus haut dans l'arborescence. Il contient tous les autres répertoires.</div>
+    <div class="def-cell">Le répertoire <code>/</code> contient <code>usr</code>, <code>etc</code>, <code>dev</code>, <code>tmp</code>, <code>bin</code>, <code>home</code>…</div>
+    <div class="def-cell"><span class="def-pill">Répertoire courant</span><br>Répertoire dans lequel on se trouve à un instant donné. Noté <code>.</code> (un seul point).</div>
+    <div class="def-cell">Si on a fait <code>cd /home/Angie/NSI</code>, le répertoire courant est <code>NSI</code>.</div>
+    <div class="def-cell"><span class="def-pill">Répertoire père</span><br>Répertoire qui contient le répertoire courant. Noté <code>..</code> (deux points).</div>
+    <div class="def-cell">Le répertoire père de <code>NSI</code> est <code>Angie</code>. <code>cd ..</code> depuis <code>NSI</code> ramène dans <code>Angie</code>.</div>
+    <div class="def-cell"><span class="def-pill">Chemin absolu</span><br>Chemin qui part <strong>toujours de la racine</strong> <code>/</code>. Commence donc par <code>/</code>. Indépendant du répertoire courant.</div>
+    <div class="def-cell"><code>/home/Angie/Danse/Photo</code><br><code>/home/Matéi/Exos/Exo1</code></div>
+    <div class="def-cell"><span class="def-pill">Chemin relatif</span><br>Chemin qui part du <strong>répertoire courant</strong>. Ne commence <strong>pas</strong> par <code>/</code>. Le symbole <code>..</code> permet de remonter d'un niveau.</div>
+    <div class="def-cell">Si courant = <code>Angie</code> : <code>Danse/Photo</code><br>Si courant = <code>NSI</code> : <code>../Danse/Photo</code><br>Si courant = <code>Angie</code> → <code>usr</code> : <code>../../usr</code></div>
+  </div>
+
+  <div class="box box-ex">
+    <div class="box-title">📝 Exemple complet</div>
+    <p>Je suis dans <code>/home/Angie/Jeux/Saisons</code> et je veux accéder à <code>/home/Matéi/Exos/Exo1</code> :</p>
+    <ul>
+      <li><strong>Chemin absolu</strong> : <code>/home/Matéi/Exos/Exo1</code> (part toujours de /)</li>
+      <li><strong>Chemin relatif</strong> : <code>../../../Matéi/Exos/Exo1</code> (remonte 3 niveaux : Saisons→Jeux→Angie→home→Matéi)</li>
+    </ul>
+    <p>💡 Rappel : un chemin <strong>absolu</strong> commence par <code>/</code>, un chemin <strong>relatif</strong> ne commence jamais par <code>/</code>.</p>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 8 — DROITS & PERMISSIONS
+══════════════════════════════════════════════ -->
+<div class="section" id="s8">
+  <div class="section-banner"><span class="num">8</span><h2>Droits et permissions d'accès</h2></div>
+
+  <div class="subsection"><h3>Utilisateurs et groupes</h3></div>
+
+  <ul>
+    <li>Chaque utilisateur est identifié par un <strong>identifiant (user id)</strong> et possède un répertoire personnel.</li>
+    <li>Le <strong>super-utilisateur</strong> (<code>root</code>) a accès à <em>tous</em> les fichiers et peut modifier tous les droits.</li>
+    <li>Le <strong>propriétaire</strong> d'un fichier est l'utilisateur qui l'a créé ; il peut modifier les droits de ses propres fichiers.</li>
+    <li>Chaque utilisateur appartient à un ou plusieurs <strong>groupes</strong>.</li>
+  </ul>
+
+  <div class="subsection"><h3>Lire les permissions avec ls -l</h3></div>
+
+  <div class="perms-box">
+    <p style="color:#637082;font-size:11px;margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;">Sortie de la commande : ls -l</p>
+    <div class="perm-str">
+      <span class="p-d">d</span><span class="p-r">r</span><span class="p-w">w</span><span class="p-x">x</span><span class="p-r">r</span><span class="p-no">-</span><span class="p-x">x</span><span class="p-r">r</span><span class="p-no">-</span><span class="p-no">-</span>
+      &nbsp;&nbsp;2&nbsp;&nbsp;Angie&nbsp;&nbsp;enfants&nbsp;&nbsp;4096&nbsp;&nbsp;juin 26&nbsp;&nbsp;Jeux
+    </div>
+    <div style="color:#637082;font-size:12px;margin-top:12px;line-height:2">
+      <span class="p-d">d</span> = répertoire (- = fichier)&nbsp;&nbsp;|&nbsp;&nbsp;
+      <span style="color:#A8D8EA">rwx r-x r--</span> = droits propriétaire | groupe | autres&nbsp;&nbsp;|&nbsp;&nbsp;
+      Angie = propriétaire&nbsp;&nbsp;|&nbsp;&nbsp;enfants = groupe
+    </div>
+  </div>
+
+  <div class="subsection"><h3>Les 3 types de droits</h3></div>
+
+  <table class="perms-table">
+    <tr><th>Lettre</th><th>De l'anglais</th><th>Pour un fichier</th><th>Pour un répertoire</th></tr>
+    <tr>
+      <td class="pval p-r">r</td><td class="desc"><em>read</em></td>
+      <td class="desc">Lire le contenu du fichier</td>
+      <td class="desc">Lister le contenu du répertoire</td>
+    </tr>
+    <tr>
+      <td class="pval p-w">w</td><td class="desc"><em>write</em></td>
+      <td class="desc">Modifier le contenu du fichier</td>
+      <td class="desc">Créer, supprimer, renommer des fichiers dans le répertoire</td>
+    </tr>
+    <tr>
+      <td class="pval p-x">x</td><td class="desc"><em>execute</em></td>
+      <td class="desc">Exécuter le fichier (s'il est exécutable)</td>
+      <td class="desc">Traverser / ouvrir le répertoire</td>
+    </tr>
+    <tr>
+      <td class="pval p-no">-</td><td class="desc">—</td>
+      <td class="desc" colspan="2">Droit absent (interdit)</td>
+    </tr>
+  </table>
+
+  <div class="subsection"><h3>Modifier les droits avec chmod</h3></div>
+
+  <div class="box box-def">
+    <div class="box-title">🔧 Syntaxe de chmod</div>
+    <code>chmod  [qui][+/-/=][droits]  nom_fichier</code>
+  </div>
+
+  <table class="std">
+    <tr><th>Paramètre</th><th>Signification</th><th>Valeurs possibles</th></tr>
+    <tr><td><strong>Qui</strong></td><td>À qui s'applique la modification</td><td><code>u</code> propriétaire · <code>g</code> groupe · <code>o</code> autres · <code>a</code> tous</td></tr>
+    <tr><td><strong>Type</strong></td><td>Type de modification</td><td><code>+</code> ajouter · <code>-</code> enlever · <code>=</code> assigner uniquement</td></tr>
+    <tr><td><strong>Droit</strong></td><td>Type d'autorisation</td><td><code>r</code> lecture · <code>w</code> écriture · <code>x</code> exécution</td></tr>
+  </table>
+
+  <div class="terminal">
+    <div class="terminal-bar"><span class="tdot tr"></span><span class="tdot ty"></span><span class="tdot tg"></span><span style="margin-left:8px">Exemples chmod</span></div>
+    <pre class="cmd"><span class="comment"># Ajouter le droit d'exécution au propriétaire et au groupe</span>
+chmod ug+x nom_fichier
+
+<span class="comment"># Enlever le droit de lecture aux autres utilisateurs</span>
+chmod o-r nom_fichier
+
+<span class="comment"># Assigner rw pour le propriétaire, r pour le groupe, rien pour les autres</span>
+chmod u=rw,g=r,o= nom_fichier
+
+<span class="comment"># -R : récursif (applique aux sous-répertoires et fichiers contenus)</span>
+chmod -R g+rw Saisons</pre>
+  </div>
+
+  <div class="subsection"><h3>Notation octale</h3></div>
+
+  <p>On peut aussi représenter les droits par un nombre en <strong>base 8</strong> (trois chiffres : propriétaire, groupe, autres) :</p>
+
+  <table class="perms-table">
+    <tr><th>Droits</th><th>Binaire (0=absent, 1=présent)</th><th>Valeur octale</th></tr>
+    <tr><td><code>rwx</code></td><td>111</td><td class="pval">7</td></tr>
+    <tr><td><code>rw-</code></td><td>110</td><td class="pval">6</td></tr>
+    <tr><td><code>r-x</code></td><td>101</td><td class="pval">5</td></tr>
+    <tr><td><code>r--</code></td><td>100</td><td class="pval">4</td></tr>
+    <tr><td><code>-wx</code></td><td>011</td><td class="pval">3</td></tr>
+    <tr><td><code>-w-</code></td><td>010</td><td class="pval">2</td></tr>
+    <tr><td><code>--x</code></td><td>001</td><td class="pval">1</td></tr>
+    <tr><td><code>---</code></td><td>000</td><td class="pval">0</td></tr>
+  </table>
+
+  <div class="box box-ex">
+    <div class="box-title">📐 Exemple</div>
+    <code>chmod 755 monfichier</code> → propriétaire : <code>rwx</code> (7), groupe : <code>r-x</code> (5), autres : <code>r-x</code> (5)<br>
+    <code>chmod 644 monfichier</code> → propriétaire : <code>rw-</code> (6), groupe : <code>r--</code> (4), autres : <code>r--</code> (4)
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 9 — EXERCICES
+══════════════════════════════════════════════ -->
+<div class="section" id="s9">
+  <div class="section-banner"><span class="num">✏</span><h2>Exercices progressifs</h2></div>
+  <p style="color:var(--grey);margin-bottom:20px;">3 niveaux de difficulté. Réfléchis avant de regarder la correction !</p>
+
+  <!-- EX 1 -->
+  <div class="exo-card">
+    <div class="exo-card-hdr easy">
+      <div>
+        <div class="exo-level">⭐ Niveau 1 — Exercice 1</div>
+        <div class="exo-title">Composants et périphériques</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>Classez les composants/périphériques suivants dans le tableau ci-dessous :</p>
+      <p><em>Clavier · Écran · Disque SSD · RAM · CPU · Webcam · Imprimante · Carte réseau · Haut-parleurs · Scanner · Manette de jeu · ROM</em></p>
+      <table class="std">
+        <tr><th>Périphérique d'entrée</th><th>Périphérique de sortie</th><th>Périphérique E/S</th><th>Composant interne</th></tr>
+        <tr><td style="height:80px"></td><td></td><td></td><td></td></tr>
+      </table>
+      <ol>
+        <li>Quelle est la différence entre la RAM et le disque SSD ? (volatile, capacité, vitesse)</li>
+        <li>Quel type de mémoire contient les instructions de démarrage de l'ordinateur ? Peut-on la modifier ?</li>
+        <li>À quoi servent les bus dans une carte mère ?</li>
+      </ol>
+
+      <div class="toggle-btn btn-corr" onclick="toggle('c1')"><span class="toggle-icon" id="ic1">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c1">
+        <p><strong>Classement :</strong></p>
+        <ul>
+          <li><strong>Entrée :</strong> Clavier, Webcam, Scanner, Manette de jeu</li>
+          <li><strong>Sortie :</strong> Écran, Imprimante, Haut-parleurs</li>
+          <li><strong>Entrée/Sortie :</strong> Disque SSD, Carte réseau</li>
+          <li><strong>Composants internes :</strong> RAM, CPU, ROM</li>
+        </ul>
+        <p><strong>1.</strong> La <strong>RAM</strong> est volatile (perd son contenu à l'extinction), rapide (quelques Go/s), faible capacité (quelques Go). Le <strong>SSD</strong> est persistant, plus lent (500 Mo/s), grande capacité (centaines de Go à plusieurs To).</p>
+        <p><strong>2.</strong> La <strong>ROM</strong> (mémoire morte) contient le firmware/BIOS. Non, l'utilisateur ne peut pas la modifier — son contenu est fixé à la fabrication.</p>
+        <p><strong>3.</strong> Les <strong>bus</strong> sont les liaisons (câbles ou pistes) qui transportent les données entre les composants de la carte mère (CPU, RAM, cartes d'extension, périphériques).</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX 2 -->
+  <div class="exo-card">
+    <div class="exo-card-hdr easy">
+      <div>
+        <div class="exo-level">⭐ Niveau 1 — Exercice 2</div>
+        <div class="exo-title">Chemins d'accès Linux</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>On utilise l'arborescence de fichiers du cours (Angie, Matéi, Jeux, NSI, Danse…). Donnez les chemins demandés :</p>
+      <ol>
+        <li>Chemin <strong>absolu</strong> du fichier <code>Saison2</code>.</li>
+        <li>Chemin <strong>absolu</strong> du fichier <code>Exo1</code>.</li>
+        <li>Chemin <strong>relatif</strong> depuis <code>/home/Angie</code> pour accéder à <code>Photo</code>.</li>
+        <li>Chemin <strong>relatif</strong> depuis <code>/home/Angie/NSI</code> pour accéder à <code>Exo2</code>.</li>
+        <li>Chemin <strong>relatif</strong> depuis <code>/home/Angie/Jeux/Saisons</code> pour accéder à <code>/usr</code>.</li>
+      </ol>
+      <div class="toggle-btn btn-hint" onclick="toggle('h2')"><span class="toggle-icon" id="ih2">▶</span> Indice</div>
+      <div class="hint-box" id="h2"><p>Le chemin absolu commence toujours par <code>/</code>. Le chemin relatif ne commence jamais par <code>/</code>. Chaque <code>..</code> remonte d'un niveau dans l'arborescence.</p></div>
+      <div class="toggle-btn btn-corr" onclick="toggle('c2')"><span class="toggle-icon" id="ic2">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c2">
+        <ol>
+          <li><code>/home/Angie/Jeux/Saisons/Saison2</code></li>
+          <li><code>/home/Matéi/Exos/Exo1</code></li>
+          <li><code>Danse/Photo</code> (courant = Angie, Photo est dans Danse)</li>
+          <li><code>../../Matéi/Exos/Exo2</code> (NSI → Angie → home → Matéi/Exos/Exo2)</li>
+          <li><code>../../../../usr</code> (Saisons → Jeux → Angie → home → / → usr)</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX 3 -->
+  <div class="exo-card">
+    <div class="exo-card-hdr medium">
+      <div>
+        <div class="exo-level">⭐⭐ Niveau 2 — Exercice 3</div>
+        <div class="exo-title">Commandes Linux — Navigation et gestion de fichiers</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>On part du répertoire courant <code>/home/Angie</code>. Écrivez la ou les commandes permettant de réaliser chaque opération :</p>
+      <ol>
+        <li>Afficher le contenu du répertoire courant avec les droits et détails.</li>
+        <li>Se déplacer dans le répertoire <code>NSI</code>.</li>
+        <li>Créer un répertoire <code>Programmation</code> dans <code>NSI</code>, sans changer de répertoire.</li>
+        <li>Copier le fichier <code>Modules</code> dans <code>Programmation</code>.</li>
+        <li>Renommer le répertoire <code>Encodage</code> en <code>Encodages</code>.</li>
+        <li>Supprimer le répertoire <code>Danse</code> et tout son contenu.</li>
+        <li>Revenir au répertoire personnel en une seule commande.</li>
+      </ol>
+      <div class="toggle-btn btn-corr" onclick="toggle('c3')"><span class="toggle-icon" id="ic3">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c3">
+        <ol>
+          <li><code>ls -l</code></li>
+          <li><code>cd NSI</code></li>
+          <li><code>mkdir NSI/Programmation</code>  (chemin relatif depuis Angie)</li>
+          <li><code>cp NSI/Modules NSI/Programmation/Modules</code></li>
+          <li><code>mv Encodage Encodages</code></li>
+          <li><code>rm -r Danse</code>  (l'option <code>-r</code> = récursif, nécessaire pour un répertoire)</li>
+          <li><code>cd ~</code>  (ou <code>cd</code> sans argument)</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX 4 -->
+  <div class="exo-card">
+    <div class="exo-card-hdr medium">
+      <div>
+        <div class="exo-level">⭐⭐ Niveau 2 — Exercice 4</div>
+        <div class="exo-title">Lecture et interprétation des droits</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>La commande <code>ls -l</code> dans le répertoire <code>Jeux</code> d'Angie donne :</p>
+      <div class="terminal">
+        <div class="terminal-bar"><span class="tdot tr"></span><span class="tdot ty"></span><span class="tdot tg"></span></div>
+        <pre class="cmd"><span class="output">drwxr-x---  2  Angie  enfants  4096  Personnages
+-rw-r--r--  1  Angie  enfants  1024  Mondes
+drwxrwx---  2  Angie  enfants  4096  Saisons</span></pre>
+      </div>
+      <p>Angie et Matéi appartiennent au groupe <code>enfants</code>. Leurs parents ont leur propre groupe <code>parents</code> (= « autres utilisateurs »).</p>
+      <ol>
+        <li>Pour <strong>Personnages</strong> : complétez le tableau (oui/non) pour Angie, Matéi, et un parent.</li>
+        <li>Pour le fichier <strong>Mondes</strong> : que peuvent faire les parents ?</li>
+        <li>Pour <strong>Saisons</strong> : Matéi peut-il créer un fichier dedans ? Justifiez.</li>
+        <li>Quelle commande donne à tous les utilisateurs le droit de lire <code>Saisons</code> ?</li>
+        <li>Exprimer les droits de <code>Saisons</code> en notation octale.</li>
+      </ol>
+      <div class="toggle-btn btn-corr" onclick="toggle('c4')"><span class="toggle-icon" id="ic4">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c4">
+        <p><strong>1. Personnages (drwxr-x---) :</strong></p>
+        <table class="std">
+          <tr><th></th><th>Lecture</th><th>Écriture</th><th>Exécution/Traverser</th></tr>
+          <tr><td>Angie (propriétaire)</td><td>✅ oui</td><td>✅ oui</td><td>✅ oui</td></tr>
+          <tr><td>Matéi (groupe enfants)</td><td>✅ oui</td><td>❌ non</td><td>✅ oui</td></tr>
+          <tr><td>Parent (autres)</td><td>❌ non</td><td>❌ non</td><td>❌ non</td></tr>
+        </table>
+        <p><strong>2. Mondes (-rw-r--r--) :</strong> Les parents peuvent <strong>lire</strong> le fichier Mondes (droit r présent pour « autres »). Ils ne peuvent pas le modifier ni l'exécuter.</p>
+        <p><strong>3. Saisons (drwxrwx---) :</strong> Oui, Matéi peut créer un fichier dans Saisons. Le droit <code>w</code> du groupe (<code>rwx</code>) lui permet de créer/supprimer des fichiers dans ce répertoire.</p>
+        <p><strong>4.</strong> <code>chmod a+r Saisons</code> ou <code>chmod o+r Saisons</code> (ajouter le droit r aux autres).</p>
+        <p><strong>5.</strong> <code>drwxrwx---</code> → propriétaire : rwx=7, groupe : rwx=7, autres : ---=0 → <strong>770</strong></p>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX 5 -->
+  <div class="exo-card">
+    <div class="exo-card-hdr hard">
+      <div>
+        <div class="exo-level">⭐⭐⭐ Niveau 3 — Exercice 5</div>
+        <div class="exo-title">Problème complet — Organisation d'un projet NSI</div>
+      </div>
+    </div>
+    <div class="exo-body">
+      <p>Paul (<code>paul@PC_NSI</code>) veut organiser ses projets NSI. Son répertoire personnel est <code>/home/paul</code>.</p>
+      <ol>
+        <li>Donnez la structure complète de l'arborescence à créer, puis les commandes pour créer la structure suivante depuis <code>/home/paul</code> :</li>
+      </ol>
+      <div class="filetree" style="font-size:12px;padding:14px 16px">
+<pre><span class="ft-dir">paul</span>/
+<span class="ft-line">├──</span> <span class="ft-dir">NSI</span>/
+<span class="ft-line">│   ├──</span> <span class="ft-dir">Python</span>/
+<span class="ft-line">│   │   ├──</span> <span class="ft-dir">TP1</span>/
+<span class="ft-line">│   │   └──</span> <span class="ft-dir">TP2</span>/
+<span class="ft-line">│   └──</span> <span class="ft-dir">HTML</span>/
+<span class="ft-line">└──</span> <span class="ft-dir">Perso</span>/</pre>
+      </div>
+      <ol start="2">
+        <li>Paul est dans <code>/home/paul/NSI/Python/TP1</code>. Il veut copier tous les fichiers <code>.py</code> dans <code>TP2</code>. Quelle commande utiliser ?</li>
+        <li>Paul crée un fichier <code>secret.py</code> dans <code>TP1</code>. Il veut que <strong>lui seul</strong> puisse le lire et le modifier. Quelle commande utiliser ?</li>
+        <li>Il veut que <code>TP2</code> soit accessible en lecture/exécution par son groupe, et inaccessible aux autres. Les droits actuels sont <code>rwxr-xr-x</code>. Quelle commande minimale utiliser ?</li>
+        <li>Exprimer les droits finaux de <code>TP2</code> (après la question 4) en notation octale.</li>
+      </ol>
+      <div class="toggle-btn btn-hint" onclick="toggle('h5')"><span class="toggle-icon" id="ih5">▶</span> Indice</div>
+      <div class="hint-box" id="h5"><p>Pour la question 2, pensez au caractère joker <code>*</code>. Pour les droits, calculez bit par bit : r=4, w=2, x=1.</p></div>
+      <div class="toggle-btn btn-corr" onclick="toggle('c5')"><span class="toggle-icon" id="ic5">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c5">
+        <p><strong>1. Commandes :</strong></p>
+        <div class="terminal"><div class="terminal-bar"><span class="tdot tr"></span><span class="tdot ty"></span><span class="tdot tg"></span></div>
+        <pre class="cmd">mkdir NSI
+mkdir NSI/Python
+mkdir NSI/Python/TP1
+mkdir NSI/Python/TP2
+mkdir NSI/HTML
+mkdir Perso</pre></div>
+        <p><strong>2.</strong> Depuis <code>/home/paul/NSI/Python/TP1</code> :<br><code>cp *.py ../TP2/</code><br>Le <code>*</code> remplace n'importe quelle chaîne, donc <code>*.py</code> sélectionne tous les fichiers <code>.py</code>.</p>
+        <p><strong>3.</strong> <code>chmod 600 secret.py</code> → <code>rw-------</code> : seul le propriétaire peut lire (r) et écrire (w), personne d'autre ne peut rien faire.</p>
+        <p><strong>4.</strong> Droits actuels : <code>rwxr-xr-x</code>. On veut supprimer le droit des autres (<code>o</code>) :<br><code>chmod o-rx TP2</code> (ou <code>chmod o= TP2</code>)<br>Résultat : <code>rwxr-x---</code></p>
+        <p><strong>5.</strong> <code>rwxr-x---</code> → propriétaire : rwx=7, groupe : r-x=5, autres : ---=0 → <strong>750</strong></p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════
+     SECTION 10 — QCM
+══════════════════════════════════════════════ -->
+<div class="section" id="s10">
+  <div class="section-banner"><span class="num">🎯</span><h2>QCM interactif — Architecture &amp; OS</h2></div>
+  <p style="color:var(--grey);margin-bottom:16px;">Banque de <strong>50 questions</strong>. Choisissez le nombre de questions puis lancez le tirage aléatoire.</p>
+
+  <div class="qcm-controls">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--grey)">Nombre de questions :</span>
+    <label class="qcm-size-opt" id="lbl5">
+      <input type="radio" name="qsz" value="5" checked onchange="onSzChange()"> 5 questions
+    </label>
+    <label class="qcm-size-opt" id="lbl10">
+      <input type="radio" name="qsz" value="10" onchange="onSzChange()"> 10 questions
+    </label>
+    <button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button>
+  </div>
+
+  <div id="qcm-questions"></div>
+
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">
+    <button class="qcm-btn qcm-btn-primary" onclick="submitQCM()" id="btn-sub">✅ Valider mes réponses</button>
+    <button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button>
+  </div>
+  <div id="qcm-result"></div>
+</div>
+
+</div><!-- /container -->
+<footer>NSI · 1ère Spécialité · Architecture matérielle & Systèmes d'exploitation · Cours complet</footer>
+
+<script>
+// ── TOGGLE ──────────────────────────────────────────────
+function toggle(id) {
+  const el = document.getElementById(id);
+  const icon = document.getElementById('i'+id);
+  el.classList.toggle('open');
+  if(icon) icon.textContent = el.classList.contains('open') ? '▼' : '▶';
+}
+
+// ── QCM SIZE STYLE ──────────────────────────────────────
+function onSzChange() {
+  const v5 = document.querySelector('[name="qsz"][value="5"]').checked;
+  document.getElementById('lbl5').style.borderColor  = v5  ? 'var(--rouge)' : '';
+  document.getElementById('lbl10').style.borderColor = !v5 ? 'var(--rouge)' : '';
+}
+
+// ── 50 QUESTIONS ────────────────────────────────────────
+const BANK = [
+  // ── COMPOSANTS ──
+  {q:"Un périphérique d'entrée sert à :",
+   o:["Envoyer des informations à l'extérieur de la machine","Obtenir des informations depuis l'extérieur","Stocker des données à long terme","Calculer des opérations arithmétiques"],
+   a:1, ex:"Un périphérique d'entrée permet à la machine d'obtenir des informations (clavier, souris, webcam…). À ne pas confondre avec un périphérique de sortie (écran, imprimante…)."},
+
+  {q:"Lequel de ces éléments est un périphérique de sortie ?",
+   o:["Clavier","Scanner","Imprimante","Disque dur externe"],
+   a:2, ex:"L'imprimante envoie des informations (documents) vers l'extérieur → sortie. Le clavier et le scanner sont des entrées. Le disque dur externe est une entrée/sortie."},
+
+  {q:"Un disque SSD est un périphérique :",
+   o:["D'entrée uniquement","De sortie uniquement","D'entrée/sortie","Aucune des réponses"],
+   a:2, ex:"Un SSD peut lire (entrée) et écrire (sortie) des données. C'est donc un périphérique d'entrée/sortie, comme le HDD ou la clé USB."},
+
+  {q:"La carte mère assure :",
+   o:["L'alimentation électrique de l'ordinateur","La liaison entre tous les composants et périphériques","Uniquement l'exécution des calculs","Le stockage à long terme des données"],
+   a:1, ex:"La carte mère est le circuit imprimé central qui relie tous les composants entre eux (CPU, RAM, cartes d'extension, ports de connexion)."},
+
+  {q:"Un bus informatique est :",
+   o:["Un logiciel de transport de fichiers","Un type de mémoire persistante","Un dispositif de transmission de données entre composants","Une unité de mesure de la fréquence du CPU"],
+   a:2, ex:"Un bus est un câble ou une piste électronique qui transmet les données entre les composants d'une machine (processeur, RAM, cartes d'extension…)."},
+
+  {q:"Qu'est-ce qu'une carte d'extension ?",
+   o:["Un type de mémoire cache","Un composant permettant d'ajouter des fonctionnalités à une machine","Un bus reliant la RAM au CPU","Un logiciel de gestion des périphériques"],
+   a:1, ex:"Une carte d'extension (ou carte fille) ajoute des capacités à la machine. Elle est connectée à la carte mère par un bus. Exemples : carte graphique, carte réseau, carte son."},
+
+  // ── MÉMOIRES ──
+  {q:"Une mémoire volatile :",
+   o:["Conserve ses données après extinction","Perd ses données lors de la mise hors tension","Est toujours plus rapide qu'une mémoire persistante","Contient les instructions de démarrage"],
+   a:1, ex:"Une mémoire volatile (comme la RAM) perd son contenu dès qu'elle n'est plus alimentée en électricité. À l'opposé, la mémoire persistante (disque, ROM) conserve ses données."},
+
+  {q:"La RAM signifie :",
+   o:["Read And Modify","Random Access Memory","Rapid And Modern","Reduced Arithmetic Machine"],
+   a:1, ex:"RAM = Random Access Memory (mémoire à accès aléatoire). Le temps d'accès aux données est faible et indépendant de leur emplacement en mémoire."},
+
+  {q:"Quelle mémoire a la plus grande capacité de stockage ?",
+   o:["Mémoire cache L1","RAM","Disque dur HDD","Mémoire ROM"],
+   a:2, ex:"Le disque dur HDD peut stocker jusqu'à 10 To. La RAM se limite à quelques Go, la mémoire cache à quelques Mo, et la ROM à quelques Mo."},
+
+  {q:"La mémoire cache sert à :",
+   o:["Stocker les fichiers de l'utilisateur","Contenir le programme de démarrage","Accélérer le processeur en conservant les données fréquemment utilisées","Alimenter électriquement la carte mère"],
+   a:2, ex:"La mémoire cache est très rapide et se situe entre la RAM et le CPU. Elle évite le goulot d'étranglement en conservant un court instant les données fréquemment consultées."},
+
+  {q:"La ROM est une mémoire :",
+   o:["Volatile et modifiable par l'utilisateur","Volatile et rapide","Persistante dont le contenu est fixé à la fabrication","Persistante pouvant être effacée par l'utilisateur"],
+   a:2, ex:"La ROM (Read-Only Memory) est une mémoire persistante. Son contenu est fixé lors de la fabrication. Elle contient les instructions de démarrage (BIOS/UEFI) et ne peut pas être effacée par l'utilisateur."},
+
+  {q:"Quel est l'ordre croissant de vitesse des mémoires ?",
+   o:["Disque dur < RAM < Mémoire cache < Registres","Registres < RAM < Mémoire cache < Disque dur","RAM < Disque dur < Mémoire cache < Registres","Mémoire cache < RAM < Registres < Disque dur"],
+   a:0, ex:"Du plus lent au plus rapide : Disque dur (500 Mo/s) < RAM (2 Go/s) < Cache (5 Go/s) < Registres CPU (instantané). Plus la mémoire est rapide, plus elle est coûteuse et petite."},
+
+  {q:"1 Giga-octet équivaut à :",
+   o:["1 000 octets","1 000 Ko","1 000 Mo","1 000 To"],
+   a:2, ex:"1 Go = 1 000 Mo = 1 000 000 Ko = 10⁹ octets. Mémo : Ko→Mo→Go→To = multiplier par 1 000 à chaque fois."},
+
+  {q:"Quelle mémoire est à la fois persistante et de grande capacité ?",
+   o:["RAM","Mémoire cache","ROM","Disque dur (HDD)"],
+   a:3, ex:"Le disque dur HDD est persistant (conserve les données après extinction) et de grande capacité (jusqu'à 10 To). La RAM est volatile, la cache est volatile et petite, la ROM est petite."},
+
+  // ── PROCESSEUR ──
+  {q:"Que signifie CPU ?",
+   o:["Central Power Unit","Central Processing Unit","Computer Primary Unit","Core Processing Utility"],
+   a:1, ex:"CPU = Central Processing Unit (Unité Centrale de Traitement, UCT en français). C'est le processeur, le composant qui exécute les instructions machine."},
+
+  {q:"L'ALU dans un processeur est chargée de :",
+   o:["Séquencer et coordonner les opérations","Stocker les instructions en cours d'exécution","Effectuer les opérations arithmétiques et logiques","Gérer les accès à la mémoire RAM"],
+   a:2, ex:"L'ALU (Arithmetic and Logic Unit / Unité Arithmétique et Logique) réalise tous les calculs : additions, soustractions, comparaisons, opérations logiques (ET, OU, NON…)."},
+
+  {q:"Les registres du CPU servent à :",
+   o:["Stocker les données sur le long terme","Mémoriser en très petite quantité les données en cours de traitement","Contrôler les périphériques d'entrée/sortie","Alimenter le processeur en électricité"],
+   a:1, ex:"Les registres sont des petites mémoires internes au CPU, très rapides, qui stockent temporairement les données et instructions en cours de traitement. Capacité : quelques dizaines d'octets."},
+
+  {q:"L'unité de contrôle du CPU joue le rôle de :",
+   o:["Calculateur principal","Chef d'orchestre : séquence les opérations et coordonne les échanges","Gestionnaire de fichiers","Interface graphique avec l'utilisateur"],
+   a:1, ex:"L'unité de contrôle séquence les opérations : elle récupère les instructions en mémoire, les décode et les envoie à l'ALU avec les données correspondantes."},
+
+  // ── VON NEUMANN ──
+  {q:"L'architecture de Von Neumann a été élaborée en :",
+   o:["1936","1945","1958","1969"],
+   a:1, ex:"L'architecture de Von Neumann date de 1945. Elle décrit pour la première fois un ordinateur à mémoire unifiée où programmes et données sont stockés dans la même mémoire."},
+
+  {q:"Quelle est la caractéristique principale de l'architecture de Von Neumann ?",
+   o:["Le programme et les données sont stockés dans des mémoires séparées","Le programme et les données sont stockés dans la même mémoire","Seul le processeur peut modifier les données","L'unité de contrôle et l'ALU sont toujours séparées"],
+   a:1, ex:"Dans l'architecture de Von Neumann, programme et données partagent la même mémoire (mémoire unifiée). C'est la spécificité fondamentale de ce modèle, toujours utilisé dans les ordinateurs actuels."},
+
+  {q:"Les 4 parties de l'architecture de Von Neumann sont :",
+   o:["CPU, RAM, ROM, Disque dur","ALU, Unité de contrôle, Mémoire, Entrées/Sorties","CPU, GPU, RAM, Bus","Processeur, Clavier, Écran, Disque dur"],
+   a:1, ex:"Von Neumann décompose l'ordinateur en : UAL (calculs) + Unité de contrôle (séquençage) + Mémoire (programme et données) + Entrées/Sorties (périphériques). Aujourd'hui, UAL et Unité de contrôle forment le CPU."},
+
+  {q:"Dans le modèle de Von Neumann, les instructions sont traitées :",
+   o:["Séparément des données, dans une mémoire dédiée","De la même façon que les données","Uniquement par l'unité de contrôle","Avant toute autre opération"],
+   a:1, ex:"La spécificité du modèle de Von Neumann est de traiter les instructions de la même façon que les données. Cela permet notamment à un programme de modifier un autre programme."},
+
+  // ── SYSTÈMES D'EXPLOITATION ──
+  {q:"Un système d'exploitation (OS) est :",
+   o:["Un processeur spécialisé dans les calculs graphiques","Un ensemble de programmes qui gère les ressources d'un ordinateur","Un type de mémoire volatile","Un périphérique d'entrée/sortie"],
+   a:1, ex:"Un OS (Operating System) est un ensemble de programmes qui gère les ressources matérielles et logicielles d'un ordinateur. Il sert d'intermédiaire entre les applications et le matériel."},
+
+  {q:"Que signifie OS ?",
+   o:["Open Source","Operating System","Output System","Online Server"],
+   a:1, ex:"OS = Operating System (Système d'exploitation). Exemples : Windows, Linux, macOS, Android, iOS."},
+
+  {q:"Quel programme s'exécute en premier au démarrage d'un ordinateur ?",
+   o:["L'OS lui-même","Le firmware (BIOS/UEFI), stocké en ROM","La RAM","Le navigateur web"],
+   a:1, ex:"Au démarrage, le firmware (programme d'amorçage, stocké en ROM) s'exécute en premier. Il initialise le matériel puis charge l'OS depuis le disque dur."},
+
+  {q:"Windows est un système d'exploitation :",
+   o:["Libre et open source","Propriétaire, dont le code appartient à Microsoft","Gratuit et librement modifiable","Dérivé de Linux"],
+   a:1, ex:"Windows est un logiciel propriétaire de Microsoft. Son code source n'est pas accessible, modifiable ni distribuable sans autorisation. Son utilisation est encadrée par une licence commerciale."},
+
+  {q:"Lequel de ces systèmes d'exploitation est libre ?",
+   o:["Windows 11","macOS Sonoma","GNU/Linux (Ubuntu, Debian…)","iOS"],
+   a:2, ex:"GNU/Linux est un système d'exploitation libre. Son code source est accessible, modifiable et redistribuable. Windows et macOS sont propriétaires. iOS est propriétaire d'Apple."},
+
+  {q:"Un logiciel libre est-il forcément gratuit ?",
+   o:["Oui, toujours","Non, libre et gratuit sont deux notions distinctes","Oui, par définition légale","Non, mais son utilisation est toujours restreinte"],
+   a:1, ex:"'Libre' fait référence à la liberté (accéder au code, modifier, redistribuer), pas à la gratuité. Un logiciel peut être libre et payant. Snapchat est gratuit mais propriétaire ; Red Hat Linux est libre mais payant."},
+
+  {q:"Android est un système d'exploitation :",
+   o:["Propriétaire de Microsoft","Propriétaire d'Apple","Basé sur Linux, principalement pour smartphones","Dérivé de Windows Mobile"],
+   a:2, ex:"Android est un système d'exploitation basé sur Linux, développé par Google. Il est principalement utilisé sur les smartphones et tablettes. C'est un descendant d'Unix/Linux."},
+
+  {q:"L'OS gère notamment les droits d'accès aux fichiers pour :",
+   o:["Accélérer les calculs arithmétiques","Protéger le système et permettre à chaque utilisateur d'accéder à ses propres fichiers","Compresser automatiquement les données","Améliorer la résolution de l'écran"],
+   a:1, ex:"L'OS gère les permissions pour protéger le système de fichiers : seuls les utilisateurs autorisés peuvent lire, modifier ou exécuter certains fichiers. C'est essentiel sur un système multi-utilisateurs."},
+
+  // ── LIGNE DE COMMANDE ──
+  {q:"Le Shell est :",
+   o:["Un type de mémoire cache","L'interpréteur de commandes de l'interface en ligne de commande","Un logiciel de compression de fichiers","Le nom du processeur sous Linux"],
+   a:1, ex:"Le Shell est l'interpréteur de commandes. Il reçoit les commandes saisies par l'utilisateur, les interprète et demande au système d'exploitation de les exécuter."},
+
+  {q:"La commande Linux pour afficher le contenu d'un répertoire est :",
+   o:["pwd","cat","ls","cd"],
+   a:2, ex:"ls (list) affiche le contenu du répertoire courant. pwd (print working directory) affiche le chemin du répertoire courant. cat affiche le contenu d'un fichier. cd change de répertoire."},
+
+  {q:"La commande 'cd ..' permet de :",
+   o:["Créer un répertoire nommé ..","Revenir au répertoire racine /","Remonter d'un niveau dans l'arborescence","Supprimer le répertoire courant"],
+   a:2, ex:"cd .. permet de remonter d'un niveau (aller dans le répertoire père). Par exemple, depuis /home/Angie/NSI, cd .. amène dans /home/Angie."},
+
+  {q:"Que fait la commande 'mkdir MonDossier' ?",
+   o:["Supprime le répertoire MonDossier","Déplace MonDossier","Crée un répertoire vide nommé MonDossier","Affiche le contenu de MonDossier"],
+   a:2, ex:"mkdir (make directory) crée un répertoire vide dans le répertoire courant. On peut aussi créer dans un sous-répertoire : mkdir chemin/MonDossier."},
+
+  {q:"La commande 'rm -r Dossier' permet de :",
+   o:["Renommer Dossier en r","Supprimer Dossier et tout son contenu récursivement","Déplacer Dossier dans /r","Afficher les droits de Dossier"],
+   a:1, ex:"rm (remove) supprime des fichiers. L'option -r (recursive) est nécessaire pour supprimer un répertoire et tout ce qu'il contient. rm Dossier sans -r échouerait."},
+
+  {q:"La commande 'mv source destination' permet de :",
+   o:["Copier un fichier","Afficher le contenu d'un fichier","Déplacer ou renommer un fichier/répertoire","Modifier les droits d'accès"],
+   a:2, ex:"mv (move) déplace ou renomme des fichiers et répertoires. mv fichier.txt Docs/ déplace le fichier. mv ancien.txt nouveau.txt renomme le fichier."},
+
+  {q:"Quelle commande affiche le contenu d'un fichier texte dans le terminal ?",
+   o:["ls","pwd","cat","man"],
+   a:2, ex:"cat (catenate) affiche le contenu d'un fichier directement dans le terminal. Par exemple : cat Modules affiche le texte contenu dans le fichier Modules."},
+
+  {q:"La commande 'man rm' affiche :",
+   o:["Le manuel de la commande rm","La liste des fichiers supprimés","Les droits du fichier rm","Un message d'erreur car rm n'a pas de manuel"],
+   a:0, ex:"man (manual) affiche la documentation complète d'une commande. man rm affiche toutes les options disponibles pour la commande rm, dont -r (récursif), -f (force)…"},
+
+  {q:"Que représente le caractère '~' dans une commande Linux ?",
+   o:["Le répertoire racine /","Le répertoire courant (.)","Le répertoire personnel de l'utilisateur","Le répertoire père (..)"],
+   a:2, ex:"~ est un raccourci vers le répertoire personnel de l'utilisateur (/home/utilisateur). cd ~ ou simplement cd ramène toujours dans ce répertoire."},
+
+  {q:"La commande 'cp *.py /TP_Python' copie :",
+   o:["Le fichier nommé *.py dans /TP_Python","Tous les fichiers dont le nom commence par TP dans /TP_Python","Tous les fichiers avec l'extension .py dans /TP_Python","Un fichier nommé py dans le répertoire courant"],
+   a:2, ex:"* est un joker qui remplace n'importe quelle chaîne. *.py cible tous les fichiers ayant l'extension .py. La commande les copie tous dans le répertoire /TP_Python."},
+
+  // ── SYSTÈME DE FICHIERS ──
+  {q:"Dans un système Linux, le répertoire racine est noté :",
+   o:["~","..","home","/"],
+   a:3, ex:"/ (slash) est le répertoire racine, le plus haut dans l'arborescence. Il contient tous les autres répertoires. À ne pas confondre avec ~ (répertoire personnel) ou .. (répertoire père)."},
+
+  {q:"Un chemin absolu :",
+   o:["Part toujours du répertoire courant","Part toujours de la racine / et commence par /","Ne contient jamais le symbole /","Est relatif à l'utilisateur connecté"],
+   a:1, ex:"Un chemin absolu part toujours de la racine / et commence donc par /. Il est indépendant du répertoire courant. Exemple : /home/Angie/NSI/Modules."},
+
+  {q:"Comment reconnaître un chemin relatif ?",
+   o:["Il commence par /","Il commence par ~","Il ne commence pas par /","Il contient toujours .."],
+   a:2, ex:"Un chemin relatif ne commence jamais par /. Il part du répertoire courant. Par exemple, si courant = /home/Angie, le chemin relatif vers Modules est NSI/Modules (pas /home/Angie/NSI/Modules)."},
+
+  {q:"Le symbole '..' dans un chemin relatif signifie :",
+   o:["Répertoire courant","Répertoire racine","Répertoire père (un niveau plus haut)","Tout fichier quel que soit son nom"],
+   a:2, ex:".. désigne le répertoire père (parent directory). Dans un chemin relatif, ../../usr remonte de 2 niveaux puis descend dans usr."},
+
+  {q:"Si je suis dans /home/Angie/NSI, quel est le chemin absolu du fichier Modules ?",
+   o:["Modules","NSI/Modules","/home/Angie/NSI/Modules","../NSI/Modules"],
+   a:2, ex:"Le chemin absolu part toujours de / et liste tous les répertoires jusqu'au fichier : /home/Angie/NSI/Modules. Les autres réponses sont des chemins relatifs."},
+
+  {q:"Dans quelle répertoire se trouvent les répertoires personnels des utilisateurs sous Linux ?",
+   o:["/usr","/etc","/home","/bin"],
+   a:2, ex:"Les répertoires personnels des utilisateurs sont dans /home. Par exemple : /home/Angie, /home/Matéi. Le répertoire /etc contient les fichiers de configuration système."},
+
+  // ── DROITS & PERMISSIONS ──
+  {q:"La commande 'ls -l' permet de :",
+   o:["Lister uniquement les répertoires","Afficher les droits et permissions de tous les fichiers du répertoire courant","Supprimer les fichiers en liste","Modifier les droits d'un fichier"],
+   a:1, ex:"ls -l (long format) affiche le contenu du répertoire courant avec les détails : droits, nombre de liens, propriétaire, groupe, taille, date et nom."},
+
+  {q:"Dans -rwxr-x---, quel est le droit du groupe ?",
+   o:["rwx","r-x","---","rw-"],
+   a:1, ex:"Les 10 caractères se lisent : type(1) + propriétaire(3) + groupe(3) + autres(3). Donc -rwx r-x --- : le groupe a r-x = lecture et exécution, mais pas l'écriture."},
+
+  {q:"La lettre 'w' dans les droits Linux signifie :",
+   o:["Lire (read)","Écrire (write)","Exécuter (execute)","Supprimer (wipe)"],
+   a:1, ex:"w = write = droit d'écriture. Pour un fichier : modifier son contenu. Pour un répertoire : créer, supprimer ou renommer des fichiers à l'intérieur."},
+
+  {q:"Que signifie le droit 'x' appliqué à un répertoire ?",
+   o:["Supprimer le répertoire","Exécuter un script dans le répertoire","Traverser / ouvrir le répertoire (cd)","Partager le répertoire sur le réseau"],
+   a:2, ex:"Pour un répertoire, x = execute signifie 'traverser' (y accéder, s'y déplacer avec cd). Sans x, on ne peut pas entrer dans le répertoire même si on a r."},
+
+  {q:"Que fait 'chmod o-r fichier.txt' ?",
+   o:["Ajoute le droit de lecture pour les autres utilisateurs","Enlève le droit de lecture aux autres utilisateurs","Donne tous les droits aux autres","Enlève tous les droits aux autres"],
+   a:1, ex:"chmod o-r : o = others (autres utilisateurs), - = enlève, r = lecture. Cette commande enlève le droit de lire le fichier aux utilisateurs qui ne sont ni le propriétaire ni du groupe."},
+
+  {q:"Quelle valeur octale correspond aux droits rw-r--r-- ?",
+   o:["755","644","777","600"],
+   a:1, ex:"rw- = 110 en binaire = 6 (propriétaire), r-- = 100 = 4 (groupe), r-- = 100 = 4 (autres). Donc 644. C'est le droit classique pour un fichier : modifiable par le propriétaire, lisible par tous."},
+
+  {q:"Quelle commande donne tous les droits à tous les utilisateurs sur 'monfichier' ?",
+   o:["chmod a+rwx monfichier","chmod u=rwx monfichier","chmod +r monfichier","chmod 644 monfichier"],
+   a:0, ex:"chmod a+rwx : a = all (tous), + = ajoute, rwx = lecture+écriture+exécution. On peut aussi écrire chmod 777 monfichier (7=rwx pour propriétaire, groupe et autres)."},
+
+  {q:"Le super-utilisateur root peut :",
+   o:["Seulement modifier ses propres fichiers","Accéder à tous les fichiers et changer tous les droits","Seulement lire les fichiers des autres utilisateurs","Uniquement créer de nouveaux utilisateurs"],
+   a:1, ex:"root a tous les droits sur tous les fichiers du système. Il peut modifier les droits de n'importe quel fichier et même usurper l'identité d'un autre utilisateur."},
+
+  {q:"Que signifie chmod 755 monfichier ?",
+   o:["Propriétaire : rw-, Groupe : r-x, Autres : r-x","Propriétaire : rwx, Groupe : r-x, Autres : r-x","Propriétaire : rwx, Groupe : rwx, Autres : rwx","Propriétaire : r--, Groupe : r--, Autres : r--"],
+   a:1, ex:"7=111=rwx (propriétaire), 5=101=r-x (groupe), 5=101=r-x (autres). chmod 755 est classique pour les répertoires ou programmes exécutables : le propriétaire peut tout faire, les autres peuvent seulement lire et exécuter."},
+
+  {q:"Quelle option de chmod applique les modifications récursivement ?",
+   o:["-a","-u","-R","-x"],
+   a:2, ex:"chmod -R (uppercase R, pour Recursive) applique les modifications de droits à un répertoire et à tout son contenu (sous-répertoires et fichiers inclus)."},
+];
+
+// ── ENGINE ──────────────────────────────────────────────
+let curQs = [], submitted = false, qSz = 5;
+
+function getSz() { return parseInt(document.querySelector('[name="qsz"]:checked')?.value||5); }
+
+function shuffle(a) {
+  const b=[...a];
+  for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}
+  return b;
+}
+
+function newQCM() {
+  submitted = false;
+  qSz = getSz();
+  curQs = shuffle(BANK).slice(0,qSz);
+  renderQCM();
+  const r=document.getElementById('qcm-result');
+  r.style.display='none'; r.innerHTML='';
+  const btn=document.getElementById('btn-sub');
+  btn.disabled=false; btn.style.opacity='1';
+  onSzChange();
+}
+
+function renderQCM() {
+  const c=document.getElementById('qcm-questions');
+  c.innerHTML='';
+  curQs.forEach((q,qi)=>{
+    const shOpts=shuffle(q.o.map((t,i)=>({t,i})));
+    q._sh=shOpts;
+    const opts=shOpts.map((o,si)=>`
+      <label class="qcm-opt" id="opt-${qi}-${si}">
+        <input type="radio" name="q${qi}" value="${si}">
+        <span>${o.t}</span>
+      </label>`).join('');
+    c.innerHTML+=`
+      <div class="qcm-q" id="qb-${qi}">
+        <div class="qcm-num">Question ${qi+1} / ${qSz}</div>
+        <div class="qcm-question">${q.q}</div>
+        <div class="qcm-opts">${opts}</div>
+        <div class="qcm-fb" id="fb-${qi}"></div>
+      </div>`;
+  });
+}
+
+function submitQCM() {
+  if(submitted) return;
+  submitted=true;
+  let score=0;
+  curQs.forEach((q,qi)=>{
+    const sel=document.querySelector(`input[name="q${qi}"]:checked`);
+    const block=document.getElementById(`qb-${qi}`);
+    const fb=document.getElementById(`fb-${qi}`);
+    const corrSi=q._sh.findIndex(o=>o.i===q.a);
+    document.querySelectorAll(`input[name="q${qi}"]`).forEach(r=>r.disabled=true);
+    const corrLabel=document.getElementById(`opt-${qi}-${corrSi}`);
+    if(corrLabel) corrLabel.classList.add('opt-ok');
+    if(sel){
+      const chosen=parseInt(sel.value);
+      if(chosen===corrSi){
+        score++;
+        block.classList.add('correct');
+        fb.className='qcm-fb show ok';
+        fb.innerHTML='✅ Bonne réponse ! '+q.ex;
+      } else {
+        block.classList.add('wrong');
+        document.getElementById(`opt-${qi}-${chosen}`)?.classList.add('opt-ko');
+        fb.className='qcm-fb show ko';
+        fb.innerHTML='❌ Mauvaise réponse. '+q.ex;
+      }
+    } else {
+      block.classList.add('wrong');
+      fb.className='qcm-fb show ko';
+      fb.innerHTML='⚠️ Pas de réponse. '+q.ex;
+    }
+  });
+  showResult(score);
+  const btn=document.getElementById('btn-sub');
+  btn.disabled=true; btn.style.opacity='.5';
+}
+
+function showResult(score) {
+  const pct=(score/qSz)*100;
+  const ratio=score/qSz;
+  const col=ratio<0.3?'#E74C3C':ratio<0.5?'#E67E22':ratio<0.7?'#F1C40F':ratio<0.9?'#27AE60':'#1ABC9C';
+  const msgs=p=>p<30?'💪 Relis le cours attentivement !':p<50?'📖 Quelques révisions s\'imposent.':p<70?'👍 Pas mal, continue !':p<90?'🎉 Très bien, tu es presque prêt(e) !':'🏆 Excellent ! Maîtrise parfaite !';
+  const note=Math.round((score/qSz)*20);
+  const r=document.getElementById('qcm-result');
+  r.style.display='block';
+  r.innerHTML=`
+    <div class="score-big" style="color:${col}">${score}<span style="font-size:28px;opacity:.6">/${qSz}</span></div>
+    <div class="score-sub">Soit environ <strong>${note}/20</strong></div>
+    <div class="score-bar-bg"><div class="score-bar-fill" style="width:0%;background:${col}" id="sfill"></div></div>
+    <div class="score-msg" style="color:${col}">${msgs(pct)}</div>`;
+  setTimeout(()=>{ const f=document.getElementById('sfill'); if(f)f.style.width=pct+'%'; },80);
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+document.addEventListener('DOMContentLoaded',()=>{ newQCM(); onSzChange(); });
+</script>
+</body>
+</html>

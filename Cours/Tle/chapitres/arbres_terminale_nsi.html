@@ -1,0 +1,1497 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les Arbres — Terminale NSI</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;700;800;900&family=Source+Serif+4:ital,wght@0,300;0,400;0,600;1,300;1,400&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #0c0f16;
+  --bg2: #111520;
+  --surface: #161b28;
+  --surface2: #1c2235;
+  --border: #252d42;
+  --border2: #2e3850;
+  --accent: #4ade80;
+  --accent2: #fb923c;
+  --accent3: #60a5fa;
+  --accent4: #e879f9;
+  --text: #e2e8f0;
+  --text2: #94a3b8;
+  --code-bg: #090d14;
+  --green: #4ade80;
+  --orange: #fb923c;
+  --blue: #60a5fa;
+  --red: #f87171;
+  --purple: #c084fc;
+  --yellow: #fbbf24;
+  --teal: #2dd4bf;
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Source Serif 4',Georgia,serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.75;
+  font-size:17px;
+}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ── HERO ── */
+.hero{
+  position:relative;
+  overflow:hidden;
+  padding:70px 40px 60px;
+  text-align:center;
+  background:linear-gradient(160deg,#0c0f16 0%,#0d1a12 40%,#0c0f16 100%);
+  border-bottom:1px solid var(--border);
+}
+.hero::before{
+  content:'';position:absolute;inset:0;
+  background:radial-gradient(ellipse 70% 50% at 50% -10%,rgba(74,222,128,0.12) 0%,transparent 70%);
+}
+.hero-tree{
+  position:absolute;right:60px;top:20px;
+  font-size:120px;opacity:0.04;
+  transform:rotate(10deg);
+  user-select:none;pointer-events:none;
+}
+.hero-badge{
+  display:inline-block;
+  background:rgba(74,222,128,0.1);
+  border:1px solid rgba(74,222,128,0.25);
+  color:var(--accent);
+  font-family:'JetBrains Mono',monospace;
+  font-size:11px;letter-spacing:3px;text-transform:uppercase;
+  padding:4px 14px;border-radius:20px;margin-bottom:18px;
+}
+.hero h1{
+  font-family:'Syne',sans-serif;
+  font-weight:900;
+  font-size:clamp(40px,7vw,84px);
+  letter-spacing:-3px;
+  line-height:1.0;
+  margin-bottom:14px;
+}
+.hero h1 em{color:var(--accent);font-style:normal;}
+.hero-sub{
+  color:var(--text2);
+  font-style:italic;font-weight:300;font-size:18px;
+  max-width:560px;margin:0 auto 24px;
+}
+.hero-tags{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;}
+.tag{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  padding:4px 12px;border-radius:4px;border:1px solid var(--border2);
+  color:var(--text2);letter-spacing:1px;
+}
+
+/* ── NAV ── */
+.toc{
+  background:var(--surface);
+  border-bottom:1px solid var(--border);
+  padding:12px 24px;
+  display:flex;flex-wrap:wrap;gap:4px;justify-content:center;
+  position:sticky;top:0;z-index:100;
+  backdrop-filter:blur(12px);
+}
+.toc a{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--text2);text-decoration:none;
+  padding:5px 10px;border-radius:4px;border:1px solid transparent;
+  transition:all .2s;white-space:nowrap;
+}
+.toc a:hover{color:var(--accent);border-color:rgba(74,222,128,0.3);background:rgba(74,222,128,0.05);}
+
+/* ── LAYOUT ── */
+.container{max-width:920px;margin:0 auto;padding:0 24px;}
+
+/* ── SECTIONS ── */
+.section{padding:56px 0 40px;border-bottom:1px solid var(--border);}
+.section:last-child{border-bottom:none;}
+.section-num{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  color:var(--accent);letter-spacing:3px;text-transform:uppercase;margin-bottom:6px;
+}
+.section h2{
+  font-family:'Syne',sans-serif;font-weight:800;
+  font-size:clamp(22px,4vw,38px);letter-spacing:-1px;
+  margin-bottom:22px;line-height:1.15;
+}
+.section h3{
+  font-family:'Syne',sans-serif;font-weight:700;font-size:20px;
+  color:var(--accent2);margin:36px 0 14px;
+}
+.section h4{
+  font-family:'JetBrains Mono',monospace;font-size:14px;
+  color:var(--accent3);margin:24px 0 10px;letter-spacing:1px;
+}
+.section p{color:#cbd5e1;margin-bottom:14px;}
+.section ul,ol{padding-left:22px;margin-bottom:14px;}
+.section li{color:#cbd5e1;margin-bottom:5px;}
+p code,li code,td code,th code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:var(--accent);background:rgba(74,222,128,0.1);
+  padding:1px 6px;border-radius:3px;
+}
+
+/* ── CODE BLOCKS ── */
+.code-block{
+  background:var(--code-bg);
+  border:1px solid var(--border);border-radius:10px;
+  margin:18px 0;overflow:hidden;
+}
+.code-header{
+  background:var(--surface2);border-bottom:1px solid var(--border);
+  padding:7px 14px;display:flex;align-items:center;gap:8px;
+  font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--text2);
+}
+.dot{width:10px;height:10px;border-radius:50%;}
+.dr{background:#ff5f56;}.dy{background:#ffbd2e;}.dg{background:#27c93f;}
+pre{
+  padding:18px 20px;overflow-x:auto;
+  font-family:'JetBrains Mono',monospace;font-size:13.5px;line-height:1.7;
+}
+/* Python syntax */
+.kw{color:#c084fc;}   /* keyword */
+.fn{color:#60a5fa;}   /* function */
+.st{color:#4ade80;}   /* string */
+.cm{color:#475569;font-style:italic;} /* comment */
+.nb{color:#fb923c;}   /* number/builtin */
+.cl{color:#f472b6;}   /* class */
+.op{color:#94a3b8;}   /* operator */
+.df{color:#fbbf24;}   /* def name */
+
+/* ── INFO BOXES ── */
+.box{border-radius:10px;padding:16px 20px;margin:18px 0;border-left:3px solid;font-size:15px;}
+.box-def{background:rgba(74,222,128,0.06);border-color:var(--green);}
+.box-tip{background:rgba(96,165,250,0.06);border-color:var(--blue);}
+.box-warn{background:rgba(251,146,60,0.06);border-color:var(--orange);}
+.box-alert{background:rgba(248,113,113,0.06);border-color:var(--red);}
+.box-key{background:rgba(192,132,252,0.06);border-color:var(--purple);}
+.box-title{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;font-weight:700;margin-bottom:8px;
+}
+.box-def .box-title{color:var(--green);}
+.box-tip .box-title{color:var(--blue);}
+.box-warn .box-title{color:var(--orange);}
+.box-alert .box-title{color:var(--red);}
+.box-key .box-title{color:var(--purple);}
+
+/* ── TABLE ── */
+table{width:100%;border-collapse:collapse;margin:18px 0;font-size:15px;}
+th{
+  background:var(--surface2);color:var(--accent);
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:1px;text-transform:uppercase;
+  padding:10px 14px;text-align:left;border:1px solid var(--border);
+}
+td{padding:10px 14px;border:1px solid var(--border);color:#cbd5e1;vertical-align:top;}
+tr:nth-child(even) td{background:rgba(255,255,255,0.02);}
+
+/* ── ASCII TREE ── */
+.ascii-tree{
+  background:var(--code-bg);border:1px solid var(--border);
+  border-radius:10px;padding:20px 24px;
+  font-family:'JetBrains Mono',monospace;font-size:14px;
+  color:var(--accent);line-height:1.8;overflow-x:auto;
+  margin:18px 0;
+}
+.ascii-tree .node-label{color:var(--orange);}
+.ascii-tree .branch{color:var(--text2);}
+
+/* ── DEFINITION HIGHLIGHT ── */
+.def-term{
+  display:inline-block;
+  background:rgba(74,222,128,0.12);
+  border:1px solid rgba(74,222,128,0.25);
+  color:var(--accent);font-weight:600;
+  padding:1px 8px;border-radius:4px;
+  font-family:'JetBrains Mono',monospace;font-size:14px;
+}
+
+/* ── COMPLEXITY BADGE ── */
+.complexity{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--surface2);border:1px solid var(--border2);
+  padding:4px 12px;border-radius:6px;
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  margin:4px 4px 4px 0;
+}
+.complexity .o{color:var(--yellow);}
+
+/* ── EXERCISES ── */
+.exo-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:26px;margin-bottom:24px;
+  position:relative;overflow:hidden;
+}
+.exo-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:3px;
+}
+.exo-easy::before{background:linear-gradient(90deg,var(--green),transparent);}
+.exo-med::before{background:linear-gradient(90deg,var(--orange),transparent);}
+.exo-hard::before{background:linear-gradient(90deg,var(--red),transparent);}
+.exo-level{
+  font-family:'JetBrains Mono',monospace;font-size:11px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:10px;
+}
+.exo-easy .exo-level{color:var(--green);}
+.exo-med .exo-level{color:var(--orange);}
+.exo-hard .exo-level{color:var(--red);}
+.exo-card h3{font-family:'Syne',sans-serif;font-weight:700;font-size:18px;margin-bottom:14px;color:var(--text);}
+.hint-toggle{
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  margin-top:12px;padding:7px 16px;
+  background:rgba(96,165,250,0.08);border:1px solid rgba(96,165,250,0.2);
+  border-radius:6px;color:var(--blue);
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  transition:all .2s;user-select:none;
+}
+.hint-toggle:hover{background:rgba(96,165,250,0.15);}
+.correction-toggle{
+  display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+  margin-top:14px;padding:8px 18px;
+  background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.2);
+  border-radius:6px;color:var(--accent);
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  transition:all .2s;user-select:none;
+}
+.correction-toggle:hover{background:rgba(74,222,128,0.15);}
+.toggle-icon{font-size:10px;transition:transform .2s;}
+.hint-box,.correction-box{display:none;margin-top:14px;}
+.hint-box.open,.correction-box.open{display:block;}
+.hint-box{
+  background:rgba(96,165,250,0.06);border:1px solid rgba(96,165,250,0.2);
+  border-radius:8px;padding:14px 18px;
+}
+.correction-box{
+  background:rgba(74,222,128,0.05);border:1px solid rgba(74,222,128,0.15);
+  border-radius:8px;padding:18px 20px;
+}
+
+/* ── QCM ── */
+.qcm-size-selector{
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;margin-bottom:26px;
+}
+.qcm-size-opt{
+  display:flex;align-items:center;gap:8px;cursor:pointer;
+  padding:8px 18px;border-radius:8px;
+  border:1px solid var(--border2);
+  font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--text2);
+  transition:all .2s;user-select:none;
+}
+.qcm-size-opt:has(input:checked){
+  border-color:rgba(74,222,128,0.4);
+  background:rgba(74,222,128,0.07);color:var(--accent);
+}
+.qcm-size-opt input{accent-color:var(--accent);width:15px;height:15px;}
+.qcm-q{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:12px;padding:22px 24px;margin-bottom:16px;
+  transition:border-color .3s;
+}
+.qcm-q.correct{border-color:#4ade80;background:rgba(74,222,128,0.05);}
+.qcm-q.wrong{border-color:#f87171;background:rgba(248,113,113,0.05);}
+.qcm-num{
+  font-family:'JetBrains Mono',monospace;font-size:10px;
+  color:var(--accent);letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;
+}
+.qcm-question{font-size:16px;font-weight:600;color:var(--text);margin-bottom:14px;line-height:1.45;}
+.qcm-question code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  color:var(--accent);background:rgba(74,222,128,0.1);
+  padding:1px 6px;border-radius:3px;
+}
+.qcm-options{display:flex;flex-direction:column;gap:7px;}
+.qcm-option{
+  display:flex;align-items:flex-start;gap:10px;
+  padding:10px 14px;border:1px solid var(--border);
+  border-radius:8px;cursor:pointer;transition:all .15s;
+  font-size:15px;color:#cbd5e1;
+}
+.qcm-option:hover{border-color:var(--accent3);background:rgba(96,165,250,0.05);}
+.qcm-option input{accent-color:var(--accent3);width:15px;height:15px;flex-shrink:0;margin-top:2px;}
+.qcm-option.opt-correct{border-color:#4ade80!important;background:rgba(74,222,128,0.1)!important;color:#4ade80;font-weight:600;}
+.qcm-option.opt-wrong{border-color:#f87171!important;background:rgba(248,113,113,0.08)!important;color:#f87171;}
+.qcm-option code{
+  font-family:'JetBrains Mono',monospace;font-size:13px;
+  background:rgba(74,222,128,0.1);padding:1px 5px;border-radius:3px;color:inherit;
+}
+.qcm-feedback{
+  margin-top:10px;font-size:14px;font-family:'JetBrains Mono',monospace;
+  padding:8px 12px;border-radius:6px;display:none;line-height:1.5;
+}
+.qcm-feedback.show{display:block;}
+.qcm-feedback.ok{background:rgba(74,222,128,0.1);color:#4ade80;}
+.qcm-feedback.ko{background:rgba(248,113,113,0.1);color:#f87171;}
+#qcm-result{
+  background:var(--surface2);border:1px solid var(--border);
+  border-radius:14px;padding:28px;margin-top:24px;text-align:center;display:none;
+}
+.score-big{
+  font-family:'Syne',sans-serif;font-weight:900;font-size:60px;line-height:1;margin-bottom:6px;
+}
+.score-label{color:var(--text2);font-size:15px;margin-bottom:18px;}
+.score-bar-bg{background:var(--border);border-radius:99px;height:10px;overflow:hidden;margin:14px 0;}
+.score-bar-fill{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1);}
+.score-msg{font-size:18px;font-weight:700;margin-top:10px;}
+.btn{
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  padding:10px 22px;border-radius:7px;border:none;cursor:pointer;
+  font-weight:700;transition:opacity .2s;
+}
+.btn-primary{background:var(--accent);color:#0c0f16;}
+.btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border);}
+.btn:hover{opacity:.85;}
+.btn-row{display:flex;gap:12px;flex-wrap:wrap;align-items:center;margin-top:22px;}
+
+/* ── SYNTHESIS CARD ── */
+.synth-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px;margin-top:20px;}
+.synth-card{
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:10px;padding:18px 20px;
+}
+.synth-card h4{
+  font-family:'JetBrains Mono',monospace;font-size:12px;
+  letter-spacing:2px;text-transform:uppercase;margin-bottom:12px;
+}
+.synth-card ul{list-style:none;padding:0;}
+.synth-card li{color:#cbd5e1;font-size:14px;padding:4px 0;border-bottom:1px solid var(--border);display:flex;gap:8px;}
+.synth-card li:last-child{border-bottom:none;}
+.synth-card li::before{content:'→';color:var(--accent);flex-shrink:0;}
+
+/* ── FICHE RAPIDE ── */
+.fiche{
+  background:linear-gradient(135deg,var(--surface) 0%,#111a14 100%);
+  border:1px solid rgba(74,222,128,0.2);
+  border-radius:14px;padding:28px 32px;margin-top:24px;
+}
+.fiche h3{font-family:'Syne',sans-serif;font-size:20px;color:var(--accent);margin-bottom:16px;}
+
+/* ── FOOTER ── */
+footer{
+  text-align:center;padding:36px;
+  color:var(--text2);font-family:'JetBrains Mono',monospace;font-size:12px;
+  border-top:1px solid var(--border);margin-top:0;
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:640px){
+  .hero{padding:40px 20px 36px;}
+  .container{padding:0 16px;}
+  .section{padding:36px 0 28px;}
+  pre{font-size:12px;}
+  .toc{padding:10px 12px;}
+  .toc a{font-size:10px;padding:4px 7px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<div class="hero">
+  <div class="hero-tree">🌳</div>
+  <div class="hero-badge">NSI · Terminale · Programme Officiel</div>
+  <h1>Les <em>Arbres</em></h1>
+  <p class="hero-sub">Structures arborescentes — cours complet, exercices et QCM interactif</p>
+  <div class="hero-tags">
+    <span class="tag">STRUCTURES DE DONNÉES</span>
+    <span class="tag">RÉCURSIVITÉ</span>
+    <span class="tag">COMPLEXITÉ</span>
+    <span class="tag">PYTHON</span>
+    <span class="tag">BAC NSI</span>
+  </div>
+</div>
+
+<!-- ══════════════════ NAV ══════════════════ -->
+<nav class="toc">
+  <a href="#s1">1. Introduction</a>
+  <a href="#s2">2. Vocabulaire</a>
+  <a href="#s3">3. Représentation</a>
+  <a href="#s4">4. Parcours</a>
+  <a href="#s5">5. Opérations</a>
+  <a href="#s6">6. Complexité</a>
+  <a href="#s7">7. Synthèse</a>
+  <a href="#s8">8. Fiche rapide</a>
+  <a href="#s9">✏ Exercices</a>
+  <a href="#s10">🎯 QCM</a>
+</nav>
+
+<div class="container">
+
+<!-- ══════════════════ SECTION 1 : INTRODUCTION ══════════════════ -->
+<div class="section" id="s1">
+  <div class="section-num">01 — Introduction</div>
+  <h2>Qu'est-ce qu'un arbre ?</h2>
+
+  <p>Un <strong>arbre</strong> est une structure de données hiérarchique composée de <strong>nœuds</strong> reliés entre eux par des <strong>arêtes</strong>. C'est l'une des structures fondamentales de l'informatique, omniprésente dans les algorithmes, les langages et les systèmes.</p>
+
+  <div class="box box-def">
+    <div class="box-title">📐 Définition formelle</div>
+    Un <strong>arbre</strong> est un graphe connexe sans cycle, orienté depuis un nœud particulier appelé <strong>racine</strong>. Chaque nœud possède exactement un parent (sauf la racine) et peut avoir zéro ou plusieurs enfants.
+  </div>
+
+  <h3>Pourquoi les arbres sont-ils importants ?</h3>
+  <p>Les arbres sont utilisés partout en informatique :</p>
+  <ul>
+    <li><strong>Systèmes de fichiers</strong> : l'arborescence de dossiers de votre OS est un arbre</li>
+    <li><strong>Compilateurs</strong> : l'arbre syntaxique abstrait (AST) représente le code source</li>
+    <li><strong>Bases de données</strong> : les index B-trees accélèrent les requêtes</li>
+    <li><strong>Intelligence artificielle</strong> : arbres de décision, arbre minimax dans les jeux</li>
+    <li><strong>HTML/XML</strong> : le DOM (Document Object Model) est un arbre</li>
+    <li><strong>Tri et recherche</strong> : les arbres binaires de recherche (ABR)</li>
+  </ul>
+
+  <h3>Lien avec les autres notions NSI</h3>
+  <ul>
+    <li><strong>Récursivité</strong> : la quasi-totalité des algorithmes sur les arbres sont récursifs</li>
+    <li><strong>Listes chaînées</strong> : un arbre généralise la liste (chaque nœud peut avoir plusieurs successeurs)</li>
+    <li><strong>Graphes</strong> : un arbre est un graphe acyclique connexe orienté</li>
+    <li><strong>Programmation orientée objet</strong> : les arbres se représentent naturellement avec des classes</li>
+  </ul>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 À retenir pour le bac</div>
+    Au baccalauréat NSI, les arbres apparaissent régulièrement. On vous demande souvent d'<strong>écrire des fonctions récursives</strong> (hauteur, taille, parcours) et de <strong>dessiner ou lire un arbre</strong> à partir d'une représentation Python.
+  </div>
+</div>
+
+<!-- ══════════════════ SECTION 2 : VOCABULAIRE ══════════════════ -->
+<div class="section" id="s2">
+  <div class="section-num">02 — Vocabulaire</div>
+  <h2>Vocabulaire essentiel</h2>
+
+  <p>Maîtriser le vocabulaire est indispensable pour comprendre les énoncés de sujets de bac. Voici les définitions illustrées sur l'arbre suivant :</p>
+
+  <div class="ascii-tree">
+<pre>
+          <span class="node-label">A</span>          ← racine (profondeur 0)
+         <span class="branch">/ \</span>
+        <span class="node-label">B</span>   <span class="node-label">C</span>        ← profondeur 1
+       <span class="branch">/ \</span>   <span class="branch">\</span>
+      <span class="node-label">D</span>   <span class="node-label">E</span>   <span class="node-label">F</span>    ← profondeur 2
+         <span class="branch">/</span>
+        <span class="node-label">G</span>           ← feuille (profondeur 3)
+</pre>
+  </div>
+
+  <table>
+    <tr><th>Terme</th><th>Définition</th><th>Exemple sur l'arbre ci-dessus</th></tr>
+    <tr>
+      <td><span class="def-term">Arbre</span></td>
+      <td>Structure hiérarchique composée de nœuds reliés par des arêtes, sans cycle</td>
+      <td>L'ensemble {A, B, C, D, E, F, G}</td>
+    </tr>
+    <tr>
+      <td><span class="def-term">Racine</span></td>
+      <td>Nœud sommet de l'arbre, sans parent. Point d'entrée unique.</td>
+      <td>Le nœud <strong>A</strong></td>
+    </tr>
+    <tr>
+      <td><span class="def-term">Feuille</span></td>
+      <td>Nœud sans enfant (degré sortant = 0)</td>
+      <td>Nœuds <strong>D</strong>, <strong>G</strong>, <strong>F</strong></td>
+    </tr>
+    <tr>
+      <td><span class="def-term">Nœud interne</span></td>
+      <td>Nœud avec au moins un enfant (ni feuille, ni forcément racine)</td>
+      <td>Nœuds <strong>B</strong>, <strong>C</strong>, <strong>E</strong></td>
+    </tr>
+    <tr>
+      <td><span class="def-term">Père / Parent</span></td>
+      <td>Nœud directement au-dessus d'un autre dans la hiérarchie</td>
+      <td>Le père de B est <strong>A</strong> ; le père de G est <strong>E</strong></td>
+    </tr>
+    <tr>
+      <td><span class="def-term">Fils / Enfant</span></td>
+      <td>Nœud directement en dessous d'un autre</td>
+      <td>Les fils de A sont <strong>B et C</strong></td>
+    </tr>
+    <tr>
+      <td><span class="def-term">Profondeur d'un nœud</span></td>
+      <td>Nombre d'arêtes sur le chemin de la racine à ce nœud</td>
+      <td>prof(A)=0, prof(B)=1, prof(G)=3</td>
+    </tr>
+    <tr>
+      <td><span class="def-term">Hauteur d'un nœud</span></td>
+      <td>Nombre d'arêtes sur le plus long chemin de ce nœud à une feuille descendante</td>
+      <td>h(A)=3, h(B)=2, h(D)=0</td>
+    </tr>
+    <tr>
+      <td><span class="def-term">Hauteur de l'arbre</span></td>
+      <td>Hauteur de la racine = profondeur maximale de l'arbre</td>
+      <td><strong>3</strong> (chemin A→B→E→G)</td>
+    </tr>
+    <tr>
+      <td><span class="def-term">Taille de l'arbre</span></td>
+      <td>Nombre total de nœuds</td>
+      <td><strong>7</strong> nœuds</td>
+    </tr>
+    <tr>
+      <td><span class="def-term">Sous-arbre</span></td>
+      <td>Arbre formé par un nœud et tous ses descendants</td>
+      <td>Sous-arbre raciné en B : {B, D, E, G}</td>
+    </tr>
+    <tr>
+      <td><span class="def-term">Arbre binaire</span></td>
+      <td>Arbre où chaque nœud a au plus <strong>2 enfants</strong> : un fils gauche et un fils droit</td>
+      <td>L'arbre ci-dessus est binaire (max 2 fils par nœud)</td>
+    </tr>
+    <tr>
+      <td><span class="def-term">Arbre vide</span></td>
+      <td>Arbre sans aucun nœud (cas de base pour la récursivité)</td>
+      <td>Représenté par <code>None</code> en Python</td>
+    </tr>
+  </table>
+
+  <div class="box box-warn">
+    <div class="box-title">⚠ Confusion fréquente</div>
+    <strong>Hauteur vs Profondeur</strong> : la profondeur d'un nœud est mesurée depuis la racine (vers le bas). La hauteur d'un nœud est mesurée vers les feuilles (vers le bas aussi, mais à partir du nœud lui-même). La hauteur de l'arbre = hauteur de sa racine = profondeur maximale.
+  </div>
+
+  <h3>Arbres binaires : propriétés importantes</h3>
+  <ul>
+    <li>Un arbre binaire de hauteur <code>h</code> contient au maximum <strong>2<sup>h+1</sup> − 1</strong> nœuds</li>
+    <li>Un arbre binaire de hauteur <code>h</code> contient au moins <strong>h + 1</strong> nœuds</li>
+    <li>Un arbre binaire <strong>complet</strong> a toutes ses feuilles au même niveau</li>
+    <li>Un arbre binaire <strong>parfait</strong> est complet et tous les nœuds internes ont exactement 2 enfants</li>
+  </ul>
+</div>
+
+<!-- ══════════════════ SECTION 3 : REPRÉSENTATION ══════════════════ -->
+<div class="section" id="s3">
+  <div class="section-num">03 — Représentation</div>
+  <h2>Représentation des arbres</h2>
+
+  <h3>Représentation graphique</h3>
+  <p>Un arbre binaire se dessine avec la racine en haut, les fils gauche (FG) à gauche et les fils droits (FD) à droite :</p>
+
+  <div class="ascii-tree">
+<pre>
+         <span class="node-label">8</span>           ← racine
+        <span class="branch">/ \</span>
+       <span class="node-label">3</span>   <span class="node-label">10</span>
+      <span class="branch">/ \</span>    <span class="branch">\</span>
+     <span class="node-label">1</span>   <span class="node-label">6</span>   <span class="node-label">14</span>
+        <span class="branch">/ \</span>   <span class="branch">/</span>
+       <span class="node-label">4</span>   <span class="node-label">7</span> <span class="node-label">13</span>
+</pre>
+  </div>
+  <p>Cet arbre est un <strong>arbre binaire de recherche (ABR)</strong> : pour chaque nœud, les valeurs à gauche sont inférieures et celles à droite sont supérieures.</p>
+
+  <h3>Représentation en Python — classe Noeud</h3>
+  <p>En NSI, on représente un arbre binaire avec une classe <code>Noeud</code> :</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">arbre.py — Classe Noeud</span></div>
+    <pre><span class="kw">class</span> <span class="cl">Noeud</span><span class="op">:</span>
+    <span class="cm">"""Représente un nœud d'un arbre binaire."""</span>
+
+    <span class="kw">def</span> <span class="df">__init__</span>(<span class="nb">self</span>, valeur, gauche<span class="op">=</span><span class="nb">None</span>, droite<span class="op">=</span><span class="nb">None</span>)<span class="op">:</span>
+        <span class="nb">self</span>.valeur <span class="op">=</span> valeur        <span class="cm"># donnée stockée dans le nœud</span>
+        <span class="nb">self</span>.gauche <span class="op">=</span> gauche        <span class="cm"># sous-arbre gauche (Noeud ou None)</span>
+        <span class="nb">self</span>.droite <span class="op">=</span> droite        <span class="cm"># sous-arbre droit  (Noeud ou None)</span>
+
+    <span class="kw">def</span> <span class="df">est_feuille</span>(<span class="nb">self</span>)<span class="op">:</span>
+        <span class="cm">"""Retourne True si le nœud est une feuille."""</span>
+        <span class="kw">return</span> <span class="nb">self</span>.gauche <span class="kw">is</span> <span class="nb">None</span> <span class="kw">and</span> <span class="nb">self</span>.droite <span class="kw">is</span> <span class="nb">None</span>
+
+    <span class="kw">def</span> <span class="df">__repr__</span>(<span class="nb">self</span>)<span class="op">:</span>
+        <span class="kw">return</span> <span class="st">f"Noeud({self.valeur})"</span></pre>
+  </div>
+
+  <h3>Construction d'un arbre en Python</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Construction manuelle de l'arbre</span></div>
+    <pre><span class="cm"># Construction de l'arbre :</span>
+<span class="cm">#        8</span>
+<span class="cm">#       / \</span>
+<span class="cm">#      3   10</span>
+<span class="cm">#     / \    \</span>
+<span class="cm">#    1   6   14</span>
+
+<span class="cm"># On construit de bas en haut (des feuilles vers la racine)</span>
+n1  <span class="op">=</span> <span class="cl">Noeud</span>(<span class="nb">1</span>)
+n6  <span class="op">=</span> <span class="cl">Noeud</span>(<span class="nb">6</span>)
+n14 <span class="op">=</span> <span class="cl">Noeud</span>(<span class="nb">14</span>)
+n3  <span class="op">=</span> <span class="cl">Noeud</span>(<span class="nb">3</span>, gauche<span class="op">=</span>n1, droite<span class="op">=</span>n6)
+n10 <span class="op">=</span> <span class="cl">Noeud</span>(<span class="nb">10</span>, droite<span class="op">=</span>n14)
+racine <span class="op">=</span> <span class="cl">Noeud</span>(<span class="nb">8</span>, gauche<span class="op">=</span>n3, droite<span class="op">=</span>n10)
+
+<span class="cm"># Accès aux valeurs</span>
+<span class="fn">print</span>(racine.valeur)         <span class="cm"># 8</span>
+<span class="fn">print</span>(racine.gauche.valeur)  <span class="cm"># 3</span>
+<span class="fn">print</span>(n6.est_feuille())      <span class="cm"># True</span>
+<span class="fn">print</span>(n3.est_feuille())      <span class="cm"># False</span></pre>
+  </div>
+
+  <h3>Représentation alternative : tuples imbriqués</h3>
+  <p>Certains sujets de bac utilisent des tuples <code>(valeur, gauche, droite)</code> ou <code>None</code> pour l'arbre vide :</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Représentation par tuples</span></div>
+    <pre><span class="cm"># Arbre sous forme de tuples (valeur, fils_gauche, fils_droit)</span>
+<span class="cm"># None représente l'arbre vide</span>
+arbre <span class="op">=</span> (<span class="nb">8</span>,
+          (<span class="nb">3</span>,
+            (<span class="nb">1</span>, <span class="nb">None</span>, <span class="nb">None</span>),
+            (<span class="nb">6</span>, <span class="nb">None</span>, <span class="nb">None</span>)),
+          (<span class="nb">10</span>,
+            <span class="nb">None</span>,
+            (<span class="nb">14</span>, <span class="nb">None</span>, <span class="nb">None</span>)))
+
+<span class="cm"># Accès : arbre[0]=racine, arbre[1]=gauche, arbre[2]=droite</span>
+<span class="fn">print</span>(arbre[<span class="nb">0</span>])       <span class="cm"># 8 (racine)</span>
+<span class="fn">print</span>(arbre[<span class="nb">1</span>][<span class="nb">0</span>])   <span class="cm"># 3 (fils gauche)</span></pre>
+  </div>
+
+  <div class="box box-tip">
+    <div class="box-title">💡 Conseil bac</div>
+    Les deux représentations apparaissent au bac. Sachez passer de l'une à l'autre. La classe <code>Noeud</code> est la plus courante. Retenez bien : <code>None</code> représente un <strong>arbre vide</strong> (pas un nœud sans valeur).
+  </div>
+</div>
+
+<!-- ══════════════════ SECTION 4 : PARCOURS ══════════════════ -->
+<div class="section" id="s4">
+  <div class="section-num">04 — Parcours</div>
+  <h2>Parcours d'arbres</h2>
+
+  <p>Parcourir un arbre signifie <strong>visiter tous ses nœuds exactement une fois</strong>. Il existe plusieurs stratégies, chacune avec des applications différentes.</p>
+
+  <p>Pour tous les exemples, on utilise cet arbre de référence :</p>
+
+  <div class="ascii-tree">
+<pre>
+         <span class="node-label">A</span>
+        <span class="branch">/ \</span>
+       <span class="node-label">B</span>   <span class="node-label">C</span>
+      <span class="branch">/ \</span>   <span class="branch">/ \</span>
+     <span class="node-label">D</span>   <span class="node-label">E</span> <span class="node-label">F</span>   <span class="node-label">G</span>
+</pre>
+  </div>
+
+  <h3>Parcours en profondeur (DFS — Depth-First Search)</h3>
+  <p>Les parcours en profondeur explorent un sous-arbre entièrement avant de passer au suivant. Ils se définissent par <strong>l'ordre de visite du nœud courant</strong> (N) par rapport à ses fils gauche (G) et droit (D).</p>
+
+  <!-- PRÉFIXE -->
+  <h4>Parcours préfixe (N → G → D)</h4>
+  <p>On visite d'abord le <strong>nœud</strong>, puis le <strong>sous-arbre gauche</strong>, puis le <strong>sous-arbre droit</strong>.</p>
+  <p><strong>Résultat sur l'exemple :</strong> A → B → D → E → C → F → G</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Parcours préfixe — Python</span></div>
+    <pre><span class="kw">def</span> <span class="df">prefixe</span>(noeud)<span class="op">:</span>
+    <span class="cm">"""Parcours préfixe (NoeudGaucheDroit) — récursif."""</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>     <span class="cm"># cas de base : arbre vide</span>
+        <span class="kw">return</span>
+    <span class="fn">print</span>(noeud.valeur)   <span class="cm"># 1. Visiter le nœud</span>
+    prefixe(noeud.gauche) <span class="cm"># 2. Parcourir le sous-arbre gauche</span>
+    prefixe(noeud.droite) <span class="cm"># 3. Parcourir le sous-arbre droit</span></pre>
+  </div>
+
+  <!-- INFIXE -->
+  <h4>Parcours infixe (G → N → D)</h4>
+  <p>On parcourt le <strong>sous-arbre gauche</strong>, puis on visite le <strong>nœud</strong>, puis le <strong>sous-arbre droit</strong>.</p>
+  <p><strong>Résultat sur l'exemple :</strong> D → B → E → A → F → C → G</p>
+  <p><strong>Propriété clé :</strong> sur un arbre binaire de recherche, le parcours infixe donne les valeurs <strong>dans l'ordre croissant</strong> !</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Parcours infixe — Python</span></div>
+    <pre><span class="kw">def</span> <span class="df">infixe</span>(noeud)<span class="op">:</span>
+    <span class="cm">"""Parcours infixe (GauchNoeudDroit) — récursif."""</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span>
+    infixe(noeud.gauche)  <span class="cm"># 1. Parcourir le sous-arbre gauche</span>
+    <span class="fn">print</span>(noeud.valeur)    <span class="cm"># 2. Visiter le nœud</span>
+    infixe(noeud.droite)  <span class="cm"># 3. Parcourir le sous-arbre droit</span></pre>
+  </div>
+
+  <!-- POSTFIXE -->
+  <h4>Parcours postfixe (G → D → N)</h4>
+  <p>On parcourt d'abord les deux <strong>sous-arbres</strong>, puis on visite le <strong>nœud</strong> en dernier.</p>
+  <p><strong>Résultat sur l'exemple :</strong> D → E → B → F → G → C → A</p>
+  <p><strong>Application :</strong> utile pour supprimer un arbre (on supprime les enfants avant les parents) ou évaluer une expression arithmétique en notation polonaise inversée.</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Parcours postfixe — Python</span></div>
+    <pre><span class="kw">def</span> <span class="df">postfixe</span>(noeud)<span class="op">:</span>
+    <span class="cm">"""Parcours postfixe (GaucheDroitNoeud) — récursif."""</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span>
+    postfixe(noeud.gauche) <span class="cm"># 1. Parcourir le sous-arbre gauche</span>
+    postfixe(noeud.droite) <span class="cm"># 2. Parcourir le sous-arbre droit</span>
+    <span class="fn">print</span>(noeud.valeur)     <span class="cm"># 3. Visiter le nœud</span></pre>
+  </div>
+
+  <!-- LARGEUR -->
+  <h3>Parcours en largeur (BFS — Breadth-First Search)</h3>
+  <p>On visite les nœuds <strong>niveau par niveau</strong>, de gauche à droite.</p>
+  <p><strong>Résultat sur l'exemple :</strong> A → B → C → D → E → F → G</p>
+  <p>Ce parcours n'est <strong>pas récursif</strong> : il utilise une <strong>file (deque)</strong>.</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Parcours en largeur — Python (avec file)</span></div>
+    <pre><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> <span class="df">largeur</span>(racine)<span class="op">:</span>
+    <span class="cm">"""Parcours en largeur (BFS) — utilise une file."""</span>
+    <span class="kw">if</span> racine <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span>
+
+    file <span class="op">=</span> deque([racine])  <span class="cm"># on enfile la racine</span>
+
+    <span class="kw">while</span> file<span class="op">:</span>
+        noeud <span class="op">=</span> file.popleft()       <span class="cm"># on défile</span>
+        <span class="fn">print</span>(noeud.valeur)           <span class="cm"># on visite</span>
+        <span class="kw">if</span> noeud.gauche <span class="kw">is not</span> <span class="nb">None</span><span class="op">:</span>
+            file.append(noeud.gauche) <span class="cm"># on enfile le fils gauche</span>
+        <span class="kw">if</span> noeud.droite <span class="kw">is not</span> <span class="nb">None</span><span class="op">:</span>
+            file.append(noeud.droite) <span class="cm"># on enfile le fils droit</span></pre>
+  </div>
+
+  <h3>Tableau récapitulatif des parcours</h3>
+  <table>
+    <tr><th>Parcours</th><th>Ordre</th><th>Résultat (arbre A)</th><th>Application typique</th></tr>
+    <tr><td>Préfixe</td><td>N → G → D</td><td>A B D E C F G</td><td>Copie d'arbre, sérialisation</td></tr>
+    <tr><td>Infixe</td><td>G → N → D</td><td>D B E A F C G</td><td>Tri sur ABR (ordre croissant)</td></tr>
+    <tr><td>Postfixe</td><td>G → D → N</td><td>D E B F G C A</td><td>Suppression, éval. expression</td></tr>
+    <tr><td>Largeur</td><td>niveau / niveau</td><td>A B C D E F G</td><td>Plus court chemin, impression</td></tr>
+  </table>
+
+  <div class="box box-key">
+    <div class="box-title">🔑 Astuce mémorisation</div>
+    Le nom du parcours indique la position du <strong>Nœud</strong> dans l'ordre N-G-D : <br>
+    • <strong>Pré</strong>fixe = Nœud en <strong>premier</strong> (avant)<br>
+    • <strong>In</strong>fixe = Nœud au <strong>milieu</strong> (entre)<br>
+    • <strong>Post</strong>fixe = Nœud en <strong>dernier</strong> (après)
+  </div>
+</div>
+
+<!-- ══════════════════ SECTION 5 : OPÉRATIONS ══════════════════ -->
+<div class="section" id="s5">
+  <div class="section-num">05 — Opérations</div>
+  <h2>Opérations sur les arbres</h2>
+
+  <h3>Calcul de la taille</h3>
+  <p>La <strong>taille</strong> d'un arbre est le nombre total de nœuds. On la calcule récursivement : taille = 1 (nœud courant) + taille(gauche) + taille(droite).</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Taille d'un arbre</span></div>
+    <pre><span class="kw">def</span> <span class="df">taille</span>(noeud)<span class="op">:</span>
+    <span class="cm">"""Retourne le nombre de nœuds de l'arbre."""</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>       <span class="cm"># arbre vide → taille 0</span>
+        <span class="kw">return</span> <span class="nb">0</span>
+    <span class="kw">return</span> <span class="nb">1</span> <span class="op">+</span> taille(noeud.gauche) <span class="op">+</span> taille(noeud.droite)
+    <span class="cm"># 1 pour le nœud courant, + récursion sur les deux sous-arbres</span></pre>
+  </div>
+
+  <h3>Calcul de la hauteur</h3>
+  <p>La <strong>hauteur</strong> d'un arbre est le nombre d'arêtes sur le plus long chemin de la racine à une feuille. Conventionnellement, la hauteur d'un arbre vide est −1, celle d'un arbre réduit à une feuille est 0.</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Hauteur d'un arbre</span></div>
+    <pre><span class="kw">def</span> <span class="df">hauteur</span>(noeud)<span class="op">:</span>
+    <span class="cm">"""Retourne la hauteur de l'arbre (-1 si vide, 0 si feuille)."""</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="op">-</span><span class="nb">1</span>              <span class="cm"># arbre vide : convention hauteur = -1</span>
+    h_gauche <span class="op">=</span> hauteur(noeud.gauche)
+    h_droite <span class="op">=</span> hauteur(noeud.droite)
+    <span class="kw">return</span> <span class="nb">1</span> <span class="op">+</span> <span class="fn">max</span>(h_gauche, h_droite)
+    <span class="cm"># +1 pour l'arête vers ce nœud, max pour prendre le chemin le plus long</span></pre>
+  </div>
+
+  <div class="box box-warn">
+    <div class="box-title">⚠ Convention hauteur arbre vide</div>
+    Certains sujets définissent la hauteur d'un arbre vide à <strong>0</strong> et celle d'une feuille à <strong>1</strong>. Lisez toujours attentivement l'énoncé. La logique reste la même, seule la constante de base change.
+  </div>
+
+  <h3>Recherche dans un arbre binaire quelconque</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Recherche dans un arbre binaire</span></div>
+    <pre><span class="kw">def</span> <span class="df">recherche</span>(noeud, valeur)<span class="op">:</span>
+    <span class="cm">"""Cherche une valeur dans un arbre binaire quelconque.
+    Retourne True si trouvée, False sinon."""</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="nb">False</span>             <span class="cm"># arbre vide → non trouvé</span>
+    <span class="kw">if</span> noeud.valeur <span class="op">==</span> valeur<span class="op">:</span>
+        <span class="kw">return</span> <span class="nb">True</span>              <span class="cm"># trouvé !</span>
+    <span class="cm"># Chercher dans les deux sous-arbres</span>
+    <span class="kw">return</span> recherche(noeud.gauche, valeur) <span class="kw">or</span> \
+           recherche(noeud.droite, valeur)</pre>
+  </div>
+
+  <h3>Recherche dans un Arbre Binaire de Recherche (ABR)</h3>
+  <p>Dans un ABR, la recherche est beaucoup plus efficace car on peut éliminer la moitié de l'arbre à chaque étape :</p>
+
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Recherche dans un ABR (optimisée)</span></div>
+    <pre><span class="kw">def</span> <span class="df">recherche_abr</span>(noeud, valeur)<span class="op">:</span>
+    <span class="cm">"""Recherche dans un ABR — O(log n) en moyenne."""</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="nb">False</span>             <span class="cm"># non trouvé</span>
+    <span class="kw">if</span> valeur <span class="op">==</span> noeud.valeur<span class="op">:</span>
+        <span class="kw">return</span> <span class="nb">True</span>              <span class="cm"># trouvé</span>
+    <span class="kw">elif</span> valeur <span class="op">&lt;</span> noeud.valeur<span class="op">:</span>
+        <span class="kw">return</span> recherche_abr(noeud.gauche, valeur)  <span class="cm"># aller à gauche</span>
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="kw">return</span> recherche_abr(noeud.droite, valeur) <span class="cm"># aller à droite</span></pre>
+  </div>
+
+  <h3>Insertion dans un ABR</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Insertion dans un ABR</span></div>
+    <pre><span class="kw">def</span> <span class="df">insertion_abr</span>(noeud, valeur)<span class="op">:</span>
+    <span class="cm">"""Insère une valeur dans un ABR. Retourne la nouvelle racine."""</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="cl">Noeud</span>(valeur)   <span class="cm"># créer un nouveau nœud feuille</span>
+    <span class="kw">if</span> valeur <span class="op">&lt;</span> noeud.valeur<span class="op">:</span>
+        noeud.gauche <span class="op">=</span> insertion_abr(noeud.gauche, valeur)
+    <span class="kw">elif</span> valeur <span class="op">&gt;</span> noeud.valeur<span class="op">:</span>
+        noeud.droite <span class="op">=</span> insertion_abr(noeud.droite, valeur)
+    <span class="cm"># si valeur == noeud.valeur : doublon ignoré</span>
+    <span class="kw">return</span> noeud               <span class="cm"># retourner le nœud (éventuellement modifié)</span>
+
+<span class="cm"># Exemple d'utilisation :</span>
+racine <span class="op">=</span> <span class="nb">None</span>
+<span class="kw">for</span> val <span class="kw">in</span> [<span class="nb">8</span>, <span class="nb">3</span>, <span class="nb">10</span>, <span class="nb">1</span>, <span class="nb">6</span>, <span class="nb">14</span>]<span class="op">:</span>
+    racine <span class="op">=</span> insertion_abr(racine, val)
+<span class="cm"># Résultat : ABR avec racine 8</span></pre>
+  </div>
+
+  <h3>Compter les feuilles</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Nombre de feuilles</span></div>
+    <pre><span class="kw">def</span> <span class="df">nb_feuilles</span>(noeud)<span class="op">:</span>
+    <span class="cm">"""Retourne le nombre de feuilles de l'arbre."""</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="nb">0</span>
+    <span class="kw">if</span> noeud.est_feuille()<span class="op">:</span>
+        <span class="kw">return</span> <span class="nb">1</span>               <span class="cm"># c'est une feuille</span>
+    <span class="kw">return</span> nb_feuilles(noeud.gauche) <span class="op">+</span> nb_feuilles(noeud.droite)</pre>
+  </div>
+</div>
+
+<!-- ══════════════════ SECTION 6 : COMPLEXITÉ ══════════════════ -->
+<div class="section" id="s6">
+  <div class="section-num">06 — Complexité</div>
+  <h2>Complexité algorithmique</h2>
+
+  <h3>Complexité des parcours</h3>
+  <p>Tous les parcours (préfixe, infixe, postfixe, largeur) visitent chaque nœud <strong>exactement une fois</strong>. Leur complexité est donc :</p>
+
+  <div style="margin:16px 0;">
+    <span class="complexity"><span class="o">O(n)</span> Parcours préfixe</span>
+    <span class="complexity"><span class="o">O(n)</span> Parcours infixe</span>
+    <span class="complexity"><span class="o">O(n)</span> Parcours postfixe</span>
+    <span class="complexity"><span class="o">O(n)</span> Parcours en largeur</span>
+  </div>
+
+  <p>où <strong>n</strong> est le nombre de nœuds. On ne peut pas faire mieux : pour visiter n nœuds, il faut au minimum n opérations.</p>
+
+  <h3>Complexité des opérations sur un ABR</h3>
+
+  <table>
+    <tr><th>Opération</th><th>Cas moyen</th><th>Pire cas (arbre dégénéré)</th></tr>
+    <tr><td>Recherche</td><td><span class="def-term">O(log n)</span></td><td>O(n)</td></tr>
+    <tr><td>Insertion</td><td><span class="def-term">O(log n)</span></td><td>O(n)</td></tr>
+    <tr><td>Taille</td><td colspan="2"><span class="def-term">O(n)</span> (toujours)</td></tr>
+    <tr><td>Hauteur</td><td colspan="2"><span class="def-term">O(n)</span> (toujours)</td></tr>
+  </table>
+
+  <h3>Cas favorable vs défavorable</h3>
+
+  <div class="box box-tip">
+    <div class="box-title">🌳 Arbre équilibré — Cas favorable</div>
+    Un arbre <strong>équilibré</strong> (toutes les feuilles à peu près à la même profondeur) de n nœuds a une hauteur de l'ordre de <strong>log₂(n)</strong>. La recherche dans un ABR équilibré est donc en <strong>O(log n)</strong>, comparable à la dichotomie.
+  </div>
+
+  <div class="ascii-tree">
+<pre>
+  <span class="cm">Arbre équilibré (h ≈ log n)</span>        <span class="cm">Arbre dégénéré (h = n-1)</span>
+         <span class="node-label">5</span>                                  <span class="node-label">1</span>
+        <span class="branch">/ \</span>                                  <span class="branch">\</span>
+       <span class="node-label">3</span>   <span class="node-label">7</span>                                 <span class="node-label">2</span>
+      <span class="branch">/ \ / \</span>                                 <span class="branch">\</span>
+     <span class="node-label">2</span> <span class="node-label">4</span> <span class="node-label">6</span> <span class="node-label">8</span>                                <span class="node-label">3</span>
+  hauteur = 2                                  <span class="branch">\</span>
+  complexité O(log n)                          <span class="node-label">4</span>
+                                           hauteur = 3
+                                           complexité O(n)
+</pre>
+  </div>
+
+  <div class="box box-alert">
+    <div class="box-title">⚠ Arbre dégénéré — Pire cas</div>
+    Si on insère des éléments <strong>dans l'ordre croissant</strong> dans un ABR (1, 2, 3, 4…), l'arbre dégénère en une liste chaînée. La hauteur devient n−1 et la recherche est en <strong>O(n)</strong>. C'est pourquoi on utilise des <em>arbres AVL</em> ou <em>arbres rouge-noir</em> (hors programme) pour garantir l'équilibre.
+  </div>
+
+  <h3>Complexité spatiale</h3>
+  <p>La récursivité consomme de la mémoire dans la <strong>pile d'appels</strong>. Pour un arbre de hauteur h :</p>
+  <ul>
+    <li>Parcours DFS récursif : <span class="complexity"><span class="o">O(h)</span> pile d'appels</span> → O(n) au pire</li>
+    <li>Parcours BFS itératif : <span class="complexity"><span class="o">O(n)</span> pour la file</span></li>
+  </ul>
+</div>
+
+<!-- ══════════════════ SECTION 7 : SYNTHÈSE ══════════════════ -->
+<div class="section" id="s7">
+  <div class="section-num">07 — Points clés</div>
+  <h2>Synthèse — Points clés à retenir</h2>
+
+  <div class="synth-grid">
+    <div class="synth-card">
+      <h4 style="color:var(--green)">Définitions fondamentales</h4>
+      <ul>
+        <li>Arbre = graphe connexe acyclique orienté depuis une racine</li>
+        <li>Racine = unique nœud sans parent</li>
+        <li>Feuille = nœud sans enfant</li>
+        <li>Hauteur = longueur du plus long chemin racine→feuille</li>
+        <li>Arbre binaire : max 2 enfants par nœud</li>
+        <li><code>None</code> représente l'arbre vide</li>
+      </ul>
+    </div>
+    <div class="synth-card">
+      <h4 style="color:var(--blue)">Parcours à connaître</h4>
+      <ul>
+        <li>Préfixe : N G D (nœud en premier)</li>
+        <li>Infixe : G N D (nœud au milieu)</li>
+        <li>Postfixe : G D N (nœud en dernier)</li>
+        <li>Largeur : niveau par niveau, avec file</li>
+        <li>Tous en O(n)</li>
+        <li>Infixe sur ABR → ordre croissant</li>
+      </ul>
+    </div>
+    <div class="synth-card">
+      <h4 style="color:var(--orange)">Fonctions récursives clés</h4>
+      <ul>
+        <li><code>taille(n)</code> = 1 + t(g) + t(d)</li>
+        <li><code>hauteur(n)</code> = 1 + max(h(g), h(d))</li>
+        <li>Cas de base : <code>None → 0 ou -1</code></li>
+        <li>Recherche ABR : O(log n) moyen</li>
+        <li>Toujours tester le cas vide en premier</li>
+      </ul>
+    </div>
+    <div class="synth-card">
+      <h4 style="color:var(--red)">Pièges classiques</h4>
+      <ul>
+        <li>Oublier le cas de base (arbre vide)</li>
+        <li>Confondre hauteur et profondeur</li>
+        <li>ABR dégénéré si insertions triées</li>
+        <li>Hauteur arbre vide : -1 ou 0 selon convention</li>
+        <li>BFS : utiliser une file, PAS la récursion</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SECTION 8 : FICHE RAPIDE ══════════════════ -->
+<div class="section" id="s8">
+  <div class="section-num">08 — Fiche de révision</div>
+  <h2>Fiche de révision rapide</h2>
+
+  <div class="fiche">
+    <h3>📋 Définitions essentielles</h3>
+    <table style="margin-bottom:20px;">
+      <tr><th>Terme</th><th>Définition express</th></tr>
+      <tr><td><code>Arbre</code></td><td>Graphe connexe acyclique avec une racine</td></tr>
+      <tr><td><code>Racine</code></td><td>Nœud sommet, sans parent</td></tr>
+      <tr><td><code>Feuille</code></td><td>Nœud sans enfant</td></tr>
+      <tr><td><code>Hauteur</code></td><td>Longueur max racine → feuille (arête vide = -1)</td></tr>
+      <tr><td><code>Taille</code></td><td>Nombre total de nœuds</td></tr>
+      <tr><td><code>ABR</code></td><td>Arbre binaire : gauche &lt; nœud &lt; droite</td></tr>
+    </table>
+
+    <h3>⚡ Algorithmes incontournables</h3>
+    <div class="code-block" style="margin-top:12px;">
+      <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Récapitulatif des fonctions essentielles</span></div>
+      <pre><span class="cm"># ── TAILLE ─────────────────────────────────────────────</span>
+<span class="kw">def</span> <span class="df">taille</span>(n)<span class="op">:</span>
+    <span class="kw">if</span> n <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span> <span class="kw">return</span> <span class="nb">0</span>
+    <span class="kw">return</span> <span class="nb">1</span> <span class="op">+</span> taille(n.gauche) <span class="op">+</span> taille(n.droite)
+
+<span class="cm"># ── HAUTEUR ────────────────────────────────────────────</span>
+<span class="kw">def</span> <span class="df">hauteur</span>(n)<span class="op">:</span>
+    <span class="kw">if</span> n <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span> <span class="kw">return</span> <span class="op">-</span><span class="nb">1</span>
+    <span class="kw">return</span> <span class="nb">1</span> <span class="op">+</span> <span class="fn">max</span>(hauteur(n.gauche), hauteur(n.droite))
+
+<span class="cm"># ── PARCOURS PRÉFIXE ───────────────────────────────────</span>
+<span class="kw">def</span> <span class="df">prefixe</span>(n)<span class="op">:</span>
+    <span class="kw">if</span> n <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span> <span class="kw">return</span>
+    <span class="fn">print</span>(n.valeur); prefixe(n.gauche); prefixe(n.droite)
+
+<span class="cm"># ── PARCOURS INFIXE ────────────────────────────────────</span>
+<span class="kw">def</span> <span class="df">infixe</span>(n)<span class="op">:</span>
+    <span class="kw">if</span> n <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span> <span class="kw">return</span>
+    infixe(n.gauche); <span class="fn">print</span>(n.valeur); infixe(n.droite)
+
+<span class="cm"># ── PARCOURS POSTFIXE ──────────────────────────────────</span>
+<span class="kw">def</span> <span class="df">postfixe</span>(n)<span class="op">:</span>
+    <span class="kw">if</span> n <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span> <span class="kw">return</span>
+    postfixe(n.gauche); postfixe(n.droite); <span class="fn">print</span>(n.valeur)
+
+<span class="cm"># ── RECHERCHE ABR ──────────────────────────────────────</span>
+<span class="kw">def</span> <span class="df">recherche_abr</span>(n, v)<span class="op">:</span>
+    <span class="kw">if</span> n <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span> <span class="kw">return</span> <span class="nb">False</span>
+    <span class="kw">if</span> v <span class="op">==</span> n.valeur<span class="op">:</span> <span class="kw">return</span> <span class="nb">True</span>
+    <span class="kw">if</span> v <span class="op">&lt;</span> n.valeur<span class="op">:</span> <span class="kw">return</span> recherche_abr(n.gauche, v)
+    <span class="kw">return</span> recherche_abr(n.droite, v)</pre>
+    </div>
+
+    <h3 style="margin-top:20px;">🚨 Erreurs fréquentes au bac</h3>
+    <ul>
+      <li>❌ Oublier le <strong>cas de base</strong> <code>if noeud is None: return ...</code></li>
+      <li>❌ Renvoyer la mauvaise valeur pour l'arbre vide (0 pour hauteur au lieu de -1)</li>
+      <li>❌ Confondre <code>None</code> (arbre vide) et un nœud sans valeur</li>
+      <li>❌ Croire qu'un ABR est toujours équilibré (il peut dégénérer)</li>
+      <li>❌ Utiliser la récursion pour le parcours en largeur (il faut une file)</li>
+      <li>❌ Dans le parcours infixe, écrire N→G→D au lieu de G→N→D</li>
+    </ul>
+  </div>
+</div>
+
+<!-- ══════════════════ SECTION 9 : EXERCICES ══════════════════ -->
+<div class="section" id="s9">
+  <div class="section-num">09 — Exercices</div>
+  <h2>Exercices progressifs</h2>
+  <p style="color:var(--text2);">3 exercices de difficulté croissante. Essayez de résoudre chaque exercice avant de consulter la correction.</p>
+
+  <!-- EX 1 -->
+  <div class="exo-card exo-easy">
+    <div class="exo-level">⭐ Niveau facile — Exercice 1</div>
+    <h3>Lecture et manipulation d'un arbre</h3>
+    <p>On considère l'arbre binaire suivant, construit en Python :</p>
+    <div class="code-block">
+      <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+      <pre>n4 = <span class="cl">Noeud</span>(<span class="nb">4</span>)
+n7 = <span class="cl">Noeud</span>(<span class="nb">7</span>)
+n2 = <span class="cl">Noeud</span>(<span class="nb">2</span>, n4, n7)
+n9 = <span class="cl">Noeud</span>(<span class="nb">9</span>)
+n5 = <span class="cl">Noeud</span>(<span class="nb">5</span>, n9, <span class="nb">None</span>)
+r  = <span class="cl">Noeud</span>(<span class="nb">6</span>, n2, n5)</pre>
+    </div>
+    <p><strong>Questions :</strong></p>
+    <ol>
+      <li>Dessinez l'arbre correspondant (schéma ASCII).</li>
+      <li>Quelle est la <strong>hauteur</strong> de cet arbre ?</li>
+      <li>Quelle est la <strong>taille</strong> (nombre de nœuds) ?</li>
+      <li>Listez les <strong>feuilles</strong> de cet arbre.</li>
+      <li>Donnez le résultat du <strong>parcours infixe</strong>.</li>
+    </ol>
+
+    <div class="hint-toggle" onclick="toggle('hint1')">
+      <span class="toggle-icon" id="icon-hint1">▶</span> Indice
+    </div>
+    <div class="hint-box" id="hint1">
+      <p>Pour dessiner l'arbre, repérez d'abord la racine <code>r</code> (valeur 6). Son fils gauche est <code>n2</code> (valeur 2) et son fils droit est <code>n5</code> (valeur 5). Continuez récursivement. La hauteur = nombre d'arêtes sur le chemin le plus long depuis la racine.</p>
+    </div>
+
+    <div class="correction-toggle" onclick="toggle('cor1')">
+      <span class="toggle-icon" id="icon-cor1">▶</span> Afficher la correction
+    </div>
+    <div class="correction-box" id="cor1">
+      <p><strong>1. Schéma de l'arbre :</strong></p>
+      <div class="ascii-tree" style="margin:10px 0;">
+<pre>
+       <span class="node-label">6</span>
+      <span class="branch">/ \</span>
+     <span class="node-label">2</span>   <span class="node-label">5</span>
+    <span class="branch">/ \</span>  <span class="branch">/</span>
+   <span class="node-label">4</span>   <span class="node-label">7</span> <span class="node-label">9</span>
+</pre>
+      </div>
+      <p><strong>2. Hauteur :</strong> le chemin le plus long est 6→2→4 ou 6→2→7 ou 6→5→9, soit <strong>2 arêtes → hauteur = 2</strong>.</p>
+      <p><strong>3. Taille :</strong> on compte les nœuds : 6, 2, 5, 4, 7, 9 → <strong>6 nœuds</strong>.</p>
+      <p><strong>4. Feuilles :</strong> nœuds sans enfant : <strong>4, 7, 9</strong>.</p>
+      <p><strong>5. Parcours infixe (G→N→D) :</strong></p>
+      <ul>
+        <li>Sous-arbre gauche de 6 (racine=2) : 4 → 2 → 7</li>
+        <li>Nœud 6</li>
+        <li>Sous-arbre droit de 6 (racine=5) : 9 → 5</li>
+      </ul>
+      <p><strong>Résultat : 4 → 2 → 7 → 6 → 9 → 5</strong></p>
+    </div>
+  </div>
+
+  <!-- EX 2 -->
+  <div class="exo-card exo-med">
+    <div class="exo-level">⭐⭐ Niveau intermédiaire — Exercice 2</div>
+    <h3>Écriture de fonctions Python sur les arbres</h3>
+    <p>On utilise la classe <code>Noeud</code> définie en cours. Écrivez les fonctions Python suivantes :</p>
+    <ol>
+      <li>Une fonction <code>nb_feuilles(noeud)</code> qui retourne le <strong>nombre de feuilles</strong> de l'arbre.</li>
+      <li>Une fonction <code>est_present(noeud, valeur)</code> qui retourne <code>True</code> si la valeur est présente dans l'arbre, <code>False</code> sinon. (Arbre quelconque, pas forcément ABR.)</li>
+      <li>Une fonction <code>profondeur_max(noeud)</code> qui retourne la <strong>profondeur maximale</strong> d'un nœud. (Cette fonction est équivalente à la hauteur.)</li>
+      <li>Une fonction <code>prefixe_liste(noeud)</code> qui retourne une <strong>liste</strong> des valeurs dans l'ordre préfixe (au lieu de les afficher).</li>
+    </ol>
+
+    <div class="hint-toggle" onclick="toggle('hint2')">
+      <span class="toggle-icon" id="icon-hint2">▶</span> Indice
+    </div>
+    <div class="hint-box" id="hint2">
+      <p>Pour toutes ces fonctions, commencez par le <strong>cas de base</strong> (<code>noeud is None</code>). Ensuite, réfléchissez à comment combiner les résultats des deux appels récursifs sur <code>noeud.gauche</code> et <code>noeud.droite</code>. Pour la question 4, au lieu de <code>print</code>, construisez une liste avec <code>+</code>.</p>
+    </div>
+
+    <div class="correction-toggle" onclick="toggle('cor2')">
+      <span class="toggle-icon" id="icon-cor2">▶</span> Afficher la correction
+    </div>
+    <div class="correction-box" id="cor2">
+      <div class="code-block">
+        <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Correction exercice 2</span></div>
+        <pre><span class="cm"># 1. Nombre de feuilles</span>
+<span class="kw">def</span> <span class="df">nb_feuilles</span>(noeud)<span class="op">:</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="nb">0</span>               <span class="cm"># arbre vide : 0 feuilles</span>
+    <span class="kw">if</span> noeud.gauche <span class="kw">is</span> <span class="nb">None</span> <span class="kw">and</span> noeud.droite <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="nb">1</span>               <span class="cm"># c'est une feuille</span>
+    <span class="kw">return</span> nb_feuilles(noeud.gauche) <span class="op">+</span> nb_feuilles(noeud.droite)
+
+<span class="cm"># 2. Recherche d'une valeur (arbre quelconque)</span>
+<span class="kw">def</span> <span class="df">est_present</span>(noeud, valeur)<span class="op">:</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="nb">False</span>
+    <span class="kw">if</span> noeud.valeur <span class="op">==</span> valeur<span class="op">:</span>
+        <span class="kw">return</span> <span class="nb">True</span>
+    <span class="kw">return</span> est_present(noeud.gauche, valeur) <span class="kw">or</span> \
+           est_present(noeud.droite, valeur)
+
+<span class="cm"># 3. Profondeur maximale (= hauteur)</span>
+<span class="kw">def</span> <span class="df">profondeur_max</span>(noeud)<span class="op">:</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="op">-</span><span class="nb">1</span>              <span class="cm"># convention : arbre vide → -1</span>
+    <span class="kw">return</span> <span class="nb">1</span> <span class="op">+</span> <span class="fn">max</span>(profondeur_max(noeud.gauche),
+                   profondeur_max(noeud.droite))
+
+<span class="cm"># 4. Parcours préfixe renvoyant une liste</span>
+<span class="kw">def</span> <span class="df">prefixe_liste</span>(noeud)<span class="op">:</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span> []               <span class="cm"># liste vide pour l'arbre vide</span>
+    <span class="kw">return</span> ([noeud.valeur]
+            <span class="op">+</span> prefixe_liste(noeud.gauche)
+            <span class="op">+</span> prefixe_liste(noeud.droite))</pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- EX 3 -->
+  <div class="exo-card exo-hard">
+    <div class="exo-level">⭐⭐⭐ Niveau Bac — Exercice 3</div>
+    <h3>Problème complet — Arbre binaire de recherche et expression arithmétique</h3>
+    <p>Un compilateur représente l'expression arithmétique <strong>(3 + 5) × (8 − 2)</strong> par un arbre binaire d'expression :</p>
+    <div class="ascii-tree">
+<pre>
+          <span class="node-label">×</span>
+         <span class="branch">/ \</span>
+        <span class="node-label">+</span>   <span class="node-label">−</span>
+       <span class="branch">/ \ / \</span>
+      <span class="node-label">3</span>  <span class="node-label">5</span> <span class="node-label">8</span>  <span class="node-label">2</span>
+</pre>
+    </div>
+    <p><strong>Partie A — Lecture de l'arbre</strong></p>
+    <ol>
+      <li>Vérifiez que cet arbre est bien un arbre binaire. Justifiez.</li>
+      <li>Quelle est la hauteur de cet arbre ? Sa taille ?</li>
+      <li>Donnez le résultat du parcours <strong>préfixe</strong> (notation polonaise préfixée).</li>
+      <li>Donnez le résultat du parcours <strong>postfixe</strong> (notation polonaise inversée ou NPI).</li>
+    </ol>
+    <p><strong>Partie B — Évaluation récursive</strong></p>
+    <ol start="5">
+      <li>Écrivez une classe <code>Noeud</code> adaptée à cet arbre (les valeurs peuvent être des entiers ou des opérateurs <code>+, -, ×, /</code>).</li>
+      <li>Construisez l'arbre en Python en utilisant cette classe.</li>
+      <li>Écrivez une fonction récursive <code>evaluer(noeud)</code> qui calcule le résultat de l'expression représentée par l'arbre. Elle doit retourner <code>48</code> pour cet arbre.</li>
+    </ol>
+
+    <div class="hint-toggle" onclick="toggle('hint3')">
+      <span class="toggle-icon" id="icon-hint3">▶</span> Indice
+    </div>
+    <div class="hint-box" id="hint3">
+      <p>Pour <code>evaluer</code> : si le nœud est une feuille (entier), retournez simplement sa valeur. Sinon, évaluez récursivement le fils gauche et le fils droit, puis appliquez l'opérateur. Utilisez un <code>if/elif</code> pour distinguer <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>. Les feuilles sont reconnaissables car leurs deux fils sont <code>None</code>.</p>
+    </div>
+
+    <div class="correction-toggle" onclick="toggle('cor3')">
+      <span class="toggle-icon" id="icon-cor3">▶</span> Afficher la correction complète
+    </div>
+    <div class="correction-box" id="cor3">
+      <p><strong>Partie A</strong></p>
+      <p><strong>1.</strong> C'est un arbre binaire car chaque nœud possède au plus 2 enfants : les opérateurs ont exactement 2 fils (opérandes), les feuilles (3,5,8,2) ont 0 fils.</p>
+      <p><strong>2.</strong> Hauteur = 2 (chemin ×→+→3, longueur 2 arêtes). Taille = 7 nœuds (×, +, −, 3, 5, 8, 2).</p>
+      <p><strong>3. Parcours préfixe (N→G→D) :</strong> <code>× + 3 5 − 8 2</code> (notation préfixe)</p>
+      <p><strong>4. Parcours postfixe (G→D→N) :</strong> <code>3 5 + 8 2 − ×</code> (NPI — utilisé par les calculatrices HP)</p>
+
+      <p><strong>Partie B</strong></p>
+      <div class="code-block">
+        <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span><span style="margin-left:8px">Correction exercice 3 — Partie B</span></div>
+        <pre><span class="cm"># Question 5 — Classe Noeud pour arbre d'expression</span>
+<span class="kw">class</span> <span class="cl">Noeud</span><span class="op">:</span>
+    <span class="kw">def</span> <span class="df">__init__</span>(<span class="nb">self</span>, valeur, gauche<span class="op">=</span><span class="nb">None</span>, droite<span class="op">=</span><span class="nb">None</span>)<span class="op">:</span>
+        <span class="nb">self</span>.valeur <span class="op">=</span> valeur   <span class="cm"># entier ou opérateur (str)</span>
+        <span class="nb">self</span>.gauche <span class="op">=</span> gauche
+        <span class="nb">self</span>.droite <span class="op">=</span> droite
+
+<span class="cm"># Question 6 — Construction de l'arbre (3 + 5) × (8 − 2)</span>
+feuille_3 <span class="op">=</span> <span class="cl">Noeud</span>(<span class="nb">3</span>)
+feuille_5 <span class="op">=</span> <span class="cl">Noeud</span>(<span class="nb">5</span>)
+feuille_8 <span class="op">=</span> <span class="cl">Noeud</span>(<span class="nb">8</span>)
+feuille_2 <span class="op">=</span> <span class="cl">Noeud</span>(<span class="nb">2</span>)
+plus      <span class="op">=</span> <span class="cl">Noeud</span>(<span class="st">'+'</span>, feuille_3, feuille_5)
+moins     <span class="op">=</span> <span class="cl">Noeud</span>(<span class="st">'-'</span>, feuille_8, feuille_2)
+racine    <span class="op">=</span> <span class="cl">Noeud</span>(<span class="st">'*'</span>, plus, moins)
+
+<span class="cm"># Question 7 — Fonction d'évaluation récursive</span>
+<span class="kw">def</span> <span class="df">evaluer</span>(noeud)<span class="op">:</span>
+    <span class="cm">"""Évalue récursivement une expression arithmétique
+    représentée par un arbre binaire d'expression."""</span>
+    <span class="kw">if</span> noeud <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="nb">0</span>
+
+    <span class="cm"># Cas de base : feuille = valeur numérique</span>
+    <span class="kw">if</span> noeud.gauche <span class="kw">is</span> <span class="nb">None</span> <span class="kw">and</span> noeud.droite <span class="kw">is</span> <span class="nb">None</span><span class="op">:</span>
+        <span class="kw">return</span> noeud.valeur
+
+    <span class="cm"># Évaluation récursive des deux sous-expressions</span>
+    gauche_val <span class="op">=</span> evaluer(noeud.gauche)
+    droite_val <span class="op">=</span> evaluer(noeud.droite)
+
+    <span class="cm"># Application de l'opérateur</span>
+    <span class="kw">if</span> noeud.valeur <span class="op">==</span> <span class="st">'+'</span><span class="op">:</span>
+        <span class="kw">return</span> gauche_val <span class="op">+</span> droite_val
+    <span class="kw">elif</span> noeud.valeur <span class="op">==</span> <span class="st">'-'</span><span class="op">:</span>
+        <span class="kw">return</span> gauche_val <span class="op">-</span> droite_val
+    <span class="kw">elif</span> noeud.valeur <span class="op">==</span> <span class="st">'*'</span><span class="op">:</span>
+        <span class="kw">return</span> gauche_val <span class="op">*</span> droite_val
+    <span class="kw">elif</span> noeud.valeur <span class="op">==</span> <span class="st">'/'</span><span class="op">:</span>
+        <span class="kw">return</span> gauche_val <span class="op">/</span> droite_val
+
+<span class="cm"># Test</span>
+<span class="fn">print</span>(evaluer(racine))  <span class="cm"># (3+5) × (8-2) = 8 × 6 = 48</span></pre>
+      </div>
+      <div class="box box-tip" style="margin-top:12px;">
+        <div class="box-title">🎓 Analyse</div>
+        Cette fonction illustre parfaitement la puissance de la récursivité sur les arbres : on délègue le calcul des sous-expressions aux appels récursifs, et on combine simplement les résultats avec l'opérateur du nœud courant.
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══════════════════ SECTION 10 : QCM ══════════════════ -->
+<div class="section" id="s10">
+  <div class="section-num">10 — QCM Interactif</div>
+  <h2>Quiz — Les Arbres</h2>
+  <p style="color:var(--text2);margin-bottom:20px;">Banque de <strong style="color:var(--accent)">50 questions</strong>. Choisissez le nombre de questions et lancez le tirage aléatoire.</p>
+
+  <div class="qcm-size-selector">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--text2)">Nombre de questions :</span>
+    <label class="qcm-size-opt" id="lbl5">
+      <input type="radio" name="qcm-size" value="5" checked onchange="onSizeChange()"> 5 questions
+    </label>
+    <label class="qcm-size-opt" id="lbl10">
+      <input type="radio" name="qcm-size" value="10" onchange="onSizeChange()"> 10 questions
+    </label>
+    <button class="btn btn-secondary" onclick="newQCM()" style="margin-left:6px;">🔀 Nouveau tirage</button>
+  </div>
+
+  <div id="qcm-questions"></div>
+
+  <div class="btn-row" id="qcm-actions">
+    <button class="btn btn-primary" onclick="submitQCM()" id="btn-submit">✅ Valider mes réponses</button>
+    <button class="btn btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button>
+  </div>
+
+  <div id="qcm-result"></div>
+</div>
+
+</div><!-- /container -->
+
+<footer>
+  NSI · Terminale · Les Arbres — Structures arborescentes · Cours complet + Exercices + QCM
+</footer>
+
+<!-- ══════════════════ JAVASCRIPT ══════════════════ -->
+<script>
+// ── TOGGLE (exercices) ──────────────────────────────────
+function toggle(id) {
+  const el = document.getElementById(id);
+  const icon = document.getElementById('icon-' + id);
+  el.classList.toggle('open');
+  icon.textContent = el.classList.contains('open') ? '▼' : '▶';
+}
+
+// ── SIZE SELECTOR STYLE ─────────────────────────────────
+function onSizeChange() {
+  const v5  = document.querySelector('[name="qcm-size"][value="5"]').checked;
+  document.getElementById('lbl5').style.borderColor  = v5  ? 'rgba(74,222,128,0.5)' : '';
+  document.getElementById('lbl10').style.borderColor = !v5 ? 'rgba(74,222,128,0.5)' : '';
+}
+
+// ── QCM BANK (50 questions) ─────────────────────────────
+const allQuestions = [
+  // ── VOCABULAIRE ──
+  {q:"Comment appelle-t-on le nœud au sommet d'un arbre, sans parent ?",opts:["Feuille","Nœud interne","Racine","Sommet"],a:2,exp:"La <strong>racine</strong> est l'unique nœud de l'arbre qui n'a pas de parent. C'est le point d'entrée de l'arbre."},
+  {q:"Comment appelle-t-on un nœud sans enfant dans un arbre ?",opts:["Racine","Feuille","Nœud interne","Ancêtre"],a:1,exp:"Une <strong>feuille</strong> est un nœud dont le degré sortant est 0, c'est-à-dire sans aucun fils."},
+  {q:"La <strong>hauteur</strong> d'un arbre est :",opts:["Le nombre de nœuds","La profondeur de la racine","La longueur du plus long chemin de la racine à une feuille","Le nombre de feuilles"],a:2,exp:"La hauteur est le nombre d'<strong>arêtes</strong> sur le chemin le plus long depuis la racine jusqu'à une feuille."},
+  {q:"La <strong>taille</strong> d'un arbre désigne :",opts:["Sa hauteur","Son nombre de nœuds","Son nombre de feuilles","Sa profondeur maximale"],a:1,exp:"La taille d'un arbre est son <strong>nombre total de nœuds</strong>."},
+  {q:"La <strong>profondeur</strong> d'un nœud est :",opts:["Le nombre d'enfants de ce nœud","Sa distance à la feuille la plus proche","Le nombre d'arêtes entre la racine et ce nœud","Le nombre de frères de ce nœud"],a:2,exp:"La profondeur d'un nœud est le nombre d'arêtes sur le chemin depuis la <strong>racine</strong> jusqu'à ce nœud. La racine a une profondeur de 0."},
+  {q:"Un <strong>arbre binaire</strong> est un arbre où chaque nœud possède au maximum :",opts:["1 enfant","2 enfants","3 enfants","Pas de limite"],a:1,exp:"Un arbre binaire impose que chaque nœud possède au plus <strong>2 enfants</strong> : un fils gauche et un fils droit."},
+  {q:"En Python, comment représente-t-on conventionnellement un <strong>arbre vide</strong> ?",opts:["[]","0","''","None"],a:3,exp:"En Python, <code>None</code> représente l'arbre vide (absence de sous-arbre). C'est le cas de base de toutes les fonctions récursives sur les arbres."},
+  {q:"Un <strong>sous-arbre</strong> raciné en un nœud N est :",opts:["L'ensemble des ancêtres de N","N et tous ses descendants","L'ensemble des frères de N","Uniquement les enfants directs de N"],a:1,exp:"Le sous-arbre raciné en N est constitué de <strong>N lui-même et de tous ses descendants</strong> (enfants, petits-enfants, etc.)."},
+  {q:"Dans un arbre binaire de hauteur h, le nombre maximum de nœuds est :",opts:["h + 1","2h","2^(h+1) - 1","h²"],a:2,exp:"Un arbre binaire <strong>complet</strong> de hauteur h a au maximum <strong>2^(h+1) − 1</strong> nœuds (toutes les positions remplies)."},
+  {q:"Quelle est la hauteur d'un arbre réduit à un seul nœud (la racine) ?",opts:["−1","0","1","Indéfini"],a:1,exp:"Un arbre réduit à sa seule racine a une hauteur de <strong>0</strong> : il n'y a aucune arête à parcourir pour atteindre une feuille."},
+  // ── REPRÉSENTATION ──
+  {q:"Dans la classe <code>Noeud</code> standard en NSI, quels sont les attributs habituels ?",opts:["val, next","valeur, gauche, droite","data, left, right, parent","valeur, fils"],a:1,exp:"La classe <code>Noeud</code> standard en NSI utilise <code>valeur</code> pour la donnée, <code>gauche</code> pour le fils gauche et <code>droite</code> pour le fils droit."},
+  {q:"Que retourne <code>noeud.gauche</code> si le fils gauche n'existe pas ?",opts:["0","False","None","Une exception"],a:2,exp:"Si le fils gauche n'existe pas, <code>noeud.gauche</code> vaut <code>None</code> (il a été initialisé à <code>None</code> lors de la création du nœud)."},
+  {q:"Pour construire un arbre en Python de manière propre, on construit généralement :",opts:["De la racine vers les feuilles","Des feuilles vers la racine","Dans l'ordre de parcours infixe","Peu importe l'ordre"],a:1,exp:"On construit de préférence un arbre <strong>des feuilles vers la racine</strong>, car pour créer un nœud avec ses fils, il faut d'abord que les fils existent."},
+  {q:"Dans la représentation par tuples <code>(valeur, gauche, droite)</code>, que représente le tuple <code>(5, None, None)</code> ?",opts:["Un arbre vide","Un nœud feuille de valeur 5","Un nœud avec deux enfants","Un nœud de valeur None"],a:1,exp:"<code>(5, None, None)</code> représente un <strong>nœud feuille</strong> de valeur 5 : ses deux fils sont <code>None</code> (arbres vides)."},
+  {q:"Dans un arbre binaire de recherche (ABR), quelle propriété est vérifiée ?",opts:["Tous les nœuds ont 2 fils","Les fils gauches sont > au père","Les valeurs gauches < nœud < valeurs droites","L'arbre est toujours équilibré"],a:2,exp:"Dans un ABR, pour tout nœud : toutes les valeurs dans le <strong>sous-arbre gauche sont inférieures</strong> à la valeur du nœud, et toutes celles du <strong>sous-arbre droit sont supérieures</strong>."},
+  // ── PARCOURS ──
+  {q:"Dans le parcours <strong>préfixe</strong>, l'ordre de visite est :",opts:["Gauche → Nœud → Droite","Nœud → Gauche → Droite","Gauche → Droite → Nœud","Droite → Nœud → Gauche"],a:1,exp:"Le parcours <strong>pré</strong>fixe visite le <strong>nœud en premier</strong> (avant ses fils) : N → G → D."},
+  {q:"Dans le parcours <strong>infixe</strong>, l'ordre de visite est :",opts:["Nœud → Gauche → Droite","Gauche → Droite → Nœud","Gauche → Nœud → Droite","Droite → Nœud → Gauche"],a:2,exp:"Le parcours <strong>in</strong>fixe visite le nœud <strong>entre ses fils</strong> : G → N → D."},
+  {q:"Dans le parcours <strong>postfixe</strong>, l'ordre de visite est :",opts:["Nœud → Gauche → Droite","Gauche → Nœud → Droite","Gauche → Droite → Nœud","Droite → Gauche → Nœud"],a:2,exp:"Le parcours <strong>post</strong>fixe visite le nœud <strong>en dernier</strong>, après ses deux fils : G → D → N."},
+  {q:"Le parcours <strong>en largeur</strong> (BFS) visite les nœuds :",opts:["De bas en haut","De la feuille la plus profonde","Niveau par niveau","Dans l'ordre décroissant"],a:2,exp:"Le BFS visite les nœuds <strong>niveau par niveau</strong> : d'abord la racine (niveau 0), puis ses fils (niveau 1), puis les petits-fils (niveau 2), etc."},
+  {q:"Quelle structure de données est utilisée pour implémenter le parcours en <strong>largeur</strong> ?",opts:["Une pile (stack)","Une file (queue)","Un tableau trié","Un dictionnaire"],a:1,exp:"Le BFS utilise une <strong>file (FIFO)</strong> : on enfile les enfants de chaque nœud visité, et on défile le prochain nœud à traiter. En Python : <code>from collections import deque</code>."},
+  {q:"Sur un ABR, le parcours <strong>infixe</strong> produit :",opts:["Les valeurs en ordre décroissant","Les valeurs dans l'ordre d'insertion","Les valeurs en ordre croissant","Les feuilles en premier"],a:2,exp:"Sur un ABR, le parcours infixe (G→N→D) produit les valeurs <strong>dans l'ordre croissant</strong>. C'est une propriété fondamentale des ABR."},
+  {q:"Sur l'arbre binaire de racine 1, fils gauche 2, fils droit 3 : quel est le résultat du parcours préfixe ?",opts:["2 1 3","1 2 3","2 3 1","3 1 2"],a:1,exp:"Parcours préfixe (N→G→D) : on visite d'abord la racine <strong>1</strong>, puis le sous-arbre gauche <strong>2</strong>, puis le sous-arbre droit <strong>3</strong>."},
+  {q:"Sur l'arbre binaire de racine 1, fils gauche 2, fils droit 3 : quel est le résultat du parcours <strong>postfixe</strong> ?",opts:["1 2 3","2 1 3","2 3 1","3 2 1"],a:2,exp:"Parcours postfixe (G→D→N) : sous-arbre gauche <strong>2</strong>, puis sous-arbre droit <strong>3</strong>, puis racine <strong>1</strong>."},
+  {q:"Les parcours en profondeur (DFS) sont généralement implémentés de façon :",opts:["Itérative avec une file","Récursive","Itérative avec un tableau trié","Non-déterministe"],a:1,exp:"Les parcours DFS (préfixe, infixe, postfixe) s'implémentent naturellement de façon <strong>récursive</strong> grâce à la structure récursive des arbres."},
+  {q:"Quel parcours est le plus adapté pour évaluer une expression arithmétique représentée en arbre ?",opts:["Préfixe","Infixe","Postfixe","Largeur"],a:2,exp:"Le parcours <strong>postfixe</strong> est utilisé pour évaluer les arbres d'expression : on évalue d'abord les sous-expressions (fils) avant d'appliquer l'opérateur (nœud)."},
+  // ── FONCTIONS RÉCURSIVES ──
+  {q:"Quelle est la valeur retournée par <code>taille(None)</code> ?",opts:["−1","None","0","1"],a:2,exp:"<code>taille(None)</code> retourne <strong>0</strong> : l'arbre vide ne contient aucun nœud."},
+  {q:"Quelle est la valeur retournée par <code>hauteur(None)</code> selon la convention du programme NSI ?",opts:["0","1","−1","None"],a:2,exp:"Par convention NSI, <code>hauteur(None)</code> retourne <strong>−1</strong>. Cela permet d'avoir : hauteur(feuille) = 1 + max(−1, −1) = 0."},
+  {q:"La fonction récursive <code>taille(n)</code> retourne :",opts:["1 si n est None","n.valeur si n est une feuille","0 si n est None, sinon 1 + taille(n.gauche) + taille(n.droite)","max(taille(n.gauche), taille(n.droite))"],a:2,exp:"<code>taille(n)</code> retourne 0 pour l'arbre vide, et <code>1 + taille(n.gauche) + taille(n.droite)</code> sinon — le 1 compte le nœud courant."},
+  {q:"La fonction <code>hauteur(n)</code> utilise :",opts:["La somme des hauteurs des fils","Le produit des hauteurs","Le maximum des hauteurs des fils + 1","La valeur du nœud"],a:2,exp:"La hauteur d'un nœud est <code>1 + max(hauteur(gauche), hauteur(droite))</code> : on prend le chemin le plus long, on ajoute 1 pour l'arête vers ce nœud."},
+  {q:"Pour chercher une valeur dans un arbre binaire <strong>quelconque</strong>, la complexité est :",opts:["O(1)","O(log n)","O(n)","O(n²)"],a:2,exp:"Dans un arbre binaire quelconque (non ABR), on doit potentiellement explorer tous les nœuds : la complexité est <strong>O(n)</strong>."},
+  {q:"Quel est le cas de base incontournable de toute fonction récursive sur un arbre ?",opts:["noeud.valeur == 0","noeud est une feuille","noeud is None","noeud.gauche is None"],a:2,exp:"Le cas de base fondamental est <code>if noeud is None: return ...</code>. Ce cas gère l'arbre vide et assure la terminaison de la récursion."},
+  // ── ABR ──
+  {q:"Dans un ABR, pour chercher une valeur v < noeud.valeur, on doit :",opts:["Chercher à droite","Chercher à gauche","Arrêter la recherche","Chercher dans les deux sens"],a:1,exp:"Dans un ABR, si v < nœud.valeur, la valeur recherchée ne peut être que dans le <strong>sous-arbre gauche</strong> (par définition de l'ABR)."},
+  {q:"Quelle est la complexité de la recherche dans un ABR <strong>équilibré</strong> ?",opts:["O(1)","O(log n)","O(n)","O(n log n)"],a:1,exp:"Dans un ABR équilibré, la hauteur est O(log n), donc la recherche (qui descend d'un niveau à chaque étape) est en <strong>O(log n)</strong>."},
+  {q:"Si on insère les valeurs 1, 2, 3, 4, 5 dans cet ordre dans un ABR, l'arbre obtenu est :",opts:["Équilibré","Une liste chaînée (arbre dégénéré)","Un arbre complet","Un arbre avec 3 niveaux"],a:1,exp:"Insérer des valeurs en ordre croissant dans un ABR produit un <strong>arbre dégénéré</strong> (chaque nœud n'a qu'un fils droit), équivalent à une liste chaînée. La hauteur vaut n−1."},
+  {q:"Dans un ABR, où se trouve le <strong>minimum</strong> de l'arbre ?",opts:["À la racine","Dans le fils droit le plus profond","Dans le fils gauche le plus profond (tout à gauche)","Impossible à dire"],a:2,exp:"Le minimum d'un ABR se trouve dans le nœud le plus à <strong>gauche</strong> (on descend en suivant les fils gauches jusqu'à <code>None</code>)."},
+  {q:"Après un parcours infixe d'un ABR contenant {3, 7, 1, 5}, le résultat est :",opts:["3 7 1 5","1 3 5 7","7 5 3 1","1 7 5 3"],a:1,exp:"Le parcours infixe d'un ABR donne les valeurs en <strong>ordre croissant</strong> : 1 → 3 → 5 → 7."},
+  // ── COMPLEXITÉ ──
+  {q:"Quelle est la complexité d'un parcours en profondeur (DFS) d'un arbre à n nœuds ?",opts:["O(1)","O(log n)","O(n)","O(n²)"],a:2,exp:"Un DFS visite chaque nœud <strong>exactement une fois</strong>, donc sa complexité est <strong>O(n)</strong>."},
+  {q:"Quelle est la complexité en espace mémoire (pile) d'un parcours DFS récursif ?",opts:["O(1)","O(log n)","O(h) où h est la hauteur","O(n²)"],a:2,exp:"La récursion utilise une pile d'appels dont la profondeur maximale est la <strong>hauteur h</strong> de l'arbre. Au pire (arbre dégénéré), h = n−1, donc O(n)."},
+  {q:"La complexité du parcours en <strong>largeur</strong> BFS est :",opts:["O(log n)","O(n)","O(h) où h est la hauteur","O(n log n)"],a:1,exp:"Le BFS visite aussi chaque nœud exactement une fois : sa complexité temporelle est <strong>O(n)</strong>. En espace, il utilise une file pouvant contenir O(n) éléments."},
+  {q:"Un arbre binaire parfait (toutes les feuilles au même niveau, tous les nœuds internes ont 2 fils) de hauteur h a une taille de :",opts:["h + 1","2h + 1","2^(h+1) - 1","h²"],a:2,exp:"Un arbre parfait de hauteur h contient <strong>2^(h+1) − 1</strong> nœuds : 1 + 2 + 4 + … + 2^h = 2^(h+1) − 1."},
+  {q:"La hauteur minimale d'un arbre binaire à n nœuds est de l'ordre de :",opts:["n","n/2","log₂(n)","√n"],a:2,exp:"Un arbre binaire équilibré de n nœuds a une hauteur de l'ordre de <strong>⌊log₂(n)⌋</strong>. C'est pourquoi les ABR équilibrés sont efficaces."},
+  // ── APPLICATION ──
+  {q:"Pour <strong>compter les feuilles</strong> d'un arbre, la relation de récurrence est :",opts:["nb_feuilles(n) = 1 + nb_feuilles(n.g) + nb_feuilles(n.d)","Si n est feuille : 1, sinon : nb_feuilles(n.g) + nb_feuilles(n.d)","nb_feuilles(n) = max(n.g, n.d)","nb_feuilles(None) = 1"],a:1,exp:"Si le nœud est une feuille, il compte pour 1. Sinon, on additionne le nombre de feuilles des deux sous-arbres <strong>sans ajouter 1</strong> pour le nœud courant."},
+  {q:"Que retourne <code>hauteur(Noeud(5))</code> (nœud feuille) avec la convention hauteur(None) = −1 ?",opts:["−1","0","1","2"],a:1,exp:"hauteur(feuille) = 1 + max(hauteur(None), hauteur(None)) = 1 + max(−1, −1) = 1 + (−1) = <strong>0</strong>."},
+  {q:"Quel parcours est utilisé pour <strong>afficher un répertoire</strong> (dossiers et fichiers) ?",opts:["Parcours infixe","Parcours en largeur","Parcours préfixe","Parcours postfixe"],a:2,exp:"Le parcours <strong>préfixe</strong> est naturel pour afficher un système de fichiers : on affiche d'abord le dossier (nœud), puis récursivement son contenu (sous-arbres)."},
+  {q:"Pour <strong>supprimer proprement</strong> tous les nœuds d'un arbre (en libérant la mémoire), quel parcours est le plus adapté ?",opts:["Préfixe","Infixe","Postfixe","Largeur"],a:2,exp:"Le parcours <strong>postfixe</strong> supprime d'abord les fils avant le père, évitant ainsi de perdre des références vers les fils avant de les supprimer."},
+  {q:"Quel est le résultat du parcours en largeur de l'arbre : racine=1, fils gauche=2, fils droit=3, petit-fils gauche de 2 = 4 ?",opts:["1 2 4 3","4 2 3 1","1 2 3 4","2 4 3 1"],a:2,exp:"BFS niveau par niveau : niveau 0 → <strong>1</strong>, niveau 1 → <strong>2, 3</strong>, niveau 2 → <strong>4</strong>. Résultat : 1 2 3 4."},
+  {q:"En Python, <code>isinstance(noeud.valeur, int)</code> dans une fonction d'évaluation d'arbre d'expression permet de :",opts:["Vérifier si le nœud est la racine","Vérifier si le nœud est une feuille numérique","Calculer la hauteur","Trouver le maximum"],a:1,exp:"Dans un arbre d'expression, les feuilles contiennent des nombres (int/float) et les nœuds internes des opérateurs (str). Tester <code>isinstance(val, int)</code> permet de détecter les <strong>feuilles numériques</strong>."},
+  {q:"Quelle affirmation sur les arbres binaires de recherche est <strong>fausse</strong> ?",opts:["Le parcours infixe donne les valeurs triées","La recherche est toujours en O(log n)","Un ABR peut dégénérer en liste","Les valeurs gauches sont inférieures à la racine"],a:1,exp:"La recherche dans un ABR est en O(log n) <strong>uniquement si l'arbre est équilibré</strong>. Dans le pire cas (arbre dégénéré), elle est en O(n). Cette affirmation est donc fausse."},
+  {q:"Comment appelle-t-on un arbre binaire dont toutes les feuilles sont à la même profondeur ?",opts:["Arbre dégénéré","Arbre parfait","Arbre trié","Arbre AVL"],a:1,exp:"Un arbre binaire <strong>parfait</strong> (ou complet) a toutes ses feuilles au même niveau et tous ses nœuds internes ont exactement 2 fils."},
+  {q:"Dans la construction d'un arbre en Python, <code>Noeud(5, None, Noeud(8))</code> crée :",opts:["Un nœud 5 sans fils","Un nœud 5 avec fils gauche 8","Un nœud 5 avec fils droit 8","Une erreur Python"],a:2,exp:"<code>Noeud(5, None, Noeud(8))</code> crée un nœud de valeur 5, sans fils gauche (<code>None</code>) et avec un fils <strong>droit</strong> de valeur 8."},
+  {q:"Combien de nœuds contient un chemin (arbre dégénéré) de hauteur 4 ?",opts:["4","5","8","16"],a:1,exp:"Un chemin de hauteur h a exactement <strong>h + 1</strong> nœuds (un par niveau, de 0 à h). Hauteur 4 → 5 nœuds."},
+  {q:"La relation entre la taille n et la hauteur h d'un arbre binaire quelconque est :",opts:["n = 2h","h + 1 ≤ n ≤ 2^(h+1) − 1","n = h²","n = log(h)"],a:1,exp:"Un arbre binaire de hauteur h contient au minimum <strong>h+1 nœuds</strong> (chemin) et au maximum <strong>2^(h+1)−1</strong> nœuds (arbre parfait)."},
+  {q:"Quel type d'arbre garantit une recherche en O(log n) dans le pire cas ?",opts:["N'importe quel ABR","Un arbre dégénéré","Un arbre AVL (arbre équilibré)","Un arbre binaire quelconque"],a:2,exp:"Les <strong>arbres AVL</strong> (et arbres rouge-noir) maintiennent un équilibre automatique, garantissant une hauteur O(log n) et donc une recherche O(log n) dans le pire cas."}
+];
+
+// ── QCM ENGINE ─────────────────────────────────────────
+let currentQs = [], submitted = false, qcmSize = 5;
+
+function getSize() {
+  const r = document.querySelector('input[name="qcm-size"]:checked');
+  return r ? parseInt(r.value) : 5;
+}
+function shuffle(a) {
+  const b = [...a];
+  for (let i = b.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [b[i], b[j]] = [b[j], b[i]];
+  }
+  return b;
+}
+function newQCM() {
+  submitted = false;
+  qcmSize = getSize();
+  currentQs = shuffle(allQuestions).slice(0, qcmSize);
+  renderQCM();
+  const r = document.getElementById('qcm-result');
+  r.style.display = 'none'; r.innerHTML = '';
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = false; btn.style.opacity = '1';
+  onSizeChange();
+}
+function renderQCM() {
+  const c = document.getElementById('qcm-questions');
+  c.innerHTML = '';
+  currentQs.forEach((q, qi) => {
+    const shuffled = shuffle(q.opts.map((o, i) => ({t: o, i})));
+    q._s = shuffled;
+    const opts = shuffled.map((o, si) =>
+      `<label class="qcm-option" id="opt-${qi}-${si}">
+        <input type="radio" name="q${qi}" value="${si}">
+        <span>${o.t}</span>
+      </label>`).join('');
+    c.innerHTML += `
+      <div class="qcm-q" id="qb-${qi}">
+        <div class="qcm-num">Question ${qi+1} / ${qcmSize}</div>
+        <div class="qcm-question">${q.q}</div>
+        <div class="qcm-options">${opts}</div>
+        <div class="qcm-feedback" id="fb-${qi}"></div>
+      </div>`;
+  });
+}
+function submitQCM() {
+  if (submitted) return;
+  submitted = true;
+  let score = 0;
+  currentQs.forEach((q, qi) => {
+    const sel = document.querySelector(`input[name="q${qi}"]:checked`);
+    const block = document.getElementById(`qb-${qi}`);
+    const fb = document.getElementById(`fb-${qi}`);
+    const corrSi = q._s.findIndex(o => o.i === q.a);
+    document.querySelectorAll(`input[name="q${qi}"]`).forEach(r => r.disabled = true);
+    const corrLabel = document.getElementById(`opt-${qi}-${corrSi}`);
+    if (corrLabel) corrLabel.classList.add('opt-correct');
+    if (sel) {
+      const chosen = parseInt(sel.value);
+      if (chosen === corrSi) {
+        score++;
+        block.classList.add('correct');
+        fb.className = 'qcm-feedback show ok';
+        fb.innerHTML = '✅ Bonne réponse ! ' + q.exp;
+      } else {
+        block.classList.add('wrong');
+        document.getElementById(`opt-${qi}-${chosen}`).classList.add('opt-wrong');
+        fb.className = 'qcm-feedback show ko';
+        fb.innerHTML = '❌ Mauvaise réponse. ' + q.exp;
+      }
+    } else {
+      block.classList.add('wrong');
+      fb.className = 'qcm-feedback show ko';
+      fb.innerHTML = '⚠️ Aucune réponse. ' + q.exp;
+    }
+  });
+  showResult(score);
+  const btn = document.getElementById('btn-submit');
+  btn.disabled = true; btn.style.opacity = '0.5';
+}
+function showResult(score) {
+  const pct = (score / qcmSize) * 100;
+  const ratio = score / qcmSize;
+  const color = ratio < 0.3 ? '#f87171' : ratio < 0.5 ? '#fb923c' : ratio < 0.7 ? '#fbbf24' : ratio < 0.9 ? '#4ade80' : '#2dd4bf';
+  const msgs = p => p < 30 ? '💪 Relis le cours attentivement !' : p < 50 ? '📖 Quelques révisions s\'imposent.' : p < 70 ? '👍 Pas mal, continue !' : p < 90 ? '🎉 Très bien, presque prêt(e) !' : '🏆 Excellent ! Maîtrise totale !';
+  const note = Math.round((score / qcmSize) * 20);
+  const r = document.getElementById('qcm-result');
+  r.style.display = 'block';
+  r.innerHTML = `
+    <div class="score-big" style="color:${color}">${score}<span style="font-size:28px;color:#64748b">/${qcmSize}</span></div>
+    <div class="score-label">≈ <strong>${note}/20</strong> au bac</div>
+    <div class="score-bar-bg"><div class="score-bar-fill" style="width:0%;background:${color}" id="sfill"></div></div>
+    <div class="score-msg" style="color:${color}">${msgs(pct)}</div>`;
+  setTimeout(() => { const f = document.getElementById('sfill'); if(f) f.style.width = pct+'%'; }, 80);
+  r.scrollIntoView({behavior:'smooth', block:'center'});
+}
+document.addEventListener('DOMContentLoaded', () => { newQCM(); onSizeChange(); });
+</script>
+</body>
+</html>
