@@ -10,250 +10,112 @@ const QUESTIONS = {
      CHAPITRE 1 : Structures de données (Listes, Piles, Files, Dico)
      ═══════════════════════════════════════════════════════════ */
   structures: [
-    { q: "Quelle est la complexité temporelle de l'accès à un élément par indice dans une liste Python ?", opts:["O(1)","O(n)","O(log n)","O(n²)"], ans:0, exp:"L'accès par indice dans une liste Python est O(1) car chaque élément est accessible directement en mémoire." },
-    { q: "Une pile suit le principe :", opts:["FIFO (Premier entré, premier sorti)","LIFO (Dernier entré, premier sorti)","Accès aléatoire","Tri automatique"], ans:1, exp:"Une pile (stack) fonctionne en LIFO : le dernier élément empilé est le premier à être dépilé." },
-    { q: "Une file suit le principe :", opts:["LIFO","FIFO","Accès indexé","Aucun de ces principes"], ans:1, exp:"Une file (queue) fonctionne en FIFO : le premier élément entré est le premier sorti." },
-    { q: "Quelle opération retire le sommet d'une pile ?", opts:["push","enqueue","pop","peek"], ans:2, exp:"pop() retire et renvoie l'élément au sommet de la pile." },
-    { q: "Dans une implémentation de pile avec une liste Python, le sommet correspond à :", opts:["l'indice 0","l'indice -1 (dernier élément)","l'indice du milieu","un indice quelconque"], ans:1, exp:"On utilise le dernier élément (pile[-1]) comme sommet : push=append() et pop=pop() sont en O(1)." },
-    { q: "Quelle est la différence principale entre une liste et un dictionnaire ?", opts:["Une liste est ordonnée, un dictionnaire ne l'est pas toujours","Les listes utilisent des indices entiers, les dictionnaires utilisent des clés arbitraires","Les dictionnaires sont plus lents","Les listes peuvent stocker des types mixtes, pas les dictionnaires"], ans:1, exp:"Différence fondamentale : liste[indice entier] vs dictionnaire[clé], où la clé peut être n'importe quel objet hashable." },
-    { q: "La complexité de la recherche d'une clé dans un dictionnaire Python est en moyenne :", opts:["O(n)","O(log n)","O(1)","O(n log n)"], ans:2, exp:"Les dictionnaires utilisent une table de hachage. La recherche est O(1) en moyenne." },
-    { q: "Que renvoie d.get('cle', 0) si 'cle' n'est pas dans le dictionnaire d ?", opts:["None","KeyError","0","False"], ans:2, exp:"get(clé, valeur_par_défaut) renvoie la valeur par défaut si la clé est absente, sans lever d'exception." },
-    { q: "Laquelle de ces structures est adaptée pour gérer des appels de fonctions récursifs ?", opts:["File","Pile","Dictionnaire","Liste doublement chaînée"], ans:1, exp:"La pile d'appels utilise naturellement la structure pile : chaque appel empile un cadre, chaque retour dépile." },
-    { q: "Pour implémenter une file efficacement en Python, on préfère :", opts:["Une liste avec insert(0,x) pour enfiler","collections.deque","Un dictionnaire","Un tableau numpy"], ans:1, exp:"collections.deque offre des opérations O(1) aux deux extrémités. Les listes sont O(n) pour insert(0,x)." },
-    { q: "Quelle méthode permet de vérifier si une clé existe dans un dictionnaire ?", opts:["d.has(cle)","cle in d","d.contains(cle)","d.exists(cle)"], ans:1, exp:"L'opérateur 'in' teste l'appartenance d'une clé : 'cle in d' renvoie True ou False en O(1)." },
-    { q: "Une liste chaînée diffère d'un tableau car :", opts:["Elle est triée automatiquement","L'accès par indice est O(n) mais l'insertion en tête est O(1)","Elle ne peut stocker que des entiers","Elle a une taille fixe"], ans:1, exp:"Liste chaînée : accès au ième élément nécessite de parcourir i nœuds O(n), mais insérer en tête est O(1)." },
-    { q: "Quelle est la valeur de len({'a':1, 'b':2, 'a':3}) en Python ?", opts:["3","2","1","Erreur"], ans:1, exp:"Les clés d'un dictionnaire sont uniques. 'a':3 écrase 'a':1. Le dictionnaire final a 2 clés." },
-    { q: "Un dictionnaire Python préserve-t-il l'ordre d'insertion ?", opts:["Non, jamais","Oui, depuis Python 3.7","Seulement avec collections.OrderedDict","Non, il trie par clé"], ans:1, exp:"Depuis Python 3.7, les dictionnaires préservent l'ordre d'insertion. C'est une garantie du langage." },
-    { q: "Pour empiler l'élément 5 sur une pile implémentée avec une liste :", opts:["pile.insert(0, 5)","pile.push(5)","pile.append(5)","pile.add(5)"], ans:2, exp:"On utilise append() pour ajouter en fin de liste (= sommet de la pile). push() n'existe pas en Python natif." },
-    { q: "Quelle est la complexité de l'opération append sur une liste Python ?", opts:["O(n)","O(log n)","O(1) amorti","O(n²)"], ans:2, exp:"append() est O(1) amorti. Parfois Python redimensionne (O(n)), mais en moyenne sur n opérations c'est O(1)." },
+    { q: "Quelle est la complexité temporelle de l'accès à un élément par indice dans une liste Python ?", opts:["O(1)","O(n)","O(log n)","O(n²)"], ans:0, exp:"L'accès par indice dans une liste Python (tableau dynamique) est O(1) car chaque élément est accessible directement en mémoire." },
+    { q: "Une pile suit le principe :", opts:["FIFO (Premier entré, premier sorti)","LIFO (Dernier entré, premier sorti)","Accès aléatoire","Tri automatique"], ans:1, exp:"Une pile (stack) fonctionne en LIFO : le dernier élément empilé est le premier à être dépilé. Comme une pile d'assiettes." },
+    { q: "Une file suit le principe :", opts:["LIFO","FIFO","Accès indexé","Aucun de ces principes"], ans:1, exp:"Une file (queue) fonctionne en FIFO : le premier élément entré est le premier sorti. Comme une file d'attente." },
+    { q: "Quelle opération retire le sommet d'une pile ?", opts:["push","enqueue","pop","peek"], ans:2, exp:"pop() retire et renvoie l'élément au sommet de la pile. push() (ou append) ajoute un élément au sommet." },
+    { q: "Dans une implémentation de pile avec une liste Python, le sommet correspond à :", opts:["l'indice 0","l'indice -1 (dernier élément)","l'indice du milieu","un indice quelconque"], ans:1, exp:"On utilise conventionnellement le dernier élément (pile[-1]) comme sommet, ce qui rend push=append() et pop=pop() en O(1)." },
+    { q: "Quelle est la différence principale entre une liste et un dictionnaire ?", opts:["Une liste est ordonnée, un dictionnaire ne l'est pas toujours","Les listes utilisent des indices entiers, les dictionnaires utilisent des clés arbitraires","Les dictionnaires sont plus lents","Les listes peuvent stocker des types mixtes, pas les dictionnaires"], ans:1, exp:"La différence fondamentale est le mode d'accès : liste[indice entier] vs dictionnaire[clé], où la clé peut être n'importe quel objet hashable." },
+    { q: "La complexité de la recherche d'une clé dans un dictionnaire Python est en moyenne :", opts:["O(n)","O(log n)","O(1)","O(n log n)"], ans:2, exp:"Les dictionnaires Python utilisent une table de hachage. La recherche est O(1) en moyenne grâce au calcul du hash de la clé." },
+    { q: "Que renvoie `d.get('cle', 0)` si 'cle' n'est pas dans le dictionnaire d ?", opts:["None","KeyError","0","False"], ans:2, exp:"La méthode get(clé, valeur_par_défaut) renvoie la valeur_par_défaut (ici 0) si la clé est absente, sans lever d'exception." },
+    { q: "Laquelle de ces structures est adaptée pour gérer des appels de fonctions récursifs ?", opts:["File","Pile","Dictionnaire","Liste doublement chaînée"], ans:1, exp:"La pile d'appels (call stack) utilise naturellement la structure pile : chaque appel empile un cadre, chaque retour dépile. D'où les erreurs 'stack overflow'." },
+    { q: "Pour implémenter une file efficacement en Python, on préfère :", opts:["Une liste avec insert(0,x) pour enfiler","collections.deque","Un dictionnaire","Un tableau numpy"], ans:1, exp:"collections.deque offre des opérations O(1) aux deux extrémités (appendleft, append, popleft, pop). Les listes sont O(n) pour insert(0,x)." },
+    { q: "Quelle méthode permet de vérifier si une clé existe dans un dictionnaire ?", opts:["d.has(cle)","cle in d","d.contains(cle)","d.exists(cle)"], ans:1, exp:"L'opérateur 'in' est la façon idiomatique de tester l'appartenance d'une clé : 'cle in d' renvoie True ou False en O(1)." },
+    { q: "Une liste chaînée diffère d'un tableau (list Python) car :", opts:["Elle est triée automatiquement","L'accès par indice est O(n) mais l'insertion en tête est O(1)","Elle ne peut stocker que des entiers","Elle a une taille fixe"], ans:1, exp:"Dans une liste chaînée, chaque nœud pointe vers le suivant. Accéder au ième élément nécessite de parcourir i nœuds : O(n). Mais insérer en tête est O(1)." },
+    { q: "Quelle est la valeur de `len({'a':1, 'b':2, 'a':3})` en Python ?", opts:["3","2","1","Erreur"], ans:1, exp:"Les clés d'un dictionnaire sont uniques. 'a':3 écrase 'a':1. Le dictionnaire final contient 2 clés : 'a' et 'b'." },
+    { q: "Un dictionnaire Python préserve-t-il l'ordre d'insertion ?", opts:["Non, jamais","Oui, depuis Python 3.7","Seulement avec collections.OrderedDict","Non, il trie par clé"], ans:1, exp:"Depuis Python 3.7 (CPython 3.6), les dictionnaires préservent l'ordre d'insertion. C'est une garantie du langage depuis la version 3.7." },
+    { q: "Pour empiler l'élément 5 sur une pile implémentée avec une liste, on écrit :", opts:["pile.insert(0, 5)","pile.push(5)","pile.append(5)","pile.add(5)"], ans:2, exp:"On utilise append() pour ajouter en fin de liste (= sommet de la pile). Il n'existe pas de méthode push() native en Python." },
+    { q: "Quelle est la complexité de l'opération `append` sur une liste Python ?", opts:["O(n)","O(log n)","O(1) amorti","O(n²)"], ans:2, exp:"append() est O(1) amorti. Parfois Python doit redimensionner le tableau sous-jacent (O(n)), mais en moyenne sur n opérations, c'est O(1)." },
     { q: "Un tableau associatif est un autre nom pour :", opts:["Une liste","Un dictionnaire","Une pile","Un graphe"], ans:1, exp:"Un tableau associatif (ou map, hashmap) associe des clés à des valeurs. En Python, c'est le type dict." },
-    { q: "Que se passe-t-il si on fait pop() sur une pile vide (liste Python) ?", opts:["Renvoie None","Lève IndexError","Renvoie -1","Ne fait rien"], ans:1, exp:"Appeler pop() sur une liste vide lève une IndexError. Il faut vérifier que la pile n'est pas vide avant." },
-    { q: "La structure adaptée à la gestion d'une file d'impression est :", opts:["Pile","File","Arbre binaire","Graphe"], ans:1, exp:"Une file d'impression traite les documents dans l'ordre d'arrivée : FIFO." },
-    { q: "Quelle affirmation est correcte sur les clés d'un dictionnaire Python ?", opts:["Elles peuvent être des listes","Elles doivent être hashables (int, str, tuple immuable...)","Elles sont nécessairement des chaînes","Elles peuvent être des ensembles"], ans:1, exp:"Les clés doivent être hashables : types immuables. Les listes et dicts (mutables) ne peuvent pas être des clés." },
-    { q: "Quel est le résultat de [1,2,3] + [4,5] en Python ?", opts:["[1,2,3,4,5]","[[1,2,3],[4,5]]","Erreur","[1,2,3,[4,5]]"], ans:0, exp:"L'opérateur + sur les listes réalise la concaténation. Il crée une nouvelle liste avec tous les éléments." },
-    { q: "Dans une file, l'opération d'ajout s'appelle :", opts:["push","pop","enqueue","dequeue"], ans:2, exp:"enqueue (ou enfiler) ajoute en queue. dequeue (défiler) retire en tête." },
-    { q: "Pour une pile avec une liste, quelle opération permet de voir le sommet sans le retirer ?", opts:["pile.peek()","pile[-1]","pile.top()","pile[0]"], ans:1, exp:"pile[-1] accède au dernier élément (sommet) sans le retirer. Il n'y a pas de méthode peek() native." },
-    { q: "Quelle est la complexité de la recherche dans une liste Python ?", opts:["O(1)","O(log n)","O(n)","O(n log n)"], ans:2, exp:"La recherche 'x in liste' parcourt les éléments un à un : O(n). Différent de la recherche dans un dict (O(1))." },
-    { q: "Que fait collections.deque par rapport à une liste pour les opérations en début de séquence ?", opts:["Rien de différent","Elle est plus lente","Elle est O(1) pour appendleft et popleft (contre O(n) pour list)","Elle trie automatiquement"], ans:2, exp:"deque offre O(1) pour appendleft/popleft. Pour une liste, insert(0,x) et pop(0) sont O(n) car tous les éléments se déplacent." },
-    { q: "Dans une implémentation de file avec deque, on enfile avec :", opts:["append() et on défile avec popleft()","popleft() et on défile avec append()","appendleft() et on défile avec pop()","pop() et on défile avec append()"], ans:0, exp:"Convention FIFO : on enfile (ajoute) à droite avec append(), on défile (retire) à gauche avec popleft()." },
-    { q: "Quelle structure choisir pour mémoriser l'historique de navigation d'un navigateur web (retour arrière) ?", opts:["File","Pile","Dictionnaire","Ensemble (set)"], ans:1, exp:"Une pile LIFO : chaque nouvelle page est empilée, le retour arrière dépile la page courante pour revenir à la précédente." },
-    { q: "La complexité de l'insertion au début d'une liste Python est :", opts:["O(1)","O(log n)","O(n)","O(1) amorti"], ans:2, exp:"insert(0, x) sur une liste nécessite de décaler tous les éléments existants d'une position → O(n)." },
-    { q: "Un dictionnaire Python peut-il avoir deux fois la même clé ?", opts:["Oui, si les valeurs sont différentes","Non, la dernière valeur écrase la précédente","Oui, il crée une liste des valeurs","Non, cela lève une KeyError"], ans:1, exp:"Les clés sont uniques. Si on affecte d['a'] = 3 alors que 'a' existe déjà avec la valeur 1, la valeur 3 remplace 1." },
-    { q: "Quelle méthode retourne toutes les clés d'un dictionnaire ?", opts:["d.keys()","d.all_keys()","list(d)","d.items()"], ans:0, exp:"d.keys() retourne un objet vue des clés. list(d) fonctionne aussi mais crée une liste. d.items() retourne les paires (clé, valeur)." },
-    { q: "Quelle est la complexité de heapq.heapify(liste) ?", opts:["O(n log n)","O(n)","O(log n)","O(1)"], ans:1, exp:"heapify() construit un tas depuis une liste existante en O(n), plus efficace que n insertions individuelles en O(n log n)." }
+    { q: "Que se passe-t-il si on fait pop() sur une pile vide (implémentée avec une liste Python) ?", opts:["Renvoie None","Lève IndexError","Renvoie -1","Ne fait rien"], ans:1, exp:"Appeler pop() sur une liste vide lève une IndexError. Il faut toujours vérifier que la pile n'est pas vide avant de dépiler." },
+    { q: "La structure de données adaptée à la gestion d'une file d'impression (imprimante) est :", opts:["Pile","File","Arbre binaire","Graphe"], ans:1, exp:"Une file d'impression traite les documents dans l'ordre d'arrivée : FIFO. La première tâche envoyée est la première imprimée." },
+    { q: "Quelle affirmation est correcte sur les clés d'un dictionnaire Python ?", opts:["Elles peuvent être des listes","Elles doivent être hashables (ex: int, str, tuple immuable)","Elles sont nécessairement des chaînes","Elles peuvent être des ensembles (set)"], ans:1, exp:"Les clés doivent être hashables : types immuables comme int, str, float, tuple d'immuables. Les listes et dicts (mutables) ne peuvent pas être des clés." },
+    { q: "Quel est le résultat de `[1,2,3] + [4,5]` en Python ?", opts:["[1,2,3,4,5]","[[1,2,3],[4,5]]","Erreur","[1,2,3,[4,5]]"], ans:0, exp:"L'opérateur + sur les listes réalise la concaténation. Il crée une nouvelle liste contenant tous les éléments des deux listes." },
+    { q: "Dans une file, l'opération d'ajout s'appelle :", opts:["push","pop","enqueue","dequeue"], ans:2, exp:"enqueue (ou enfiler) ajoute un élément en queue de file. dequeue (ou défiler) retire l'élément en tête." },
+    { q: "Combien d'éléments contient `{'x': [1,2,3]}` ?", opts:["3","1","4","2"], ans:1, exp:"Ce dictionnaire contient 1 seule clé ('x') associée à une valeur qui est une liste. len({'x': [1,2,3]}) == 1." },
+    { q: "Quelle structure permet de vérifier les parenthèses bien formées dans une expression ?", opts:["File","Pile","Dictionnaire","Tableau trié"], ans:0, exp:"On utilise une pile : pour chaque parenthèse ouvrante, on empile. Pour chaque fermante, on dépile et vérifie la correspondance. Si vide à la fin → bien formé." },
+    { q: "La méthode items() d'un dictionnaire renvoie :", opts:["La liste des clés","La liste des valeurs","Des paires (clé, valeur)","Le nombre d'éléments"], ans:2, exp:"d.items() renvoie une vue d'objets (clé, valeur). On l'utilise pour itérer sur les paires : for k, v in d.items()." },
+    { q: "Quelle est la complexité de la suppression d'un élément par valeur dans une liste Python (list.remove(x)) ?", opts:["O(1)","O(log n)","O(n)","O(n²)"], ans:2, exp:"remove(x) parcourt la liste pour trouver x, puis déplace les éléments suivants. C'est O(n) dans le pire cas." },
+    { q: "Pour inverser une liste L en Python, on peut écrire :", opts:["L.reverse() ou L[::-1]","L.sort()","reversed = L","L.flip()"], ans:0, exp:"L.reverse() inverse en place (modifie L). L[::-1] crée une nouvelle liste inversée. Les deux sont valides selon le besoin." },
+    { q: "Un dictionnaire peut avoir des valeurs dupliquées :", opts:["Non, comme les clés","Oui, les valeurs peuvent se répéter","Seulement si les clés sont différentes","Non, toujours"], ans:1, exp:"Seules les clés doivent être uniques dans un dictionnaire. Les valeurs peuvent être identiques pour des clés différentes." },
+    { q: "Quelle est la sortie de ce code ?\n```python\npile = []\npile.append(1)\npile.append(2)\nprint(pile.pop())\n```", opts:["1","2","[1,2]","Erreur"], ans:1, exp:"append(1) puis append(2) donne [1,2]. pop() sans argument retire et renvoie le DERNIER élément, soit 2." },
+    { q: "Une pile est utile pour implémenter :", opts:["Un algorithme de parcours en largeur","Le mécanisme d'annulation (undo) dans un éditeur","Une file d'attente","Un tri rapide uniquement"], ans:1, exp:"Le mécanisme d'annulation (undo) empile les actions. Ctrl+Z dépile la dernière action effectuée. C'est un usage classique de la pile." },
+    { q: "Quelle méthode ajoute plusieurs éléments à la fin d'une liste ?", opts:["add()","extend()","append()","insert()"], ans:1, exp:"extend(iterable) ajoute chaque élément de l'itérable à la fin. append() ajoute un seul objet (si c'est une liste, elle devient un sous-élément)." },
+    { q: "La complexité d'accès à un élément d'un dictionnaire par clé est :", opts:["O(n)","O(log n)","O(1) en moyenne","O(n log n)"], ans:2, exp:"Grâce au hachage, l'accès est O(1) en moyenne. Dans le pire cas (collisions), c'est O(n), mais c'est très rare avec les implémentations modernes." },
+    { q: "Comment créer un dictionnaire vide en Python ?", opts:["d = {}  ou  d = dict()","d = []","d = ()","d = set()"], ans:0, exp:"{} crée un dict vide. Attention : {} ne crée pas un set vide — pour un set vide, utiliser set()." },
+    { q: "Que fait `d.pop('cle')` si 'cle' n'est pas dans d ?", opts:["Renvoie None","Lève KeyError","Renvoie False","Ne fait rien"], ans:1, exp:"pop(clé) lève KeyError si la clé est absente, sauf si on fournit une valeur par défaut : d.pop('cle', None)." },
+    { q: "Quelle structure de données est FIFO par nature ?", opts:["Pile","File","Arbre","Graphe"], ans:1, exp:"File = FIFO (First In, First Out). Pile = LIFO (Last In, First Out). Arbre et graphe ne sont pas des structures séquentielles." },
+    { q: "En Python, `deque` est importé depuis :", opts:["import deque","from collections import deque","from itertools import deque","import queue"], ans:1, exp:"deque (double-ended queue) est dans le module collections : `from collections import deque`." },
+    { q: "Quelle est la complexité de l'opération popleft() sur un deque ?", opts:["O(n)","O(log n)","O(1)","O(n²)"], ans:2, exp:"popleft() sur un deque est O(1). C'est l'avantage principal du deque sur la liste Python pour implémenter des files." },
+    { q: "Un tableau de hachage gère les collisions principalement avec :", opts:["Le tri des clés","L'adressage ouvert ou les chaînes (listes)","La suppression des doublons","La récursion"], ans:1, exp:"Les deux méthodes principales sont : l'adressage ouvert (chercher une autre case libre) et le chaînage (liste de couples en cas de collision)." },
+    { q: "Quelle est la bonne façon d'itérer sur les clés d'un dictionnaire ?", opts:["for k in d.keys(): ou for k in d:","for k in d.values():","for k in range(len(d)):","for k in d.items():"], ans:0, exp:"'for k in d:' ou 'for k in d.keys():' itèrent sur les clés. 'for k in d.values():' donne les valeurs, 'for k, v in d.items():' donne les paires." },
+    { q: "Que renvoie `list({'a':1,'b':2})` ?", opts:["[('a',1),('b',2)]","['a','b']","[1,2]","Erreur"], ans:1, exp:"Convertir un dict en liste donne la liste de ses clés. Pour les valeurs : list(d.values()). Pour les paires : list(d.items())." },
+    { q: "Une liste Python peut contenir des éléments de types différents :", opts:["Non, tous les éléments doivent être du même type","Oui, Python est dynamiquement typé","Seulement int et str","Non, sauf si déclaré"], ans:1, exp:"Python est dynamiquement typé. Une liste peut contenir [1, 'hello', 3.14, [2,3], None] sans problème." },
+    { q: "Quelle est la différence entre `append` et `insert` ?", opts:["append ajoute en début, insert à la fin","append ajoute à la fin, insert à une position donnée","Elles font la même chose","insert est plus rapide"], ans:1, exp:"append(x) ajoute x à la fin (O(1) amorti). insert(i, x) insère x à l'indice i, ce qui décale les éléments suivants : O(n)." },
+    { q: "Le paradigme 'LIFO' désigne :", opts:["Last In First Out","List Is For Objects","Linear Index For Output","Last Index First Order"], ans:0, exp:"LIFO = Last In, First Out. Le dernier élément entré est le premier sorti. C'est le principe de la pile (stack)." },
+    { q: "Pour tester si une pile (liste Python) est vide, on utilise :", opts:["pile.isEmpty()","len(pile) == 0  ou  not pile","pile == None","pile.empty()"], ans:1, exp:"len(pile) == 0 ou 'not pile' (qui est True quand la liste est vide) sont les façons idiomatiques. Il n'y a pas de méthode isEmpty() en Python natif." },
+    { q: "Quel est le résultat de `{'a':1}.update({'b':2})` ?", opts:["{'a':1,'b':2}","None (modification en place)","{'b':2}","Erreur"], ans:1, exp:"update() modifie le dictionnaire en place et renvoie None. Après d.update({'b':2}), d vaut {'a':1,'b':2}." },
+    { q: "La complexité temporelle de la recherche d'une valeur (pas une clé) dans un dictionnaire est :", opts:["O(1)","O(log n)","O(n)","O(n²)"], ans:2, exp:"Rechercher une valeur nécessite de parcourir toutes les paires clé-valeur. C'est O(n). C'est pourquoi on préfère chercher par clé." },
+    { q: "Quelle instruction crée une copie superficielle d'une liste L ?", opts:["L2 = L","L2 = L.copy()  ou  L2 = L[:]","L2 = deepcopy(L)","L2 = list.new(L)"], ans:1, exp:"L2 = L est une référence (les deux pointent vers le même objet). L.copy() ou L[:] créent une vraie copie superficielle (les sous-listes restent partagées)." },
+    { q: "Un dictionnaire de comptage (Counter) peut être créé avec :", opts:["from collections import Counter\nCounter(liste)","count = {}\nfor x in liste: count[x]+=1","Les deux sont corrects","Uniquement la première méthode"], ans:2, exp:"Counter est une sous-classe de dict très pratique. La méthode manuelle avec boucle fonctionne aussi (avec setdefault ou get). Les deux sont valides." },
+    { q: "Quelle est la structure de données adaptée à l'algorithme de parcours en largeur (BFS) ?", opts:["Pile","File","Arbre AVL","Tableau trié"], ans:1, exp:"BFS utilise une file : on enfile les voisins à explorer, et on défile pour traiter le prochain nœud. Cela garantit l'exploration par niveaux." },
+    { q: "En Python, `tuple` vs `list` : laquelle peut être clé d'un dictionnaire ?", opts:["list","tuple (si ses éléments sont immuables)","Les deux","Aucune"], ans:1, exp:"Les tuples sont hashables si tous leurs éléments le sont. (1,2,3) peut être clé. [1,2,3] ne peut pas car les listes sont mutables." }
   ],
 
   /* ═══════════════════════════════════════════════════════════
-     CHAPITRE : Arbres (Arbres binaires, ABR, Parcours, Complexité)
-     0-19  → Facile    : vocabulaire, représentation, lecture d'arbre
-     20-34 → Moyen     : parcours, fonctions récursives, ABR basique
-     35-49 → Difficile : complexité, ABR avancé, applications, pièges
+     CHAPITRE 2 : Arbres
      ═══════════════════════════════════════════════════════════ */
   arbres: [
-
-    /* ── FACILE (0–19) ── */
-    { q: "Comment appelle-t-on le nœud au sommet d'un arbre, sans parent ?",
-      opts: ["Feuille","Nœud interne","Racine","Sommet"],
-      ans: 2, exp: "La <strong>racine</strong> est l'unique nœud sans parent. C'est le point d'entrée de l'arbre." },
-
-    { q: "Comment appelle-t-on un nœud sans enfant dans un arbre ?",
-      opts: ["Racine","Feuille","Nœud interne","Ancêtre"],
-      ans: 1, exp: "Une <strong>feuille</strong> est un nœud dont le degré sortant est 0, sans aucun fils." },
-
-    { q: "La taille d'un arbre désigne :",
-      opts: ["Sa hauteur","Son nombre de nœuds","Son nombre de feuilles","Sa profondeur maximale"],
-      ans: 1, exp: "La taille d'un arbre est son <strong>nombre total de nœuds</strong>." },
-
-    { q: "La profondeur d'un nœud est :",
-      opts: ["Le nombre d'enfants de ce nœud","Sa distance à la feuille la plus proche","Le nombre d'arêtes entre la racine et ce nœud","Le nombre de frères de ce nœud"],
-      ans: 2, exp: "La profondeur d'un nœud est le nombre d'arêtes depuis la <strong>racine</strong> jusqu'à ce nœud. La racine a une profondeur de 0." },
-
-    { q: "Un arbre binaire est un arbre où chaque nœud possède au maximum :",
-      opts: ["1 enfant","2 enfants","3 enfants","Pas de limite"],
-      ans: 1, exp: "Un arbre binaire impose que chaque nœud possède au plus <strong>2 enfants</strong> : un fils gauche et un fils droit." },
-
-    { q: "En Python, comment représente-t-on un arbre vide ?",
-      opts: ["[]","0","''","None"],
-      ans: 3, exp: "En Python, <code>None</code> représente l'arbre vide. C'est le cas de base de toutes les fonctions récursives sur les arbres." },
-
-    { q: "Quelle est la hauteur d'un arbre réduit à un seul nœud (la racine) ?",
-      opts: ["−1","0","1","Indéfini"],
-      ans: 1, exp: "Un arbre réduit à sa seule racine a une hauteur de <strong>0</strong> : il n'y a aucune arête à parcourir pour atteindre une feuille." },
-
-    { q: "Dans un arbre binaire de hauteur h, le nombre maximum de nœuds est :",
-      opts: ["h + 1","2h","2^(h+1) - 1","h²"],
-      ans: 2, exp: "Un arbre binaire complet de hauteur h a au maximum <strong>2^(h+1) − 1</strong> nœuds." },
-
-    { q: "Un sous-arbre raciné en un nœud N est :",
-      opts: ["L'ensemble des ancêtres de N","N et tous ses descendants","L'ensemble des frères de N","Uniquement les enfants directs de N"],
-      ans: 1, exp: "Le sous-arbre raciné en N est constitué de <strong>N lui-même et de tous ses descendants</strong>." },
-
-    { q: "Dans la classe Noeud standard en NSI, quels sont les attributs habituels ?",
-      opts: ["val, next","valeur, gauche, droite","data, left, right, parent","valeur, fils"],
-      ans: 1, exp: "La classe <code>Noeud</code> standard utilise <code>valeur</code>, <code>gauche</code> et <code>droite</code>." },
-
-    { q: "Que retourne noeud.gauche si le fils gauche n'existe pas ?",
-      opts: ["0","False","None","Une exception"],
-      ans: 2, exp: "Si le fils gauche n'existe pas, <code>noeud.gauche</code> vaut <code>None</code>." },
-
-    { q: "Pour construire un arbre en Python, on construit généralement :",
-      opts: ["De la racine vers les feuilles","Des feuilles vers la racine","Dans l'ordre infixe","Peu importe l'ordre"],
-      ans: 1, exp: "On construit un arbre <strong>des feuilles vers la racine</strong>, car pour créer un nœud avec ses fils, il faut d'abord que les fils existent." },
-
-    { q: "Dans la représentation par tuples (valeur, gauche, droite), que représente (5, None, None) ?",
-      opts: ["Un arbre vide","Un nœud feuille de valeur 5","Un nœud avec deux enfants","Une erreur"],
-      ans: 1, exp: "<code>(5, None, None)</code> représente un <strong>nœud feuille</strong> de valeur 5 : ses deux fils sont absents." },
-
-    { q: "La hauteur de l'arbre est :",
-      opts: ["Le nombre de nœuds","La profondeur de la racine","La longueur du plus long chemin de la racine à une feuille","Le nombre de feuilles"],
-      ans: 2, exp: "La hauteur est le nombre d'<strong>arêtes</strong> sur le plus long chemin depuis la racine jusqu'à une feuille." },
-
-    { q: "Dans un ABR, quelle propriété est vérifiée ?",
-      opts: ["Tous les nœuds ont 2 fils","Les fils gauches sont > au père","Valeurs gauches < nœud < valeurs droites","L'arbre est toujours équilibré"],
-      ans: 2, exp: "Dans un ABR, pour tout nœud : <strong>sous-arbre gauche &lt; nœud &lt; sous-arbre droit</strong>." },
-
-    { q: "La construction Noeud(5, None, Noeud(8)) crée :",
-      opts: ["Un nœud 5 sans fils","Un nœud 5 avec fils gauche 8","Un nœud 5 avec fils droit 8","Une erreur Python"],
-      ans: 2, exp: "<code>Noeud(5, None, Noeud(8))</code> crée un nœud 5 sans fils gauche et avec un fils <strong>droit</strong> de valeur 8." },
-
-    { q: "Un nœud interne est :",
-      opts: ["La racine uniquement","Un nœud sans enfant","Un nœud avec au moins un enfant","Un nœud à profondeur 1"],
-      ans: 2, exp: "Un <strong>nœud interne</strong> est tout nœud possédant au moins un enfant (ni feuille, ni forcément racine)." },
-
-    { q: "Le père du nœud B dans un arbre est :",
-      opts: ["Le fils gauche de B","Le fils droit de B","Le nœud directement au-dessus de B","La racine toujours"],
-      ans: 2, exp: "Le <strong>père (ou parent)</strong> d'un nœud est l'unique nœud qui le précède directement dans la hiérarchie." },
-
-    { q: "Combien de nœuds contient un chemin (arbre dégénéré) de hauteur 4 ?",
-      opts: ["4","5","8","16"],
-      ans: 1, exp: "Un chemin de hauteur h a exactement <strong>h + 1</strong> nœuds. Hauteur 4 → 5 nœuds." },
-
-    { q: "La hauteur minimale d'un arbre binaire à n nœuds est de l'ordre de :",
-      opts: ["n","n/2","log₂(n)","√n"],
-      ans: 2, exp: "Un arbre équilibré de n nœuds a une hauteur de l'ordre de <strong>⌊log₂(n)⌋</strong>." },
-
-    /* ── MOYEN (20–34) ── */
-    { q: "Dans le parcours préfixe, l'ordre de visite est :",
-      opts: ["Gauche → Nœud → Droite","Nœud → Gauche → Droite","Gauche → Droite → Nœud","Droite → Nœud → Gauche"],
-      ans: 1, exp: "Le parcours <strong>pré</strong>fixe visite le <strong>nœud en premier</strong> : N → G → D." },
-
-    { q: "Dans le parcours infixe, l'ordre de visite est :",
-      opts: ["Nœud → Gauche → Droite","Gauche → Droite → Nœud","Gauche → Nœud → Droite","Droite → Nœud → Gauche"],
-      ans: 2, exp: "Le parcours <strong>in</strong>fixe visite le nœud <strong>entre ses fils</strong> : G → N → D." },
-
-    { q: "Dans le parcours postfixe, l'ordre de visite est :",
-      opts: ["Nœud → Gauche → Droite","Gauche → Nœud → Droite","Gauche → Droite → Nœud","Droite → Gauche → Nœud"],
-      ans: 2, exp: "Le parcours <strong>post</strong>fixe visite le nœud <strong>en dernier</strong> : G → D → N." },
-
-    { q: "Le parcours en largeur (BFS) visite les nœuds :",
-      opts: ["De bas en haut","De la feuille la plus profonde","Niveau par niveau","Dans l'ordre décroissant"],
-      ans: 2, exp: "Le BFS visite les nœuds <strong>niveau par niveau</strong> depuis la racine." },
-
-    { q: "Quelle structure de données est utilisée pour le parcours en largeur ?",
-      opts: ["Une pile","Une file (queue)","Un tableau trié","Un dictionnaire"],
-      ans: 1, exp: "Le BFS utilise une <strong>file (FIFO)</strong> : on enfile les enfants de chaque nœud visité. En Python : <code>from collections import deque</code>." },
-
-    { q: "Sur un ABR, le parcours infixe produit :",
-      opts: ["Les valeurs en ordre décroissant","Les valeurs dans l'ordre d'insertion","Les valeurs en ordre croissant","Les feuilles en premier"],
-      ans: 2, exp: "Sur un ABR, le parcours infixe (G→N→D) produit les valeurs <strong>dans l'ordre croissant</strong>. Propriété fondamentale." },
-
-    { q: "Quelle valeur retourne taille(None) ?",
-      opts: ["−1","None","0","1"],
-      ans: 2, exp: "<code>taille(None)</code> retourne <strong>0</strong> : l'arbre vide ne contient aucun nœud." },
-
-    { q: "Quelle valeur retourne hauteur(None) selon la convention NSI ?",
-      opts: ["0","1","−1","None"],
-      ans: 2, exp: "Par convention NSI, <code>hauteur(None)</code> retourne <strong>−1</strong>. Cela permet : hauteur(feuille) = 1 + max(−1, −1) = 0." },
-
-    { q: "La fonction récursive taille(n) retourne :",
-      opts: ["1 si n est None","n.valeur si n est une feuille","0 si n est None, sinon 1 + taille(n.gauche) + taille(n.droite)","max(taille(n.gauche), taille(n.droite))"],
-      ans: 2, exp: "<code>taille(n)</code> = 0 pour l'arbre vide, <code>1 + taille(gauche) + taille(droite)</code> sinon." },
-
-    { q: "La fonction hauteur(n) utilise :",
-      opts: ["La somme des hauteurs des fils","Le produit des hauteurs","Le maximum des hauteurs des fils + 1","La valeur du nœud"],
-      ans: 2, exp: "Hauteur = <code>1 + max(hauteur(gauche), hauteur(droite))</code> : on prend le chemin le plus long + 1 pour l'arête." },
-
-    { q: "Quel est le cas de base incontournable d'une fonction récursive sur arbre ?",
-      opts: ["noeud.valeur == 0","noeud est une feuille","noeud is None","noeud.gauche is None"],
-      ans: 2, exp: "Le cas de base fondamental est <code>if noeud is None: return ...</code>. Il gère l'arbre vide et assure la terminaison." },
-
-    { q: "Sur l'arbre de racine 1, fils gauche 2, fils droit 3 : quel est le résultat du parcours préfixe ?",
-      opts: ["2 1 3","1 2 3","2 3 1","3 1 2"],
-      ans: 1, exp: "Préfixe (N→G→D) : <strong>1</strong> (racine), puis <strong>2</strong> (gauche), puis <strong>3</strong> (droite)." },
-
-    { q: "Sur l'arbre de racine 1, fils gauche 2, fils droit 3 : résultat du parcours postfixe ?",
-      opts: ["1 2 3","2 1 3","2 3 1","3 2 1"],
-      ans: 2, exp: "Postfixe (G→D→N) : <strong>2</strong> (gauche), <strong>3</strong> (droite), <strong>1</strong> (racine)." },
-
-    { q: "Les parcours en profondeur (DFS) sont implémentés de façon :",
-      opts: ["Itérative avec une file","Récursive","Itérative avec un tableau trié","Non-déterministe"],
-      ans: 1, exp: "Les parcours DFS s'implémentent naturellement de façon <strong>récursive</strong> grâce à la structure récursive des arbres." },
-
-    { q: "Dans un ABR, pour chercher une valeur v < noeud.valeur, on doit :",
-      opts: ["Chercher à droite","Chercher à gauche","Arrêter la recherche","Chercher dans les deux sens"],
-      ans: 1, exp: "Si v < nœud.valeur, la valeur ne peut être que dans le <strong>sous-arbre gauche</strong>." },
-
-    { q: "Après un parcours infixe d'un ABR contenant {3, 7, 1, 5}, le résultat est :",
-      opts: ["3 7 1 5","1 3 5 7","7 5 3 1","1 7 5 3"],
-      ans: 1, exp: "Le parcours infixe d'un ABR donne les valeurs en <strong>ordre croissant</strong> : 1 → 3 → 5 → 7." },
-
-    /* ── DIFFICILE (35–49) ── */
-    { q: "Quelle est la complexité d'un parcours DFS d'un arbre à n nœuds ?",
-      opts: ["O(1)","O(log n)","O(n)","O(n²)"],
-      ans: 2, exp: "Un DFS visite chaque nœud <strong>exactement une fois</strong> → complexité <strong>O(n)</strong>." },
-
-    { q: "Quelle est la complexité en espace (pile) d'un parcours DFS récursif ?",
-      opts: ["O(1)","O(log n)","O(h) où h est la hauteur","O(n²)"],
-      ans: 2, exp: "La pile d'appels a une profondeur maximale = hauteur h. Au pire (dégénéré) : h = n−1 → O(n)." },
-
-    { q: "La complexité du parcours BFS est :",
-      opts: ["O(log n)","O(n)","O(h)","O(n log n)"],
-      ans: 1, exp: "Le BFS visite chaque nœud une fois → <strong>O(n)</strong> en temps. En espace, la file peut contenir O(n) éléments." },
-
-    { q: "Quelle est la complexité de la recherche dans un ABR équilibré ?",
-      opts: ["O(1)","O(log n)","O(n)","O(n log n)"],
-      ans: 1, exp: "ABR équilibré : hauteur O(log n) → recherche en <strong>O(log n)</strong>, comme la dichotomie." },
-
-    { q: "Si on insère 1, 2, 3, 4, 5 dans cet ordre dans un ABR, on obtient :",
-      opts: ["Un arbre équilibré","Un arbre dégénéré (liste chaînée)","Un arbre complet","Un arbre de hauteur 2"],
-      ans: 1, exp: "Insertions en ordre croissant → <strong>arbre dégénéré</strong> (chaque nœud n'a qu'un fils droit). Hauteur = n−1 = 4." },
-
-    { q: "Dans un ABR, où se trouve le minimum de l'arbre ?",
-      opts: ["À la racine","Dans le fils droit le plus profond","Dans le fils gauche le plus profond (tout à gauche)","Impossible à dire"],
-      ans: 2, exp: "Le minimum d'un ABR est le nœud le plus à <strong>gauche</strong> (on descend en suivant les fils gauches jusqu'à None)." },
-
-    { q: "Quelle affirmation sur les ABR est fausse ?",
-      opts: ["Le parcours infixe donne les valeurs triées","La recherche est toujours en O(log n)","Un ABR peut dégénérer en liste","Les valeurs gauches sont inférieures à la racine"],
-      ans: 1, exp: "La recherche est en O(log n) <strong>uniquement si équilibré</strong>. Dans le pire cas (dégénéré), c'est O(n). Cette affirmation est donc fausse." },
-
-    { q: "Un arbre binaire parfait de hauteur h a une taille de :",
-      opts: ["h + 1","2h + 1","2^(h+1) - 1","h²"],
-      ans: 2, exp: "Arbre parfait de hauteur h : <strong>2^(h+1) − 1</strong> nœuds. Exemple h=2 : 1+2+4 = 7 nœuds." },
-
-    { q: "Pour compter les feuilles, la relation de récurrence est :",
-      opts: ["nb_feuilles(n) = 1 + nb_feuilles(g) + nb_feuilles(d)","Si n est feuille : 1, sinon : nb_feuilles(g) + nb_feuilles(d)","nb_feuilles(n) = max(g, d)","nb_feuilles(None) = 1"],
-      ans: 1, exp: "Feuille → 1. Nœud interne → on additionne les feuilles des deux sous-arbres <strong>sans ajouter 1</strong> pour le nœud courant." },
-
-    { q: "Que retourne hauteur(Noeud(5)) avec la convention hauteur(None) = −1 ?",
-      opts: ["−1","0","1","2"],
-      ans: 1, exp: "hauteur(feuille) = 1 + max(hauteur(None), hauteur(None)) = 1 + max(−1,−1) = 1 + (−1) = <strong>0</strong>." },
-
-    { q: "Quel parcours est adapté pour afficher un répertoire (dossiers puis fichiers) ?",
-      opts: ["Parcours infixe","Parcours en largeur","Parcours préfixe","Parcours postfixe"],
-      ans: 2, exp: "Le parcours <strong>préfixe</strong> : on affiche d'abord le dossier (nœud), puis récursivement son contenu (sous-arbres)." },
-
-    { q: "Quel parcours est adapté pour évaluer une expression arithmétique en arbre ?",
-      opts: ["Préfixe","Infixe","Postfixe","Largeur"],
-      ans: 2, exp: "Le parcours <strong>postfixe</strong> : on évalue d'abord les sous-expressions (fils) avant d'appliquer l'opérateur (nœud)." },
-
-    { q: "Quel est le résultat du BFS de l'arbre : racine=1, fils gauche=2, fils droit=3, petit-fils gauche de 2=4 ?",
-      opts: ["1 2 4 3","4 2 3 1","1 2 3 4","2 4 3 1"],
-      ans: 2, exp: "BFS niveau par niveau : niveau 0 → 1, niveau 1 → 2 3, niveau 2 → 4. Résultat : <strong>1 2 3 4</strong>." },
-
-    { q: "La relation entre taille n et hauteur h d'un arbre binaire quelconque est :",
-      opts: ["n = 2h","h + 1 ≤ n ≤ 2^(h+1) − 1","n = h²","n = log(h)"],
-      ans: 1, exp: "Un arbre binaire de hauteur h a au minimum <strong>h+1</strong> nœuds (chemin) et au maximum <strong>2^(h+1)−1</strong> nœuds (parfait)." },
-
+    { q: "Qu'est-ce qu'un arbre binaire ?", opts:["Un arbre où chaque nœud a exactement 2 fils","Un arbre où chaque nœud a au plus 2 fils","Un arbre de hauteur 2","Un arbre avec exactement 2 niveaux"], ans:1, exp:"Un arbre binaire est un arbre où chaque nœud possède au PLUS 2 fils (fils gauche et fils droit). Un nœud peut avoir 0, 1 ou 2 fils." },
+    { q: "Le parcours infixe (in-order) d'un arbre binaire de recherche (ABR) donne :", opts:["Les nœuds dans un ordre quelconque","Les nœuds dans l'ordre croissant","Les nœuds de la racine aux feuilles","Les feuilles en premier"], ans:1, exp:"Le parcours infixe (gauche → racine → droite) d'un ABR donne les éléments dans l'ordre croissant. C'est une propriété fondamentale des ABR." },
+    { q: "Dans un parcours préfixe (pre-order), on visite :", opts:["Gauche → Racine → Droite","Droite → Racine → Gauche","Racine → Gauche → Droite","Gauche → Droite → Racine"], ans:2, exp:"Préfixe = Racine d'abord, puis sous-arbre gauche, puis sous-arbre droit. C'est la racine en PREMier, d'où le nom PRE-fixe." },
+    { q: "Le parcours suffixe (post-order) visite :", opts:["Racine → Gauche → Droite","Gauche → Droite → Racine","Gauche → Racine → Droite","Droite → Gauche → Racine"], ans:1, exp:"Suffixe = Gauche, Droite, puis Racine en dernier (POST). Utilisé pour libérer la mémoire d'un arbre ou évaluer des expressions." },
+    { q: "La hauteur d'un arbre est :", opts:["Le nombre de nœuds","La longueur du chemin le plus long de la racine à une feuille","Le nombre de feuilles","Le nombre de niveaux moins 1"], ans:1, exp:"La hauteur = longueur du chemin le plus long de la racine à une feuille. Un arbre à un seul nœud a hauteur 0 (certains auteurs disent 1, vérifier le contexte)." },
+    { q: "Un arbre avec n nœuds a combien d'arêtes ?", opts:["n","n+1","n-1","2n"], ans:2, exp:"Tout arbre (non vide) à n nœuds possède exactement n-1 arêtes. C'est une propriété fondamentale des arbres (graphes acycliques connexes)." },
+    { q: "Qu'est-ce qu'une feuille dans un arbre ?", opts:["Le nœud racine","Un nœud sans fils","Un nœud avec exactement un fils","Le nœud le plus profond"], ans:1, exp:"Une feuille est un nœud terminal, c'est-à-dire un nœud qui n'a aucun fils. C'est le contraire de la racine qui n'a pas de parent." },
+    { q: "Un arbre binaire de recherche (ABR) vérifie la propriété :", opts:["Tous les nœuds gauches < racine < tous les nœuds droits","Les fils gauche et droit ont la même valeur","L'arbre est toujours équilibré","Les valeurs sont triées par niveau"], ans:0, exp:"ABR : pour tout nœud, toutes les valeurs dans son sous-arbre gauche sont inférieures, et toutes celles à droite sont supérieures à sa valeur." },
+    { q: "La complexité de la recherche dans un ABR équilibré est :", opts:["O(n)","O(n²)","O(log n)","O(1)"], ans:2, exp:"Dans un ABR équilibré de hauteur h ≈ log₂(n), chaque comparaison élimine la moitié des nœuds : O(log n). Dans le pire cas (dégénéré), c'est O(n)." },
+    { q: "Quel est le résultat du parcours infixe de l'arbre dont la racine est 4, fils gauche 2 (avec fils 1 et 3), fils droit 6 (avec fils 5 et 7) ?", opts:["4,2,6,1,3,5,7","1,2,3,4,5,6,7","4,6,2,7,5,3,1","7,6,5,4,3,2,1"], ans:1, exp:"Parcours infixe : G→N→D récursivement. On obtient 1,2,3,4,5,6,7 — l'ordre croissant confirme que c'est un ABR valide." },
+    { q: "Un tas (heap) est un arbre binaire qui vérifie :", opts:["La propriété ABR","La propriété de tas : chaque parent ≥ ses fils (max-heap) ou ≤ ses fils (min-heap)","L'équilibre parfait","La propriété de coloration rouge-noir"], ans:1, exp:"Un tas vérifie la propriété de tas (heap property) et est complet (rempli niveau par niveau de gauche à droite). Utilisé pour les files de priorité." },
+    { q: "Le parcours en largeur (BFS) d'un arbre utilise :", opts:["Une pile","Une file","Un tableau trié","Aucune structure auxiliaire"], ans:1, exp:"BFS explore niveau par niveau. On utilise une file : on enfile les enfants de chaque nœud visité. Le premier nœud enfilé est le premier traité." },
+    { q: "Un arbre binaire complet de hauteur h a au maximum combien de nœuds ?", opts:["h²","2^h - 1","2^(h+1) - 1","h * 2"], ans:2, exp:"Un arbre binaire complet (parfait) de hauteur h (racine à niveau 0) contient 2^(h+1) - 1 nœuds (1+2+4+...+2^h = 2^(h+1)-1)." },
+    { q: "Implémenter la récursivité avec un arbre utilise naturellement :", opts:["Une boucle for","La récursion (chaque sous-arbre est aussi un arbre)","Un tri externe","Des pointeurs manuels"], ans:1, exp:"La définition même d'un arbre est récursive : un arbre est soit vide, soit un nœud avec des sous-arbres (qui sont eux-mêmes des arbres)." },
+    { q: "Quelle est la taille d'un arbre ?", opts:["Sa hauteur","Le nombre de nœuds qu'il contient","Le nombre de feuilles","Le nombre de niveaux"], ans:1, exp:"La taille d'un arbre = nombre total de nœuds. La hauteur = longueur du plus long chemin racine-feuille. Ces deux notions sont distinctes." },
+    { q: "Dans un ABR, pour trouver le minimum :", opts:["On parcourt tous les nœuds","On va tout à gauche jusqu'à une feuille","On prend la racine","On cherche le dernier niveau"], ans:1, exp:"Dans un ABR, les valeurs décroissent vers la gauche. Le minimum est le nœud le plus à gauche : on suit les fils gauches jusqu'à ce qu'il n'y en ait plus." },
+    { q: "Un arbre est dit dégénéré quand :", opts:["Il est parfaitement équilibré","Chaque nœud a exactement 2 fils","Chaque nœud a au plus 1 fils (ressemble à une liste chaînée)","Il a une seule feuille"], ans:2, exp:"Un arbre dégénéré ressemble à une liste chaînée (chaque nœud n'a qu'un seul fils). La hauteur vaut n-1 et la complexité de recherche devient O(n)." },
+    { q: "La propriété d'un tas max est :", opts:["Racine = minimum","La valeur de chaque nœud ≥ celles de ses fils","Arbre parfaitement équilibré","ABR + équilibre"], ans:1, exp:"Dans un max-heap, chaque nœud est supérieur ou égal à ses fils. La racine contient donc la valeur maximale, accessible en O(1)." },
+    { q: "Pour calculer la hauteur d'un arbre binaire récursivement :", opts:["hauteur = max(hauteur_gauche, hauteur_droite) + 1","hauteur = min(hauteur_gauche, hauteur_droite)","hauteur = taille / 2","hauteur = nombre de feuilles"], ans:0, exp:"hauteur(arbre) = 1 + max(hauteur(gauche), hauteur(droite)). Cas de base : arbre vide → -1 (ou 0 selon convention)." },
+    { q: "Un arbre n-aire est un arbre où chaque nœud a :", opts:["Exactement n fils","Au plus n fils","Exactement 2 fils","Au moins n fils"], ans:1, exp:"Un arbre n-aire (ou m-aire) est un arbre où chaque nœud a au plus n fils. Un arbre binaire est un arbre 2-aire." },
+    { q: "Qu'est-ce qu'un arbre équilibré ?", opts:["Un arbre parfaitement symétrique","Un arbre où les hauteurs des sous-arbres gauche et droit diffèrent d'au plus 1 (pour chaque nœud)","Un arbre complet","Un arbre trié"], ans:1, exp:"Un arbre est équilibré (au sens AVL) si, pour chaque nœud, |hauteur_gauche - hauteur_droite| ≤ 1. Cela garantit O(log n) pour les opérations." },
+    { q: "Le parcours préfixe de (racine:A, gauche:B, droite:C) donne :", opts:["B A C","A B C","B C A","C B A"], ans:1, exp:"Préfixe : Racine d'abord → A, puis gauche → B, puis droite → C. Résultat : A, B, C." },
+    { q: "Pour insérer dans un ABR, on :", opts:["Insère toujours à la racine","Compare avec chaque nœud et descend à gauche si inférieur, à droite si supérieur","Trie d'abord le tableau puis construit","Insère aléatoirement"], ans:1, exp:"Insertion ABR : compare avec la racine, descend à gauche si valeur < nœud courant, à droite sinon. On insère comme nouvelle feuille à l'emplacement vide trouvé." },
+    { q: "Le nombre de feuilles d'un arbre binaire complet (tous les nœuds ont 0 ou 2 fils) à n nœuds internes est :", opts:["n","n+1","n-1","2n"], ans:1, exp:"Dans un arbre binaire strict (chaque nœud a 0 ou 2 fils), le nombre de feuilles = nombre de nœuds internes + 1. Si n nœuds internes → n+1 feuilles." },
+    { q: "Quelle structure de données sous-tend la récursion d'un parcours d'arbre ?", opts:["File","Pile (pile d'appels)","Tableau","Dictionnaire"], ans:1, exp:"Chaque appel récursif est empilé dans la pile d'appels (call stack). Les parcours itératifs d'arbres utilisent explicitement une pile pour simuler la récursion." },
+    { q: "Dans un ABR, la suppression du nœud ayant 2 fils se fait :", opts:["En retirant simplement le nœud","En le remplaçant par son successeur infixe (minimum du sous-arbre droit)","En le remplaçant par la racine","En reconstruisant l'arbre"], ans:1, exp:"On remplace la valeur par celle du successeur infixe (plus petit élément du sous-arbre droit), puis on supprime ce successeur (qui a au plus 1 fils)." },
+    { q: "La complexité en espace d'un parcours récursif d'un arbre de hauteur h est :", opts:["O(1)","O(n)","O(h)","O(n²)"], ans:2, exp:"La récursion empile h appels simultanément (un par niveau). L'espace utilisé est O(h), ce qui est O(log n) si équilibré, O(n) si dégénéré." },
+    { q: "Un arbre binaire de recherche est construit avec les valeurs 5,3,7,1,4. Quelle est sa racine ?", opts:["1","3","5","7"], ans:2, exp:"La racine est la première valeur insérée : 5. Puis 3 va à gauche de 5, 7 à droite, 1 à gauche de 3, 4 à droite de 3." },
+    { q: "L'arbre des expression '(2+3)*4' représenté en arbre a comme racine :", opts:["2","+","*","4"], ans:2, exp:"L'opérateur prioritaire le plus externe est la multiplication. La racine est *, avec fils gauche le sous-arbre (2+3) et fils droit 4." },
+    { q: "Quel parcours est utilisé pour copier un arbre ?", opts:["Infixe","Préfixe","Suffixe","En largeur"], ans:1, exp:"Le parcours préfixe est naturel pour copier : on crée le nœud racine d'abord, puis récursivement le sous-arbre gauche, puis le droit." },
+    { q: "La relation entre taille n et hauteur h d'un arbre binaire équilibré est :", opts:["h = n","h = n/2","h ≈ log₂(n)","h = √n"], ans:2, exp:"Un arbre binaire équilibré de n nœuds a une hauteur h ≈ log₂(n). C'est ce qui garantit les performances O(log n) des opérations." },
+    { q: "Qu'est-ce que l'arité d'un nœud ?", opts:["Sa profondeur","Son nombre de fils","Sa valeur","Son rang dans l'arbre"], ans:1, exp:"L'arité (ou degré) d'un nœud est son nombre de fils. Pour un arbre binaire, l'arité est 0, 1 ou 2." },
+    { q: "Le parcours en largeur d'un arbre visite les nœuds :", opts:["De la feuille la plus profonde à la racine","Niveau par niveau, de gauche à droite","En ordre infixe","De manière aléatoire"], ans:1, exp:"BFS visite tous les nœuds du niveau k avant de passer au niveau k+1, de gauche à droite. Utilise une file." },
+    { q: "La profondeur d'un nœud est :", opts:["Son nombre de fils","La longueur du chemin de la racine à ce nœud","Sa hauteur","Son indice"], ans:1, exp:"La profondeur d'un nœud = nombre d'arêtes (ou de nœuds) sur le chemin de la racine jusqu'à lui. La racine a profondeur 0." },
+    { q: "Un arbre binaire de hauteur 3 (racine à niveau 0) contient au maximum :", opts:["6 nœuds","7 nœuds","15 nœuds","8 nœuds"], ans:2, exp:"Hauteur h=3 → au maximum 2^(h+1)-1 = 2^4-1 = 15 nœuds. (Niveaux 0,1,2,3 avec 1,2,4,8 nœuds respectivement : 1+2+4+8=15)." },
+    { q: "Quelle est la complexité de la construction d'un ABR à partir de n valeurs aléatoires ?", opts:["O(n)","O(n log n)","O(n²)","O(log n)"], ans:1, exp:"En moyenne (valeurs aléatoires), chaque insertion coûte O(log n), et on insère n valeurs : O(n log n). Dans le pire cas (déjà trié) : O(n²)." },
+    { q: "En Python, un nœud d'arbre binaire est souvent représenté par :", opts:["Un simple entier","Une classe avec attributs val, gauche, droit","Un dictionnaire {'gauche': ..., 'droite': ...}","Les deux dernières réponses sont valides"], ans:3, exp:"On peut utiliser une classe (orientée objet) ou un dictionnaire/tuple. Les deux approches sont valides et rencontrées dans les sujets de bac NSI." },
+    { q: "La propriété ABR est-elle vérifiée après suppression si on remplace par le prédécesseur infixe ?", opts:["Non","Oui, toujours","Seulement pour les feuilles","Seulement si l'arbre est équilibré"], ans:1, exp:"Remplacer par le prédécesseur (maximum du sous-arbre gauche) ou le successeur préserve la propriété ABR. Les deux méthodes sont correctes." },
+    { q: "Un arbre de décision est un exemple d'arbre utilisé dans :", opts:["La cryptographie","L'apprentissage automatique / IA","Le routage réseau","La compression de données"], ans:1, exp:"Les arbres de décision sont utilisés en apprentissage automatique (machine learning) pour classer des données selon des règles de décision successives." },
+    { q: "Quelle est la hauteur d'un arbre contenant un seul nœud (la racine) ?", opts:["0","1","-1","Indéfinie"], ans:0, exp:"Convention la plus répandue : un arbre à un seul nœud a hauteur 0. Un arbre vide a hauteur -1. Certains programmes définissent différemment — vérifier l'énoncé." },
+    { q: "Le parcours suffixe est utilisé pour :", opts:["Lire un ABR dans l'ordre","Évaluer une expression arithmétique en notation polonaise inverse","Parcourir niveau par niveau","Insérer dans un tas"], ans:1, exp:"L'évaluation d'expressions arithmétiques en notation post-fixe (polonaise inverse) suit un parcours suffixe : on évalue d'abord les opérandes, puis l'opérateur." },
+    { q: "Un tas (min-heap) vérifie : pour tout nœud i de fils j et k,", opts:["clé[i] ≥ clé[j] et clé[i] ≥ clé[k]","clé[i] ≤ clé[j] et clé[i] ≤ clé[k]","clé[j] ≤ clé[k]","clé[i] = (clé[j] + clé[k]) / 2"], ans:1, exp:"Dans un min-heap, chaque parent est plus petit que ses enfants. La racine est donc le minimum global, accessible en O(1)." },
+    { q: "La taille de l'arbre est calculée récursivement par :", opts:["taille = 1","taille = 1 + taille(gauche) + taille(droite)","taille = max(taille(gauche), taille(droite))","taille = hauteur * 2"], ans:1, exp:"taille(arbre) = 1 (pour le nœud courant) + taille(sous-arbre gauche) + taille(sous-arbre droit). Cas de base : arbre vide → 0." },
+    { q: "Un arbre syntaxique représente :", opts:["La structure matérielle du PC","La grammaire d'un programme ou d'une expression","Le graphe du réseau","La hiérarchie des processus"], ans:1, exp:"Un arbre syntaxique (AST : Abstract Syntax Tree) représente la structure grammaticale d'un programme. Les compilateurs l'utilisent pour analyser le code." },
+    { q: "Quelle est la complexité de l'extraction du maximum dans un max-heap à n éléments ?", opts:["O(1)","O(log n)","O(n)","O(n log n)"], ans:1, exp:"Extraire le max = retirer la racine (O(1)), puis réorganiser le tas (percolation vers le bas) en O(log n), car la hauteur du tas est log n." },
+    { q: "La relation parent-enfant dans un tas implémenté en tableau est :", opts:["parent(i) = i-1 ; enfants: 2i et 2i+1","parent(i) = i//2 ; enfants: 2i et 2i+1 (si on commence à i=1)","parent(i) = i+1","parent(i) = i*2"], ans:1, exp:"En commençant à l'indice 1 : parent de i = i//2 ; enfants de i = 2i (gauche) et 2i+1 (droite). Cette formule permet d'implémenter un tas sans pointeurs." },
+    { q: "Un arbre est un graphe :", opts:["Quelconque","Orienté et cyclique","Connexe et acyclique","Complet"], ans:2, exp:"Un arbre est un graphe non orienté, connexe (tout nœud est accessible depuis tout autre) et acyclique (pas de cycle). Ces trois propriétés le définissent." },
+    { q: "Quel parcours donne les nœuds dans l'ordre racine → droite → gauche ?", opts:["Préfixe miroir","Infixe","Suffixe","En largeur"], ans:0, exp:"Le parcours préfixe miroir visite : Racine → Droite → Gauche. C'est le symétrique du parcours préfixe standard (Racine → Gauche → Droite)." },
+    { q: "Dans un ABR, la recherche d'une valeur v qui n'existe pas se termine quand :", opts:["On a visité tous les nœuds","On atteint None (sous-arbre vide) sans avoir trouvé v","On revient à la racine","On ne termine jamais"], ans:1, exp:"La recherche dans un ABR descend dans l'arbre selon les comparaisons. Si on atteint un sous-arbre vide (None) sans trouver v, la valeur est absente." },
+    { q: "Quel est le parcours infixe de l'arbre dont la racine est 5, fils gauche 3, fils droit 7 ?", opts:["5, 3, 7","3, 5, 7","3, 7, 5","7, 5, 3"], ans:1, exp:"Le parcours infixe (G, Racine, D) d'un ABR donne les éléments en ordre croissant : 3, 5, 7." },
   ],
 
   /* ═══════════════════════════════════════════════════════════
@@ -590,226 +452,7 @@ const QUESTIONS = {
     { q: "La condition d'arrêt d'une récursion s'appelle :", opts:["La récurrence","Le cas de base","Le cas inductif","Le pivot"], ans:1, exp:"Le cas de base est la condition qui arrête la récursion. Sans lui, la fonction s'appelle indéfiniment jusqu'à l'erreur RecursionError." },
     { q: "Quel est le nombre d'opérations pour chercher dans un set Python ?", opts:["O(n)","O(log n)","O(1) en moyenne","O(n²)"], ans:2, exp:"Les sets Python utilisent une table de hachage. La recherche 'x in s' est O(1) en moyenne, contre O(n) pour 'x in liste'." },
     { q: "Le problème du sac à dos est typiquement résolu par :", opts:["Recherche séquentielle","Algorithme glouton uniquement","Programmation dynamique (optimal) ou glouton (approché)","Tri fusion"], ans:2, exp:"Le problème du sac à dos est NP-difficile. La DP le résout en O(n×W). Le glouton est optimal pour la variante fractionnaire seulement." }
-  ],
-
-  /* ═══════════════════════════════════════════════════════════
-     CHAPITRE : Programmation Orientée Objet (POO)
-     0-19  → Facile  : syntaxe de base, constructeur, self, attributs
-     20-34 → Moyen   : méthodes, encapsulation, listes d'objets
-     35-49 → Difficile : héritage, polymorphisme, méthodes spéciales
-     ═══════════════════════════════════════════════════════════ */
-  poo: [
-
-    /* ── FACILE (0–19) : classe, __init__, self, instanciation ── */
-    { q: "Qu'est-ce qu'une classe en Python ?",
-      opts: ["Un objet créé en mémoire", "Un modèle (plan) à partir duquel on crée des objets", "Une variable contenant plusieurs valeurs", "Une fonction qui retourne un objet"],
-      ans: 1, exp: "Une classe est le plan, le moule. Les objets (instances) sont les pièces concrètes fabriquées à partir de ce plan." },
-
-    { q: "Comment appelle-t-on un objet créé à partir d'une classe ?",
-      opts: ["Une méthode", "Un attribut", "Une instance", "Un module"],
-      ans: 2, exp: "Un objet créé à partir d'une classe s'appelle une instance. On dit qu'on instancie la classe." },
-
-    { q: "Quelle est la convention de nommage pour une classe Python ?",
-      opts: ["tout_en_minuscules", "toutEnMinuscules", "PremièreLettreMajuscule (PascalCase)", "TOUT_EN_MAJUSCULES"],
-      ans: 2, exp: "Les classes utilisent le PascalCase selon PEP 8 : Voiture, CompteBancaire, PokemonFeu." },
-
-    { q: "Quel est le nom obligatoire du constructeur Python ?",
-      opts: ["constructor", "create", "__init__", "__new__"],
-      ans: 2, exp: "Le constructeur Python s'appelle __init__ — deux underscores avant ET après. C'est une méthode spéciale (dunder method)." },
-
-    { q: "Quel est le premier paramètre obligatoire de tout constructeur ?",
-      opts: ["this", "cls", "self", "Le nom de la classe"],
-      ans: 2, exp: "self représente l'instance en cours de création. Python le passe automatiquement ; on ne l'écrit jamais lors de l'appel." },
-
-    { q: "Quelle ligne instancie correctement la classe Eleve avec nom='Alice' et note=15 ?",
-      opts: ["e = Eleve.__init__('Alice', 15)", "e = new Eleve('Alice', 15)", "e = Eleve('Alice', 15)", "e = Eleve(self, 'Alice', 15)"],
-      ans: 2, exp: "On instancie avec NomClasse(args). Python appelle __init__ automatiquement. new n'existe pas en Python, et self n'est jamais passé manuellement." },
-
-    { q: "Que se passe-t-il si on oublie self. devant un attribut dans __init__ ?",
-      opts: ["Python crée quand même l'attribut", "Une variable locale est créée et disparaît à la fin de __init__", "SyntaxError levée", "L'attribut vaut None"],
-      ans: 1, exp: "Sans self., on crée une variable locale qui disparaît à la fin du constructeur. L'objet n'a pas l'attribut → AttributeError à la première utilisation." },
-
-    { q: "Que doit retourner le constructeur __init__ ?",
-      opts: ["self", "L'objet créé", "True", "Rien (pas de return)"],
-      ans: 3, exp: "__init__ ne retourne jamais rien. Ajouter return self lève un TypeError. Python gère la création en interne." },
-
-    { q: "Comment accède-t-on à l'attribut nom d'un objet p depuis l'extérieur de la classe ?",
-      opts: ["p[nom]", "p.get(nom)", "p.nom", "p->nom"],
-      ans: 2, exp: "Notation pointée : objet.attribut. Les crochets sont pour les listes/dicts, -> n'existe pas en Python." },
-
-    { q: "Combien d'instances peut-on créer à partir d'une même classe ?",
-      opts: ["Une seule", "Deux au maximum", "Autant que l'on veut", "Cela dépend du constructeur"],
-      ans: 2, exp: "On peut créer autant d'instances que l'on veut à partir d'une classe. C'est l'intérêt du modèle." },
-
-    { q: "Qu'est-ce qu'un attribut de classe (par opposition à un attribut d'instance) ?",
-      opts: ["Un attribut défini dans __init__ avec self.", "Un attribut partagé par toutes les instances, défini dans le corps de la classe", "Un attribut privé préfixé par __", "Un attribut en lecture seule"],
-      ans: 1, exp: "Un attribut de classe est défini hors de toute méthode, directement dans le corps. Il est partagé par toutes les instances. Un attribut d'instance (self.x) est propre à chaque objet." },
-
-    { q: "Laquelle de ces définitions de constructeur est correcte ?",
-      opts: ["def init(self, x): self.x = x", "def __init__(self, x): self.x = x", "def __init__(x): self.x = x", "def __init__(self, x): return x"],
-      ans: 1, exp: "Seule la B est correcte : nom __init__, premier param self, attribut via self.x, pas de return." },
-
-    { q: "Comment déclarer un attribut score initialisé à 0 par défaut si non fourni ?",
-      opts: ["def __init__(self, nom, score): self.score = 0", "def __init__(self, nom, score=0): self.score = score", "def __init__(self, nom): self.score = score or 0", "def __init__(self, nom, score): score = 0"],
-      ans: 1, exp: "On utilise une valeur par défaut dans la signature : score=0. Si l'appelant ne fournit pas score, Python utilise 0." },
-
-    { q: "Que vaut e.nom après : class Eleve:\\n  def __init__(self, nom):\\n    nom = nom\\ne = Eleve('Alice')\\nprint(e.nom) ?",
-      opts: ["'Alice'", "None", "AttributeError", "SyntaxError"],
-      ans: 2, exp: "sans self., on crée une variable locale nom qui disparaît. self.nom n'existe jamais → AttributeError." },
-
-    { q: "Que retourne type(p) si p = Pokemon('Pikachu', 'Électrique', 35) ?",
-      opts: ["Pokemon", "<class '__main__.Pokemon'>", "object", "str"],
-      ans: 1, exp: "type() retourne la classe de l'objet, affichée sous la forme <class '__main__.Pokemon'>." },
-
-    { q: "Deux objets créés à partir de la même classe partagent-ils leurs valeurs d'attributs ?",
-      opts: ["Oui, toujours", "Non, chaque instance a ses propres valeurs", "Oui si on utilise self", "Non, ils n'ont aucun attribut en commun"],
-      ans: 1, exp: "Chaque instance est indépendante. p1 = Point(3,5) et p2 = Point(7,2) ont toutes les deux x et y, mais avec des valeurs différentes." },
-
-    { q: "Peut-on calculer un attribut directement dans le constructeur ?",
-      opts: ["Non, tous les attributs viennent de paramètres", "Oui, comme self.aire = l * h", "Oui mais seulement avec return", "Non, RecursionError"],
-      ans: 1, exp: "Oui, on peut parfaitement calculer des attributs dans __init__. self.aire = l * h est valide." },
-
-    { q: "Combien d'objets Balle sont créés par : b1=Balle('rouge'); b2=Balle('bleue'); b3=b1 ?",
-      opts: ["3", "2", "1", "0"],
-      ans: 1, exp: "b3 = b1 crée une deuxième référence vers le même objet — pas un nouvel objet. Il y a 2 Balles en mémoire." },
-
-    { q: "Que signifie la convention _attribut (un seul underscore) en Python ?",
-      opts: ["L'attribut est privé et inaccessible de l'extérieur", "Convention : l'attribut est protégé, accessible mais destiné à un usage interne", "L'attribut est une constante", "Rien de particulier"],
-      ans: 1, exp: "Un seul underscore est une convention signalant 'usage interne'. Python n'empêche pas l'accès, mais le programmeur signale qu'il est déconseillé." },
-
-    { q: "Quelle ligne appelle correctement la méthode afficher() sur l'objet e ?",
-      opts: ["Eleve.afficher()", "afficher(e)", "e.afficher()", "e.afficher"],
-      ans: 2, exp: "La notation pointée e.afficher() est la bonne syntaxe. Python passe automatiquement e comme argument self." },
-
-    /* ── MOYEN (20–34) : méthodes, attribut vs méthode, opérateurs, encapsulation, listes ── */
-    { q: "Quelle est la différence entre un accesseur et un mutateur ?",
-      opts: ["L'accesseur prend des paramètres, le mutateur non", "L'accesseur retourne une valeur sans modifier l'objet ; le mutateur modifie sans return", "L'accesseur s'appelle get_ obligatoirement", "Aucune différence"],
-      ans: 1, exp: "Accesseur (getter) : lit et retourne. Mutateur (setter) : modifie un attribut sans rien retourner." },
-
-    { q: "Que retourne r.aire (sans parenthèses) si aire est une méthode ?",
-      opts: ["La valeur calculée de l'aire", "0", "Une référence à l'objet méthode (pas le résultat)", "AttributeError"],
-      ans: 2, exp: "Sans (), on obtient l'objet méthode lui-même — toujours truthy. C'est un bug silencieux très courant. Il faut r.aire()." },
-
-    { q: "Un mutateur doit-il contenir un return ?",
-      opts: ["Oui, il retourne self", "Oui, il retourne la nouvelle valeur", "Non, il modifie l'attribut et ne retourne rien", "Oui si la modification a réussi"],
-      ans: 2, exp: "Un mutateur ne retourne rien. Son seul rôle est de modifier un attribut. Ajouter return est une erreur de conception." },
-
-    { q: "Quel opérateur logique est invalide en Python ?",
-      opts: ["and", "or", "&&", "not"],
-      ans: 2, exp: "&& est la syntaxe C/Java. En Python, le ET logique s'écrit and (en minuscules)." },
-
-    { q: "Comment afficher proprement les informations d'un objet e depuis l'extérieur de la classe ?",
-      opts: ["print(e.__dict__)", "Appeler une méthode afficher() définie dans la classe", "print(e) sans rien définir", "e.display()"],
-      ans: 1, exp: "On définit une méthode afficher(self) dans la classe qui utilise print() pour afficher les attributs. C'est l'approche au programme NSI Terminale." },
-
-    { q: "Une méthode afficher(self) doit-elle utiliser print() ou return ?",
-      opts: ["return uniquement, jamais print()", "print() uniquement, jamais return", "print() pour afficher les infos — c'est une méthode d'affichage, pas un accesseur", "Les deux sont équivalents"],
-      ans: 2, exp: "afficher(self) est un cas particulier : son rôle est d'afficher, donc on utilise print(). Un accesseur comme get_solde() retourne une valeur. Ce sont deux familles différentes de méthodes." },
-
-    { q: "Que signifie 0 <= val <= 100 en Python ?",
-      opts: ["SyntaxError", "Équivalent à val>=0 or val<=100", "Équivalent à val>=0 and val<=100", "Équivalent à 0<=val seulement"],
-      ans: 2, exp: "Python autorise le chaînage de comparaisons. 0 <= val <= 100 est strictement équivalent à val >= 0 and val <= 100." },
-
-    { q: "Comment accéder à l'attribut pages du 2e livre d'une liste biblio ?",
-      opts: ["biblio[1].pages()", "biblio[1].pages", "biblio.pages[1]", "get_pages(biblio[1])"],
-      ans: 1, exp: "biblio[1] donne le 2e objet (index 1). .pages accède à l'attribut. Pas de parenthèses — ce n'est pas une méthode." },
-
-    { q: "Pourquoi if e.est_admis: est-il toujours vrai même si l'élève n'est pas admis ?",
-      opts: ["La méthode retourne toujours True", "L'objet méthode (sans parenthèses) est toujours truthy", "Python évalue les méthodes à True", "C'est une erreur de syntaxe"],
-      ans: 1, exp: "Sans (), e.est_admis est un objet méthode — tout objet non-None est truthy en Python → condition toujours vraie. Bug silencieux redoutable." },
-
-    { q: "Avec quoi initialise-t-on le champion pour chercher le maximum dans une liste d'objets ?",
-      opts: ["champion = 0", "champion = None", "champion = liste[0]", "champion = max(liste)"],
-      ans: 2, exp: "On initialise avec le premier objet (liste[0]). Initialiser avec 0 ou None → AttributeError lors de la comparaison des attributs." },
-
-    { q: "Que retourne une fonction avec return total placé dans la boucle for ?",
-      opts: ["La somme de tous les éléments", "0", "La valeur du premier élément uniquement", "IndexError"],
-      ans: 2, exp: "Le return dans la boucle → Python sort dès la première itération. Il faut placer le return après la boucle." },
-
-    { q: "Quelle ligne ajoute correctement un objet Eleve à la liste promo ?",
-      opts: ["promo = promo + Eleve('Alice', 15)", "promo.add(Eleve('Alice', 15))", "promo.append(Eleve('Alice', 15))", "promo[len(promo)] = Eleve('Alice', 15)"],
-      ans: 2, exp: "list.append(element) est la méthode standard. add n'existe pas sur les listes (c'est pour les sets)." },
-
-    { q: "Comment appeler aire() correctement dans est_plus_grand(self, autre) ?",
-      opts: ["self.aire > autre.aire", "self.aire() > autre.aire", "self.aire() > autre.aire()", "aire(self) > aire(autre)"],
-      ans: 2, exp: "aire est une méthode → parenthèses obligatoires des deux côtés. self.aire sans () compare des références de méthodes, pas des valeurs." },
-
-    { q: "Quelle est la bonne façon de modifier self.temperature en ajoutant delta ?",
-      opts: ["temperature = self.temperature + delta", "self.temperature = temperature + delta", "self.temperature = self.temperature + delta", "return self.temperature + delta"],
-      ans: 2, exp: "Il faut self. des deux côtés : on lit l'ancienne valeur via self.temperature et on réassigne le résultat à self.temperature." },
-
-    { q: "Quelle est la différence entre retourner l'objet c et retourner c.titulaire dans une boucle de filtrage ?",
-      opts: ["Aucune différence", "c retourne l'objet complet ; c.titulaire retourne uniquement la chaîne du nom", "c est plus rapide à retourner", "c.titulaire crée une copie de l'objet"],
-      ans: 1, exp: "Retourner c donne l'objet entier avec tous ses attributs. Retourner c.titulaire donne uniquement la chaîne du nom. Le choix dépend de ce dont l'appelant a besoin." },
-
-    { q: "Que signifie la convention _attribut (un seul underscore) en Python ?",
-      opts: ["L'attribut est privé et inaccessible de l'extérieur", "Convention : l'attribut est protégé, usage interne recommandé", "L'attribut est une constante", "Rien de particulier"],
-      ans: 1, exp: "Un seul underscore est une convention signalant 'usage interne'. Python n'empêche pas l'accès, mais signale qu'il est déconseillé. C'est différent du double underscore." },
-
-    /* ── DIFFICILE (35–49) : héritage, super(), polymorphisme, dunder avancés ── */
-    { q: "Quelle syntaxe crée une sous-classe PokemonFeu héritant de Pokemon ?",
-      opts: ["class PokemonFeu inherits Pokemon:", "class PokemonFeu extends Pokemon:", "class PokemonFeu(Pokemon):", "class PokemonFeu < Pokemon:"],
-      ans: 2, exp: "En Python, l'héritage se déclare avec le parent entre parenthèses : class Enfant(Parent):. Les mots-clés inherits et extends n'existent pas en Python." },
-
-    { q: "Que permet super() ?",
-      opts: ["Créer une super-instance de la classe", "Accéder aux méthodes et attributs de la classe parente", "Rendre une méthode plus rapide", "Vérifier qu'un objet est une instance valide"],
-      ans: 1, exp: "super() retourne un proxy qui délègue les appels à la classe parente. Utilisé principalement dans __init__ pour initialiser les attributs hérités." },
-
-    { q: "Que se passe-t-il si on omet super().__init__() dans le constructeur d'une sous-classe ?",
-      opts: ["Python l'appelle automatiquement", "Les attributs définis dans le parent ne sont jamais créés → AttributeError possible", "La sous-classe est ignorée", "Un warning est affiché mais le code fonctionne"],
-      ans: 1, exp: "Sans super().__init__(), le constructeur parent ne s'exécute jamais. Les attributs qu'il aurait créés n'existent pas → AttributeError à la première utilisation." },
-
-    { q: "Une instance de PokemonFeu peut-elle appeler une méthode définie uniquement dans Pokemon ?",
-      opts: ["Non, seulement ses propres méthodes", "Oui, elle hérite de toutes les méthodes de Pokemon", "Oui, mais seulement via super()", "Non, sauf si on la redéfinit dans PokemonFeu"],
-      ans: 1, exp: "L'héritage est automatique : PokemonFeu hérite de toutes les méthodes de Pokemon sans avoir à les réécrire." },
-
-    { q: "Qu'est-ce que la surcharge (override) d'une méthode ?",
-      opts: ["Appeler une méthode avec trop d'arguments", "Redéfinir dans la sous-classe une méthode déjà présente dans le parent", "Supprimer une méthode héritée", "Appeler une méthode deux fois de suite"],
-      ans: 1, exp: "La surcharge consiste à redéfinir dans la sous-classe une méthode héritée. Python utilisera la version de la sous-classe en priorité (MRO)." },
-
-    { q: "Que retourne isinstance(salameche, Pokemon) si salameche est un PokemonFeu héritant de Pokemon ?",
-      opts: ["False", "True", "None", "TypeError"],
-      ans: 1, exp: "isinstance retourne True si l'objet est une instance de la classe ou d'une de ses sous-classes. Un PokemonFeu est aussi un Pokemon." },
-
-    { q: "Dans quel ordre Python cherche-t-il la méthode attaquer sur un PokemonElectrique ?",
-      opts: ["D'abord dans Pokemon, puis PokemonElectrique", "D'abord dans PokemonElectrique, puis Pokemon si absente", "Uniquement dans Pokemon", "Uniquement dans PokemonElectrique"],
-      ans: 1, exp: "Python applique la MRO (Method Resolution Order) : il cherche d'abord dans la classe réelle de l'objet (PokemonElectrique), puis remonte vers le parent." },
-
-    { q: "Comment étendre une méthode parente (garder son comportement ET ajouter du spécifique) ?",
-      opts: ["Réécrire entièrement la méthode dans la sous-classe", "Appeler super().methode() puis ajouter le comportement spécifique", "Utiliser le mot-clé extend", "C'est impossible en Python"],
-      ans: 1, exp: "On appelle super().methode() pour exécuter la logique parente, puis on ajoute le comportement spécifique. Exemple : super().attaquer(cible) puis cible.paralysie = True." },
-
-    { q: "Qu'est-ce que le polymorphisme permet concrètement ?",
-      opts: ["Avoir plusieurs classes avec le même nom", "Appeler la même méthode sur des objets de types différents, chacun répondant avec son propre comportement", "Créer des objets sans constructeur", "Partager des attributs entre plusieurs instances"],
-      ans: 1, exp: "Le polymorphisme permet for p in equipe: p.attaquer(cible) — chaque Pokémon applique sa propre version de attaquer selon son type réel." },
-
-    { q: "Quel est le problème dans : class PF(Pokemon):\\n  def __init__(self, nom, pdv):\\n    self.flammes = 3 ?",
-      opts: ["Pas de problème", "self.flammes ne peut pas être défini avant super()", "Les attributs nom et pdv du parent ne sont jamais créés → AttributeError", "__init__ ne peut pas être redéfinie dans une sous-classe"],
-      ans: 2, exp: "Sans super().__init__(nom, 'Feu', pdv), les attributs self.nom, self.type, self.pdv définis dans Pokemon ne sont jamais créés → AttributeError à la première utilisation." },
-
-    { q: "On a une liste d'objets Pokemon. Que fait : for p in equipe: p.attaquer(cible) ?",
-      opts: ["Appelle toujours la méthode attaquer de la classe Pokemon de base", "Appelle la version de attaquer propre au type réel de chaque objet (polymorphisme)", "Lève une erreur car attaquer prend un argument", "Ne fait rien si attaquer n'est pas définie dans chaque sous-classe"],
-      ans: 1, exp: "C'est le polymorphisme en action : Python regarde le type réel de chaque objet p et appelle SA version de attaquer. Un PokemonFeu utilisera sa propre implémentation, différente de celle de PokemonEau." },
-
-    { q: "Peut-on passer un objet d'une sous-classe là où un objet de la classe parente est attendu ?",
-      opts: ["Non, les types doivent correspondre exactement", "Oui, c'est le principe de substitution — une sous-classe peut toujours remplacer son parent", "Oui mais seulement avec isinstance()", "Non, il faut convertir explicitement"],
-      ans: 1, exp: "Principe de substitution de Liskov : partout où on attend un Pokemon, on peut utiliser un PokemonFeu. C'est la base du polymorphisme et de l'utilité de l'héritage." },
-
-    { q: "Dans une hiérarchie Compte → CompteEpargne, comment appeler depot() du parent depuis capitaliser() ?",
-      opts: ["Compte.depot(self, montant)", "super().depot(montant)", "parent.depot(montant)", "Les deux A et B sont correctes"],
-      ans: 3, exp: "Les deux formes fonctionnent. super().depot(montant) est recommandé (plus générique). Compte.depot(self, montant) est explicite mais moins flexible si la hiérarchie change." },
-
-    { q: "On veut que PokemonElectrique.attaquer() applique d'abord l'attaque normale de Pokemon, puis paralyse la cible. Quelle est la bonne implémentation ?",
-      opts: [
-        "def attaquer(self, cible): cible.pdv -= 10; cible.paralysie = True",
-        "def attaquer(self, cible): super().attaquer(cible); cible.paralysie = True",
-        "def attaquer(self, cible): Pokemon.attaquer(); cible.paralysie = True",
-        "def attaquer(self, cible): self.attaquer(cible); cible.paralysie = True"
-      ],
-      ans: 1, exp: "super().attaquer(cible) exécute la logique du parent (retire 10 PV), puis on ajoute l'effet spécifique (paralysie). La réponse A duplique la logique ; C oublie self ; D crée une récursion infinie." }
-
   ]
-
 };
 
 /* Fonction utilitaire : obtenir n questions aléatoires d'un chapitre */

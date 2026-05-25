@@ -289,6 +289,7 @@
           <li>Héritage : <code>class Enfant(Parent)</code> et <code>super().__init__()</code></li>
           <li>Polymorphisme : même méthode, comportement différent selon le type réel</li>
           <li>Encapsulation : conventions <code>_attribut</code> (protégé) et <code>__attribut</code> (privé)</li>
+          <li>Méthodes spéciales : <code>__str__</code>, <code>__repr__</code>, <code>__eq__</code>, <code>__len__</code>, <code>__add__</code></li>
           <li>Manipuler des listes d'objets : boucles, cumuls, filtres, recherche de max</li>
         </ul>
       </div>
@@ -337,8 +338,8 @@
     <span class="kw">def</span> <span class="fn">vitesse</span>(<span class="sf">self</span>):
         <span class="kw">return</span> <span class="sf">self</span>._vitesse
 
-    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):
-        <span class="kw">print</span>(<span class="sf">self</span>.marque, <span class="st">"à"</span>, <span class="sf">self</span>._vitesse, <span class="st">"km/h"</span>)
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.marque}<span class="st"> à </span>{<span class="sf">self</span>._vitesse}<span class="st"> km/h"</span>
 
 <span class="cm"># Instanciation</span>
 ma_voiture = <span class="cl">Voiture</span>(<span class="st">"Toyota"</span>, <span class="nb">180</span>)   <span class="cm"># Python appelle __init__ automatiquement</span>
@@ -535,6 +536,7 @@ c2 = <span class="cl">Compte</span>(<span class="st">"Bob"</span>)          <spa
           <tr><th>Famille</th><th>Rôle</th><th>Utilise <code>return</code> ?</th><th>Exemple</th></tr>
           <tr><td><strong>Accesseur</strong> (getter)</td><td>Lit et retourne une valeur sans modifier l'objet</td><td>✅ Toujours</td><td><code>get_solde()</code>, <code>aire()</code></td></tr>
           <tr><td><strong>Mutateur</strong> (setter)</td><td>Modifie un attribut</td><td>❌ Jamais</td><td><code>deposer()</code>, <code>set_note()</code></td></tr>
+          <tr><td><strong>Spéciale</strong> (dunder)</td><td>Comportement built-in</td><td>✅ (<code>__str__</code> retourne une str)</td><td><code>__str__</code>, <code>__eq__</code></td></tr>
         </table>
 
 <pre><code><span class="kw">class</span> <span class="cl">Compte</span>:
@@ -553,8 +555,8 @@ c2 = <span class="cl">Compte</span>(<span class="st">"Bob"</span>)          <spa
         <span class="kw">if</span> <span class="nb">0</span> < montant <= <span class="sf">self</span>.solde:
             <span class="sf">self</span>.solde -= montant
 
-    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):
-        <span class="kw">print</span>(<span class="sf">self</span>.titulaire, <span class="st">":"</span>, <span class="sf">self</span>.solde, <span class="st">"€"</span>)</code></pre>
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.titulaire}<span class="st"> : </span>{<span class="sf">self</span>.solde}<span class="st">€"</span></code></pre>
       </div>
 
       <div id="attribut-vs-methode">
@@ -639,29 +641,64 @@ b.<span class="fn">set_charge</span>(<span class="nb">150</span>)       <span cl
     </section>
 
     <!-- ══════════════════════════════════════
-         MÉTHODES SPÉCIALES (programme)
+         MÉTHODES SPÉCIALES
          ══════════════════════════════════════ -->
     <section id="methodes-spec">
-      <h2>✨ La méthode <code>afficher</code></h2>
-      <p>Au programme NSI Terminale, la seule méthode "spéciale" à maîtriser est <code>__init__</code>. Pour afficher les informations d'un objet, on définit une méthode <strong>ordinaire</strong> <code>afficher(self)</code> qui utilise <code>print()</code> directement.</p>
+      <h2>✨ Méthodes spéciales (dunder)</h2>
+      <p>Les méthodes dont le nom commence et termine par <code>__</code> sont appelées <strong>méthodes spéciales</strong> (ou <em>dunder methods</em>). Python les invoque automatiquement dans certains contextes.</p>
 
-      <div class="callout callout-info">
-        <span class="callout-icon">💡</span>
+      <table>
+        <tr><th>Méthode</th><th>Déclencheur</th><th>Usage typique</th></tr>
+        <tr><td><code>__init__</code></td><td><code>Classe(args)</code></td><td>Constructeur — initialise les attributs</td></tr>
+        <tr><td><code>__str__</code></td><td><code>print(obj)</code>, <code>str(obj)</code></td><td>Affichage lisible pour l'utilisateur</td></tr>
+        <tr><td><code>__repr__</code></td><td>Console Python, <code>repr(obj)</code></td><td>Représentation technique/debug</td></tr>
+        <tr><td><code>__len__</code></td><td><code>len(obj)</code></td><td>Taille logique de l'objet</td></tr>
+        <tr><td><code>__eq__</code></td><td><code>obj1 == obj2</code></td><td>Égalité entre deux objets</td></tr>
+        <tr><td><code>__lt__</code></td><td><code>obj1 &lt; obj2</code></td><td>Comparaison (inférieur)</td></tr>
+        <tr><td><code>__add__</code></td><td><code>obj1 + obj2</code></td><td>Addition entre objets</td></tr>
+        <tr><td><code>__getitem__</code></td><td><code>obj[i]</code></td><td>Accès par indice</td></tr>
+      </table>
+
+<pre><code><span class="kw">class</span> <span class="cl">Fraction</span>:
+    <span class="kw">from</span> math <span class="kw">import</span> gcd
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, num, den):
+        <span class="kw">if</span> den == <span class="nb">0</span>: <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="st">"Dénominateur nul"</span>)
+        g = <span class="cl">Fraction</span>.<span class="fn">gcd</span>(<span class="fn">abs</span>(num), <span class="fn">abs</span>(den))
+        <span class="sf">self</span>.num = num // g
+        <span class="sf">self</span>.den = den // g
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):                  <span class="cm"># print(f) → "3/4"</span>
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.num}<span class="st">/</span>{<span class="sf">self</span>.den}<span class="st">"</span>
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="sf">self</span>):                 <span class="cm"># console → Fraction(3, 4)</span>
+        <span class="kw">return</span> <span class="st">f"Fraction(</span>{<span class="sf">self</span>.num}<span class="st">, </span>{<span class="sf">self</span>.den}<span class="st">)"</span>
+
+    <span class="kw">def</span> <span class="fn">__add__</span>(<span class="sf">self</span>, other):           <span class="cm"># f1 + f2</span>
+        <span class="kw">return</span> <span class="cl">Fraction</span>(<span class="sf">self</span>.num * other.den + other.num * <span class="sf">self</span>.den,
+                        <span class="sf">self</span>.den * other.den)
+
+    <span class="kw">def</span> <span class="fn">__eq__</span>(<span class="sf">self</span>, other):            <span class="cm"># f1 == f2</span>
+        <span class="kw">return</span> <span class="sf">self</span>.num == other.num <span class="kw">and</span> <span class="sf">self</span>.den == other.den
+
+f1 = <span class="cl">Fraction</span>(<span class="nb">1</span>, <span class="nb">2</span>)
+f2 = <span class="cl">Fraction</span>(<span class="nb">1</span>, <span class="nb">3</span>)
+<span class="kw">print</span>(f1 + f2)   <span class="cm"># 5/6</span>
+<span class="kw">print</span>(f1 == f2)  <span class="cm"># False</span></code></pre>
+
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
         <div class="callout-body">
-          <strong>Pour aller plus loin (hors programme bac) :</strong> Python dispose de méthodes spéciales comme <code>__str__</code> (appelée par <code>print(obj)</code>), <code>__eq__</code> (appelée par <code>==</code>), <code>__add__</code> (appelée par <code>+</code>)… Elles ne sont <strong>pas exigibles au baccalauréat</strong> mais peuvent apparaître dans un énoncé comme donnée à lire.
+          <strong>Piège <code>__eq__</code> :</strong> sans définir <code>__eq__</code>, Python compare les <em>adresses mémoire</em> (identité), pas les valeurs. Deux objets Fraction(1,2) créés séparément seraient inégaux. Toujours définir <code>__eq__</code> si l'égalité logique a du sens.
         </div>
       </div>
 
-<pre><code><span class="kw">class</span> <span class="cl">Eleve</span>:
-    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom, note):
-        <span class="sf">self</span>.nom  = nom
-        <span class="sf">self</span>.note = note
-
-    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):              <span class="cm"># méthode ordinaire d'affichage</span>
-        <span class="kw">print</span>(<span class="sf">self</span>.nom, <span class="st">":"</span>, <span class="sf">self</span>.note)
-
-e = <span class="cl">Eleve</span>(<span class="st">"Alice"</span>, <span class="nb">15</span>)
-e.<span class="fn">afficher</span>()   <span class="cm"># Alice : 15</span></code></pre>
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body">
+          <strong>Piège <code>__str__</code> :</strong> <code>__str__</code> doit <strong>retourner</strong> une chaîne, jamais l'afficher avec <code>print()</code>. <code>print()</code> retourne <code>None</code> → <code>TypeError</code> quand Python attend une str.
+        </div>
+      </div>
     </section>
 
     <!-- ══════════════════════════════════════
@@ -733,8 +770,8 @@ promo = [<span class="cl">Eleve</span>(<span class="st">"Alice"</span>, <span cl
         <span class="sf">self</span>.nom = nom
     <span class="kw">def</span> <span class="fn">parler</span>(<span class="sf">self</span>):
         <span class="kw">return</span> <span class="st">"..."</span>
-    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):
-        <span class="kw">print</span>(<span class="sf">self</span>.nom, <span class="st">"dit :"</span>, <span class="sf">self</span>.<span class="fn">parler</span>())
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.nom}<span class="st"> dit : </span>{<span class="sf">self</span>.<span class="fn">parler</span>()}<span class="st">"</span>
 
 <span class="kw">class</span> <span class="cl">Chien</span>(<span class="cl">Animal</span>):       <span class="cm"># Chien hérite de Animal</span>
     <span class="kw">def</span> <span class="fn">parler</span>(<span class="sf">self</span>):       <span class="cm"># surcharge (override) de parler</span>
@@ -750,7 +787,7 @@ promo = [<span class="cl">Eleve</span>(<span class="st">"Alice"</span>, <span cl
 <span class="cm"># Polymorphisme : même interface, comportement différent selon le type réel</span>
 animaux = [<span class="cl">Chien</span>(<span class="st">"Rex"</span>), <span class="cl">Chat</span>(<span class="st">"Felix"</span>, <span class="kw">True</span>)]
 <span class="kw">for</span> a <span class="kw">in</span> animaux:
-    a.<span class="fn">afficher</span>()   <span class="cm"># appelle parler() → Chien puis Chat donnent des résultats différents</span></code></pre>
+    <span class="kw">print</span>(a)   <span class="cm"># __str__ appelle parler() → Chien puis Chat donnent des résultats différents</span></code></pre>
       </div>
 
       <div id="super">
@@ -837,6 +874,8 @@ cible  = <span class="cl">Pokemon</span>(<span class="st">"Pikachu"</span>, <spa
             <tr><td>Méthode bool en boucle</td><td><code class="err">if e.est_admis</code></td><td><code>if e.est_admis()</code></td></tr>
             <tr><td>Chercher le max</td><td>Initialiser avec <code class="err">0</code> ou <code class="err">None</code></td><td>Initialiser avec <code>liste[0]</code></td></tr>
             <tr><td><code>return</code> cumulatif</td><td>Return <em>dans</em> la boucle</td><td>Return <em>après</em> la boucle</td></tr>
+            <tr><td><code>__str__</code></td><td><code class="err">print(self.nom)</code> dedans</td><td><code>return str(self.nom)</code></td></tr>
+            <tr><td>Égalité d'objets</td><td><code class="err">==</code> compare les adresses par défaut</td><td>Définir <code>__eq__</code></td></tr>
             <tr><td>Héritage — déclarer</td><td><code class="err">class Enfant:</code></td><td><code>class Enfant(Parent):</code></td></tr>
             <tr><td>Héritage — init parent</td><td>Oublier <code>super().__init__()</code></td><td><code>super().__init__(...)</code> en 1ère ligne</td></tr>
             <tr><td>Étendre une méthode</td><td>Réécrire toute la logique parent</td><td><code>super().methode()</code> + ajouts</td></tr>
@@ -850,6 +889,36 @@ cible  = <span class="cl">Pokemon</span>(<span class="st">"Pikachu"</span>, <spa
          ══════════════════════════════════════ -->
     <section id="exercices">
       <h2>🏋️ Exercices</h2>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-facile">Facile</span>
+          <span class="exercise-title">Classe Fraction avec méthodes spéciales</span>
+        </div>
+        <div class="exercise-body">
+          <p>Créer une classe <code>Fraction</code> avec numérateur et dénominateur. Implémenter <code>__str__</code> (affichage <code>"num/den"</code>), <code>__add__</code> (addition de deux fractions) et <code>__eq__</code> (égalité). Simplifier la fraction dans le constructeur avec <code>gcd</code>.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+<pre><code><span class="kw">from</span> math <span class="kw">import</span> gcd
+<span class="kw">class</span> <span class="cl">Fraction</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, num, den):
+        <span class="kw">if</span> den == <span class="nb">0</span>: <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="st">"Dénominateur nul"</span>)
+        g = <span class="fn">gcd</span>(<span class="fn">abs</span>(num), <span class="fn">abs</span>(den))
+        <span class="sf">self</span>.num = num // g
+        <span class="sf">self</span>.den = den // g
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.num}<span class="st">/</span>{<span class="sf">self</span>.den}<span class="st">"</span>
+    <span class="kw">def</span> <span class="fn">__add__</span>(<span class="sf">self</span>, other):
+        <span class="kw">return</span> <span class="cl">Fraction</span>(<span class="sf">self</span>.num * other.den + other.num * <span class="sf">self</span>.den,
+                        <span class="sf">self</span>.den * other.den)
+    <span class="kw">def</span> <span class="fn">__eq__</span>(<span class="sf">self</span>, other):
+        <span class="kw">return</span> <span class="sf">self</span>.num == other.num <span class="kw">and</span> <span class="sf">self</span>.den == other.den
+
+<span class="kw">print</span>(<span class="cl">Fraction</span>(<span class="nb">1</span>,<span class="nb">2</span>) + <span class="cl">Fraction</span>(<span class="nb">1</span>,<span class="nb">3</span>))   <span class="cm"># 5/6</span>
+<span class="kw">print</span>(<span class="cl">Fraction</span>(<span class="nb">2</span>,<span class="nb">4</span>) == <span class="cl">Fraction</span>(<span class="nb">1</span>,<span class="nb">2</span>)) <span class="cm"># True (simplification dans __init__)</span></code></pre>
+          </div></div>
+        </div>
+      </div>
 
       <div class="exercise">
         <div class="exercise-header">
@@ -899,7 +968,7 @@ cible  = <span class="cl">Pokemon</span>(<span class="st">"Pikachu"</span>, <spa
           <span class="exercise-title">Héritage : Compte bancaire &amp; Compte épargne</span>
         </div>
         <div class="exercise-body">
-          <p>Créer une classe <code>Compte</code> avec un attribut privé <code>__solde</code>, des méthodes <code>solde()</code>, <code>depot(m)</code> et <code>retrait(m)</code> (lève une erreur si solde insuffisant). Puis une classe <code>CompteEpargne</code> héritant de <code>Compte</code> avec un <code>taux</code> et une méthode <code>capitaliser()</code> qui ajoute les intérêts.</p>
+          <p>Créer une classe <code>Compte</code> avec un attribut privé <code>__solde</code>, des méthodes <code>solde()</code>, <code>depot(m)</code>, <code>retrait(m)</code> (lève une erreur si solde insuffisant) et <code>__str__</code>. Puis une classe <code>CompteEpargne</code> héritant de <code>Compte</code> avec un <code>taux</code> et une méthode <code>capitaliser()</code> qui ajoute les intérêts.</p>
           <button class="toggle-correction">▼ Voir la correction</button>
           <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
 <pre><code><span class="kw">class</span> <span class="cl">Compte</span>:
@@ -911,8 +980,8 @@ cible  = <span class="cl">Pokemon</span>(<span class="st">"Pikachu"</span>, <spa
     <span class="kw">def</span> <span class="fn">retrait</span>(<span class="sf">self</span>, m):
         <span class="kw">if</span> m > <span class="sf">self</span>.__solde: <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="st">"Solde insuffisant"</span>)
         <span class="sf">self</span>.__solde -= m
-    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):
-        <span class="kw">print</span>(<span class="sf">self</span>.titulaire, <span class="st">":"</span>, <span class="sf">self</span>.__solde, <span class="st">"€"</span>)
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.titulaire}<span class="st"> : </span>{<span class="sf">self</span>.__solde}<span class="st">€"</span>
 
 <span class="kw">class</span> <span class="cl">CompteEpargne</span>(<span class="cl">Compte</span>):
     <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titulaire, solde, taux):
@@ -923,7 +992,7 @@ cible  = <span class="cl">Pokemon</span>(<span class="st">"Pikachu"</span>, <spa
 
 ce = <span class="cl">CompteEpargne</span>(<span class="st">"Alice"</span>, <span class="nb">1000</span>, <span class="nb">0.03</span>)
 ce.<span class="fn">capitaliser</span>()
-ce.<span class="fn">afficher</span>()   <span class="cm"># Alice : 1030.0 €</span></code></pre>
+<span class="kw">print</span>(ce)   <span class="cm"># Alice : 1030.0€</span></code></pre>
           </div></div>
         </div>
       </div>
@@ -934,7 +1003,7 @@ ce.<span class="fn">afficher</span>()   <span class="cm"># Alice : 1030.0 €</s
           <span class="exercise-title">Polymorphisme : hiérarchie Pokémon</span>
         </div>
         <div class="exercise-body">
-          <p>Créer une classe <code>Pokemon</code> avec <code>nom</code>, <code>type_p</code>, <code>pdv</code>, une méthode <code>attaquer(cible)</code> (−10 PV, min 0) et <code>est_vaincu()</code>. Créer les sous-classes <code>PokemonFeu</code> et <code>PokemonEau</code> avec leurs propres <code>attaquer</code> (dégâts différents). Écrire une fonction <code>duel(p1, p2)</code> qui simule un combat et retourne le gagnant.</p>
+          <p>Créer une classe <code>Pokemon</code> avec <code>nom</code>, <code>type_p</code>, <code>pdv</code>, une méthode <code>attaquer(cible)</code> (−10 PV, min 0), <code>est_vaincu()</code> et <code>__str__</code>. Créer les sous-classes <code>PokemonFeu</code> et <code>PokemonEau</code> avec leurs propres <code>attaquer</code> (dégâts différents). Écrire une fonction <code>duel(p1, p2)</code> qui simule un combat et retourne le gagnant.</p>
           <button class="toggle-correction">▼ Voir la correction</button>
           <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
 <pre><code><span class="kw">class</span> <span class="cl">Pokemon</span>:
@@ -943,7 +1012,7 @@ ce.<span class="fn">afficher</span>()   <span class="cm"># Alice : 1030.0 €</s
     <span class="kw">def</span> <span class="fn">attaquer</span>(<span class="sf">self</span>, cible):
         cible.pdv = <span class="fn">max</span>(<span class="nb">0</span>, cible.pdv - <span class="nb">10</span>)
     <span class="kw">def</span> <span class="fn">est_vaincu</span>(<span class="sf">self</span>): <span class="kw">return</span> <span class="sf">self</span>.pdv <= <span class="nb">0</span>
-    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>): <span class="kw">print</span>(<span class="sf">self</span>.nom, <span class="st">"["</span> + <span class="sf">self</span>.type + <span class="st">"]"</span>, <span class="sf">self</span>.pdv, <span class="st">"PV"</span>)
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>): <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.nom}<span class="st"> [</span>{<span class="sf">self</span>.type}<span class="st">] </span>{<span class="sf">self</span>.pdv}<span class="st"> PV"</span>
 
 <span class="kw">class</span> <span class="cl">PokemonFeu</span>(<span class="cl">Pokemon</span>):
     <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom, pdv):
@@ -997,6 +1066,12 @@ ce.<span class="fn">afficher</span>()   <span class="cm"># Alice : 1030.0 €</s
           <li><code>super().__init__()</code></li>
           <li>Override : redéfinir méthode</li>
           <li>Polymorphisme : même nom, ≠ comportement</li>
+        </ul></div>
+        <div class="synthese-card"><h4>DUNDER</h4><ul>
+          <li><code>__str__</code> → <code>print(obj)</code></li>
+          <li><code>__repr__</code> → console debug</li>
+          <li><code>__eq__</code> → <code>obj1 == obj2</code></li>
+          <li><code>__add__</code> → <code>obj1 + obj2</code></li>
         </ul></div>
         <div class="synthese-card"><h4>LISTES</h4><ul>
           <li>Accumulateur avant la boucle</li>

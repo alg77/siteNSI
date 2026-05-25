@@ -1,0 +1,42 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="320" height="320">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1a1a2e"/>
+      <stop offset="100%" style="stop-color:#2d2b5e"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Fond arrondi -->
+  <rect width="64" height="64" rx="14" fill="url(#bg)"/>
+
+  <!-- Accolades { } stylisées -->
+  <!-- { gauche -->
+  <path d="M18 20 Q13 20 13 25 L13 29 Q13 32 10 32 Q13 32 13 35 L13 39 Q13 44 18 44"
+        fill="none" stroke="#6741d9" stroke-width="2.8" stroke-linecap="round"/>
+  <!-- } droite -->
+  <path d="M46 20 Q51 20 51 25 L51 29 Q51 32 54 32 Q51 32 51 35 L51 39 Q51 44 46 44"
+        fill="none" stroke="#6741d9" stroke-width="2.8" stroke-linecap="round"/>
+
+  <!-- Point central kawaii (nez) -->
+  <circle cx="32" cy="32" r="2" fill="#bc8cff"/>
+
+  <!-- Yeux kawaii -->
+  <circle cx="26" cy="29" r="2.2" fill="white"/>
+  <circle cx="38" cy="29" r="2.2" fill="white"/>
+  <!-- Pupilles -->
+  <circle cx="26.6" cy="29.6" r="1.1" fill="#1a1a2e"/>
+  <circle cx="38.6" cy="29.6" r="1.1" fill="#1a1a2e"/>
+  <!-- Reflets -->
+  <circle cx="25.8" cy="28.7" r="0.45" fill="white"/>
+  <circle cx="37.8" cy="28.7" r="0.45" fill="white"/>
+
+  <!-- Joues roses -->
+  <ellipse cx="22" cy="33" rx="3.2" ry="1.8" fill="#ff9eb5" opacity="0.5"/>
+  <ellipse cx="42" cy="33" rx="3.2" ry="1.8" fill="#ff9eb5" opacity="0.5"/>
+
+  <!-- Sourire -->
+  <path d="M27 35.5 Q32 39 37 35.5" fill="none" stroke="white" stroke-width="1.6" stroke-linecap="round"/>
+
+  <!-- Petite étoile déco en haut à droite -->
+  <text x="47" y="17" font-size="8" fill="#f0c040" font-family="sans-serif">✦</text>
+</svg>

@@ -289,6 +289,7 @@
           <li>Héritage : <code>class Enfant(Parent)</code> et <code>super().__init__()</code></li>
           <li>Polymorphisme : même méthode, comportement différent selon le type réel</li>
           <li>Encapsulation : conventions <code>_attribut</code> (protégé) et <code>__attribut</code> (privé)</li>
+          <li>Méthodes spéciales : <code>__str__</code>, <code>__repr__</code>, <code>__eq__</code>, <code>__len__</code>, <code>__add__</code></li>
           <li>Manipuler des listes d'objets : boucles, cumuls, filtres, recherche de max</li>
         </ul>
       </div>
@@ -337,8 +338,8 @@
     <span class="kw">def</span> <span class="fn">vitesse</span>(<span class="sf">self</span>):
         <span class="kw">return</span> <span class="sf">self</span>._vitesse
 
-    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):
-        <span class="kw">print</span>(<span class="sf">self</span>.marque, <span class="st">"à"</span>, <span class="sf">self</span>._vitesse, <span class="st">"km/h"</span>)
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.marque}<span class="st"> à </span>{<span class="sf">self</span>._vitesse}<span class="st"> km/h"</span>
 
 <span class="cm"># Instanciation</span>
 ma_voiture = <span class="cl">Voiture</span>(<span class="st">"Toyota"</span>, <span class="nb">180</span>)   <span class="cm"># Python appelle __init__ automatiquement</span>
@@ -535,6 +536,7 @@ c2 = <span class="cl">Compte</span>(<span class="st">"Bob"</span>)          <spa
           <tr><th>Famille</th><th>Rôle</th><th>Utilise <code>return</code> ?</th><th>Exemple</th></tr>
           <tr><td><strong>Accesseur</strong> (getter)</td><td>Lit et retourne une valeur sans modifier l'objet</td><td>✅ Toujours</td><td><code>get_solde()</code>, <code>aire()</code></td></tr>
           <tr><td><strong>Mutateur</strong> (setter)</td><td>Modifie un attribut</td><td>❌ Jamais</td><td><code>deposer()</code>, <code>set_note()</code></td></tr>
+          <tr><td><strong>Spéciale</strong> (dunder)</td><td>Comportement built-in</td><td>✅ (<code>__str__</code> retourne une str)</td><td><code>__str__</code>, <code>__eq__</code></td></tr>
         </table>
 
 <pre><code><span class="kw">class</span> <span class="cl">Compte</span>:
@@ -553,8 +555,8 @@ c2 = <span class="cl">Compte</span>(<span class="st">"Bob"</span>)          <spa
         <span class="kw">if</span> <span class="nb">0</span> < montant <= <span class="sf">self</span>.solde:
             <span class="sf">self</span>.solde -= montant
 
-    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):
-        <span class="kw">print</span>(<span class="sf">self</span>.titulaire, <span class="st">":"</span>, <span class="sf">self</span>.solde, <span class="st">"€"</span>)</code></pre>
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.titulaire}<span class="st"> : </span>{<span class="sf">self</span>.solde}<span class="st">€"</span></code></pre>
       </div>
 
       <div id="attribut-vs-methode">
@@ -639,29 +641,64 @@ b.<span class="fn">set_charge</span>(<span class="nb">150</span>)       <span cl
     </section>
 
     <!-- ══════════════════════════════════════
-         MÉTHODES SPÉCIALES (programme)
+         MÉTHODES SPÉCIALES
          ══════════════════════════════════════ -->
     <section id="methodes-spec">
-      <h2>✨ La méthode <code>afficher</code></h2>
-      <p>Au programme NSI Terminale, la seule méthode "spéciale" à maîtriser est <code>__init__</code>. Pour afficher les informations d'un objet, on définit une méthode <strong>ordinaire</strong> <code>afficher(self)</code> qui utilise <code>print()</code> directement.</p>
+      <h2>✨ Méthodes spéciales (dunder)</h2>
+      <p>Les méthodes dont le nom commence et termine par <code>__</code> sont appelées <strong>méthodes spéciales</strong> (ou <em>dunder methods</em>). Python les invoque automatiquement dans certains contextes.</p>
 
-      <div class="callout callout-info">
-        <span class="callout-icon">💡</span>
+      <table>
+        <tr><th>Méthode</th><th>Déclencheur</th><th>Usage typique</th></tr>
+        <tr><td><code>__init__</code></td><td><code>Classe(args)</code></td><td>Constructeur — initialise les attributs</td></tr>
+        <tr><td><code>__str__</code></td><td><code>print(obj)</code>, <code>str(obj)</code></td><td>Affichage lisible pour l'utilisateur</td></tr>
+        <tr><td><code>__repr__</code></td><td>Console Python, <code>repr(obj)</code></td><td>Représentation technique/debug</td></tr>
+        <tr><td><code>__len__</code></td><td><code>len(obj)</code></td><td>Taille logique de l'objet</td></tr>
+        <tr><td><code>__eq__</code></td><td><code>obj1 == obj2</code></td><td>Égalité entre deux objets</td></tr>
+        <tr><td><code>__lt__</code></td><td><code>obj1 &lt; obj2</code></td><td>Comparaison (inférieur)</td></tr>
+        <tr><td><code>__add__</code></td><td><code>obj1 + obj2</code></td><td>Addition entre objets</td></tr>
+        <tr><td><code>__getitem__</code></td><td><code>obj[i]</code></td><td>Accès par indice</td></tr>
+      </table>
+
+<pre><code><span class="kw">class</span> <span class="cl">Fraction</span>:
+    <span class="kw">from</span> math <span class="kw">import</span> gcd
+
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, num, den):
+        <span class="kw">if</span> den == <span class="nb">0</span>: <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="st">"Dénominateur nul"</span>)
+        g = <span class="cl">Fraction</span>.<span class="fn">gcd</span>(<span class="fn">abs</span>(num), <span class="fn">abs</span>(den))
+        <span class="sf">self</span>.num = num // g
+        <span class="sf">self</span>.den = den // g
+
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):                  <span class="cm"># print(f) → "3/4"</span>
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.num}<span class="st">/</span>{<span class="sf">self</span>.den}<span class="st">"</span>
+
+    <span class="kw">def</span> <span class="fn">__repr__</span>(<span class="sf">self</span>):                 <span class="cm"># console → Fraction(3, 4)</span>
+        <span class="kw">return</span> <span class="st">f"Fraction(</span>{<span class="sf">self</span>.num}<span class="st">, </span>{<span class="sf">self</span>.den}<span class="st">)"</span>
+
+    <span class="kw">def</span> <span class="fn">__add__</span>(<span class="sf">self</span>, other):           <span class="cm"># f1 + f2</span>
+        <span class="kw">return</span> <span class="cl">Fraction</span>(<span class="sf">self</span>.num * other.den + other.num * <span class="sf">self</span>.den,
+                        <span class="sf">self</span>.den * other.den)
+
+    <span class="kw">def</span> <span class="fn">__eq__</span>(<span class="sf">self</span>, other):            <span class="cm"># f1 == f2</span>
+        <span class="kw">return</span> <span class="sf">self</span>.num == other.num <span class="kw">and</span> <span class="sf">self</span>.den == other.den
+
+f1 = <span class="cl">Fraction</span>(<span class="nb">1</span>, <span class="nb">2</span>)
+f2 = <span class="cl">Fraction</span>(<span class="nb">1</span>, <span class="nb">3</span>)
+<span class="kw">print</span>(f1 + f2)   <span class="cm"># 5/6</span>
+<span class="kw">print</span>(f1 == f2)  <span class="cm"># False</span></code></pre>
+
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
         <div class="callout-body">
-          <strong>Pour aller plus loin (hors programme bac) :</strong> Python dispose de méthodes spéciales comme <code>__str__</code> (appelée par <code>print(obj)</code>), <code>__eq__</code> (appelée par <code>==</code>), <code>__add__</code> (appelée par <code>+</code>)… Elles ne sont <strong>pas exigibles au baccalauréat</strong> mais peuvent apparaître dans un énoncé comme donnée à lire.
+          <strong>Piège <code>__eq__</code> :</strong> sans définir <code>__eq__</code>, Python compare les <em>adresses mémoire</em> (identité), pas les valeurs. Deux objets Fraction(1,2) créés séparément seraient inégaux. Toujours définir <code>__eq__</code> si l'égalité logique a du sens.
         </div>
       </div>
 
-<pre><code><span class="kw">class</span> <span class="cl">Eleve</span>:
-    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom, note):
-        <span class="sf">self</span>.nom  = nom
-        <span class="sf">self</span>.note = note
-
-    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):              <span class="cm"># méthode ordinaire d'affichage</span>
-        <span class="kw">print</span>(<span class="sf">self</span>.nom, <span class="st">":"</span>, <span class="sf">self</span>.note)
-
-e = <span class="cl">Eleve</span>(<span class="st">"Alice"</span>, <span class="nb">15</span>)
-e.<span class="fn">afficher</span>()   <span class="cm"># Alice : 15</span></code></pre>
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body">
+          <strong>Piège <code>__str__</code> :</strong> <code>__str__</code> doit <strong>retourner</strong> une chaîne, jamais l'afficher avec <code>print()</code>. <code>print()</code> retourne <code>None</code> → <code>TypeError</code> quand Python attend une str.
+        </div>
+      </div>
     </section>
 
     <!-- ══════════════════════════════════════
@@ -733,8 +770,8 @@ promo = [<span class="cl">Eleve</span>(<span class="st">"Alice"</span>, <span cl
         <span class="sf">self</span>.nom = nom
     <span class="kw">def</span> <span class="fn">parler</span>(<span class="sf">self</span>):
         <span class="kw">return</span> <span class="st">"..."</span>
-    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):
-        <span class="kw">print</span>(<span class="sf">self</span>.nom, <span class="st">"dit :"</span>, <span class="sf">self</span>.<span class="fn">parler</span>())
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.nom}<span class="st"> dit : </span>{<span class="sf">self</span>.<span class="fn">parler</span>()}<span class="st">"</span>
 
 <span class="kw">class</span> <span class="cl">Chien</span>(<span class="cl">Animal</span>):       <span class="cm"># Chien hérite de Animal</span>
     <span class="kw">def</span> <span class="fn">parler</span>(<span class="sf">self</span>):       <span class="cm"># surcharge (override) de parler</span>
@@ -750,7 +787,7 @@ promo = [<span class="cl">Eleve</span>(<span class="st">"Alice"</span>, <span cl
 <span class="cm"># Polymorphisme : même interface, comportement différent selon le type réel</span>
 animaux = [<span class="cl">Chien</span>(<span class="st">"Rex"</span>), <span class="cl">Chat</span>(<span class="st">"Felix"</span>, <span class="kw">True</span>)]
 <span class="kw">for</span> a <span class="kw">in</span> animaux:
-    a.<span class="fn">afficher</span>()   <span class="cm"># appelle parler() → Chien puis Chat donnent des résultats différents</span></code></pre>
+    <span class="kw">print</span>(a)   <span class="cm"># __str__ appelle parler() → Chien puis Chat donnent des résultats différents</span></code></pre>
       </div>
 
       <div id="super">
@@ -837,6 +874,8 @@ cible  = <span class="cl">Pokemon</span>(<span class="st">"Pikachu"</span>, <spa
             <tr><td>Méthode bool en boucle</td><td><code class="err">if e.est_admis</code></td><td><code>if e.est_admis()</code></td></tr>
             <tr><td>Chercher le max</td><td>Initialiser avec <code class="err">0</code> ou <code class="err">None</code></td><td>Initialiser avec <code>liste[0]</code></td></tr>
             <tr><td><code>return</code> cumulatif</td><td>Return <em>dans</em> la boucle</td><td>Return <em>après</em> la boucle</td></tr>
+            <tr><td><code>__str__</code></td><td><code class="err">print(self.nom)</code> dedans</td><td><code>return str(self.nom)</code></td></tr>
+            <tr><td>Égalité d'objets</td><td><code class="err">==</code> compare les adresses par défaut</td><td>Définir <code>__eq__</code></td></tr>
             <tr><td>Héritage — déclarer</td><td><code class="err">class Enfant:</code></td><td><code>class Enfant(Parent):</code></td></tr>
             <tr><td>Héritage — init parent</td><td>Oublier <code>super().__init__()</code></td><td><code>super().__init__(...)</code> en 1ère ligne</td></tr>
             <tr><td>Étendre une méthode</td><td>Réécrire toute la logique parent</td><td><code>super().methode()</code> + ajouts</td></tr>
@@ -850,6 +889,36 @@ cible  = <span class="cl">Pokemon</span>(<span class="st">"Pikachu"</span>, <spa
          ══════════════════════════════════════ -->
     <section id="exercices">
       <h2>🏋️ Exercices</h2>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-facile">Facile</span>
+          <span class="exercise-title">Classe Fraction avec méthodes spéciales</span>
+        </div>
+        <div class="exercise-body">
+          <p>Créer une classe <code>Fraction</code> avec numérateur et dénominateur. Implémenter <code>__str__</code> (affichage <code>"num/den"</code>), <code>__add__</code> (addition de deux fractions) et <code>__eq__</code> (égalité). Simplifier la fraction dans le constructeur avec <code>gcd</code>.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+<pre><code><span class="kw">from</span> math <span class="kw">import</span> gcd
+<span class="kw">class</span> <span class="cl">Fraction</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, num, den):
+        <span class="kw">if</span> den == <span class="nb">0</span>: <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="st">"Dénominateur nul"</span>)
+        g = <span class="fn">gcd</span>(<span class="fn">abs</span>(num), <span class="fn">abs</span>(den))
+        <span class="sf">self</span>.num = num // g
+        <span class="sf">self</span>.den = den // g
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.num}<span class="st">/</span>{<span class="sf">self</span>.den}<span class="st">"</span>
+    <span class="kw">def</span> <span class="fn">__add__</span>(<span class="sf">self</span>, other):
+        <span class="kw">return</span> <span class="cl">Fraction</span>(<span class="sf">self</span>.num * other.den + other.num * <span class="sf">self</span>.den,
+                        <span class="sf">self</span>.den * other.den)
+    <span class="kw">def</span> <span class="fn">__eq__</span>(<span class="sf">self</span>, other):
+        <span class="kw">return</span> <span class="sf">self</span>.num == other.num <span class="kw">and</span> <span class="sf">self</span>.den == other.den
+
+<span class="kw">print</span>(<span class="cl">Fraction</span>(<span class="nb">1</span>,<span class="nb">2</span>) + <span class="cl">Fraction</span>(<span class="nb">1</span>,<span class="nb">3</span>))   <span class="cm"># 5/6</span>
+<span class="kw">print</span>(<span class="cl">Fraction</span>(<span class="nb">2</span>,<span class="nb">4</span>) == <span class="cl">Fraction</span>(<span class="nb">1</span>,<span class="nb">2</span>)) <span class="cm"># True (simplification dans __init__)</span></code></pre>
+          </div></div>
+        </div>
+      </div>
 
       <div class="exercise">
         <div class="exercise-header">
@@ -899,7 +968,7 @@ cible  = <span class="cl">Pokemon</span>(<span class="st">"Pikachu"</span>, <spa
           <span class="exercise-title">Héritage : Compte bancaire &amp; Compte épargne</span>
         </div>
         <div class="exercise-body">
-          <p>Créer une classe <code>Compte</code> avec un attribut privé <code>__solde</code>, des méthodes <code>solde()</code>, <code>depot(m)</code> et <code>retrait(m)</code> (lève une erreur si solde insuffisant). Puis une classe <code>CompteEpargne</code> héritant de <code>Compte</code> avec un <code>taux</code> et une méthode <code>capitaliser()</code> qui ajoute les intérêts.</p>
+          <p>Créer une classe <code>Compte</code> avec un attribut privé <code>__solde</code>, des méthodes <code>solde()</code>, <code>depot(m)</code>, <code>retrait(m)</code> (lève une erreur si solde insuffisant) et <code>__str__</code>. Puis une classe <code>CompteEpargne</code> héritant de <code>Compte</code> avec un <code>taux</code> et une méthode <code>capitaliser()</code> qui ajoute les intérêts.</p>
           <button class="toggle-correction">▼ Voir la correction</button>
           <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
 <pre><code><span class="kw">class</span> <span class="cl">Compte</span>:
@@ -911,8 +980,8 @@ cible  = <span class="cl">Pokemon</span>(<span class="st">"Pikachu"</span>, <spa
     <span class="kw">def</span> <span class="fn">retrait</span>(<span class="sf">self</span>, m):
         <span class="kw">if</span> m > <span class="sf">self</span>.__solde: <span class="kw">raise</span> <span class="fn">ValueError</span>(<span class="st">"Solde insuffisant"</span>)
         <span class="sf">self</span>.__solde -= m
-    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>):
-        <span class="kw">print</span>(<span class="sf">self</span>.titulaire, <span class="st">":"</span>, <span class="sf">self</span>.__solde, <span class="st">"€"</span>)
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>):
+        <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.titulaire}<span class="st"> : </span>{<span class="sf">self</span>.__solde}<span class="st">€"</span>
 
 <span class="kw">class</span> <span class="cl">CompteEpargne</span>(<span class="cl">Compte</span>):
     <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, titulaire, solde, taux):
@@ -923,7 +992,7 @@ cible  = <span class="cl">Pokemon</span>(<span class="st">"Pikachu"</span>, <spa
 
 ce = <span class="cl">CompteEpargne</span>(<span class="st">"Alice"</span>, <span class="nb">1000</span>, <span class="nb">0.03</span>)
 ce.<span class="fn">capitaliser</span>()
-ce.<span class="fn">afficher</span>()   <span class="cm"># Alice : 1030.0 €</span></code></pre>
+<span class="kw">print</span>(ce)   <span class="cm"># Alice : 1030.0€</span></code></pre>
           </div></div>
         </div>
       </div>
@@ -934,7 +1003,7 @@ ce.<span class="fn">afficher</span>()   <span class="cm"># Alice : 1030.0 €</s
           <span class="exercise-title">Polymorphisme : hiérarchie Pokémon</span>
         </div>
         <div class="exercise-body">
-          <p>Créer une classe <code>Pokemon</code> avec <code>nom</code>, <code>type_p</code>, <code>pdv</code>, une méthode <code>attaquer(cible)</code> (−10 PV, min 0) et <code>est_vaincu()</code>. Créer les sous-classes <code>PokemonFeu</code> et <code>PokemonEau</code> avec leurs propres <code>attaquer</code> (dégâts différents). Écrire une fonction <code>duel(p1, p2)</code> qui simule un combat et retourne le gagnant.</p>
+          <p>Créer une classe <code>Pokemon</code> avec <code>nom</code>, <code>type_p</code>, <code>pdv</code>, une méthode <code>attaquer(cible)</code> (−10 PV, min 0), <code>est_vaincu()</code> et <code>__str__</code>. Créer les sous-classes <code>PokemonFeu</code> et <code>PokemonEau</code> avec leurs propres <code>attaquer</code> (dégâts différents). Écrire une fonction <code>duel(p1, p2)</code> qui simule un combat et retourne le gagnant.</p>
           <button class="toggle-correction">▼ Voir la correction</button>
           <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
 <pre><code><span class="kw">class</span> <span class="cl">Pokemon</span>:
@@ -943,7 +1012,7 @@ ce.<span class="fn">afficher</span>()   <span class="cm"># Alice : 1030.0 €</s
     <span class="kw">def</span> <span class="fn">attaquer</span>(<span class="sf">self</span>, cible):
         cible.pdv = <span class="fn">max</span>(<span class="nb">0</span>, cible.pdv - <span class="nb">10</span>)
     <span class="kw">def</span> <span class="fn">est_vaincu</span>(<span class="sf">self</span>): <span class="kw">return</span> <span class="sf">self</span>.pdv <= <span class="nb">0</span>
-    <span class="kw">def</span> <span class="fn">afficher</span>(<span class="sf">self</span>): <span class="kw">print</span>(<span class="sf">self</span>.nom, <span class="st">"["</span> + <span class="sf">self</span>.type + <span class="st">"]"</span>, <span class="sf">self</span>.pdv, <span class="st">"PV"</span>)
+    <span class="kw">def</span> <span class="fn">__str__</span>(<span class="sf">self</span>): <span class="kw">return</span> <span class="st">f"</span>{<span class="sf">self</span>.nom}<span class="st"> [</span>{<span class="sf">self</span>.type}<span class="st">] </span>{<span class="sf">self</span>.pdv}<span class="st"> PV"</span>
 
 <span class="kw">class</span> <span class="cl">PokemonFeu</span>(<span class="cl">Pokemon</span>):
     <span class="kw">def</span> <span class="fn">__init__</span>(<span class="sf">self</span>, nom, pdv):
@@ -998,6 +1067,12 @@ ce.<span class="fn">afficher</span>()   <span class="cm"># Alice : 1030.0 €</s
           <li>Override : redéfinir méthode</li>
           <li>Polymorphisme : même nom, ≠ comportement</li>
         </ul></div>
+        <div class="synthese-card"><h4>DUNDER</h4><ul>
+          <li><code>__str__</code> → <code>print(obj)</code></li>
+          <li><code>__repr__</code> → console debug</li>
+          <li><code>__eq__</code> → <code>obj1 == obj2</code></li>
+          <li><code>__add__</code> → <code>obj1 + obj2</code></li>
+        </ul></div>
         <div class="synthese-card"><h4>LISTES</h4><ul>
           <li>Accumulateur avant la boucle</li>
           <li><code>return</code> après la boucle</li>
@@ -1007,10 +1082,32 @@ ce.<span class="fn">afficher</span>()   <span class="cm"># Alice : 1030.0 €</s
       </div>
     </section>
 
+    <!-- ══════════════════════════════════════
+         QCM INTÉGRÉ
+         ══════════════════════════════════════ -->
     <section class="quiz-section" id="qcm">
-      <h2>🧠 QCM</h2>
-      <p style="color:var(--text2);margin-bottom:1rem">Choisissez le nombre de questions et le niveau, puis lancez.</p>
-      <div id="quiz-container-poo"></div>
+      <h2>🧠 QCM — Auto-évaluation</h2>
+      <p style="color:var(--text2);margin-bottom:1rem">50 questions couvrant tous les chapitres · Tirage aléatoire</p>
+
+      <div class="qcm-wrap">
+        <div class="qcm-controls">
+          <span class="qcm-ctrl-label">Nombre de questions :</span>
+          <button class="btn-qcount sel" onclick="setQCount(this,5)">5</button>
+          <button class="btn-qcount"    onclick="setQCount(this,10)">10</button>
+          <button class="btn-qcount"    onclick="setQCount(this,20)">20</button>
+          <button class="btn-qcount"    onclick="setQCount(this,0)">Toutes (50)</button>
+          <button class="btn-launch" onclick="launchQuiz()">▶ Lancer</button>
+        </div>
+        <div class="qcm-prog-wrap" id="qprog">
+          <div class="qcm-prog-row">
+            <span class="qcm-prog-txt" id="qprog-txt">Question 1 / 5</span>
+            <span class="qcm-prog-txt" id="qscore-txt">Score : 0</span>
+          </div>
+          <div class="qcm-track"><div class="qcm-fill" id="qfill"></div></div>
+        </div>
+        <div id="qarea"></div>
+        <div class="qcm-result" id="qresult"></div>
+      </div>
     </section>
 
     <!-- Navigation entre chapitres -->
@@ -1031,20 +1128,146 @@ ce.<span class="fn">afficher</span>()   <span class="cm"># Alice : 1030.0 €</s
 <script src="../js/quiz.js"></script>
 <script src="../js/main.js"></script>
 
-<!-- Toggle corrections -->
+<!-- Toggle corrections (reprend le comportement du site) -->
 <script>
 document.querySelectorAll('.toggle-correction').forEach(btn => {
   btn.addEventListener('click', () => {
     const corr = btn.nextElementSibling;
     const open = corr.style.display === 'block';
     corr.style.display = open ? 'none' : 'block';
-    btn.textContent = open ? '▼ Voir la correction' : '▲ Masquer';
+    btn.textContent   = open ? '▼ Voir la correction' : '▲ Masquer';
   });
 });
 </script>
 
+<!-- QCM intégré autonome (50 questions) -->
 <script>
-  initChapterQuiz('poo', 'quiz-container-poo', 5);
+const QDB = [
+  {theme:"classe",text:"Qu'est-ce qu'une <strong>classe</strong> en Python ?",options:["Un objet créé en mémoire","Un modèle (plan) à partir duquel on crée des objets","Une variable contenant plusieurs valeurs","Une fonction qui retourne un objet"],answer:1,expl:"Une classe est le <strong>plan</strong>, le moule. Les objets sont les instances concrètes créées à partir de ce plan."},
+  {theme:"classe",text:"Comment appelle-t-on un objet créé à partir d'une classe ?",options:["Une méthode","Un attribut","Une instance","Un module"],answer:2,expl:"Un objet créé à partir d'une classe s'appelle une <strong>instance</strong>."},
+  {theme:"classe",text:"Quelle est la convention de nommage d'une classe Python ?",options:["tout_en_minuscules","toutEnMinuscules","PremièreLettreMajuscule (PascalCase)","TOUT_EN_MAJUSCULES"],answer:2,expl:"Les classes utilisent le <strong>PascalCase</strong> : <code>Pokemon</code>, <code>CompteBancaire</code>."},
+  {theme:"classe",text:"Deux objets d'une même classe partagent-ils leurs valeurs d'attributs ?",options:["Oui, toujours","Non, chaque instance a ses propres valeurs","Oui si on utilise self","Non, ils n'ont aucun attribut"],answer:1,expl:"Chaque instance est <strong>indépendante</strong> avec ses propres valeurs d'attributs."},
+  {theme:"classe",text:"Comment accéder à l'attribut <code>nom</code> d'un objet <code>p</code> depuis l'extérieur ?",options:["<code>p[nom]</code>","<code>p.get(nom)</code>","<code>p.nom</code>","<code>p->nom</code>"],answer:2,expl:"Notation pointée : <code>objet.attribut</code>. Pas de crochets, pas de flèche."},
+  {theme:"classe",text:"Qu'est-ce qu'un attribut de classe ?",options:["Un attribut défini dans __init__ avec self.","Un attribut partagé par toutes les instances, défini dans le corps de la classe","Un attribut privé avec __","Un attribut qui ne peut pas être modifié"],answer:1,expl:"Un attribut de classe est défini hors de toute méthode, directement dans le corps de la classe. Il est partagé par toutes les instances."},
+  {theme:"classe",text:"Quelle ligne instancie correctement <code>Eleve('Alice', 15)</code> ?",options:["<code>e = Eleve.__init__('Alice',15)</code>","<code>e = new Eleve('Alice',15)</code>","<code>e = Eleve('Alice',15)</code>","<code>e = Eleve(self,'Alice',15)</code>"],answer:2,expl:"On instancie avec <code>NomClasse(args)</code>. <code>new</code> n'existe pas en Python."},
+  {theme:"classe",text:"Combien d'instances peut-on créer à partir d'une même classe ?",options:["Une seule","Deux au maximum","Autant que l'on veut","Cela dépend du constructeur"],answer:2,expl:"On peut créer <strong>autant d'instances que l'on veut</strong>."},
+  {theme:"classe",text:"Que retourne <code>isinstance(p, Pokemon)</code> si <code>p</code> est un <code>PokemonFeu</code> héritant de <code>Pokemon</code> ?",options:["False","True","None","TypeError"],answer:1,expl:"<code>isinstance</code> retourne <code>True</code> pour la classe réelle ET toutes ses classes parentes."},
+  {theme:"classe",text:"Que signifie <strong>encapsulation</strong> ?",options:["Mettre tout le code dans une fonction","Regrouper données et comportements, contrôler l'accès","Créer plusieurs classes identiques","Convertir un objet en chaîne"],answer:1,expl:"L'encapsulation regroupe attributs et méthodes, et protège les données via des accesseurs/mutateurs."},
+  {theme:"init",text:"Quel est le nom obligatoire du constructeur Python ?",options:["<code>constructor</code>","<code>create</code>","<code>__init__</code>","<code>__new__</code>"],answer:2,expl:"Le constructeur Python s'appelle <code>__init__</code> — deux underscores avant ET après."},
+  {theme:"init",text:"Quel est le premier paramètre obligatoire du constructeur ?",options:["<code>this</code>","<code>cls</code>","<code>self</code>","Le nom de la classe"],answer:2,expl:"<code>self</code> représente l'instance en cours. C'est le premier paramètre de toute méthode de classe."},
+  {theme:"init",text:"Que se passe-t-il si on oublie <code>self.</code> devant un attribut dans <code>__init__</code> ?",options:["Python crée quand même l'attribut","Une variable locale créée disparaît à la fin de __init__","SyntaxError","L'attribut vaut None"],answer:1,expl:"Sans <code>self.</code>, c'est une variable locale qui disparaît → <code>AttributeError</code> à la première utilisation."},
+  {theme:"init",text:"Que doit retourner le constructeur <code>__init__</code> ?",options:["<code>self</code>","L'objet créé","<code>True</code>","Rien (pas de return)"],answer:3,expl:"<code>__init__</code> ne retourne <strong>jamais rien</strong>. <code>return self</code> lève un <code>TypeError</code>."},
+  {theme:"init",text:"Laquelle de ces définitions est <strong>correcte</strong> ?",options:["<code>def init(self, x): self.x = x</code>","<code>def __init__(self, x): self.x = x</code>","<code>def __init__(x): self.x = x</code>","<code>def __init__(self, x): return x</code>"],answer:1,expl:"Seule la B est correcte : nom <code>__init__</code>, premier param <code>self</code>, <code>self.x</code>, pas de <code>return</code>."},
+  {theme:"init",text:"Comment déclarer un attribut <code>score</code> initialisé à 0 par défaut ?",options:["<code>def __init__(self,nom,score): self.score=0</code>","<code>def __init__(self,nom,score=0): self.score=score</code>","<code>def __init__(self,nom): self.score=score or 0</code>","<code>def __init__(self,nom,score): score=0</code>"],answer:1,expl:"On utilise une valeur par défaut dans la signature : <code>score=0</code>."},
+  {theme:"init",text:"Peut-on calculer un attribut dans le constructeur ?",options:["Non","Oui, comme <code>self.aire = l * h</code>","Oui, mais seulement avec return","Non, RecursionError"],answer:1,expl:"Oui, on peut parfaitement <strong>calculer des attributs</strong> dans <code>__init__</code>."},
+  {theme:"init",text:"Combien d'objets Balle sont créés par <code>b1=Balle('r'); b2=Balle('b'); b3=b1</code> ?",options:["3","2","1","0"],answer:1,expl:"<code>b3 = b1</code> crée une deuxième référence vers le même objet — pas un nouvel objet. Il y a 2 Balles en mémoire."},
+  {theme:"init",text:"Qu'est-ce que <code>p = Point(3, 5)</code> déclenche ?",options:["Appel manuel de __init__","Création de l'objet + appel automatique de __init__(self,3,5)","Création d'un dictionnaire","Appel de __init__(Point,3,5)"],answer:1,expl:"Python crée l'objet puis appelle <code>__init__</code> automatiquement. On n'appelle jamais <code>__init__</code> directement."},
+  {theme:"init",text:"Que signifie l'underscore dans <code>self._vitesse</code> ?",options:["L'attribut est privé et inaccessible","Convention : l'attribut est protégé, accessible mais à ne pas modifier directement","L'attribut est une constante","Rien, c'est décoratif"],answer:1,expl:"Un seul underscore est une <strong>convention</strong> (pas une règle Python) signalant que l'attribut est protégé — accessible mais destiné à un usage interne."},
+  {theme:"methods",text:"Différence entre accesseur et mutateur ?",options:["L'accesseur prend des paramètres, le mutateur non","L'accesseur retourne sans modifier ; le mutateur modifie sans return","L'accesseur s'appelle get_, le mutateur set_ obligatoirement","Aucune différence"],answer:1,expl:"<strong>Accesseur</strong> : lit et retourne. <strong>Mutateur</strong> : modifie sans rien retourner."},
+  {theme:"methods",text:"Que retourne <code>r.aire</code> (sans parenthèses) si <code>aire</code> est une méthode ?",options:["La valeur calculée","0","L'objet méthode lui-même (pas le résultat)","AttributeError"],answer:2,expl:"Sans <code>()</code>, on obtient l'objet méthode lui-même — toujours truthy. Bug silencieux très courant."},
+  {theme:"methods",text:"Quelle méthode spéciale est appelée par <code>print(obj)</code> ?",options:["<code>__print__</code>","<code>__repr__</code>","<code>__str__</code>","<code>__display__</code>"],answer:2,expl:"<code>__str__</code> est appelée par <code>print()</code> et <code>str()</code>. Elle doit toujours <code>return</code> une chaîne."},
+  {theme:"methods",text:"Un mutateur doit-il contenir un <code>return</code> ?",options:["Oui, il retourne self","Oui, il retourne la nouvelle valeur","Non, il modifie l'attribut et ne retourne rien","Oui si la modification a réussi"],answer:2,expl:"Un mutateur <strong>ne retourne rien</strong>. Son rôle est uniquement de modifier un attribut."},
+  {theme:"methods",text:"Quel opérateur logique est invalide en Python ?",options:["<code>and</code>","<code>or</code>","<code>&&</code>","<code>not</code>"],answer:2,expl:"<code>&&</code> est la syntaxe C/Java. En Python : <code>and</code> en minuscules."},
+  {theme:"methods",text:"Que retourne <code>__str__</code> qui contient <code>print(self.nom)</code> ?",options:["La chaîne correctement","None — print ne retourne rien","None — et TypeError car note est int","AttributeError"],answer:1,expl:"<code>print()</code> retourne <code>None</code> → <code>TypeError</code> quand Python attend une str. Il faut <code>return</code>."},
+  {theme:"methods",text:"Comment appeler <code>aire()</code> correctement dans <code>est_plus_grand</code> ?",options:["<code>self.aire > autre.aire</code>","<code>self.aire() > autre.aire</code>","<code>self.aire() > autre.aire()</code>","<code>aire(self) > aire(autre)</code>"],answer:2,expl:"<code>aire</code> est une méthode → parenthèses obligatoires des <strong>deux côtés</strong>."},
+  {theme:"methods",text:"Que signifie <code>0 <= val <= 100</code> en Python ?",options:["SyntaxError","Équivalent à <code>val>=0 or val<=100</code>","Équivalent à <code>val>=0 and val<=100</code>","Équivalent à <code>0<=val</code> seulement"],answer:2,expl:"Python autorise le chaînage de comparaisons. Strictement équivalent à <code>val>=0 and val<=100</code>."},
+  {theme:"methods",text:"Pourquoi définir <code>__eq__</code> dans une classe ?",options:["Pour utiliser print()","Car sans __eq__, == compare les adresses mémoire, pas les valeurs","Pour permettre l'héritage","Pour trier des listes"],answer:1,expl:"Sans <code>__eq__</code>, Python compare les <em>identités</em> (adresses mémoire). Deux objets Fraction(1,2) distincts seraient inégaux."},
+  {theme:"methods",text:"Bonne façon de modifier <code>self.temperature</code> en ajoutant <code>delta</code> ?",options:["<code>temperature = self.temperature + delta</code>","<code>self.temperature = temperature + delta</code>","<code>self.temperature = self.temperature + delta</code>","<code>return self.temperature + delta</code>"],answer:2,expl:"Il faut <code>self.</code> des deux côtés : on lit l'ancienne valeur et on réassigne le résultat."},
+  {theme:"lists",text:"Comment accéder à l'attribut <code>pages</code> du 2e livre d'une liste <code>biblio</code> ?",options:["<code>biblio[1].pages()</code>","<code>biblio[1].pages</code>","<code>biblio.pages[1]</code>","<code>get_pages(biblio[1])</code>"],answer:1,expl:"<code>biblio[1]</code> = 2e objet (index 1). <code>.pages</code> = attribut, pas de parenthèses."},
+  {theme:"lists",text:"Que renvoie une fonction avec <code>return total</code> <em>dans</em> la boucle ?",options:["La somme de tous les éléments","0","La valeur du premier élément uniquement","IndexError"],answer:2,expl:"Le <code>return</code> dans la boucle → Python sort dès la première itération."},
+  {theme:"lists",text:"Pourquoi <code>if e.est_admis:</code> est-il toujours vrai ?",options:["La méthode retourne toujours True","L'objet méthode (sans ()) est toujours truthy","Python évalue les méthodes à True","SyntaxError"],answer:1,expl:"Sans <code>()</code>, <code>e.est_admis</code> est un objet méthode — tout objet non-None est truthy. Bug silencieux."},
+  {theme:"lists",text:"Avec quoi initialise-t-on le champion pour chercher le max ?",options:["<code>champion = 0</code>","<code>champion = None</code>","<code>champion = liste[0]</code>","<code>champion = max(liste)</code>"],answer:2,expl:"On initialise avec le <strong>premier objet</strong>. Initialiser avec 0 ou None → <code>AttributeError</code>."},
+  {theme:"lists",text:"Quelle ligne ajoute un objet Eleve à la liste <code>promo</code> ?",options:["<code>promo = promo + Eleve('Alice',15)</code>","<code>promo.add(Eleve('Alice',15))</code>","<code>promo.append(Eleve('Alice',15))</code>","<code>promo[len(promo)] = Eleve('Alice',15)</code>"],answer:2,expl:"<code>list.append(element)</code> est la méthode standard. <code>add</code> n'existe pas sur les listes."},
+  {theme:"lists",text:"Différence entre retourner <code>c</code> et <code>c.titulaire</code> ?",options:["Aucune","<code>c</code> = objet complet ; <code>c.titulaire</code> = chaîne du nom","<code>c</code> est plus rapide","<code>c.titulaire</code> crée une copie"],answer:1,expl:"<code>c</code> donne l'objet entier avec tous ses attributs ; <code>c.titulaire</code> donne uniquement la chaîne du nom."},
+  {theme:"lists",text:"Comment appeler une méthode sur chaque objet d'une liste ?",options:["<code>for e in promo: e.est_admis</code>","<code>for e in promo: if e.est_admis():</code>","<code>promo.est_admis()</code>","<code>est_admis(promo)</code>"],answer:1,expl:"Méthode → parenthèses obligatoires. On itère sur la liste avec <code>for</code> puis on appelle <code>e.est_admis()</code>."},
+  {theme:"lists",text:"Quel est le résultat de <code>len(admis)</code> si 3 élèves sur 5 ont note ≥ 10 et on filtre correctement ?",options:["5","3","0","Dépend de l'ordre"],answer:1,expl:"Seuls les 3 élèves avec note ≥ 10 sont ajoutés à <code>admis</code> → <code>len == 3</code>."},
+  {theme:"lists",text:"Pourquoi protéger la division dans <code>moyenne</code> avec <code>if len(promo) == 0</code> ?",options:["Par convention","Pour éviter une ZeroDivisionError si la liste est vide","Pour accélérer le code","Pour éviter AttributeError"],answer:1,expl:"Diviser par 0 lève une <code>ZeroDivisionError</code>. On vérifie que la liste n'est pas vide avant de diviser."},
+  {theme:"lists",text:"Syntaxe correcte pour la moyenne des notes ?",options:["<code>sum(e.note() for e in eleves) / len(eleves)</code>","<code>sum(e.note for e in eleves) / len(eleves)</code>","<code>average(eleves.note)</code>","<code>eleves.note / len(eleves)</code>"],answer:1,expl:"<code>note</code> est un attribut → pas de <code>()</code>. Il n'y a pas de fonction <code>average()</code> native en Python."},
+  {theme:"inherit",text:"Quelle syntaxe crée une sous-classe <code>PokemonFeu</code> héritant de <code>Pokemon</code> ?",options:["<code>class PokemonFeu inherits Pokemon:</code>","<code>class PokemonFeu extends Pokemon:</code>","<code>class PokemonFeu(Pokemon):</code>","<code>class PokemonFeu &lt; Pokemon:</code>"],answer:2,expl:"En Python, l'héritage se déclare avec le parent entre parenthèses : <code>class Enfant(Parent):</code>."},
+  {theme:"inherit",text:"Que permet <code>super()</code> ?",options:["Créer une super-instance","Accéder aux méthodes de la classe parente","Rendre une méthode plus rapide","Vérifier qu'un objet est valide"],answer:1,expl:"<code>super()</code> donne accès aux méthodes de la classe <strong>parente</strong>."},
+  {theme:"inherit",text:"Que se passe-t-il si on omet <code>super().__init__()</code> dans la sous-classe ?",options:["Python l'appelle automatiquement","Les attributs du parent ne sont jamais créés → AttributeError possible","La sous-classe est ignorée","Un warning est affiché"],answer:1,expl:"Sans <code>super().__init__()</code>, le constructeur parent ne s'exécute jamais → attributs manquants."},
+  {theme:"inherit",text:"Un <code>PokemonFeu</code> peut-il appeler une méthode définie uniquement dans <code>Pokemon</code> ?",options:["Non","Oui, il hérite de toutes les méthodes du parent","Oui mais via super() seulement","Non, sauf si on la redéfinit"],answer:1,expl:"L'héritage est automatique : toutes les méthodes du parent sont disponibles sur la sous-classe."},
+  {theme:"inherit",text:"Qu'est-ce que la surcharge (override) d'une méthode ?",options:["Appeler une méthode avec trop d'arguments","Redéfinir dans la sous-classe une méthode héritée","Supprimer une méthode","Appeler une méthode deux fois"],answer:1,expl:"La surcharge = redéfinir dans la sous-classe une méthode héritée. Python utilise la version de la sous-classe en priorité."},
+  {theme:"inherit",text:"Que retourne <code>isinstance(s, Pokemon)</code> si <code>s</code> est un <code>PokemonFeu</code> ?",options:["False","True","None","TypeError"],answer:1,expl:"<code>isinstance</code> retourne <code>True</code> pour la classe réelle ET toutes ses classes parentes."},
+  {theme:"inherit",text:"Dans quel ordre Python cherche-t-il la méthode <code>attaquer</code> sur un <code>PokemonFeu</code> ?",options:["D'abord dans Pokemon puis PokemonFeu","D'abord dans PokemonFeu puis Pokemon si absente","Uniquement dans Pokemon","Uniquement dans PokemonFeu"],answer:1,expl:"MRO : Python cherche d'abord dans la classe réelle (PokemonFeu), puis remonte vers le parent."},
+  {theme:"inherit",text:"Comment étendre une méthode (garder le comportement parent ET ajouter) ?",options:["Réécrire entièrement la méthode","Appeler <code>super().methode()</code> puis ajouter le comportement spécifique","Utiliser le mot-clé <code>extend</code>","Impossible"],answer:1,expl:"On appelle <code>super().methode()</code> pour exécuter la logique du parent, puis on ajoute le spécifique."},
+  {theme:"inherit",text:"Qu'est-ce que le polymorphisme permet ?",options:["Avoir plusieurs classes avec le même nom","Appeler la même méthode sur des types différents avec des comportements adaptés","Créer des objets sans constructeur","Partager des attributs entre instances"],answer:1,expl:"Le polymorphisme : <code>for p in equipe: p.attaquer(cible)</code> — chaque type applique sa propre version."},
+  {theme:"inherit",text:"Problème de cette sous-classe : <code>class PF(Pokemon):\\n  def __init__(self, nom, pdv):\\n    self.flammes = 3</code>",options:["Pas de problème","self.flammes avant super() interdit","Les attributs nom et pdv du parent ne sont jamais créés","__init__ ne peut pas être redéfinie"],answer:2,expl:"Sans <code>super().__init__(nom,'Feu',pdv)</code>, <code>self.nom</code>, <code>self.type</code>, <code>self.pdv</code> n'existent jamais → <code>AttributeError</code>."}
+];
+
+let qCount=5, qList=[], qIdx=0, qScore=0, qAnswered=[];
+function setQCount(btn,n){document.querySelectorAll('.btn-qcount').forEach(b=>b.classList.remove('sel'));btn.classList.add('sel');qCount=n;}
+function shuffle(a){const r=[...a];for(let i=r.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[r[i],r[j]]=[r[j],r[i]];}return r;}
+function launchQuiz(){
+  const pool=shuffle(QDB);
+  qList=qCount===0?pool:pool.slice(0,Math.min(qCount,pool.length));
+  qIdx=0;qScore=0;qAnswered=[];
+  document.getElementById('qprog').style.display='block';
+  document.getElementById('qresult').style.display='none';
+  document.getElementById('qarea').innerHTML='';
+  renderQ();
+}
+const TMETA={classe:{label:'Classe',cls:'tt-classe'},init:{label:'Constructeur',cls:'tt-init'},methods:{label:'Méthodes',cls:'tt-methods'},lists:{label:"Listes d'objets",cls:'tt-lists'},inherit:{label:'Héritage',cls:'tt-inherit'}};
+function updateProg(){
+  const done=qAnswered.filter(a=>a!==undefined).length;
+  document.getElementById('qfill').style.width=(qList.length?(done/qList.length)*100:0)+'%';
+  document.getElementById('qprog-txt').textContent=`Question ${Math.min(qIdx+1,qList.length)} / ${qList.length}`;
+  document.getElementById('qscore-txt').textContent=`Score : ${qScore} / ${done}`;
+}
+function renderQ(){
+  updateProg();
+  if(qIdx>=qList.length){showResult();return;}
+  const q=qList[qIdx],tm=TMETA[q.theme],L=['A','B','C','D'];
+  const code=q.code?`<pre class="q-code">${q.code}</pre>`:'';
+  const next=qIdx<qList.length-1?'Question suivante →':'Voir les résultats →';
+  document.getElementById('qarea').innerHTML=`
+    <div class="q-card">
+      <div class="q-head"><span class="q-num">Q${qIdx+1}/${qList.length}</span><span class="q-theme-tag ${tm.cls}">${tm.label}</span></div>
+      <div class="q-body">
+        <div class="q-text">${q.text}</div>${code}
+        <div class="q-options">${q.options.map((o,i)=>`<div class="q-opt" id="qo${i}" onclick="pick(${i})"><span class="q-opt-letter">${L[i]}.</span><span>${o}</span></div>`).join('')}</div>
+        <div class="q-expl" id="qexpl"></div>
+        <div id="qnw" style="text-align:right;margin-top:.5rem;display:none"><button class="btn-launch" style="margin-left:0" onclick="nextQ()">${next}</button></div>
+      </div>
+    </div>`;
+}
+function pick(idx){
+  if(qAnswered[qIdx]!==undefined)return;
+  qAnswered[qIdx]=idx;
+  const q=qList[qIdx],ok=idx===q.answer;
+  if(ok)qScore++;
+  document.querySelectorAll('.q-opt').forEach(o=>o.classList.add('locked'));
+  document.getElementById(`qo${q.answer}`).classList.add('correct');
+  if(!ok)document.getElementById(`qo${idx}`).classList.add('wrong');
+  const ex=document.getElementById('qexpl');
+  ex.innerHTML=`<strong>${ok?'✓ Correct !':'✗ Incorrect.'}</strong> ${q.expl}`;
+  ex.classList.add('show');
+  document.getElementById('qnw').style.display='block';
+  updateProg();
+}
+function nextQ(){qIdx++;renderQ();}
+function showResult(){
+  document.getElementById('qprog').style.display='none';
+  document.getElementById('qarea').innerHTML='';
+  const t=qList.length,p=Math.round((qScore/t)*100);
+  const c=p>=70?'#2f9e44':p>=50?'#e67700':'#c92a2a';
+  let msg,e;
+  if(p===100){msg="Score parfait !";e="🏆";}
+  else if(p>=80){msg="Excellent !";e="🎉";}
+  else if(p>=60){msg="Bon niveau, quelques points à revoir.";e="👍";}
+  else if(p>=40){msg="Des lacunes — relis le cours !";e="📖";}
+  else{msg="Reprends depuis le début.";e="💪";}
+  const r=document.getElementById('qresult');
+  r.style.display='block';
+  r.innerHTML=`<div class="qcm-score">${e} ${qScore}/${t}</div>
+    <div class="qcm-pct">${p}% de bonnes réponses</div>
+    <div class="qcm-sbar-wrap"><div class="qcm-sbar" style="width:${p}%;background:${c}"></div></div>
+    <div class="qcm-msg">${msg}</div>
+    <div class="qcm-btns">
+      <button class="btn-retry primary" onclick="launchQuiz()">↺ Nouveau tirage</button>
+      <button class="btn-retry secondary" onclick="document.getElementById('qresult').style.display='none';document.getElementById('qarea').innerHTML=''">⚙ Changer le nombre</button>
+    </div>`;
+}
 </script>
 
 </body>
