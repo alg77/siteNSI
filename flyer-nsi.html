@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Flyer NSI — Recto/Verso</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,700;1,300&display=swap" rel="stylesheet">
+<style>
+* { margin:0; padding:0; box-sizing:border-box; }
+
+:root {
+  --black: #111;
+  --white: #fff;
+  --cyan: #00BFA5;
+  --cyan-light: #e0f7f4;
+  --ink: #222;
+  --muted: #777;
+  --rule: #ddd;
+}
+
+body {
+  background: #ccc;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 36px;
+  padding: 36px 16px;
+  font-family: 'DM Sans', sans-serif;
+}
+
+.label {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11px;
+  letter-spacing: 3px;
+  color: #888;
+  text-transform: uppercase;
+}
+
+/* A4 */
+.page {
+  width: 210mm;
+  min-height: 297mm;
+  background: white;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 6px 32px rgba(0,0,0,.22);
+  display: flex;
+  flex-direction: column;
+}
+
+/* ══════════════════════
+   RECTO
+══════════════════════ */
+
+/* Header stripe — thin, classy */
+.r-topbar {
+  background: var(--black);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 9px 22px;
+}
+.r-topbar .spe {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8.5px;
+  letter-spacing: 3.5px;
+  color: rgba(255,255,255,.45);
+  font-weight: 400;
+}
+.r-topbar .year {
+  font-family: 'DM Sans', sans-serif;
+  font-size: 8.5px;
+  letter-spacing: 2px;
+  color: var(--cyan);
+  font-weight: 700;
+}
+
+/* Hero: left text / right accent block */
+.r-hero {
+  display: grid;
+  grid-template-columns: 1fr 72mm;
+  min-height: 78mm;
+}
+.r-hero-left {
+  background: var(--white);
+  padding: 28px 22px 22px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.r-eyebrow {
+  font-size: 9px;
+  letter-spacing: 4px;
+  color: var(--cyan);
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.r-bigname {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 82px;
+  line-height: .92;
+  color: var(--black);
+  letter-spacing: 1px;
+}
+.r-bigname .light { color: #bbb; }
+.r-tagline {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.55;
+  font-style: italic;
+  max-width: 220px;
+  margin-top: 10px;
+}
+
+.r-hero-right {
+  background: var(--black);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-start;
+  padding: 20px 18px;
+  position: relative;
+  overflow: hidden;
+}
+/* decorative grid */
+.r-hero-right::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    repeating-linear-gradient(0deg, rgba(0,191,165,.08) 0, rgba(0,191,165,.08) 1px, transparent 1px, transparent 12px),
+    repeating-linear-gradient(90deg, rgba(0,191,165,.08) 0, rgba(0,191,165,.08) 1px, transparent 1px, transparent 12px);
+}
+/* big background letter */
+.r-hero-right::after {
+  content: 'N';
+  position: absolute;
+  bottom: -18px; right: -8px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 160px;
+  color: rgba(255,255,255,.04);
+  line-height: 1;
+  pointer-events: none;
+}
+.r-hero-right .pill {
+  background: var(--cyan);
+  color: var(--black);
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  padding: 4px 10px;
+  margin-bottom: 10px;
+  position: relative;
+  z-index: 1;
+}
+.r-hero-right .stat {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 48px;
+  color: white;
+  line-height: 1;
+  position: relative;
+  z-index: 1;
+}
+.r-hero-right .stat-sub {
+  font-size: 8.5px;
+  color: rgba(255,255,255,.5);
+  line-height: 1.4;
+  max-width: 120px;
+  position: relative;
+  z-index: 1;
+  margin-top: 2px;
+}
+
+/* Cyan rule */
+.r-rule {
+  height: 3px;
+  background: linear-gradient(90deg, var(--cyan) 0%, var(--cyan) 60%, #ddd 60%);
+}
+
+/* 4 programme pillars */
+.r-pillars {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid var(--rule);
+}
+.pillar {
+  padding: 14px 14px 12px;
+  border-right: 1px solid var(--rule);
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.pillar:last-child { border-right: none; }
+.pillar-icon { font-size: 20px; line-height: 1; }
+.pillar-name {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 15px;
+  line-height: 1.1;
+  color: var(--black);
+}
+.pillar-desc {
+  font-size: 8px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+/* Body */
+.r-body {
+  flex: 1;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.r-section-title {
+  font-size: 8px;
+  letter-spacing: 3.5px;
+  font-weight: 700;
+  color: var(--muted);
+  border-bottom: 1px solid var(--rule);
+  padding-bottom: 5px;
+}
+
+/* Skills grid: 3×2 */
+.skills-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.skill-item {
+  display: flex;
+  gap: 9px;
+  align-items: flex-start;
+}
+.skill-dot {
+  width: 6px; height: 6px;
+  border-radius: 50%;
+  background: var(--cyan);
+  flex-shrink: 0;
+  margin-top: 4px;
+}
+.skill-text .st-name {
+  font-size: 10.5px;
+  font-weight: 700;
+  color: var(--black);
+  line-height: 1.2;
+}
+.skill-text .st-desc {
+  font-size: 8px;
+  color: var(--muted);
+  line-height: 1.4;
+  margin-top: 1px;
+}
+
+/* Projets highlights */
+.projects-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 8px;
+}
+.proj {
+  background: var(--cyan-light);
+  padding: 10px 12px;
+  border-left: 3px solid var(--cyan);
+}
+.proj-title {
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--black);
+  line-height: 1.2;
+}
+.proj-sub {
+  font-size: 8px;
+  color: var(--muted);
+  margin-top: 3px;
+  line-height: 1.4;
+}
+
+/* Prereqs two-col */
+.prereq-cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  border: 1.5px solid var(--rule);
+}
+.prereq-col {
+  padding: 12px 14px;
+}
+.prereq-col:first-child {
+  border-right: 1.5px solid var(--rule);
+}
+.prereq-col-title {
+  font-size: 8.5px;
+  font-weight: 700;
+  color: var(--black);
+  letter-spacing: 1.5px;
+  margin-bottom: 7px;
+}
+.prereq-item {
+  display: flex;
+  gap: 7px;
+  align-items: flex-start;
+  font-size: 8.5px;
+  color: var(--muted);
+  line-height: 1.4;
+  margin-bottom: 4px;
+}
+.prereq-item::before { content: '—'; color: var(--cyan); font-weight: 700; flex-shrink: 0; }
+
+/* Footer */
+.r-footer {
+  border-top: 1.5px solid var(--rule);
+  padding: 10px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.r-footer .prof {
+  font-size: 8.5px;
+  color: var(--muted);
+  line-height: 1.5;
+}
+.r-footer .prof strong { color: var(--black); }
+.r-footer .flip {
+  font-size: 8px;
+  letter-spacing: 2px;
+  color: var(--muted);
+}
+.r-footer .flip span { color: var(--cyan); }
+
+
+/* ══════════════════════
+   VERSO
+══════════════════════ */
+
+.v-topbar {
+  background: var(--cyan);
+  padding: 14px 22px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+.v-topbar .v-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 36px;
+  line-height: 1;
+  color: var(--black);
+}
+.v-topbar .v-sub {
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: rgba(0,0,0,.45);
+  font-weight: 700;
+  margin-top: 3px;
+}
+.v-topbar .v-right {
+  font-size: 9px;
+  color: rgba(0,0,0,.5);
+  text-align: right;
+  line-height: 1.5;
+  font-weight: 700;
+  letter-spacing: 1px;
+}
+
+.v-body {
+  flex: 1;
+  padding: 18px 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* Evals: two big blocks */
+.evals-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+}
+.eval-block {
+  border: 1.5px solid var(--rule);
+  overflow: hidden;
+}
+.eval-head {
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--rule);
+  background: #fafafa;
+}
+.eval-head-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 18px;
+  color: var(--black);
+  line-height: 1;
+}
+.eval-head-badge {
+  font-size: 7.5px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  color: var(--muted);
+  background: var(--rule);
+  padding: 2px 7px;
+}
+.eval-body { padding: 10px 12px; }
+.eval-item {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  font-size: 8.5px;
+  color: var(--muted);
+  line-height: 1.4;
+  margin-bottom: 5px;
+}
+.eval-item::before { content: '›'; color: var(--cyan); font-size: 12px; line-height: 1.1; flex-shrink: 0; font-weight: 700; }
+.eval-item strong { color: var(--black); }
+
+/* Bac block: full width */
+.bac-block {
+  border: 1.5px solid var(--black);
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  overflow: hidden;
+}
+.bac-head {
+  grid-column: 1 / -1;
+  background: var(--black);
+  padding: 8px 14px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.bac-head-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 20px;
+  color: white;
+  letter-spacing: 1px;
+}
+.bac-head-badge {
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 2px;
+  color: var(--cyan);
+}
+.bac-col {
+  padding: 12px 14px;
+  border-right: 1px solid var(--rule);
+}
+.bac-col:last-child { border-right: none; }
+.bac-col-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 16px;
+  color: var(--black);
+  margin-bottom: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+}
+.bac-pct {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  color: var(--cyan);
+}
+.bac-item {
+  font-size: 8.5px;
+  color: var(--muted);
+  line-height: 1.5;
+  margin-bottom: 3px;
+  display: flex; gap: 6px;
+}
+.bac-item::before { content: '—'; color: var(--rule); flex-shrink: 0; }
+.bac-item strong { color: var(--black); }
+
+/* Debouches */
+.debouches-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.deb-item {
+  padding: 10px 12px;
+  background: #fafafa;
+  border-bottom: 2.5px solid var(--black);
+}
+.deb-icon { font-size: 18px; margin-bottom: 4px; }
+.deb-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 13px;
+  color: var(--black);
+  line-height: 1.1;
+  margin-bottom: 3px;
+}
+.deb-list {
+  font-size: 8px;
+  color: var(--muted);
+  line-height: 1.45;
+}
+
+/* La Nuit du Code highlight */
+.event-strip {
+  background: var(--black);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px;
+  gap: 16px;
+}
+.event-left {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.event-label {
+  font-size: 8px;
+  letter-spacing: 3px;
+  color: var(--cyan);
+  font-weight: 700;
+}
+.event-title {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 28px;
+  color: white;
+  line-height: 1;
+  letter-spacing: .5px;
+}
+.event-desc {
+  font-size: 8.5px;
+  color: rgba(255,255,255,.5);
+  line-height: 1.4;
+  max-width: 320px;
+}
+
+.event-badges {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.ebadge {
+  background: rgba(255,255,255,.08);
+  border: 1px solid rgba(255,255,255,.15);
+  color: white;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  padding: 4px 10px;
+  white-space: nowrap;
+  text-align: center;
+}
+.ebadge.accent { background: var(--cyan); color: var(--black); border-color: var(--cyan); }
+
+/* Footer verso */
+.v-footer {
+  border-top: 1.5px solid var(--rule);
+  padding: 10px 22px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+.v-footer-left {
+  font-size: 8.5px;
+  color: var(--muted);
+  line-height: 1.55;
+}
+.v-footer-left strong { color: var(--black); }
+.v-footer-cta {
+  background: var(--black);
+  color: var(--white);
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  padding: 9px 18px;
+}
+
+@media print {
+  body { background: white; padding: 0; gap: 0; }
+  .page { box-shadow: none; }
+  .verso { page-break-before: always; }
+  .label { display: none; }
+}
+</style>
+</head>
+<body>
+
+<p class="label">▸ RECTO</p>
+
+<!-- ══════════════════════════════
+     RECTO
+══════════════════════════════ -->
+<div class="page">
+
+  <div class="r-topbar">
+    <span class="spe">SPÉCIALITÉ — SECONDE → PREMIÈRE → TERMINALE</span>
+    <span class="year">2025 / 2026</span>
+  </div>
+
+  <div class="r-hero">
+    <div class="r-hero-left">
+      <div>
+        <div class="r-eyebrow">SPÉCIALITÉ NSI</div>
+        <div class="r-bigname">
+          <span class="light">Numérique</span><br>
+          &amp; Sciences<br>
+          Informatiques
+        </div>
+      </div>
+      <div class="r-tagline">
+        L'informatique qui façonne le monde<br>d'aujourd'hui — et invente celui de demain.
+      </div>
+    </div>
+    <div class="r-hero-right">
+      <div class="pill">DISPONIBLE EN PREMIÈRE</div>
+      <div class="stat">4<br>PILIERS</div>
+      <div class="stat-sub">Programmation · Architecture · Données · Web & IHM</div>
+    </div>
+  </div>
+
+  <div class="r-rule"></div>
+
+  <!-- 4 pillars -->
+  <div class="r-pillars">
+    <div class="pillar">
+      <div class="pillar-icon">🐍</div>
+      <div class="pillar-name">Prog. &amp; Algorithmique</div>
+      <div class="pillar-desc">Python, algorithmes, complexité, structures de données</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">🖥️</div>
+      <div class="pillar-name">Architecture &amp; OS</div>
+      <div class="pillar-desc">Hardware, systèmes d'exploitation, réseaux, protocoles</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">📊</div>
+      <div class="pillar-name">Représentation des données</div>
+      <div class="pillar-desc">Binaire, images, textes, bases de données</div>
+    </div>
+    <div class="pillar">
+      <div class="pillar-icon">🌐</div>
+      <div class="pillar-name">Web &amp; IHM</div>
+      <div class="pillar-desc">HTML, CSS, JS, interfaces, requêtes client-serveur</div>
+    </div>
+  </div>
+
+  <div class="r-body">
+
+    <!-- Compétences -->
+    <div class="r-section-title">COMPÉTENCES DÉVELOPPÉES</div>
+    <div class="skills-grid">
+      <div class="skill-item">
+        <div class="skill-dot"></div>
+        <div class="skill-text">
+          <div class="st-name">Apprendre par l'erreur</div>
+          <div class="st-desc">Coder, déboguer, recommencer — l'erreur est une étape</div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-dot"></div>
+        <div class="skill-text">
+          <div class="st-name">Autonomie &amp; initiative</div>
+          <div class="st-desc">Recherche, prise de décision, organisation personnelle</div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-dot"></div>
+        <div class="skill-text">
+          <div class="st-name">Coopération</div>
+          <div class="st-desc">Projets en équipe, pair-programming, code review</div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-dot"></div>
+        <div class="skill-text">
+          <div class="st-name">Créativité</div>
+          <div class="st-desc">Projets à thèmes libres, conception d'interfaces et jeux</div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-dot"></div>
+        <div class="skill-text">
+          <div class="st-name">Logique &amp; abstraction</div>
+          <div class="st-desc">Modélisation, preuves, raisonnement formel</div>
+        </div>
+      </div>
+      <div class="skill-item">
+        <div class="skill-dot"></div>
+        <div class="skill-text">
+          <div class="st-name">Résolution de problèmes</div>
+          <div class="st-desc">Décomposer, analyser, proposer une solution efficace</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Projets -->
+    <div class="r-section-title">PROJETS &amp; ACTIVITÉS MARQUANTES</div>
+    <div class="projects-row">
+      <div class="proj">
+        <div class="proj-title">🏆 Concours Castor Informatique</div>
+        <div class="proj-sub">Algoréa · Trophées NSI<br><strong>Lauréat territorial 2024 !</strong></div>
+      </div>
+      <div class="proj">
+        <div class="proj-title">🎮 La Nuit du Code</div>
+        <div class="proj-sub">6h pour créer un jeu vidéo rétro avec mentors ingénieurs. 2ᵉ édition cette année !</div>
+      </div>
+      <div class="proj">
+        <div class="proj-title">🖥️ Projets libres</div>
+        <div class="proj-sub">Applis, sites, jeux, outils — chaque groupe choisit son sujet et le défend.</div>
+      </div>
+    </div>
+
+    <!-- Prérequis -->
+    <div class="r-section-title">PRÉ-REQUIS &amp; PROFIL IDÉAL</div>
+    <div class="prereq-cols">
+      <div class="prereq-col">
+        <div class="prereq-col-title">CE QU'IL FAUT AVOIR VU</div>
+        <div class="prereq-item">Bases Python (Maths &amp; SNT)</div>
+        <div class="prereq-item">Notions internet &amp; web (SNT)</div>
+        <div class="prereq-item">Aucune expérience avancée requise</div>
+      </div>
+      <div class="prereq-col">
+        <div class="prereq-col-title">LE BON PROFIL</div>
+        <div class="prereq-item">Curiosité pour la logique &amp; les machines</div>
+        <div class="prereq-item">Persévérance face aux bugs</div>
+        <div class="prereq-item">Envie de créer, pas seulement d'utiliser</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="r-footer">
+    <div class="prof">
+      <strong>Mme Amara Le Guern</strong><br>
+      Prof. &amp; coordinatrice NSI · [Nom du lycée]
+    </div>
+    <div class="flip">VOIR AU VERSO <span>→ ÉVALUATIONS &amp; DÉBOUCHÉS</span></div>
+  </div>
+
+</div><!-- /recto -->
+
+
+<p class="label">▸ VERSO</p>
+
+<!-- ══════════════════════════════
+     VERSO
+══════════════════════════════ -->
+<div class="page verso">
+
+  <div class="v-topbar">
+    <div>
+      <div class="v-title">ÉVALUATIONS<br>&amp; DÉBOUCHÉS</div>
+      <div class="v-sub">SPÉCIALITÉ NSI — 2025/2026</div>
+    </div>
+    <div class="v-right">Numérique &amp;<br>Sciences de<br>l'Informatique</div>
+  </div>
+
+  <div class="v-body">
+
+    <!-- Évals Première -->
+    <div class="r-section-title">CONTRÔLE CONTINU EN PREMIÈRE</div>
+    <div class="evals-grid">
+      <div class="eval-block">
+        <div class="eval-head">
+          <div class="eval-head-title">Évaluations écrites</div>
+          <div class="eval-head-badge">CONTINU</div>
+        </div>
+        <div class="eval-body">
+          <div class="eval-item">QCM de connaissances</div>
+          <div class="eval-item">Interrogations de cours</div>
+          <div class="eval-item">Codes à <strong>corriger, compléter ou produire</strong></div>
+        </div>
+      </div>
+      <div class="eval-block">
+        <div class="eval-head">
+          <div class="eval-head-title">Évaluations pratiques</div>
+          <div class="eval-head-badge">CONTINU</div>
+        </div>
+        <div class="eval-body">
+          <div class="eval-item">TP en binômes sur machine</div>
+          <div class="eval-item">Projets en groupes</div>
+          <div class="eval-item">TP individuels <strong>type épreuve du Bac</strong></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bac Terminale -->
+    <div class="r-section-title">BACCALAURÉAT EN TERMINALE</div>
+    <div class="bac-block">
+      <div class="bac-head">
+        <div class="bac-head-title">🎓 ÉPREUVES FINALES</div>
+        <div class="bac-head-badge">COEFFICIENT NSI : voir bulletin officiel</div>
+      </div>
+      <div class="bac-col">
+        <div class="bac-col-title">
+          Épreuve écrite
+          <span class="bac-pct">75%</span>
+        </div>
+        <div class="bac-item"><strong>Durée :</strong> 3h30</div>
+        <div class="bac-item">3 exercices indépendants</div>
+        <div class="bac-item">Algorithmique, données, architectures</div>
+        <div class="bac-item">Conception &amp; analyse de programmes</div>
+      </div>
+      <div class="bac-col">
+        <div class="bac-col-title">
+          Épreuve pratique
+          <span class="bac-pct">25%</span>
+        </div>
+        <div class="bac-item"><strong>Durée :</strong> 1 heure</div>
+        <div class="bac-item">Programmation Python sur ordinateur</div>
+        <div class="bac-item">2 exercices : lire/compléter + produire</div>
+        <div class="bac-item">Préparée tout au long de l'année en TP</div>
+      </div>
+    </div>
+
+    <!-- Débouchés -->
+    <div class="r-section-title">DÉBOUCHÉS APRÈS NSI</div>
+    <div class="debouches-grid">
+      <div class="deb-item">
+        <div class="deb-icon">🎓</div>
+        <div class="deb-title">Licences &amp; Masters</div>
+        <div class="deb-list">Informatique · Mathématiques-Info · MIAGE · Sciences du numérique</div>
+      </div>
+      <div class="deb-item">
+        <div class="deb-icon">🏫</div>
+        <div class="deb-title">Prépas &amp; Grandes Écoles</div>
+        <div class="deb-list">MPSI · MP2I · Centrale · CentraleSupélec · Télécom Paris · INSA</div>
+      </div>
+      <div class="deb-item">
+        <div class="deb-icon">🛠️</div>
+        <div class="deb-title">BTS &amp; BUT</div>
+        <div class="deb-list">BTS SIO · BUT Informatique · BUT Réseaux &amp; Télécoms</div>
+      </div>
+      <div class="deb-item">
+        <div class="deb-icon">💻</div>
+        <div class="deb-title">Développement</div>
+        <div class="deb-list">Développeur · Ingénieur logiciel · Architecte système · DevOps</div>
+      </div>
+      <div class="deb-item">
+        <div class="deb-icon">📊</div>
+        <div class="deb-title">Data &amp; IA</div>
+        <div class="deb-list">Data Scientist · Data Engineer · Chercheur en IA · MLOps</div>
+      </div>
+      <div class="deb-item">
+        <div class="deb-icon">🔐</div>
+        <div class="deb-title">Cybersécurité &amp; réseaux</div>
+        <div class="deb-list">Analyste sécu · Pentesteur · Admin réseau · RSSI</div>
+      </div>
+    </div>
+
+    <!-- Nuit du Code highlight -->
+    <div class="event-strip">
+      <div class="event-left">
+        <div class="event-label">ÉVÉNEMENT PHARE DE LA SPÉ</div>
+        <div class="event-title">LA NUIT DU CODE — 2ÈME ÉDITION</div>
+        <div class="event-desc">6h pour programmer un jeu vidéo rétro en équipe. Buffet pizzas offert. Anciens élèves NSI, aujourd'hui en école d'ingénieurs, comme mentors pour toute la soirée.</div>
+      </div>
+      <div class="event-badges">
+        <div class="ebadge accent">🍕 BUFFET PIZZAS</div>
+        <div class="ebadge">🎓 MENTORS INGÉS</div>
+        <div class="ebadge">🏆 PRIX &amp; JURY</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="v-footer">
+    <div class="v-footer-left">
+      <strong>Mme Amara Le Guern</strong> — prof. &amp; coordinatrice NSI<br>
+      Questions ? En classe, ou sur le site de la spécialité.
+    </div>
+    <div class="v-footer-cta">CHOISIS NSI →</div>
+  </div>
+
+</div><!-- /verso -->
+
+</body>
+</html>

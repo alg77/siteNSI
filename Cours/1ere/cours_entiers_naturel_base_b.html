@@ -1,0 +1,1327 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Écrire un entier naturel en base b ≥ 2 — Cours 1ère NSI</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #ffffff;
+  --surface:  #f8fafc;
+  --surface2: #f1f5f9;
+  --border:   #e2e8f0;
+  --blue:     #2563eb;
+  --blue-lt:  #eff6ff;
+  --blue-dk:  #1e3a5f;
+  --green:    #059669;
+  --green-lt: #f0fdf4;
+  --orange:   #d97706;
+  --orange-lt:#fffbeb;
+  --red:      #dc2626;
+  --red-lt:   #fef2f2;
+  --purple:   #6366f1;
+  --purple-lt:#eef2ff;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --muted:    #64748b;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  font-size: 16px;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 60%, #1d4ed8 100%);
+  padding: 60px 40px 50px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 70%);
+}
+.hero-badge {
+  display:inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.35);
+  color: white;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px; letter-spacing:2px; text-transform:uppercase;
+  padding:4px 14px; border-radius:20px; margin-bottom:20px;
+}
+.hero h1 {
+  font-size: clamp(32px,6vw,66px);
+  font-weight:900; line-height:1.1;
+  letter-spacing:-2px; margin-bottom:14px; color:white;
+}
+.hero h1 span { color:#93c5fd; }
+.hero p {
+  color:rgba(255,255,255,0.78);
+  font-style:italic; font-size:18px;
+  max-width:520px; margin:0 auto;
+}
+
+/* ── NAV ── */
+.toc {
+  background: var(--surface2);
+  border-bottom: 2px solid var(--border);
+  padding:12px 28px;
+  display:flex; flex-wrap:wrap; gap:5px;
+  justify-content:center;
+  position:sticky; top:0; z-index:100;
+}
+.toc a {
+  font-family:'JetBrains Mono',monospace; font-size:11.5px;
+  color:var(--muted); text-decoration:none;
+  padding:5px 11px; border-radius:4px;
+  border:1px solid transparent; transition:all .2s;
+}
+.toc a:hover { color:var(--blue); border-color:var(--blue); background:var(--blue-lt); }
+
+/* ── LAYOUT ── */
+.container { max-width:920px; margin:0 auto; padding:0 28px; }
+.section { padding:56px 0 38px; border-bottom:1px solid var(--border); }
+.section:last-child { border-bottom:none; }
+
+/* ── SECTION HEADERS ── */
+.section-num {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:var(--blue); letter-spacing:3px; text-transform:uppercase; margin-bottom:6px;
+}
+.section h2 {
+  font-size:clamp(22px,4vw,36px); font-weight:900;
+  letter-spacing:-1px; margin-bottom:22px; line-height:1.15; color:var(--text);
+}
+.section h3 {
+  font-size:18px; font-weight:700; color:var(--orange);
+  margin:34px 0 12px;
+}
+.section h4 {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--blue-dk); margin:22px 0 8px; letter-spacing:1px;
+}
+.section p { color:var(--text2); margin-bottom:12px; }
+.section ul, .section ol { padding-left:22px; margin-bottom:12px; }
+.section li { color:var(--text2); margin-bottom:5px; }
+strong { color:var(--text); }
+p code, li code, td code, th code {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--green); background:var(--green-lt);
+  padding:1px 6px; border-radius:3px;
+}
+
+/* ── CODE BLOCKS (dark, intentional) ── */
+.code-block {
+  background:#0d1117; border:1px solid #2a2f45;
+  border-radius:10px; margin:18px 0; overflow:hidden;
+}
+.code-header {
+  background:#1e2333; border-bottom:1px solid #2a2f45;
+  padding:8px 16px; display:flex; align-items:center; gap:8px;
+  font-family:'JetBrains Mono',monospace; font-size:11px; color:#64748b;
+}
+.dot { width:10px; height:10px; border-radius:50%; }
+.dr{background:#ff5f56;} .dy{background:#ffbd2e;} .dg{background:#27c93f;}
+pre {
+  padding:18px 20px; overflow-x:auto;
+  font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7;
+  color:#e2e8f0;
+}
+/* Python syntax */
+.kw  { color:#c084fc; }   /* keyword */
+.fn  { color:#60a5fa; }   /* built-in function */
+.st  { color:#4ade80; }   /* string */
+.cm  { color:#475569; font-style:italic; } /* comment */
+.nb  { color:#fb923c; }   /* number */
+.op  { color:#94a3b8; }   /* operator */
+.df  { color:#fbbf24; }   /* def name */
+.bi  { color:#f472b6; }   /* bool / None */
+
+/* ── INFO BOXES ── */
+.box {
+  border-radius:10px; padding:16px 20px;
+  margin:18px 0; border-left:4px solid; font-size:15px;
+}
+.box-tip   { background:var(--green-lt);  border-color:var(--green); }
+.box-warn  { background:var(--orange-lt); border-color:var(--orange); }
+.box-info  { background:var(--blue-lt);   border-color:var(--blue); }
+.box-alert { background:var(--red-lt);    border-color:var(--red); }
+.box-key   { background:var(--purple-lt); border-color:var(--purple); }
+.box-title {
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  letter-spacing:2px; text-transform:uppercase; font-weight:700; margin-bottom:7px;
+}
+.box-tip .box-title   { color:var(--green); }
+.box-warn .box-title  { color:var(--orange); }
+.box-info .box-title  { color:var(--blue); }
+.box-alert .box-title { color:var(--red); }
+.box-key .box-title   { color:var(--purple); }
+
+/* ── TABLES ── */
+table { width:100%; border-collapse:collapse; margin:18px 0; font-size:15px; }
+th {
+  background:var(--blue-dk); color:white;
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  letter-spacing:1px; text-transform:uppercase;
+  padding:9px 14px; text-align:left; border:1px solid var(--blue-dk);
+}
+td { padding:9px 14px; border:1px solid var(--border); color:var(--text2); vertical-align:top; }
+tr:nth-child(even) td { background:var(--surface); }
+
+/* ── FUNCTION CARDS ── */
+.fn-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin:18px 0; }
+.fn-card {
+  border:1px solid var(--border); border-radius:8px; overflow:hidden;
+  transition:box-shadow .2s;
+}
+.fn-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+.fn-card-hdr {
+  background:var(--blue-dk); color:white;
+  padding:8px 14px;
+  font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700;
+}
+.fn-card-hdr span { color:#93c5fd; font-weight:400; font-size:12px; margin-left:8px; }
+.fn-card-body { padding:11px 14px; font-size:14px; color:var(--text2); line-height:1.6; background:white; }
+.fn-card-body code {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:var(--green); background:var(--green-lt);
+  padding:1px 5px; border-radius:3px;
+}
+.fn-card-ex {
+  background:var(--surface2); border-top:1px solid var(--border);
+  padding:8px 14px;
+  font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);
+}
+
+/* ── EXERCISES ── */
+.exo-card {
+  border:1px solid var(--border); border-radius:10px;
+  overflow:hidden; margin-bottom:22px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.exo-hdr { padding:12px 20px; display:flex; align-items:center; gap:14px; }
+.exo-hdr.easy   { background:linear-gradient(90deg,#1e5631,#059669); }
+.exo-hdr.medium { background:linear-gradient(90deg,#92400e,#d97706); }
+.exo-hdr.hard   { background:linear-gradient(90deg,#7f1d1d,#dc2626); }
+.exo-level {
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  color:rgba(255,255,255,.8); letter-spacing:2px; text-transform:uppercase;
+}
+.exo-title { font-weight:700; font-size:16px; color:white; }
+.exo-body { padding:20px 22px; background:white; }
+.exo-body p { margin-bottom:10px; color:var(--text2); }
+.exo-body ol { padding-left:20px; }
+.exo-body li { margin-bottom:7px; color:var(--text2); }
+
+.toggle-btn {
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+  margin-top:14px; padding:7px 16px; border-radius:6px;
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  transition:all .2s; user-select:none;
+}
+.btn-hint { background:var(--blue-lt); border:1px solid #bfdbfe; color:var(--blue); }
+.btn-hint:hover { background:#dbeafe; }
+.btn-corr { background:var(--green-lt); border:1px solid #a7f3d0; color:var(--green); }
+.btn-corr:hover { background:#d1fae5; }
+.toggle-icon { font-size:10px; }
+.hint-box, .corr-box { display:none; margin-top:14px; }
+.hint-box.open, .corr-box.open { display:block; }
+.hint-box { background:var(--blue-lt); border:1px solid #bfdbfe; border-radius:7px; padding:14px 16px; }
+.corr-box { background:var(--green-lt); border:1px solid #a7f3d0; border-radius:7px; padding:14px 16px; }
+.corr-box p { color:var(--text2) !important; }
+
+/* ── DST SECTION ── */
+.dst-section {
+  background:var(--red-lt); border:1px solid #fecaca;
+  border-radius:12px; padding:34px; margin:36px 0;
+}
+.dst-section h2 { color:var(--red) !important; }
+.dst-section .section-num { color:var(--red) !important; }
+.checklist { list-style:none; padding:0; }
+.checklist li {
+  padding:8px 0; border-bottom:1px solid #fecaca;
+  display:flex; align-items:flex-start; gap:12px; color:var(--text2);
+}
+.checklist li:last-child { border-bottom:none; }
+.checklist li::before { content:'□'; font-size:15px; color:var(--blue); flex-shrink:0; }
+
+/* ── QCM ── */
+.qcm-controls {
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:22px;
+}
+.qcm-size-opt {
+  display:flex; align-items:center; gap:8px; cursor:pointer;
+  padding:8px 18px; border-radius:8px;
+  border:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted);
+  transition:all .2s; user-select:none; background:white;
+}
+.qcm-size-opt:has(input:checked) { border-color:var(--blue); background:var(--blue-lt); color:var(--blue); }
+.qcm-size-opt input { accent-color:var(--blue); }
+.qcm-q {
+  background:white; border:1px solid var(--border);
+  border-radius:10px; padding:20px 22px; margin-bottom:14px;
+  transition:border-color .3s; box-shadow:0 1px 4px rgba(0,0,0,0.04);
+}
+.qcm-q.correct { border-color:var(--green); background:var(--green-lt); }
+.qcm-q.wrong   { border-color:var(--red);   background:var(--red-lt); }
+.qcm-num {
+  font-family:'JetBrains Mono',monospace; font-size:10px;
+  color:var(--blue); letter-spacing:2px; text-transform:uppercase; margin-bottom:7px;
+}
+.qcm-question { font-size:15px; font-weight:700; color:var(--text); margin-bottom:13px; line-height:1.5; }
+.qcm-question code {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--green); background:var(--green-lt); padding:1px 5px; border-radius:3px;
+}
+.qcm-opts { display:flex; flex-direction:column; gap:7px; }
+.qcm-opt {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:9px 13px; border:1px solid var(--border);
+  border-radius:7px; cursor:pointer; transition:all .15s;
+  font-size:14px; color:var(--text2); background:white;
+}
+.qcm-opt:hover { border-color:var(--blue); background:var(--blue-lt); }
+.qcm-opt input { accent-color:var(--blue); width:14px; height:14px; flex-shrink:0; margin-top:2px; }
+.qcm-opt.opt-ok  { border-color:var(--green)!important; background:var(--green-lt)!important; color:var(--green); font-weight:700; }
+.qcm-opt.opt-ko  { border-color:var(--red)!important;   background:var(--red-lt)!important;   color:var(--red); }
+.qcm-opt code { font-family:'JetBrains Mono',monospace; font-size:12px; background:var(--green-lt); padding:1px 4px; border-radius:3px; color:inherit; }
+.qcm-fb {
+  margin-top:9px; font-size:13px; font-family:'JetBrains Mono',monospace;
+  padding:7px 11px; border-radius:5px; display:none; line-height:1.55;
+}
+.qcm-fb.show { display:block; }
+.qcm-fb.ok { background:var(--green-lt); color:var(--green); }
+.qcm-fb.ko { background:var(--red-lt);   color:var(--red); }
+#qcm-result {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:12px; padding:26px; margin-top:22px; text-align:center; display:none;
+}
+.score-big { font-size:58px; font-weight:900; line-height:1; margin-bottom:6px; }
+.score-sub { color:var(--muted); font-size:14px; margin-bottom:14px; }
+.score-bar-bg { background:var(--border); border-radius:99px; height:10px; overflow:hidden; margin:14px 0; }
+.score-bar-fill { height:100%; border-radius:99px; transition:width .8s cubic-bezier(.4,0,.2,1); }
+.score-msg { font-size:17px; font-weight:700; margin-top:10px; }
+.qcm-btn {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  padding:9px 20px; border-radius:7px; border:none; cursor:pointer;
+  font-weight:700; transition:opacity .2s;
+}
+.qcm-btn-primary { background:var(--blue); color:white; }
+.qcm-btn-secondary { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+.qcm-btn:hover { opacity:.85; }
+
+.hero-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:22px; }
+.hero-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.4);
+  color: white; text-decoration:none;
+  font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:700;
+  padding:10px 18px; border-radius:8px; transition: background .2s, transform .15s;
+}
+.hero-btn:hover { background: rgba(255,255,255,0.26); transform: translateY(-1px); }
+.hero-btn .ic { font-size:15px; }
+
+footer {
+  text-align:center; padding:38px;
+  color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;
+  border-top:1px solid var(--border);
+}
+@media(max-width:640px){
+  .hero{padding:36px 18px 30px;}
+  .container{padding:0 14px;}
+  pre{font-size:12px;}
+  .fn-grid{grid-template-columns:1fr;}
+}
+
+/* ── EXTRA : code executable (Pyodide) ── */
+.code-header { justify-content: space-between; }
+.code-header-left { display:flex; align-items:center; gap:8px; }
+.run-btn-mini {
+  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
+  background:var(--green); color:white; border:none; border-radius:5px;
+  padding:4px 12px; cursor:pointer; transition:opacity .2s;
+}
+.run-btn-mini:hover { opacity:.85; }
+.run-btn-mini:disabled { opacity:.5; cursor:wait; }
+.code-editor {
+  width:100%; display:block; box-sizing:border-box; border:none; resize:vertical;
+  background:transparent; color:#e2e8f0;
+  padding:18px 20px; font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7;
+  min-height:110px;
+}
+.code-editor:focus { outline:2px solid var(--blue); outline-offset:-2px; }
+.code-output {
+  margin:0; padding:12px 20px; border-top:1px solid #2a2f45;
+  font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.6;
+  color:#86efac; background:#0a0d14; white-space:pre-wrap;
+}
+
+/* ── EXTRA : mémo Python (détails) ── */
+.pymemo-toggle {
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+  margin:18px 0 4px; padding:9px 18px; border-radius:7px;
+  font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:700;
+  background:var(--purple-lt); border:1px solid #c7d2fe; color:var(--purple);
+  transition:all .2s; user-select:none;
+}
+.pymemo-toggle:hover { background:#e0e7ff; }
+.pymemo-box { display:none; margin:10px 0 22px; }
+.pymemo-box.open { display:block; }
+.pymemo-item {
+  background:var(--purple-lt); border:1px solid #c7d2fe; border-left:4px solid var(--purple);
+  border-radius:8px; padding:14px 18px; margin-bottom:12px; font-size:14.5px; color:var(--text2);
+}
+.pymemo-item strong { color:var(--text); }
+.pymemo-item .code-block { margin:8px 0 0; }
+
+/* ── EXTRA : auto-évaluation DST à 3 niveaux (persistance) ── */
+.selfassess { width:100%; border-collapse:collapse; margin:16px 0; font-size:13.5px; }
+.selfassess th { background:var(--blue-dk); color:white; text-align:left; padding:9px 12px; }
+.selfassess th:not(:first-child) { text-align:center; }
+.selfassess td { padding:9px 12px; border-bottom:1px solid var(--border); color:var(--text2); }
+.selfassess td:not(:first-child) { text-align:center; }
+.selfassess tr:nth-child(even) td { background:var(--surface2); }
+.selfassess input[type="radio"] {
+  width:18px; height:18px; accent-color:var(--red); cursor:pointer;
+}
+.selfassess tr.done td:first-child { color:var(--muted); }
+.checklist-reset {
+  margin-top:10px; font-family:'JetBrains Mono',monospace; font-size:11.5px; font-weight:700;
+  color:var(--red); background:white; border:1px solid var(--red); border-radius:6px;
+  padding:6px 14px; cursor:pointer;
+}
+.checklist-reset:hover { background:var(--red-lt); }
+
+/* ── EXTRA : convertisseur interactif ── */
+.converter {
+  background:var(--surface2); border:1px solid var(--border); border-radius:12px;
+  padding:24px; margin:18px 0;
+}
+.conv-row { display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; margin-bottom:8px; }
+.conv-field { flex:1; min-width:150px; }
+.conv-field label {
+  display:block; font-family:'JetBrains Mono',monospace; font-size:11px;
+  color:var(--blue); margin-bottom:6px; letter-spacing:1px; text-transform:uppercase;
+}
+.conv-field input {
+  width:100%; padding:9px 12px; border-radius:7px; border:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:14px; background:white;
+}
+.conv-arrow { font-size:1.3rem; color:var(--blue); padding-bottom:9px; }
+.conv-note { font-size:12.5px; color:var(--muted); margin-top:6px; }
+</style>
+
+</head>
+<body>
+
+<div class="hero">
+  <div class="hero-badge">NSI · 1ère Spécialité · Numération</div>
+  <h1>Écrire un <span>entier naturel</span> en base b ≥ 2</h1>
+  <p>Cours complet — Python exécutable — Exercices progressifs — QCM interactif</p>
+  <div class="hero-actions">
+    <a class="hero-btn" href="1D1E-entier-naturel-binaire-eleve.docx" download>
+      <span class="ic">📄</span> Télécharger le doc élève (Word)
+    </a>
+    <a class="hero-btn" href="1D1E-entier-naturel-binaire-diapo.pptx" download>
+      <span class="ic">🖥️</span> Mode présentation (diaporama)
+    </a>
+  </div>
+</div>
+
+<nav class="toc">
+  <a href="#s1">1. Introduction</a>
+  <a href="#s2">2. Vocabulaire</a>
+  <a href="#s3">3. Compter en binaire</a>
+  <a href="#s4">4. Binaire → décimal</a>
+  <a href="#s5">5. Décimal → binaire</a>
+  <a href="#s6">6. Hexadécimal</a>
+  <a href="#s7">7. Base b généralisée</a>
+  <a href="#s8">8. Binaire ↔ Hexa</a>
+  <a href="#s9">✏ Exercices</a>
+  <a href="#s10">⚠ Pour le DST</a>
+  <a href="#s11">🔄 Convertisseur</a>
+  <a href="#s12">🎯 QCM</a>
+</nav>
+
+<div class="container">
+
+<div class="section" id="s1">
+  <div class="section-num">01 — Introduction</div>
+  <h2>Pourquoi le binaire ?</h2>
+  <p>Vus de l'extérieur, les ordinateurs manipulent des nombres, du texte, des images, du son. Mais à l'intérieur, chaque circuit électronique n'a que <strong>deux états possibles</strong> : le courant passe, ou il ne passe pas.</p>
+  <div class="box box-info">
+    <div class="box-title">📋 Définition</div>
+    Un système de numération en base <code>b</code> est un moyen de représenter les nombres avec <code>b</code> symboles. Selon sa place, chaque symbole « pèse » une valeur particulière : le système est dit <strong>de position</strong>.
+  </div>
+  <p>Pour représenter des nombres, du texte ou des images avec seulement deux états, il faut donc les écrire comme des suites de 0 et de 1 : c'est la <strong>base 2</strong>, ou système <strong>binaire</strong>.</p>
+  <div class="box box-key">
+    <div class="box-title">🐍 Sur cette page</div>
+    Certains blocs de code sont <strong>modifiables et exécutables</strong> directement dans le navigateur (grâce à Pyodide, un vrai interpréteur Python). Repère le bouton <strong>▶ Exécuter</strong> dans l'en-tête du bloc.
+  </div>
+</div>
+
+<div class="section" id="s2">
+  <div class="section-num">02 — Vocabulaire</div>
+  <h2>Bit, octet, mot</h2>
+  <div class="box box-tip">
+    <div class="box-title">🔑 À connaître</div>
+    <ul style="margin-bottom:0">
+      <li><strong>bit</strong> (binary digit) : la plus petite unité d'information, elle vaut 0 ou 1.</li>
+      <li><strong>mot</strong> : une suite finie de bits, l'état d'un ensemble de circuits mémoire.</li>
+      <li><strong>octet</strong> (byte) : un groupe de <strong>8 bits</strong>. 1 octet = 1 o = 8 b.</li>
+    </ul>
+  </div>
+  <p>Exemple : le mot <code>100</code> représente l'état d'un circuit composé de 3 circuits mémoire un bit, dont les états sont 1, 0 et 0.</p>
+  <div class="box box-info">
+    <div class="box-title">📋 Convention d'écriture</div>
+    Dans un mot, par convention on groupe les bits par 4 avec un espace entre chaque groupe. Exemple : <code>1010 1010</code> (plus facile à lire que <code>10101010</code>).
+  </div>
+</div>
+
+<div class="section" id="s3">
+  <div class="section-num">03 — Compter en binaire</div>
+  <h2>Le même principe qu'en base 10</h2>
+  <p>Quand un rang est plein, on passe au rang suivant — exactement comme en base 10, sauf qu'un rang binaire n'accepte que 0 ou 1.</p>
+  <table>
+    <tr><th>Décimal</th><th>Binaire</th></tr>
+    <tr><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td></tr><tr><td>2</td><td>10</td></tr>
+    <tr><td>3</td><td>11</td></tr><tr><td>4</td><td>100</td></tr><tr><td>5</td><td>101</td></tr>
+    <tr><td>6</td><td>110</td></tr><tr><td>7</td><td>111</td></tr><tr><td>8</td><td>1000</td></tr>
+  </table>
+  <div class="box box-warn">
+    <div class="box-title">⚠ Combien de valeurs sur n bits ?</div>
+    Avec <code>n</code> bits, on peut coder exactement <code>2ⁿ</code> valeurs différentes, c'est-à-dire les entiers de <code>0</code> à <code>2ⁿ − 1</code>. Avec 1 bit : 2 valeurs. Avec 8 bits (1 octet) : 256 valeurs, de 0 à 255.
+  </div>
+</div>
+
+<div class="section" id="s4">
+  <div class="section-num">04 — Binaire → Décimal</div>
+  <h2>Convertir un binaire en décimal</h2>
+  <p>Comme en base 10 où <code>352 = 3×10² + 5×10¹ + 2×10⁰</code>, en base 2 chaque position vaut une puissance de 2.</p>
+  <h3>Exemple guidé</h3>
+  <table>
+    <tr><th>2⁷</th><th>2⁶</th><th>2⁵</th><th>2⁴</th><th>2³</th><th>2²</th><th>2¹</th><th>2⁰</th></tr>
+    <tr><td>128</td><td>64</td><td>32</td><td>16</td><td>8</td><td>4</td><td>2</td><td>1</td></tr>
+    <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+  </table>
+  <p><code>64 + 8 + 4 + 1 = 77</code>, donc <strong>(01001101)₂ = (77)₁₀</strong>.</p>
+  <div class="box box-key">
+    <div class="box-title">🌟 Une même valeur, plusieurs représentations</div>
+    77, 1001101₂ et 4D₁₆ désignent exactement le même nombre. Changer de base change la <strong>représentation</strong> (l'écriture), pas l'<strong>information</strong> elle-même.
+  </div>
+  <h3>En Python — prédis, puis exécute</h3>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="fn">print</span>(<span class="fn">int</span>(<span class="st">&#x27;1101&#x27;</span>, <span class="nb">2</span>))
+<span class="fn">print</span>(<span class="fn">int</span>(<span class="st">&#x27;01001101&#x27;</span>, <span class="nb">2</span>))</pre>
+  </div>
+  <div class="toggle-btn btn-corr" onclick="toggle('c-s4')"><span class="toggle-icon" id="ic-s4">▶</span> Voir la sortie attendue</div>
+  <div class="corr-box" id="c-s4"><p>Sortie attendue : <code>13</code> puis <code>77</code>. <code>int(chaîne, 2)</code> interprète la chaîne comme un nombre écrit en base 2.</p></div>
+  <p style="margin-top:18px">À toi, convertis à la main : 1₂, 10₂, 100₂, 1110₂, 101010₂.</p>
+  <div class="toggle-btn btn-corr" onclick="toggle('c-s4b')"><span class="toggle-icon" id="ic-s4b">▶</span> Voir la correction</div>
+  <div class="corr-box" id="c-s4b"><p>1₂ = 1 · 10₂ = 2 · 100₂ = 4 · 1110₂ = 14 · 101010₂ = 42</p></div>
+  <p style="margin-top:14px;color:var(--muted);font-size:14px">→ Fiche d'exercices : exercices 4 à 7.</p>
+</div>
+
+<div class="section" id="s5">
+  <div class="section-num">05 — Décimal → Binaire</div>
+  <h2>Convertir un décimal en binaire</h2>
+  <p>On effectue une succession de <strong>divisions euclidiennes par 2</strong>, jusqu'à obtenir un quotient nul. Le résultat est la juxtaposition des restes, lus du dernier au premier.</p>
+  <table>
+    <tr><th>Division</th><th>Quotient</th><th>Reste</th></tr>
+    <tr><td>77 ÷ 2</td><td>38</td><td>1</td></tr>
+    <tr><td>38 ÷ 2</td><td>19</td><td>0</td></tr>
+    <tr><td>19 ÷ 2</td><td>9</td><td>1</td></tr>
+    <tr><td>9 ÷ 2</td><td>4</td><td>1</td></tr>
+    <tr><td>4 ÷ 2</td><td>2</td><td>0</td></tr>
+    <tr><td>2 ÷ 2</td><td>1</td><td>0</td></tr>
+    <tr><td>1 ÷ 2</td><td>0</td><td>1</td></tr>
+  </table>
+  <p>Restes lus de bas en haut : <strong>1001101</strong>, donc (77)₁₀ = (1001101)₂.</p>
+
+  <div class="pymemo-toggle" onclick="toggle('pymemo')"><span class="toggle-icon" id="ipymemo">▶</span> 📘 Jamais fait de Python ? Mini-mémo (variables, if, while, for, listes...)</div>
+  <div class="pymemo-box" id="pymemo">
+    <div class="pymemo-item"><strong>Variables et affectation</strong> — on stocke une valeur dans un nom avec <code>=</code>.
+      <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>n <span class="op">=</span> <span class="nb">10</span>
+n <span class="op">=</span> n <span class="op">-</span> <span class="nb">1</span>   <span class="cm"># n vaut maintenant 9</span></pre>
+  </div>
+    </div>
+    <div class="pymemo-item"><strong>Test <code>if</code> / <code>elif</code> / <code>else</code></strong> — exécute un bloc selon une condition (bloc indenté de 4 espaces) :
+      <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="kw">if</span> n <span class="op">==</span> <span class="nb">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">&quot;zero&quot;</span>)
+<span class="kw">elif</span> n <span class="op">&gt;</span> <span class="nb">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">&quot;positif&quot;</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">&quot;negatif&quot;</span>)</pre>
+  </div>
+    </div>
+    <div class="pymemo-item"><strong>Boucle <code>while</code></strong> — répète tant qu'une condition est vraie. <em>C'est celle utilisée dans ce chapitre</em>, car on ne connaît pas à l'avance le nombre de divisions :
+      <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>n <span class="op">=</span> <span class="nb">13</span>
+<span class="kw">while</span> n <span class="op">&gt;</span> <span class="nb">0</span><span class="op">:</span>
+    <span class="fn">print</span>(n)
+    n <span class="op">=</span> n <span class="op">-</span> <span class="nb">1</span>   <span class="cm"># affiche 13, 12, 11, ... jusqu&#x27;a 1</span></pre>
+  </div>
+    </div>
+    <div class="pymemo-item"><strong>Boucle <code>for</code></strong> — répète un nombre de fois connu à l'avance, souvent avec <code>range()</code> :
+      <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">5</span>)<span class="op">:</span>
+    <span class="fn">print</span>(i)   <span class="cm"># affiche 0, 1, 2, 3, 4</span></pre>
+  </div>
+    </div>
+    <div class="pymemo-item"><strong>Modulo <code>%</code> et division entière <code>//</code></strong> — les deux opérateurs au cœur de ce chapitre :
+      <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="nb">13</span> <span class="op">%</span> <span class="nb">2</span>    <span class="cm"># reste de 13 / 2  -&gt;  1</span>
+<span class="nb">13</span> <span class="op">//</span> <span class="nb">2</span>   <span class="cm"># quotient de 13 / 2  -&gt;  6</span></pre>
+  </div>
+    </div>
+    <div class="pymemo-item"><strong>Listes</strong> — <code>[]</code> liste vide, <code>.append(x)</code> ajoute à la fin, <code>.reverse()</code> inverse sur place :
+      <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>chiffres <span class="op">=</span> []
+chiffres.append(<span class="st">&#x27;1&#x27;</span>)
+chiffres.append(<span class="st">&#x27;0&#x27;</span>)
+<span class="fn">print</span>(chiffres)      <span class="cm"># [&#x27;1&#x27;, &#x27;0&#x27;]</span>
+chiffres.reverse()
+<span class="fn">print</span>(chiffres)      <span class="cm"># [&#x27;0&#x27;, &#x27;1&#x27;]</span></pre>
+  </div>
+    </div>
+    <div class="pymemo-item"><strong>Assembler une liste en chaîne</strong> — <code>''.join(liste)</code> colle les éléments ensemble :
+      <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="st">&#x27;&#x27;</span>.join([<span class="st">&#x27;1&#x27;</span>, <span class="st">&#x27;0&#x27;</span>, <span class="st">&#x27;1&#x27;</span>])   <span class="cm"># &#x27;101&#x27;</span></pre>
+  </div>
+    </div>
+    <div class="pymemo-item"><strong>Fonctions</strong> — <code>def</code> définit une fonction, <code>return</code> renvoie son résultat :
+      <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="kw">def</span> <span class="df">double</span>(x)<span class="op">:</span>
+    <span class="kw">return</span> x <span class="op">*</span> <span class="nb">2</span>
+
+<span class="fn">print</span>(double(<span class="nb">5</span>))   <span class="cm"># 10</span></pre>
+  </div>
+    </div>
+  </div>
+
+  <h3>Trace d'exécution — suis la boucle pas à pas</h3>
+  <p>Avant d'écrire la fonction, vérifie que tu comprends bien ce que fait la boucle <code>while</code> : trace son exécution pour n = 13 (une ligne du tableau = un tour de boucle).</p>
+  <table>
+    <tr><th>Tour</th><th>n (avant)</th><th>n &gt; 0 ?</th><th>reste = n % 2</th><th>n (après n // 2)</th></tr>
+    <tr><td>1</td><td>13</td><td>Vrai</td><td>?</td><td>?</td></tr>
+    <tr><td>2</td><td>?</td><td>Vrai</td><td>?</td><td>?</td></tr>
+    <tr><td>3</td><td>?</td><td>Vrai</td><td>?</td><td>?</td></tr>
+    <tr><td>4</td><td>?</td><td>Vrai</td><td>?</td><td>?</td></tr>
+    <tr><td>5</td><td>?</td><td>?</td><td>—</td><td>—</td></tr>
+  </table>
+  <div class="toggle-btn btn-corr" onclick="toggle('c-trace13')"><span class="toggle-icon" id="ic-trace13">▶</span> Voir la correction</div>
+  <div class="corr-box" id="c-trace13">
+    <table>
+      <tr><th>Tour</th><th>n (avant)</th><th>n &gt; 0 ?</th><th>reste = n % 2</th><th>n (après n // 2)</th></tr>
+      <tr><td>1</td><td>13</td><td>Vrai</td><td>1</td><td>6</td></tr>
+      <tr><td>2</td><td>6</td><td>Vrai</td><td>0</td><td>3</td></tr>
+      <tr><td>3</td><td>3</td><td>Vrai</td><td>1</td><td>1</td></tr>
+      <tr><td>4</td><td>1</td><td>Vrai</td><td>1</td><td>0</td></tr>
+      <tr><td>5</td><td>0</td><td>Faux</td><td>—</td><td>—</td></tr>
+    </table>
+    <p>Liste <code>chiffres</code> obtenue (dans l'ordre d'ajout) : <code>1, 0, 1, 1</code> → après <code>chiffres.reverse()</code> : <code>1, 1, 0, 1</code>. Donc <code>entier_vers_binaire(13)</code> affiche <strong>1101</strong>.</p>
+  </div>
+
+  <h3>À toi de coder — complète la fonction</h3>
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+      <button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button>
+    </div>
+    <textarea class="code-editor" spellcheck="false" rows="13">def entier_vers_binaire(n):
+    """Convertit un entier naturel n en chaine binaire."""
+    if n == 0:
+        return '0'
+    chiffres = []
+    while n > 0:
+        # COMPLETE : ajoute le reste de n divise par 2 a la liste chiffres
+
+        # COMPLETE : mets a jour n avec le quotient de la division entiere
+
+    # COMPLETE : remets les chiffres dans le bon ordre
+
+    return ''.join(chiffres)
+
+print(entier_vers_binaire(77))  # doit afficher 1001101</textarea>
+    <div class="code-output" data-placeholder="Clique sur ▶ Exécuter pour lancer ton code.">Clique sur ▶ Exécuter pour lancer ton code.</div>
+  </div>
+  <div class="toggle-btn btn-hint" onclick="toggle('h-s5')"><span class="toggle-icon" id="ih-s5">▶</span> Indice</div>
+  <div class="hint-box" id="h-s5"><p>Le reste de <code>n</code> divisé par 2, c'est <code>n % 2</code> (à ajouter avec <code>.append()</code>). Le quotient, c'est <code>n // 2</code>. Pour remettre les chiffres dans le bon ordre, une liste a une méthode <code>.reverse()</code>.</p></div>
+  <div class="toggle-btn btn-corr" onclick="toggle('c-s5')"><span class="toggle-icon" id="ic-s5">▶</span> Voir la correction</div>
+  <div class="corr-box" id="c-s5"><div class="code-block" style="margin-top:8px;"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><pre><span class="kw">def</span> <span class="df">entier_vers_binaire</span>(n)<span class="op">:</span>
+    <span class="kw">if</span> n <span class="op">==</span> <span class="nb">0</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="st">&#x27;0&#x27;</span>
+    chiffres <span class="op">=</span> []
+    <span class="kw">while</span> n <span class="op">&gt;</span> <span class="nb">0</span><span class="op">:</span>
+        chiffres.append(<span class="fn">str</span>(n <span class="op">%</span> <span class="nb">2</span>))
+        n <span class="op">=</span> n <span class="op">//</span> <span class="nb">2</span>
+    chiffres.reverse()
+    <span class="kw">return</span> <span class="st">&#x27;&#x27;</span>.join(chiffres)</pre></div></div>
+</div>
+
+<div class="section" id="s6">
+  <div class="section-num">06 — Hexadécimal</div>
+  <h2>Le système hexadécimal (base 16)</h2>
+  <p>La base 16 a besoin de 16 symboles : les 10 chiffres 0 à 9, puis <strong>A, B, C, D, E, F</strong> pour 10 à 15.</p>
+  <p>Même principe que pour le binaire, avec des divisions successives par 16 :</p>
+  <table>
+    <tr><th>Division</th><th>Quotient</th><th>Reste</th></tr>
+    <tr><td>335 ÷ 16</td><td>20</td><td>15 (=F)</td></tr>
+    <tr><td>20 ÷ 16</td><td>1</td><td>4</td></tr>
+    <tr><td>1 ÷ 16</td><td>0</td><td>1</td></tr>
+  </table>
+  <p>Donc <strong>(335)₁₀ = (14F)₁₆</strong>.</p>
+  <p style="margin-top:18px">À toi : convertis 965 en base 16.</p>
+  <div class="toggle-btn btn-corr" onclick="toggle('c-s6')"><span class="toggle-icon" id="ic-s6">▶</span> Voir la correction</div>
+  <div class="corr-box" id="c-s6"><p>965 ÷ 16 = 60 reste 5 ; 60 ÷ 16 = 3 reste 12 (C) ; 3 ÷ 16 = 0 reste 3 → <strong>965 = 3C5₁₆</strong></p></div>
+  <p style="margin-top:14px;color:var(--muted);font-size:14px">→ Fiche d'exercices : exercices 12 et 13.</p>
+</div>
+
+<div class="section" id="s7">
+  <div class="section-num">07 — Base b généralisée</div>
+  <h2>Généraliser à une base b quelconque</h2>
+  <p>En base b, on a besoin de b symboles. Un nombre écrit (aₙ₋₁ ... a₁ a₀) en base b se lit comme une somme de puissances de b :</p>
+  <div class="box box-key">
+    <div class="box-title">🧮 Formule générale</div>
+    (aₙ₋₁ aₙ₋₂ … a₁ a₀)<sub>b</sub> = aₙ₋₁ × b<sup>n-1</sup> + aₙ₋₂ × b<sup>n-2</sup> + … + a₁ × b¹ + a₀ × b⁰
+  </div>
+
+  <h3>7.1 — De la base 10 vers la base b</h3>
+  <p>On effectue une succession de divisions euclidiennes par b, jusqu'à un quotient nul. Le résultat est la juxtaposition des restes, lus du dernier au premier (même méthode qu'en base 2 ou en base 16, avec b au lieu de 2 ou 16).</p>
+  <table>
+    <tr><th>Division</th><th>Quotient</th><th>Reste</th></tr>
+    <tr><td>50 ÷ 3</td><td>16</td><td>2</td></tr>
+    <tr><td>16 ÷ 3</td><td>5</td><td>1</td></tr>
+    <tr><td>5 ÷ 3</td><td>1</td><td>2</td></tr>
+    <tr><td>1 ÷ 3</td><td>0</td><td>1</td></tr>
+  </table>
+  <p>Donc <strong>(50)₁₀ = (1212)₃</strong>.</p>
+  <div class="box box-warn">
+    <div class="box-title">⚠ Généralisation</div>
+    Avec n positions en base b, on peut coder <code>bⁿ</code> valeurs, de 0 à <code>bⁿ − 1</code>. C'est la généralisation du cas b = 2 vu en partie 3 (<code>2ⁿ</code> valeurs, de 0 à <code>2ⁿ − 1</code>).
+  </div>
+
+  <h3>7.2 — De la base b vers la base 10</h3>
+  <p>On applique directement la formule ci-dessus : chaque chiffre est multiplié par la puissance de b correspondant à sa position, puis on additionne.</p>
+  <table>
+    <tr><th>16²</th><th>16¹</th><th>16⁰</th></tr>
+    <tr><td>256</td><td>16</td><td>1</td></tr>
+    <tr><td>7</td><td>2</td><td>C</td></tr>
+  </table>
+  <p><code>7×256 + 2×16 + 12×1 = 1792 + 32 + 12 = 1836</code>, donc <strong>(72C)₁₆ = (1836)₁₀</strong> (rappel : C₁₆ = 12₁₀).</p>
+  <p style="margin-top:14px;color:var(--muted);font-size:14px">→ Fiche d'exercices : exercice 14.</p>
+
+  <h3>Coder la généralisation</h3>
+  <p>Tout ce qu'on a vu se code aussi : divisions successives par <code>b</code>.</p>
+
+  <h4 style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue-dk);margin:22px 0 8px;letter-spacing:1px;">⭐ NIVEAU FACILE — base b ≤ 10</h4>
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+      <button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button>
+    </div>
+    <textarea class="code-editor" spellcheck="false" rows="8">def entier_vers_base(n, b):
+    # COMPLETE : reprends ta fonction entier_vers_binaire et remplace le 2 par b
+
+
+print(entier_vers_base(77, 10))  # doit afficher 77
+print(entier_vers_base(77, 2))   # doit afficher 1001101</textarea>
+    <div class="code-output" data-placeholder="Clique sur ▶ Exécuter pour lancer ton code.">Clique sur ▶ Exécuter pour lancer ton code.</div>
+  </div>
+  <div class="toggle-btn btn-hint" onclick="toggle('h-s7a')"><span class="toggle-icon" id="ih-s7a">▶</span> Indice</div>
+  <div class="hint-box" id="h-s7a"><p>La structure est identique à <code>entier_vers_binaire</code> : seul le <code>2</code> devient <code>b</code>, à trois endroits.</p></div>
+  <div class="toggle-btn btn-corr" onclick="toggle('c-s7a')"><span class="toggle-icon" id="ic-s7a">▶</span> Voir la correction</div>
+  <div class="corr-box" id="c-s7a"><div class="code-block" style="margin-top:8px;"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><pre><span class="kw">def</span> <span class="df">entier_vers_base</span>(n, b)<span class="op">:</span>
+    <span class="kw">if</span> n <span class="op">==</span> <span class="nb">0</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="st">&#x27;0&#x27;</span>
+    chiffres <span class="op">=</span> []
+    <span class="kw">while</span> n <span class="op">&gt;</span> <span class="nb">0</span><span class="op">:</span>
+        chiffres.append(<span class="fn">str</span>(n <span class="op">%</span> b))
+        n <span class="op">=</span> n <span class="op">//</span> b
+    chiffres.reverse()
+    <span class="kw">return</span> <span class="st">&#x27;&#x27;</span>.join(chiffres)</pre></div></div>
+
+  <h4 style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue-dk);margin:26px 0 8px;letter-spacing:1px;">⭐⭐ NIVEAU INTERMÉDIAIRE — gérer la base 16</h4>
+  <p>Pour <code>b = 16</code>, un reste peut valoir jusqu'à 15 : il faut le traduire en symbole. La chaîne <code>"0123456789ABCDEF"</code> indexée par le reste donne directement le bon caractère.</p>
+  <div class="code-block">
+    <div class="code-header">
+      <div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+      <button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button>
+    </div>
+    <textarea class="code-editor" spellcheck="false" rows="9">def entier_vers_base(n, b):
+    symboles = "0123456789ABCDEF"
+    # COMPLETE : adapte ta fonction precedente pour piocher
+    # le bon caractere dans 'symboles' au lieu de str(n % b)
+
+
+print(entier_vers_base(335, 16))  # doit afficher 14F</textarea>
+    <div class="code-output" data-placeholder="Clique sur ▶ Exécuter pour lancer ton code.">Clique sur ▶ Exécuter pour lancer ton code.</div>
+  </div>
+  <div class="toggle-btn btn-hint" onclick="toggle('h-s7b')"><span class="toggle-icon" id="ih-s7b">▶</span> Indice</div>
+  <div class="hint-box" id="h-s7b"><p>Remplace <code>str(n % b)</code> par <code>symboles[n % b]</code> : ça pioche directement le bon caractère (chiffre ou lettre).</p></div>
+  <div class="toggle-btn btn-corr" onclick="toggle('c-s7b')"><span class="toggle-icon" id="ic-s7b">▶</span> Voir la correction</div>
+  <div class="corr-box" id="c-s7b"><div class="code-block" style="margin-top:8px;"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><pre><span class="kw">def</span> <span class="df">entier_vers_base</span>(n, b)<span class="op">:</span>
+    symboles <span class="op">=</span> <span class="st">&quot;0123456789ABCDEF&quot;</span>
+    <span class="kw">if</span> n <span class="op">==</span> <span class="nb">0</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="st">&#x27;0&#x27;</span>
+    chiffres <span class="op">=</span> []
+    <span class="kw">while</span> n <span class="op">&gt;</span> <span class="nb">0</span><span class="op">:</span>
+        chiffres.append(symboles[n <span class="op">%</span> b])
+        n <span class="op">=</span> n <span class="op">//</span> b
+    chiffres.reverse()
+    <span class="kw">return</span> <span class="st">&#x27;&#x27;</span>.join(chiffres)</pre></div></div>
+
+  <h4 style="font-family:'JetBrains Mono',monospace;font-size:13px;color:var(--blue-dk);margin:26px 0 8px;letter-spacing:1px;">⭐⭐⭐ NIVEAU AVANCÉ — vérifier avec les outils natifs</h4>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre><span class="fn">print</span>(<span class="fn">hex</span>(<span class="nb">335</span>))
+<span class="fn">print</span>(<span class="fn">format</span>(<span class="nb">335</span>, <span class="st">&#x27;X&#x27;</span>))
+<span class="fn">print</span>(<span class="fn">int</span>(<span class="st">&#x27;14F&#x27;</span>, <span class="nb">16</span>))</pre>
+  </div>
+  <div class="toggle-btn btn-corr" onclick="toggle('c-s7c')"><span class="toggle-icon" id="ic-s7c">▶</span> Voir la sortie attendue</div>
+  <div class="corr-box" id="c-s7c"><p>Sortie attendue : <code>0x14f</code>, puis <code>14F</code>, puis <code>335</code>. <code>hex()</code> ajoute le préfixe <code>0x</code> ; <code>format(n, 'X')</code> donne des majuscules.</p></div>
+</div>
+
+<div class="section" id="s8">
+  <div class="section-num">08 — Binaire ↔ Hexa</div>
+  <h2>La méthode courte : paquets de 4 bits</h2>
+  <p>Sur 4 bits, on représente exactement <code>2⁴ = 16</code> valeurs : chaque chiffre hexadécimal correspond donc exactement à un groupe de 4 bits.</p>
+  <h3>Tableau de référence (à connaître par cœur, à terme)</h3>
+  <table>
+    <tr><th>Décimal</th><th>Binaire</th><th>Hexadécimal</th></tr>
+    <tr><td>0</td><td>0000</td><td>0</td></tr><tr><td>1</td><td>0001</td><td>1</td></tr>
+    <tr><td>2</td><td>0010</td><td>2</td></tr><tr><td>3</td><td>0011</td><td>3</td></tr>
+    <tr><td>4</td><td>0100</td><td>4</td></tr><tr><td>5</td><td>0101</td><td>5</td></tr>
+    <tr><td>6</td><td>0110</td><td>6</td></tr><tr><td>7</td><td>0111</td><td>7</td></tr>
+    <tr><td>8</td><td>1000</td><td>8</td></tr><tr><td>9</td><td>1001</td><td>9</td></tr>
+    <tr><td>10</td><td>1010</td><td>A</td></tr><tr><td>11</td><td>1011</td><td>B</td></tr>
+    <tr><td>12</td><td>1100</td><td>C</td></tr><tr><td>13</td><td>1101</td><td>D</td></tr>
+    <tr><td>14</td><td>1110</td><td>E</td></tr><tr><td>15</td><td>1111</td><td>F</td></tr>
+  </table>
+  <table>
+    <tr><th>Binaire</th><td>0100</td><td>1101</td></tr>
+    <tr><th>Décimal</th><td>4</td><td>13</td></tr>
+    <tr><th>Hexadécimal</th><td>4</td><td>D</td></tr>
+  </table>
+  <p>Donc <strong>(0100 1101)₂ = (4D)₁₆</strong>.</p>
+  <div class="box box-tip">
+    <div class="box-title">🔑 Notations Python</div>
+    Python reconnaît nativement des écritures littérales pour changer de base : <code>0b</code> pour le binaire (<code>0b1101</code>), <code>0x</code> pour l'hexadécimal (<code>0x1F</code>), et — bonus — <code>0o</code> pour l'octal / base 8 (<code>0o17</code>).
+  </div>
+  <div class="code-block">
+    <div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+    <pre>n <span class="op">=</span> <span class="nb">0b01001101</span>
+<span class="fn">print</span>(<span class="fn">format</span>(n, <span class="st">&#x27;X&#x27;</span>))
+<span class="fn">print</span>(<span class="fn">format</span>(<span class="nb">0xB931</span>, <span class="st">&#x27;b&#x27;</span>))</pre>
+  </div>
+  <div class="toggle-btn btn-corr" onclick="toggle('c-s8')"><span class="toggle-icon" id="ic-s8">▶</span> Voir la sortie attendue</div>
+  <div class="corr-box" id="c-s8"><p>Sortie attendue : <code>4D</code> puis <code>1011100100110001</code>. <code>0b…</code> et <code>0x…</code> sont des écritures littérales reconnues directement par Python.</p></div>
+  <p style="margin-top:14px;color:var(--muted);font-size:14px">→ Fiche d'exercices : exercices 15 et 16.</p>
+</div>
+
+<div class="section" id="s9">
+  <div class="section-num">09 — Exercices</div>
+  <h2>Exercices progressifs</h2>
+  <p style="color:var(--muted);margin-bottom:20px;">3 exercices de difficulté croissante. Réfléchis avant de consulter la correction !</p>
+
+  <div class="exo-card">
+    <div class="exo-hdr easy">
+      <div><div class="exo-level">⭐ Niveau 1 · Exercice 1</div><div class="exo-title">Conversions de base</div></div>
+    </div>
+    <div class="exo-body">
+      <p>Convertis en binaire : <code>9</code>, <code>20</code>, <code>50</code>. Convertis en décimal : <code>1010₂</code>, <code>11111₂</code>.</p>
+      <div class="toggle-btn btn-corr" onclick="toggle('c-ex1')"><span class="toggle-icon" id="ic-ex1">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c-ex1"><p>9 = 1001₂ · 20 = 10100₂ · 50 = 110010₂<br>1010₂ = 10 · 11111₂ = 31</p></div>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-hdr medium">
+      <div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 2</div><div class="exo-title">Prédire puis vérifier</div></div>
+    </div>
+    <div class="exo-body">
+      <p>Prédis puis exécute pour vérifier. Complète aussi la question sur 60 en binaire sur 8 bits.</p>
+      <div class="code-block">
+    <div class="code-header">
+      <div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+      <button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button>
+    </div>
+    <textarea class="code-editor" spellcheck="false" rows="3">print(format(45, '08b'))
+print(int('101010', 2))</textarea>
+    <div class="code-output" data-placeholder="Clique sur ▶ Exécuter pour lancer ton code.">Clique sur ▶ Exécuter pour lancer ton code.</div>
+  </div>
+      <div class="toggle-btn btn-corr" onclick="toggle('c-ex2')"><span class="toggle-icon" id="ic-ex2">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c-ex2"><p><code>format(45, '08b')</code> → <code>00101101</code> · <code>int('101010', 2)</code> → <code>42</code><br>Et 60 = 00111100₂ (sur 8 bits).</p></div>
+    </div>
+  </div>
+
+  <div class="exo-card">
+    <div class="exo-hdr hard">
+      <div><div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 3</div><div class="exo-title">Poids binaire et puissances de 2</div></div>
+    </div>
+    <div class="exo-body">
+      <p>Complète <code>poids_binaire(n)</code> (nombre de bits à 1) puis <code>est_puissance_de_deux(n)</code>, sans utiliser <code>bin()</code> ni <code>format()</code>.</p>
+      <div class="code-block">
+    <div class="code-header">
+      <div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div>
+      <button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button>
+    </div>
+    <textarea class="code-editor" spellcheck="false" rows="16">def entier_vers_binaire(n):
+    if n == 0:
+        return '0'
+    chiffres = []
+    while n > 0:
+        chiffres.append(str(n % 2))
+        n = n // 2
+    chiffres.reverse()
+    return ''.join(chiffres)
+
+def poids_binaire(n):
+    # COMPLETE : utilise entier_vers_binaire(n) et compte les '1'
+
+
+def est_puissance_de_deux(n):
+    # COMPLETE : une puissance de 2 a un seul bit a 1
+
+
+print(poids_binaire(13))          # 3   (13 = 1101)
+print(est_puissance_de_deux(16))  # True
+print(est_puissance_de_deux(18))  # False</textarea>
+    <div class="code-output" data-placeholder="Clique sur ▶ Exécuter pour lancer ton code.">Clique sur ▶ Exécuter pour lancer ton code.</div>
+  </div>
+      <div class="toggle-btn btn-hint" onclick="toggle('h-ex3')"><span class="toggle-icon" id="ih-ex3">▶</span> Indice</div>
+      <div class="hint-box" id="h-ex3"><p><code>entier_vers_binaire(n).count('1')</code> compte directement les bits à 1. Une puissance de 2 s'écrit toujours avec un seul bit à 1.</p></div>
+      <div class="toggle-btn btn-corr" onclick="toggle('c-ex3')"><span class="toggle-icon" id="ic-ex3">▶</span> Voir la correction</div>
+      <div class="corr-box" id="c-ex3"><div class="code-block" style="margin-top:8px;"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><pre><span class="kw">def</span> <span class="df">poids_binaire</span>(n)<span class="op">:</span>
+    <span class="kw">return</span> entier_vers_binaire(n).count(<span class="st">&#x27;1&#x27;</span>)
+
+<span class="kw">def</span> <span class="df">est_puissance_de_deux</span>(n)<span class="op">:</span>
+    <span class="kw">return</span> n <span class="op">&gt;</span> <span class="nb">0</span> <span class="kw">and</span> poids_binaire(n) <span class="op">==</span> <span class="nb">1</span></pre></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="dst-section" id="s10">
+  <div class="section-num">10 — Checklist DST</div>
+  <h2>Ce que tu dois maîtriser pour le DST</h2>
+  <p style="color:var(--text2);margin-bottom:20px;">Coche une case par ligne — ta progression est enregistrée automatiquement sur cet appareil. Pour une notion « à revoir », reprends l'exemple guidé correspondant puis refais un exercice sans aide.</p>
+
+  <table class="selfassess" id="dst-checklist">
+    <tr><th>Compétence</th><th>Seul</th><th>Avec aide</th><th>À revoir</th></tr>
+    <tr data-key="c1"><td>Convertir un binaire en décimal (somme des puissances de 2 où il y a un 1)</td><td><input type="radio" name="c1" value="seul"></td><td><input type="radio" name="c1" value="aide"></td><td><input type="radio" name="c1" value="revoir"></td></tr>
+    <tr data-key="c2"><td>Convertir un décimal en binaire (divisions successives par 2, lecture des restes)</td><td><input type="radio" name="c2" value="seul"></td><td><input type="radio" name="c2" value="aide"></td><td><input type="radio" name="c2" value="revoir"></td></tr>
+    <tr data-key="c3"><td>Savoir combien de valeurs on code avec n bits (2ⁿ), et l'intervalle (0 à 2ⁿ−1)</td><td><input type="radio" name="c3" value="seul"></td><td><input type="radio" name="c3" value="aide"></td><td><input type="radio" name="c3" value="revoir"></td></tr>
+    <tr data-key="c4"><td>Convertir décimal ↔ hexadécimal (divisions/puissances de 16, symboles A-F)</td><td><input type="radio" name="c4" value="seul"></td><td><input type="radio" name="c4" value="aide"></td><td><input type="radio" name="c4" value="revoir"></td></tr>
+    <tr data-key="c5"><td>Convertir binaire ↔ hexadécimal par paquets de 4 bits</td><td><input type="radio" name="c5" value="seul"></td><td><input type="radio" name="c5" value="aide"></td><td><input type="radio" name="c5" value="revoir"></td></tr>
+    <tr data-key="c6"><td>Généraliser à une base b quelconque (formule Σ aᵢ × bⁱ, divisions successives par b)</td><td><input type="radio" name="c6" value="seul"></td><td><input type="radio" name="c6" value="aide"></td><td><input type="radio" name="c6" value="revoir"></td></tr>
+    <tr data-key="c7"><td>Reconnaître et utiliser les notations Python 0b, 0x, 0o</td><td><input type="radio" name="c7" value="seul"></td><td><input type="radio" name="c7" value="aide"></td><td><input type="radio" name="c7" value="revoir"></td></tr>
+    <tr data-key="c8"><td>Distinguer bin()/format(n,'b') (avec/sans préfixe 0b) et int(chaîne, base)</td><td><input type="radio" name="c8" value="seul"></td><td><input type="radio" name="c8" value="aide"></td><td><input type="radio" name="c8" value="revoir"></td></tr>
+    <tr data-key="c9"><td>Écrire une fonction Python de conversion sans bin() ni format()</td><td><input type="radio" name="c9" value="seul"></td><td><input type="radio" name="c9" value="aide"></td><td><input type="radio" name="c9" value="revoir"></td></tr>
+    <tr data-key="c10"><td>Expliquer pourquoi représentation et information ne sont pas la même chose</td><td><input type="radio" name="c10" value="seul"></td><td><input type="radio" name="c10" value="aide"></td><td><input type="radio" name="c10" value="revoir"></td></tr>
+  </table>
+
+  <button class="checklist-reset" onclick="resetChecklist()">↺ Réinitialiser la checklist</button>
+
+  <p style="margin-top:22px;"><strong>Mon prochain objectif :</strong></p>
+  <input type="text" id="next-goal" placeholder="La prochaine chose que je dois retravailler est…" style="width:100%; padding:10px 12px; border-radius:7px; border:1px solid var(--border); font-family:inherit; font-size:14px;">
+
+  <div class="box box-alert" style="margin-top:20px;">
+    <div class="box-title">🚨 Erreurs classiques à éviter</div>
+    <ul>
+      <li>❌ Oublier qu'un bit à 1 en position <code>k</code> pèse <code>2^k</code>, pas <code>k</code>.</li>
+      <li>❌ Confondre <code>bin(n)</code> (avec le préfixe <code>0b</code>) et <code>format(n, 'b')</code> (sans préfixe).</li>
+      <li>❌ Oublier de tester le dépassement de capacité sur un nombre de bits fixé.</li>
+      <li>❌ Oublier d'inverser (lire de bas en haut) les restes obtenus par divisions successives.</li>
+      <li>❌ Confondre la valeur d'un chiffre hexadécimal (A=10, F=15) avec sa position.</li>
+    </ul>
+  </div>
+</div>
+
+<div class="section" id="s11">
+  <div class="section-num">11 — Bonus</div>
+  <h2>Convertisseur interactif</h2>
+  <p style="color:var(--muted)">Entre un nombre dans une base, il se convertit automatiquement dans les autres — utile pour vérifier tes calculs à la main.</p>
+  <div class="converter">
+    <div class="conv-row">
+      <div class="conv-field"><label>Décimal</label><input type="text" id="conv-dec" placeholder="ex : 77"></div>
+      <div class="conv-arrow">⇄</div>
+      <div class="conv-field"><label>Binaire</label><input type="text" id="conv-bin" placeholder="ex : 1001101"></div>
+      <div class="conv-arrow">⇄</div>
+      <div class="conv-field"><label>Hexadécimal</label><input type="text" id="conv-hex" placeholder="ex : 4D"></div>
+    </div>
+    <p class="conv-note">Modifie n'importe quel champ, les deux autres se mettent à jour automatiquement.</p>
+  </div>
+</div>
+
+<div class="section" id="s12">
+  <div class="section-num">12 — QCM</div>
+  <h2>Quiz interactif — Entiers naturels en base b</h2>
+  <p style="color:var(--muted);margin-bottom:16px;">Banque de <strong style="color:var(--green)">52 questions</strong>. Choisissez le nombre de questions et lancez le tirage.</p>
+  <div class="qcm-controls">
+    <span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)">Nombre de questions :</span>
+    <label class="qcm-size-opt" id="lbl5"><input type="radio" name="qsz" value="5" checked onchange="onSzChange()"> 5 questions</label>
+    <label class="qcm-size-opt" id="lbl10"><input type="radio" name="qsz" value="10" onchange="onSzChange()"> 10 questions</label>
+    <button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button>
+  </div>
+  <div id="qcm-questions"></div>
+  <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;">
+    <button class="qcm-btn qcm-btn-primary" onclick="submitQCM()" id="btn-sub">✅ Valider mes réponses</button>
+    <button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button>
+  </div>
+  <div id="qcm-result"></div>
+</div>
+
+</div><!-- /container -->
+<footer>NSI · 1ère Spécialité · Écrire un entier naturel en base b ≥ 2 · Cours complet + Exercices + QCM</footer>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+function toggle(id) {
+  const el = document.getElementById(id);
+  const icon = document.getElementById('i'+id);
+  el.classList.toggle('open');
+  if(icon) icon.textContent = el.classList.contains('open') ? '\u25bc' : '\u25b6';
+}
+function onSzChange() {
+  const v5 = document.querySelector('[name="qsz"][value="5"]').checked;
+  document.getElementById('lbl5').style.borderColor  = v5  ? '#2563eb' : '';
+  document.getElementById('lbl10').style.borderColor = !v5 ? '#2563eb' : '';
+}
+
+let _pyodidePromise = null;
+function getPyodide(){
+  if(!_pyodidePromise){ _pyodidePromise = loadPyodide(); }
+  return _pyodidePromise;
+}
+async function runPycode(btn){
+  const container = btn.closest('.code-block');
+  const textarea = container.querySelector('.code-editor');
+  const output = container.querySelector('.code-output');
+  const code = textarea.value;
+  const original = btn.textContent;
+  btn.disabled = true;
+  btn.textContent = '...';
+  output.textContent = '';
+  try{
+    const pyodide = await getPyodide();
+    pyodide.setStdout({ batched: function(s){ output.textContent += s + '\n'; } });
+    pyodide.setStderr({ batched: function(s){ output.textContent += s + '\n'; } });
+    await pyodide.runPythonAsync(code);
+    if(!output.textContent.trim()){
+      output.textContent = '(aucune sortie -- pense a utiliser print() pour afficher un resultat)';
+    }
+  }catch(err){
+    output.textContent += 'Erreur : ' + err;
+  }
+  btn.disabled = false;
+  btn.textContent = original;
+}
+
+(function(){
+  const KEY = 'nsi-base-b-selfassess';
+  let state = {};
+  try{ state = JSON.parse(localStorage.getItem(KEY)) || {}; }catch(e){ state = {}; }
+  document.querySelectorAll('.selfassess input[type="radio"]').forEach(function(radio){
+    const key = radio.name;
+    if (state[key] === radio.value) {
+      radio.checked = true;
+      radio.closest('tr').classList.add('done');
+    }
+    radio.addEventListener('change', function(){
+      state[key] = radio.value;
+      radio.closest('tr').classList.add('done');
+      try{ localStorage.setItem(KEY, JSON.stringify(state)); }catch(e){}
+    });
+  });
+  const goalKey = 'nsi-base-b-next-goal';
+  const goalInput = document.getElementById('next-goal');
+  if (goalInput) {
+    try{ goalInput.value = localStorage.getItem(goalKey) || ''; }catch(e){}
+    goalInput.addEventListener('input', function(){
+      try{ localStorage.setItem(goalKey, goalInput.value); }catch(e){}
+    });
+  }
+})();
+function resetChecklist(){
+  document.querySelectorAll('.selfassess input[type="radio"]').forEach(function(radio){
+    radio.checked = false;
+    radio.closest('tr').classList.remove('done');
+  });
+  const goalInput = document.getElementById('next-goal');
+  if (goalInput) goalInput.value = '';
+  try{
+    localStorage.removeItem('nsi-base-b-selfassess');
+    localStorage.removeItem('nsi-base-b-next-goal');
+  }catch(e){}
+}
+
+(function(){
+  const dec = document.getElementById('conv-dec');
+  const bin = document.getElementById('conv-bin');
+  const hex = document.getElementById('conv-hex');
+  let lock = false;
+  function update(source, value){
+    if(lock) return;
+    lock = true;
+    let n = null;
+    if(value.trim() === ''){
+      [dec,bin,hex].forEach(function(f){ if(f!==source) f.value=''; });
+      lock = false; return;
+    }
+    try{
+      if(source === dec) n = parseInt(value, 10);
+      if(source === bin) { if(!/^[01]+$/.test(value.trim())) throw 0; n = parseInt(value, 2); }
+      if(source === hex) { if(!/^[0-9a-fA-F]+$/.test(value.trim())) throw 0; n = parseInt(value, 16); }
+      if(n === null || isNaN(n) || n < 0){ throw 0; }
+      if(source !== dec) dec.value = n.toString(10);
+      if(source !== bin) bin.value = n.toString(2);
+      if(source !== hex) hex.value = n.toString(16).toUpperCase();
+    }catch(e){ /* saisie incomplete, on ignore */ }
+    lock = false;
+  }
+  dec.addEventListener('input', function(){ update(dec, dec.value); });
+  bin.addEventListener('input', function(){ update(bin, bin.value); });
+  hex.addEventListener('input', function(){ update(hex, hex.value); });
+  dec.value = '77'; update(dec, '77');
+})();
+
+const BANK = [
+  // ── VOCABULAIRE ──
+  {q:"Que signifie l'acronyme <code>bit</code> ?",
+   o:["binary digit","basic information transfer","binary integer type","bit information technology"],a:0,
+   ex:"« bit » vient de l'anglais <code>binary digit</code> : un chiffre binaire, 0 ou 1."},
+  {q:"Combien de bits y a-t-il dans un octet ?",
+   o:["8","10","16","4"],a:0,
+   ex:"1 octet = 8 bits, par définition (<code>byte</code> en anglais)."},
+  {q:"Un « mot » en informatique désigne :",
+   o:["une suite finie de bits","un caractère alphabétique","un octet obligatoirement","une adresse mémoire"],a:0,
+   ex:"Un mot est l'état d'un ensemble de circuits mémoire un bit : une suite finie de 0 et de 1, de longueur variable."},
+  {q:"Sur 1 bit, combien d'états sont possibles ?",
+   o:["2","1","4","0"],a:0,
+   ex:"Un bit vaut 0 ou 1 : 2 états possibles."},
+  {q:"Par convention, comment groupe-t-on les bits pour la lisibilité ?",
+   o:["par 4, avec un espace entre chaque groupe","par 2","par 3","uniquement par 8"],a:0,
+   ex:"On groupe par 4 (ex : <code>1010 1010</code>), ce qui correspond aussi à un chiffre hexadécimal par groupe."},
+  // ── COMPTER / n BITS -> VALEURS ──
+  {q:"Combien de valeurs peut-on coder avec 3 bits ?",
+   o:["8","6","9","7"],a:0,
+   ex:"2³ = 8 valeurs possibles (de 0 à 7). Attention : <code>2ⁿ</code>, pas <code>n×2</code> ni <code>n²</code>."},
+  {q:"Avec 8 bits (1 octet), quel est l'entier maximum représentable ?",
+   o:["255","256","128","254"],a:0,
+   ex:"2⁸ = 256 valeurs, donc de 0 à 255 (256 est déjà hors intervalle : erreur de décalage fréquente)."},
+  {q:"Avec n bits, combien de valeurs peut-on représenter ?",
+   o:["2ⁿ","n²","2n","n²-1"],a:0,
+   ex:"C'est 2 à la puissance n, pas n au carré ni 2 fois n : chaque bit ajouté double le nombre de possibilités."},
+  {q:"Combien de valeurs sur 5 bits ?",
+   o:["32","31","10","25"],a:0,
+   ex:"2⁵ = 32. (31 oublie le 0 ; 25 confond avec 5² ; 10 confond avec 5×2.)"},
+  {q:"Quel est le plus grand entier codable sur 4 bits ?",
+   o:["15","16","14","31"],a:0,
+   ex:"2⁴ - 1 = 15 (l'intervalle va de 0 à 2ⁿ-1, pas jusqu'à 2ⁿ)."},
+  {q:"Sur 10 bits, combien de valeurs possibles ?",
+   o:["1024","1023","100","20"],a:0,
+   ex:"2¹⁰ = 1024. Ne pas confondre le nombre de valeurs (1024) et le maximum représentable (1023)."},
+  {q:"Sur 6 bits, quel est l'intervalle des entiers représentables ?",
+   o:["0 à 63","1 à 64","0 à 64","0 à 31"],a:0,
+   ex:"2⁶ = 64 valeurs, de 0 à 63 (2⁶-1)."},
+  // ── BINAIRE -> DÉCIMAL ──
+  {q:"Convertir <code>101₂</code> en décimal.",
+   o:["5","101","3","4"],a:0,
+   ex:"101₂ = 1×2² + 0×2¹ + 1×2⁰ = 4+0+1 = 5."},
+  {q:"Convertir <code>1010₂</code> en décimal.",
+   o:["10","1010","8","12"],a:0,
+   ex:"1010₂ = 8+0+2+0 = 10."},
+  {q:"Convertir <code>1111₂</code> en décimal.",
+   o:["15","1111","16","11"],a:0,
+   ex:"1111₂ = 8+4+2+1 = 15."},
+  {q:"Convertir <code>10011₂</code> en décimal.",
+   o:["19","21","12","23"],a:0,
+   ex:"10011₂ = 16+0+0+2+1 = 19. (21 vient d'une erreur de position sur les puissances de 2.)"},
+  {q:"Convertir <code>11001₂</code> en décimal.",
+   o:["25","19","27","24"],a:0,
+   ex:"11001₂ = 16+8+0+0+1 = 25."},
+  {q:"Que vaut <code>2⁰</code> ?",
+   o:["1","0","2","indéfini"],a:0,
+   ex:"Tout nombre non nul à la puissance 0 vaut 1, y compris 2⁰."},
+  {q:"Dans <code>1011₂</code>, quel bit est le « poids fort » ?",
+   o:["le 1 le plus à gauche","le 1 le plus à droite","le 0","aucun, ils ont tous le même poids"],a:0,
+   ex:"Le poids fort (MSB) est le bit le plus à gauche : il pèse la plus grande puissance de 2."},
+  {q:"Convertir <code>100000₂</code> en décimal.",
+   o:["32","64","6","100000"],a:0,
+   ex:"Un seul 1 en position 5 : 2⁵ = 32."},
+  // ── DÉCIMAL -> BINAIRE ──
+  {q:"Convertir 6 en binaire.",
+   o:["110","101","011","60"],a:0,
+   ex:"6 = 4+2 = 110₂ (6÷2=3 r0 ; 3÷2=1 r1 ; 1÷2=0 r1 → 110)."},
+  {q:"Convertir 9 en binaire.",
+   o:["1001","1010","0110","901"],a:0,
+   ex:"9 = 8+1 = 1001₂."},
+  {q:"Convertir 13 en binaire.",
+   o:["1101","1011","1110","1100"],a:0,
+   ex:"13 = 8+4+1 = 1101₂."},
+  {q:"Convertir 20 en binaire.",
+   o:["10100","10010","01010","11000"],a:0,
+   ex:"20 = 16+4 = 10100₂."},
+  {q:"Convertir 33 en binaire.",
+   o:["100001","100010","110001","100011"],a:0,
+   ex:"33 = 32+1 = 100001₂."},
+  {q:"En posant la division euclidienne successive par 2, comment lit-on le résultat final ?",
+   o:["restes lus du dernier au premier","restes lus du premier au dernier","quotients lus du dernier au premier","uniquement le dernier reste"],a:0,
+   ex:"On juxtapose les restes en partant du dernier obtenu (le plus significatif) jusqu'au premier."},
+  {q:"Convertir 0 en binaire.",
+   o:["0","1","00","0 n'a pas d'écriture binaire"],a:0,
+   ex:"0 s'écrit 0 dans n'importe quelle base."},
+  {q:"Quelle est la première étape pour convertir 50 en binaire par divisions successives ?",
+   o:["50 ÷ 2 = 25 reste 0","50 ÷ 2 = 24 reste 2","2 ÷ 50","50 × 2 = 100"],a:0,
+   ex:"On divise 50 par 2 : quotient 25, reste 0."},
+  // ── HEXADÉCIMAL ──
+  {q:"Combien de symboles utilise la base 16 ?",
+   o:["16","10","6","15"],a:0,
+   ex:"La base 16 a besoin de 16 symboles : 0-9 puis A-F."},
+  {q:"Que vaut le symbole <code>A</code> en base 16 ?",
+   o:["10","1","11","16"],a:0,
+   ex:"A=10, B=11, C=12, D=13, E=14, F=15."},
+  {q:"Que vaut le symbole <code>F</code> en base 16 ?",
+   o:["15","16","14","6"],a:0,
+   ex:"F est le dernier symbole hexadécimal : il vaut 15."},
+  {q:"Convertir 30 en base 16.",
+   o:["1E","30","20","F0"],a:0,
+   ex:"30 = 1×16 + 14 = 1E₁₆ (14=E)."},
+  {q:"Convertir <code>A5₁₆</code> en décimal.",
+   o:["165","105","150","15"],a:0,
+   ex:"A5₁₆ = 10×16 + 5 = 165."},
+  {q:"Convertir 255 en base 16.",
+   o:["FF","F0","EE","100"],a:0,
+   ex:"255 = 15×16 + 15 = FF₁₆ (le maximum sur 2 chiffres hexa, comme 255 sur 1 octet)."},
+  {q:"Combien de symboles hexadécimaux s'ajoutent aux 10 chiffres décimaux ?",
+   o:["6 (A à F)","4","10","16"],a:0,
+   ex:"On ajoute A, B, C, D, E, F : 6 symboles supplémentaires."},
+  // ── GÉNÉRALISATION BASE b ──
+  {q:"En base b, combien de symboles sont nécessaires ?",
+   o:["b","b-1","b+1","2b"],a:0,
+   ex:"Une base b utilise exactement b symboles, de 0 à b-1."},
+  {q:"Avec n positions en base b, combien de valeurs peut-on coder ?",
+   o:["bⁿ","n^b","n×b","b×n-1"],a:0,
+   ex:"C'est la généralisation de 2ⁿ (cas b=2) : bⁿ valeurs, de 0 à bⁿ-1."},
+  {q:"Convertir 12 en base 3.",
+   o:["110","102","111","120"],a:0,
+   ex:"12÷3=4 r0 ; 4÷3=1 r1 ; 1÷3=0 r1 → restes lus de bas en haut : 110₃ (1×9+1×3+0=12)."},
+  {q:"Convertir 21 en base 5.",
+   o:["41","14","40","101"],a:0,
+   ex:"21÷5=4 r1 ; 4÷5=0 r4 → 41₅ (4×5+1=21)."},
+  {q:"Pour convertir un entier décimal en base b, quelle opération répète-t-on ?",
+   o:["division euclidienne par b","multiplication par b","soustraction de b","addition de b"],a:0,
+   ex:"On effectue des divisions euclidiennes successives par b jusqu'à un quotient nul."},
+  // ── BINAIRE <-> HEXADÉCIMAL ──
+  {q:"Combien de bits représente exactement un chiffre hexadécimal ?",
+   o:["4","2","8","1"],a:0,
+   ex:"2⁴=16, donc 4 bits couvrent exactement les 16 symboles hexadécimaux."},
+  {q:"Convertir <code>1010₂</code> en hexadécimal.",
+   o:["A","10","F","8"],a:0,
+   ex:"1010₂ = 10 en décimal = A en hexadécimal."},
+  {q:"Convertir <code>1100₂</code> en hexadécimal.",
+   o:["C","D","12","9"],a:0,
+   ex:"1100₂ = 12 en décimal = C en hexadécimal."},
+  {q:"Convertir <code>0110 1101₂</code> en hexadécimal.",
+   o:["6D","6C","7D","5D"],a:0,
+   ex:"0110=6, 1101=D → 6D₁₆."},
+  {q:"Convertir <code>3F₁₆</code> en binaire.",
+   o:["00111111","00110001","11110011","00111110"],a:0,
+   ex:"3=0011, F=1111 → 00111111₂."},
+  {q:"Pourquoi peut-on convertir directement binaire ↔ hexadécimal par paquets de 4 bits ?",
+   o:["car 2⁴ = 16, le nombre de symboles hexadécimaux","car 4 est un nombre pair","car il y a 4 lettres dans « hexa »","par convention arbitraire"],a:0,
+   ex:"4 bits codent exactement 16 valeurs (2⁴), soit tous les symboles hexadécimaux possibles."},
+  // ── NOTATIONS PYTHON ──
+  {q:"Que fait le préfixe <code>0b</code> devant un nombre en Python ?",
+   o:["indique une écriture littérale binaire","transforme le nombre en booléen","provoque une erreur de syntaxe","indique un nombre flottant"],a:0,
+   ex:"<code>0b1101</code> est reconnu directement par Python comme l'entier 13 écrit en binaire."},
+  {q:"Que renvoie <code>bin(10)</code> en Python ?",
+   o:["'0b1010'","'1010'","'10'","'0x1010'"],a:0,
+   ex:"<code>bin()</code> renvoie une chaîne avec le préfixe <code>0b</code>."},
+  {q:"Que renvoie <code>format(10, 'b')</code> en Python ?",
+   o:["'1010'","'0b1010'","'10'","'A'"],a:0,
+   ex:"<code>format(n,'b')</code> renvoie l'écriture binaire SANS préfixe, contrairement à <code>bin()</code>."},
+  {q:"Que renvoie <code>int('1010', 2)</code> en Python ?",
+   o:["10","1010","'1010'","une erreur"],a:0,
+   ex:"<code>int(chaîne, 2)</code> interprète la chaîne comme un nombre écrit en base 2 : 1010₂ = 10."},
+  {q:"Quel préfixe Python reconnaît-il pour l'hexadécimal ?",
+   o:["0x","0h","0hex","#"],a:0,
+   ex:"<code>0x1F</code> est reconnu directement par Python comme un entier écrit en hexadécimal."},
+  {q:"Que renvoie <code>format(255, 'X')</code> en Python ?",
+   o:["'FF'","'ff'","'255'","'0xFF'"],a:0,
+   ex:"'X' majuscule donne des lettres hexadécimales majuscules, sans préfixe."},
+];
+
+let curQs = [], submitted = false, qSz = 5;
+const getSz = () => parseInt(document.querySelector('[name="qsz"]:checked')?.value||5);
+const shuffle = a => { const b=[...a]; for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];} return b; };
+
+function newQCM() {
+  submitted = false; qSz = getSz();
+  curQs = shuffle(BANK).slice(0, qSz);
+  const c = document.getElementById('qcm-questions'); c.innerHTML = '';
+  curQs.forEach((q,qi) => {
+    const sh = shuffle(q.o.map((t,i) => ({t,i}))); q._sh = sh;
+    const opts = sh.map((o,si) => `<label class="qcm-opt" id="opt-${qi}-${si}"><input type="radio" name="q${qi}" value="${si}"><span>${o.t}</span></label>`).join('');
+    c.innerHTML += `<div class="qcm-q" id="qb-${qi}"><div class="qcm-num">Question ${qi+1} / ${qSz}</div><div class="qcm-question">${q.q}</div><div class="qcm-opts">${opts}</div><div class="qcm-fb" id="fb-${qi}"></div></div>`;
+  });
+  const r = document.getElementById('qcm-result'); r.style.display='none'; r.innerHTML='';
+  const btn = document.getElementById('btn-sub'); btn.disabled=false; btn.style.opacity='1';
+  document.getElementById('qcm-result').style.display='none';
+  onSzChange();
+}
+
+function submitQCM() {
+  if(submitted) return; submitted = true; let score = 0;
+  curQs.forEach((q,qi) => {
+    const sel = document.querySelector(`input[name="q${qi}"]:checked`);
+    const block = document.getElementById(`qb-${qi}`);
+    const fb = document.getElementById(`fb-${qi}`);
+    const corrSi = q._sh.findIndex(o => o.i === q.a);
+    document.querySelectorAll(`input[name="q${qi}"]`).forEach(r => r.disabled=true);
+    const cl = document.getElementById(`opt-${qi}-${corrSi}`);
+    if(cl) cl.classList.add('opt-ok');
+    if(sel) {
+      const chosen = parseInt(sel.value);
+      if(chosen === corrSi) { score++; block.classList.add('correct'); fb.className='qcm-fb show ok'; fb.innerHTML='Bonne reponse ! '+q.ex; }
+      else { block.classList.add('wrong'); document.getElementById(`opt-${qi}-${chosen}`)?.classList.add('opt-ko'); fb.className='qcm-fb show ko'; fb.innerHTML='Mauvaise reponse. '+q.ex; }
+    } else { block.classList.add('wrong'); fb.className='qcm-fb show ko'; fb.innerHTML='Pas de reponse. '+q.ex; }
+  });
+  const pct = (score/qSz)*100, ratio = score/qSz;
+  const col = ratio<0.3?'#dc2626':ratio<0.5?'#d97706':ratio<0.7?'#ca8a04':ratio<0.9?'#059669':'#0891b2';
+  const msgs = p => p<30?'Relis le cours !':p<50?"Quelques revisions s'imposent.":p<70?'Pas mal, continue !':p<90?'Tres bien !':'Parfait, maitrise totale !';
+  const note = Math.round((score/qSz)*20);
+  const r = document.getElementById('qcm-result');
+  r.style.display='block';
+  r.innerHTML=`<div class="score-big" style="color:${col}">${score}<span style="font-size:26px;opacity:.5">/${qSz}</span></div><div class="score-sub">~ <strong>${note}/20</strong></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%;background:${col}" id="sfill"></div></div><div class="score-msg" style="color:${col}">${msgs(pct)}</div>`;
+  setTimeout(()=>{ const f=document.getElementById('sfill'); if(f) f.style.width=pct+'%'; }, 80);
+  r.scrollIntoView({behavior:'smooth',block:'center'});
+  document.getElementById('btn-sub').disabled=true;
+  document.getElementById('btn-sub').style.opacity='.5';
+}
+
+document.addEventListener('DOMContentLoaded', () => { newQCM(); onSzChange(); });
+</script>
+</body>
+</html>

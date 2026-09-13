@@ -1,0 +1,686 @@
+{
+  "version": "2.0",
+  "niveau": "Première NSI",
+  "intro": "Construis un mini RPG textuel en six étapes. Pour chaque étape : lis le cours, prédis l’exemple, expérimente, puis écris ta solution dans l’atelier à rendre. Conserve les six versions pour montrer ta progression.",
+  "delivery": "À rendre : un seul fichier NOM_Prenom_mini_rpg.py exporté depuis le navigateur. Il contient six parties indépendantes sélectionnées au lancement par un menu fourni. Ne modifie pas les marqueurs de partie. Dans chaque partie, écris deux tests en commentaires (entrées, résultat attendu, résultat observé). En tête du fichier, indique les aides utilisées et une correction que tu sais expliquer. Sauvegarde à chaque séance ; une sauvegarde du navigateur ne remplace pas le fichier téléchargé.",
+  "policy": "Tu dois pouvoir expliquer et modifier chaque ligne que tu rends. Signale les aides consultées (cours, camarade, site, IA) et ce que tu as repris ou adapté. Pendant l’oral, travaille sans aide extérieure. Un code court compris vaut mieux qu’une fonction complexe que tu ne peux pas expliquer. Les conditions d’autorisation des aides sont précisées par ton professeur.",
+  "parts": [
+    {
+      "id": 1,
+      "title": "Créer son personnage",
+      "goal": "Saisir des informations, calculer et prendre une décision.",
+      "course": [
+        "Un programme exécute ses instructions de haut en bas. Une variable associe un nom à une valeur. nom = 'Lina' affecte une chaîne de caractères ; pv = 50 affecte un entier. L’opérateur = affecte ; == compare et produit un booléen (True ou False).",
+        "input(question) affiche une question et renvoie toujours une chaîne, même si on tape 5. int(input(question)) la convertit en entier. On suppose ici que les saisies numériques sont des entiers : traiter une lettre avec try/except sera un prolongement.",
+        "print affiche une ou plusieurs valeurs, séparées par des virgules. pv = pv - 10 lit l’ancienne valeur, calcule, puis remplace la valeur de pv. Un commentaire commence par # et explique une intention.",
+        "if teste une condition ; elif teste un autre cas si les précédents sont faux ; else couvre le reste. Les deux-points et les quatre espaces d’indentation délimitent le bloc. and exige que les deux conditions soient vraies."
+      ],
+      "example": "pv = 50\naction = input(\"attaquer ou soigner ? \")\nif action == \"attaquer\":\n    pv = pv - 10\nelif action == \"soigner\":\n    pv = pv + 15\nelse:\n    print(\"Action inconnue\")\nprint(\"PV :\", pv)",
+      "tasks": [
+        "Prédire les PV pour attaquer, soigner et dormir avant d’exécuter l’exemple. Modifier ensuite le soin de 15 à 12.",
+        "Dans la partie 1 du fichier à rendre, demander le nom et la classe (guerrier, mage ou archer), puis afficher un accueil personnalisé. Signaler une classe inconnue avec if/elif/else.",
+        "Demander trois entiers force, intelligence et agilite. Le budget est 15. Calculer le total et accepter uniquement trois valeurs positives ou nulles dont la somme vaut 15. Afficher un récapitulatif et un message valide/invalide. Une saisie invalide ne doit pas être annoncée valide ; la redemande n’est pas exigée ici."
+      ],
+      "tests": [
+        "Lina, mage, 5, 4, 6 → total 15 et répartition valide.",
+        "5, 5, 6 → total 16, invalide ; -1, 8, 8 → total 15 mais invalide.",
+        "Classe dragon → classe inconnue ; dormir dans l’exemple → PV inchangés."
+      ],
+      "criteria": [
+        [
+          "Nom, classe et accueil cohérents",
+          1
+        ],
+        [
+          "Conversions et calcul du total",
+          1
+        ],
+        [
+          "Somme 15 et non-négativité vérifiées",
+          2
+        ],
+        [
+          "Deux tests commentés avec attendu et observé",
+          1
+        ]
+      ],
+      "starter": "# PARTIE 1 — Création du personnage\n# TODO : saisir le nom, la classe et les trois caractéristiques.\n# TODO : afficher le récapitulatif et vérifier la répartition.\n# TEST 1 : entrées / attendu / observé\n# TEST 2 : entrées / attendu / observé\n",
+      "inputs": "Lina\nmage\n5\n4\n6",
+      "extension": "Ajouter un contrôle du nom vide. En défi, redemander les valeurs incorrectes après la partie 4."
+    },
+    {
+      "id": 2,
+      "title": "Maîtriser le hasard et les fonctions",
+      "goal": "Simuler une surprise et comprendre un appel de fonction.",
+      "course": [
+        "random est un module de la bibliothèque standard. Avec import random, on appelle random.random() ou random.randint(a, b). Éviter import * : le nom du module permet de retrouver l’origine de chaque fonction.",
+        "random.random() renvoie un nombre dans [0 ; 1[ : 0 est possible, 1 est exclu. random.randint(1, 20) renvoie un entier de 1 à 20 inclus. int(random.random()*10) produit 0 à 9. Le hasard est pseudo-aléatoire : un algorithme produit une suite qui semble aléatoire.",
+        "def nom(parametre): définit une fonction ; son corps ne s’exécute qu’à l’appel nom(valeur). Le paramètre reçoit la valeur transmise. return renvoie un résultat et termine l’appel. print affiche ; il ne remplace pas return.",
+        "Pour vérifier un seuil, choisir des valeurs fixes avant de remettre le tirage aléatoire. Un petit nombre de tirages n’a pas nécessairement les proportions théoriques."
+      ],
+      "example": "import random\n\ndef attaque_reussie(de):\n    return de > 10\n\nprint(attaque_reussie(10))\nprint(attaque_reussie(11))\nprint(\"Dé :\", random.randint(1, 20))",
+      "tasks": [
+        "Écrire une surprise : tirer chance avec random.random() ; afficher Attaque surprise si chance < 0.5, sinon Aucun ennemi.",
+        "Définir attaque_reussie(de) qui renvoie True exactement lorsque de > 10. Afficher le résultat pour 10 puis 11, puis pour un dé à 20 faces tiré avec randint.",
+        "Expliquer dans deux commentaires la différence entre définir et appeler une fonction, puis entre print et return. L’interface graphique du TP original se trouve dans l’atelier complémentaire après les six parties."
+      ],
+      "tests": [
+        "chance = 0.49 → surprise ; chance = 0.5 → aucun ennemi.",
+        "attaque_reussie(1) et (10) → False ; (11) et (20) → True.",
+        "Le dé vaut toujours entre 1 et 20 ; ne pas exiger un nombre précis de surprises."
+      ],
+      "criteria": [
+        [
+          "Surprise et seuil 0.5 corrects",
+          1
+        ],
+        [
+          "Dé entier entre 1 et 20",
+          1
+        ],
+        [
+          "Fonction avec paramètre et return corrects",
+          2
+        ],
+        [
+          "Tests de seuil et explications",
+          1
+        ]
+      ],
+      "starter": "# PARTIE 2 — Hasard et fonctions\nimport random\n\ndef attaque_reussie(de):\n    # TODO : remplacer pass par le résultat à renvoyer.\n    pass\n\n# TODO : surprise, tests fixes, puis lancer de dé.\n# TEST 1 : entrées / attendu / observé\n# TEST 2 : entrées / attendu / observé\n",
+      "inputs": "",
+      "extension": "Après le parcours principal, créer une fenêtre avec un champ de nom et un bouton : atelier Tkinter fourni."
+    },
+    {
+      "id": 3,
+      "title": "Explorer avec une boucle for",
+      "goal": "Répéter un nombre connu de fois et compter des rencontres.",
+      "course": [
+        "for i in range(1, 11): fait prendre à i les valeurs 1 à 10. La borne finale est exclue. range(10) produit 0 à 9. Le corps indenté est répété ; le code après le bloc ne l’est pas.",
+        "Un compteur est initialisé avant la boucle, puis augmenté dans le bloc : nombre = nombre + 1. L’initialiser dans le bloc efface le comptage précédent.",
+        "Avec x = random.random(), les intervalles x < 0.5, puis x < 0.8, puis le reste donnent des probabilités 50 %, 30 %, 20 %. elif empêche qu’un même tirage sélectionne deux ennemis.",
+        "Une fonction peut isoler ce choix : choisir_ennemi(x) reçoit le tirage et renvoie un nom. Le tirage reste à l’extérieur pour tester facilement les valeurs aux frontières."
+      ],
+      "example": "potions = 0\nif potions == 0:\n    print(\"Repos\")\nelse:\n    print(\"Boire une potion\")\nprint(\"Entrer dans la grotte\")\n\nfor numero in range(1, 4):\n    print(\"Pas\", numero)\nprint(\"Fin du trajet\")",
+      "tasks": [
+        "Prédire l’affichage de l’exemple pour 0 et 1 potion. Indenter la ligne Entrer dans la grotte pour ne l’afficher que si on boit une potion.",
+        "Définir choisir_ennemi(x) : gobelin si x < 0.5, araignee si 0.5 <= x < 0.8, troll sinon. Utiliser if/elif/else et return.",
+        "Simuler exactement 10 rencontres numérotées de 1 à 10. À chaque tour, appeler choisir_ennemi(random.random()). Compter les gobelins et afficher le bilan une seule fois après la boucle."
+      ],
+      "tests": [
+        "0 et 0.49 → gobelin ; 0.5 et 0.79 → araignee ; 0.8 et 0.99 → troll.",
+        "Exactement dix lignes de rencontre, puis un bilan ; le compteur vaut entre 0 et 10.",
+        "En remplaçant tous les tirages par 0.2, le bilan doit compter 10 gobelins."
+      ],
+      "criteria": [
+        [
+          "Indentation expliquée et modifiée",
+          1
+        ],
+        [
+          "Dix rencontres numérotées correctement",
+          1
+        ],
+        [
+          "Trois intervalles et return corrects",
+          1
+        ],
+        [
+          "Compteur initialisé et mis à jour au bon endroit",
+          1
+        ],
+        [
+          "Tests de frontières et bilan unique",
+          1
+        ]
+      ],
+      "starter": "# PARTIE 3 — Exploration\nimport random\n\ndef choisir_ennemi(x):\n    # TODO : renvoyer le nom selon les trois intervalles.\n    pass\n\n# TODO : exemple d'indentation puis dix rencontres et compteur.\n# TEST 1 : entrées / attendu / observé\n# TEST 2 : entrées / attendu / observé\n",
+      "inputs": "",
+      "extension": "Passer à 100 rencontres et comparer les effectifs, sans attendre exactement 50, 30 et 20."
+    },
+    {
+      "id": 4,
+      "title": "Faire durer le combat avec while",
+      "goal": "Répéter jusqu’à une condition de fin et gérer un tour complet.",
+      "course": [
+        "while condition: répète son bloc tant que la condition est vraie. Elle est vérifiée avant chaque tour. Une mise à jour doit permettre d’en sortir. Contrairement à for, le nombre de tours n’est pas connu à l’avance.",
+        "while pv_hero > 0 and pv_monstre > 0: continue seulement si les deux combattants vivent. or serait incorrect : le combat continuerait si un seul survit. break permet de sortir immédiatement, par exemple pour fuir.",
+        "Un soin doit être plafonné : après pv_hero = pv_hero + 10, si pv_hero > 100, remettre 100. On peut écrire min(100, pv_hero + 10) une fois min compris. max(0, pv) permet un affichage sans valeur négative.",
+        "Un tour a un ordre : action du héros, contrôle de survie du monstre, puis riposte éventuelle. Un monstre vaincu ne riposte pas. Tester d’abord avec des dés fixés permet de vérifier la logique."
+      ],
+      "example": "vie = 40\nwhile vie > 0:\n    vie = vie - 20\n    print(\"Vie :\", vie)\nprint(\"Fin\")",
+      "tasks": [
+        "Échauffement : commencer à 100 PV. attaquer enlève 20 PV au héros, defendre rend 10 PV plafonnés à 100, rien enlève 5. Ajouter fuir pour sortir et un message pour une action inconnue. Ce mini-jeu est indépendant du combat suivant.",
+        "Combat à rendre : héros et monstre commencent à 100 PV. attaquer lance un dé : si > 10, le monstre perd 20 PV ; defendre soigne le héros de 10 (maximum 100) ; rien ne modifie pas directement les PV. Après une action valide, le monstre encore vivant lance son dé et inflige 20 PV si > 10.",
+        "Une action inconnue ne consomme pas de tour. fuir termine sans riposte. Afficher les PV après chaque tour et une issue distincte : victoire, défaite ou fuite. Garder une version indépendante en partie 4."
+      ],
+      "tests": [
+        "Dé 10 → échec ; dé 11 → 20 dégâts ; héros 95 + soin → 100 avant riposte.",
+        "Monstre à 20, attaque du héros réussie → victoire et aucune riposte.",
+        "Héros à 20, attaque du monstre réussie → défaite ; fuir → fin immédiate.",
+        "Action xyz → message puis nouvelle saisie, PV inchangés."
+      ],
+      "criteria": [
+        [
+          "Boucle et trois issues correctes",
+          1
+        ],
+        [
+          "Actions et plafonnement du soin",
+          1
+        ],
+        [
+          "Dés et dégâts corrects des deux côtés",
+          1
+        ],
+        [
+          "Ordre du tour et absence de riposte après victoire",
+          1
+        ],
+        [
+          "Saisie invalide, fuite et tests",
+          1
+        ]
+      ],
+      "starter": "# PARTIE 4 — Combat\nimport random\n\n# TODO : boucle du mini-jeu d'échauffement.\n# TODO : combat indépendant à 100 PV chacun, puis message de fin.\n# TEST 1 : entrées / attendu / observé\n# TEST 2 : entrées / attendu / observé\n",
+      "inputs": "fuir\nfuir",
+      "extension": "Comparer le mini-jeu et le combat : attaquer ne diminue pas directement les PV du héros dans le combat."
+    },
+    {
+      "id": 5,
+      "title": "Gérer les monstres avec une liste",
+      "goal": "Ajouter, retirer et choisir des éléments sans perdre l’état du jeu.",
+      "course": [
+        "Une liste est une collection ordonnée et modifiable : monstres = ['gobelin', 'araignee', 'troll']. L’indice du premier élément est 0. len(monstres) donne sa taille. Une liste vide s’écrit [].",
+        "append(x) ajoute x à la fin ; remove(x) retire la première occurrence de x et échoue s’il est absent. Vérifier if x in monstres: avant de retirer une valeur dont on ne connaît pas la présence.",
+        "random.choice(monstres) choisit un élément au hasard, avec la même probabilité par position. Il faut vérifier que la liste n’est pas vide avant l’appel. while monstres: signifie tant que la liste n’est pas vide.",
+        "À partir de cette partie, la règle de combat évolue : attaque réussie si dé <= attaque ; elle est bloquée si le dé du défenseur <= defense. Des dégâts de 20 arrivent seulement si l’attaque réussit ET si la défense échoue. Le seuil > 10 de la partie 4 est remplacé."
+      ],
+      "example": "sac = [\"potion\", \"cle\"]\nprint(sac[0])\nsac.append(\"carte\")\nif \"cle\" in sac:\n    sac.remove(\"cle\")\nprint(sac, len(sac))",
+      "tasks": [
+        "Échauffement : créer une liste de courses vide et un menu a/r/l/q pour ajouter, retirer, afficher et quitter. Ne pas retirer un article absent.",
+        "Reprendre le combat dans la partie 5, en conservant celui de la partie 4. Commencer avec trois monstres uniques dans une liste. Choisir le monstre courant avec choice uniquement quand la liste n’est pas vide. Retirer un monstre uniquement après sa défaite, puis en choisir un autre. La liste vide signifie victoire de la forêt.",
+        "Appliquer les nouvelles règles aux deux combattants : héros attaque 12, défense 10 ; monstres attaque 9, défense 7. Chaque monstre commence à 100 PV. Le héros commence à 100 et garde ses PV entre combats. Remplacer defendre par potion : gain randint(10,20), plafond 100, puis riposte si le monstre vit. Potions illimitées dans cette version. Garder rien et fuir."
+      ],
+      "tests": [
+        "Retirer un article absent → message, pas d’erreur.",
+        "Attaque 12, dé 12 → touche ; dé 13 → rate. Défense 7, dé 7 → bloque ; dé 8 → dégâts.",
+        "Dernier monstre vaincu → liste vide et victoire, aucun choice([]).",
+        "Potion à 95 PV avec gain 20 → 100 avant la riposte ; héros non réinitialisé entre deux monstres."
+      ],
+      "criteria": [
+        [
+          "Menu de liste avec ajout et retrait sûr",
+          1
+        ],
+        [
+          "Choix sûr et retrait après défaite seulement",
+          1
+        ],
+        [
+          "Victoire finale et continuité des PV",
+          1
+        ],
+        [
+          "Attaque, défense et potion conformes",
+          1
+        ],
+        [
+          "Tests des seuils et de la liste vide",
+          1
+        ]
+      ],
+      "starter": "# PARTIE 5 — Listes\nimport random\n\n# TODO : menu de liste de courses.\n# TODO : recopier puis faire évoluer le combat de la partie 4.\n# Monstres : gobelin, araignee, troll. Ne pas réinitialiser le héros.\n# TEST 1 : entrées / attendu / observé\n# TEST 2 : entrées / attendu / observé\n",
+      "inputs": "q\nfuir",
+      "extension": "Ajouter un inventaire de trois potions et refuser une potion lorsque le stock est nul."
+    },
+    {
+      "id": 6,
+      "title": "Construire le bestiaire avec des dictionnaires",
+      "goal": "Associer des clés à des valeurs et séparer modèles et personnages.",
+      "course": [
+        "Un dictionnaire associe une clé à une valeur : hero = {'nom': 'Lina', 'pv': 100}. hero['pv'] lit la valeur ; hero['pv'] = 80 la remplace. Une clé absente provoque une erreur : vérifier sa présence avec in.",
+        "Une nouvelle clé ajoute une entrée ; del hero['nom'] la supprime. Les clés utilisées ici sont des chaînes. Une liste se lit par indice ; un dictionnaire se lit par clé.",
+        "On peut imbriquer des dictionnaires : bestiaire['gobelin']['attaque'] accède à la caractéristique du gobelin. list(bestiaire) crée une liste de ses clés, utile pour choisir les monstres restants.",
+        "monstre = bestiaire['gobelin'] crée un autre nom pour le même objet. Modifier ses PV modifierait le modèle. monstre = bestiaire['gobelin'].copy() crée une copie superficielle ; elle suffit ici car ses valeurs sont des nombres et des chaînes, sans liste ni dictionnaire imbriqué."
+      ],
+      "example": "bestiaire = {\n    \"gobelin\": {\"pv\": 60, \"attaque\": 9, \"defense\": 7}\n}\nmonstre = bestiaire[\"gobelin\"].copy()\nmonstre[\"pv\"] = monstre[\"pv\"] - 20\nprint(monstre[\"pv\"])\nprint(bestiaire[\"gobelin\"][\"pv\"])",
+      "tasks": [
+        "Échauffement : créer un bestiaire de descriptions avec trois clés, lire une description, ajouter dragon, modifier sa description puis le supprimer avec del.",
+        "Créer ensuite un bestiaire imbriqué avec les champs pv, attaque, defense et description : gobelin (60,9,7), araignee (40,11,5), troll (100,8,9). Créer les héros mage (100,14,6), guerrier (100,12,10), archer (100,13,8), avec description et image (nom de fichier indicatif, non chargé dans le navigateur).",
+        "Demander un choix de héros et le redemander tant qu’il n’est pas une clé connue. Copier le héros choisi. Remplacer dans le combat de partie 5 les constantes par les champs des dictionnaires ; copier chaque monstre depuis le bestiaire. Les monstres restants sont list(bestiaire). Garder les règles d’attaque, de défense et de potion de la partie 5."
+      ],
+      "tests": [
+        "Héros dragon → nouvelle demande ; mage → attaque 14, défense 6.",
+        "Gobelin 60, dégâts 20 → monstre courant 40, modèle du bestiaire toujours 60.",
+        "Ajout puis suppression de dragon → les trois descriptions d’origine restent.",
+        "Vaincre les trois monstres → victoire ; les PV du héros persistent, les caractéristiques changent selon le monstre."
+      ],
+      "criteria": [
+        [
+          "Descriptions avec ajout, modification et suppression",
+          1
+        ],
+        [
+          "Bestiaire imbriqué et champs exacts",
+          1
+        ],
+        [
+          "Héros et sélection validée",
+          1
+        ],
+        [
+          "Combat utilisant les données et des copies",
+          1
+        ],
+        [
+          "Tests de copie et intégration",
+          1
+        ]
+      ],
+      "starter": "# PARTIE 6 — Dictionnaires\nimport random\n\n# TODO : bestiaire de descriptions et manipulations.\n# TODO : modèles de monstres et de héros, sélection validée.\n# TODO : adapter le combat de partie 5 aux dictionnaires.\n# TEST 1 : entrées / attendu / observé\n# TEST 2 : entrées / attendu / observé\n",
+      "inputs": "mage\nfuir",
+      "extension": "Atelier graphique : afficher le héros précédent/suivant, puis démarrer le jeu avec le héros choisi."
+    }
+  ],
+  "seances_detaillees": [
+    {
+      "concepts": [
+        {
+          "title": "1. Une variable garde une valeur",
+          "text": "Une variable est un nom associé à une valeur. Pour créer ou modifier cette association, on utilise =. Python exécute les lignes dans l’ordre : la dernière affectation remplace la précédente.",
+          "code": "pv = 50\npv = pv - 10\nprint(pv)",
+          "result": "40",
+          "trap": "= signifie « affecter », pas « est égal à » au sens d’un test. On calcule le côté droit avant de modifier la variable."
+        },
+        {
+          "title": "2. Texte et nombres ne se manipulent pas pareil",
+          "text": "Une chaîne de caractères (str) se met entre guillemets. Un entier (int) s’écrit sans guillemets. + additionne des entiers ; entre deux chaînes, il colle les textes.",
+          "code": "print(5 + 5)\nprint(\"5\" + \"5\")",
+          "result": "10\n55",
+          "trap": "La valeur 5 et le texte « 5 » se ressemblent à l’écran, mais n’ont pas le même type."
+        },
+        {
+          "title": "3. Lire avec input, afficher avec print",
+          "text": "input affiche une question, puis renvoie le texte tapé. print affiche une ou plusieurs valeurs. Les virgules dans print séparent les éléments à afficher.",
+          "code": "nom = input(\"Ton nom ? \")\nprint(\"Bienvenue\", nom)",
+          "result": "Si tu saisis Lina : Bienvenue Lina",
+          "trap": "input renvoie toujours du texte. Écrire input sans les parenthèses n’appelle pas la fonction."
+        },
+        {
+          "title": "4. Convertir une saisie numérique",
+          "text": "Pour calculer avec un nombre saisi, int transforme le texte en entier. Lis de l’intérieur vers l’extérieur : input récupère le texte, int le convertit, puis = affecte le résultat.",
+          "code": "force = int(input(\"Force ? \"))\nprint(force + 2)",
+          "result": "Si tu saisis 5 : 7",
+          "trap": "Pour cette séance, on suppose que l’élève tape un entier. Si on tape cinq en lettres, int provoque une erreur ; ce cas n’est pas demandé."
+        },
+        {
+          "title": "5. Choisir un chemin avec if, elif et else",
+          "text": "== compare deux valeurs. if exécute un bloc si son test est vrai ; elif teste un autre cas ; else traite les autres possibilités. Les quatre espaces au début d’une ligne montrent le bloc auquel elle appartient.",
+          "code": "action = \"dormir\"\nif action == \"attaquer\":\n    print(\"À l’attaque !\")\nelif action == \"soigner\":\n    print(\"Une potion !\")\nelse:\n    print(\"Action inconnue\")",
+          "result": "Action inconnue",
+          "trap": "Ne remplace pas elif action == \"soigner\" par else : sinon dormir déclencherait aussi un soin."
+        },
+        {
+          "title": "6. Vérifier plusieurs contraintes",
+          "text": "and signifie que toutes les conditions reliées doivent être vraies. Pour valider le personnage, la somme doit être 15 ET chaque compétence doit être positive ou nulle.",
+          "code": "points = 7\nvalide = points >= 0 and points <= 15\nprint(valide)",
+          "result": "True",
+          "trap": "Une somme correcte ne suffit pas : -1 + 8 + 8 vaut 15, mais une compétence négative doit être refusée."
+        }
+      ],
+      "exercises": [
+        {
+          "title": "Échauffement A · la potion timide",
+          "task": "Le héros a 30 PV. Ajoute 12 PV puis affiche sa nouvelle vie. Écris les deux lignes manquantes.",
+          "code": "pv = 30\n# TODO : augmenter les PV de 12\n# TODO : afficher les PV",
+          "expected": "42",
+          "hint": "Réutilise pv = pv + ... puis print(...).",
+          "inputs": ""
+        },
+        {
+          "title": "Échauffement B · une force bien réelle",
+          "task": "Demande la force sous forme d’un entier, puis affiche le double. Teste avec 4 puis 7.",
+          "code": "# TODO : demander et convertir la force\n# TODO : afficher son double",
+          "expected": "4 → 8 ; 7 → 14",
+          "hint": "Utilise int(input(...)) ; le double se calcule avec * 2.",
+          "inputs": "4"
+        }
+      ],
+      "steps": [
+        "Dans Mon travail, écris nom = input(...) et classe = input(...). Les trois classes reconnues sont exactement guerrier, mage et archer, en minuscules.",
+        "Avec if / elif / else, affiche un accueil pour une classe reconnue et « Classe inconnue » sinon. Tu n’as pas à redemander la classe dans cette partie.",
+        "Demande force, intelligence et agilite avec int(input(...)). Les saisies sont supposées être des entiers.",
+        "Calcule total = force + intelligence + agilite. Affiche le nom, la classe, les trois valeurs et le total.",
+        "Affiche « Répartition valide » seulement si total vaut 15 ET si aucune des trois valeurs n’est négative. Sinon, affiche « Répartition invalide ». Le contrôle de la répartition est indépendant du contrôle de classe.",
+        "Lance les tests proposés et ajoute deux commentaires : entrées, résultat attendu, résultat observé. Télécharge ensuite ton fichier .py."
+      ],
+      "deliverable": "Une création de personnage en console. On ne combat pas encore dans le programme à rendre de cette partie."
+    },
+    {
+      "concepts": [
+        {
+          "title": "1. Utiliser un module",
+          "text": "Un module regroupe des fonctions. import random permet d’utiliser celles du hasard. On écrit le nom du module, un point, puis le nom de la fonction.",
+          "code": "import random\nde = random.randint(1, 20)\nprint(de)",
+          "result": "Un entier entre 1 et 20, bornes incluses.",
+          "trap": "Ne nomme pas ton fichier random.py : il risquerait de masquer le module fourni avec Python."
+        },
+        {
+          "title": "2. Comprendre les bornes du hasard",
+          "text": "random.random() donne un nombre supérieur ou égal à 0 et strictement inférieur à 1. random.randint(a, b) donne un entier entre a et b inclus. Le hasard est produit par un algorithme : il est pseudo-aléatoire.",
+          "code": "import random\nprint(random.random())\nprint(random.randint(0, 10))",
+          "result": "Par exemple 0.37 puis 8. Le résultat peut changer.",
+          "trap": "int(random.random()*10) donne 0 à 9, pas 0 à 10. Une petite série de tirages n’a pas forcément les proportions prévues."
+        },
+        {
+          "title": "3. Définir puis appeler une fonction",
+          "text": "def définit un traitement réutilisable. Le paramètre est une variable qui reçoit la valeur donnée à l’appel. Le corps de la fonction ne s’exécute pas au moment du def, mais quand on appelle la fonction.",
+          "code": "def doubler(nombre):\n    return nombre * 2\n\nprint(doubler(4))\nprint(doubler(7))",
+          "result": "8\n14",
+          "trap": "doubler est le nom de la fonction ; doubler(4) est un appel avec la valeur 4."
+        },
+        {
+          "title": "4. Renvoyer avec return",
+          "text": "return transmet un résultat au code qui a appelé la fonction et termine cet appel. print montre du texte à l’écran. Si tu veux réutiliser une valeur dans un calcul ou un test, il faut la renvoyer.",
+          "code": "def bonus(force):\n    return force + 2\n\nattaque = bonus(5)\nprint(attaque)",
+          "result": "7",
+          "trap": "Une fonction qui ne rencontre aucun return renvoie None. Afficher une valeur ne la renvoie pas."
+        },
+        {
+          "title": "5. Tester les frontières avant le hasard",
+          "text": "Pour vérifier une règle, commence avec des valeurs choisies. Si la surprise se produit pour chance < 0.5, vérifie notamment 0.49 et 0.5. Remets le hasard seulement après ces essais.",
+          "code": "chance = 0.5\nprint(chance < 0.5)",
+          "result": "False",
+          "trap": "Une égalité avec le seuil change le résultat de <. Lis la règle de l’exercice avant de choisir < ou <=."
+        }
+      ],
+      "exercises": [
+        {
+          "title": "Échauffement A · le dé miniature",
+          "task": "Importe random et lance un dé à 6 faces. Affiche son résultat.",
+          "code": "# TODO : import\n# TODO : tirer un entier entre 1 et 6\n# TODO : afficher",
+          "expected": "Toujours un entier de 1 à 6.",
+          "hint": "La borne supérieure de randint est incluse.",
+          "inputs": ""
+        },
+        {
+          "title": "Échauffement B · trois points de courage",
+          "task": "Écris une fonction ajouter_bonus(points) qui renvoie points + 3. Appelle-la avec 4 et affiche le résultat.",
+          "code": "def ajouter_bonus(points):\n    # TODO : renvoyer le résultat\n    pass\n\nprint(ajouter_bonus(4))",
+          "expected": "7",
+          "hint": "Remplace pass par return suivi du calcul.",
+          "inputs": ""
+        }
+      ],
+      "steps": [
+        "Importe random au début de Mon travail.",
+        "Tire chance avec random.random(). Affiche « Attaque surprise » si chance < 0.5, sinon « Aucun ennemi ».",
+        "Écris def attaque_reussie(de): avec un paramètre de. La fonction doit renvoyer le booléen du test de > 10.",
+        "Affiche attaque_reussie(10), puis attaque_reussie(11). Tu dois voir False, puis True.",
+        "Tire un entier de 1 à 20 avec randint, puis affiche ce dé et le résultat renvoyé par attaque_reussie pour ce dé.",
+        "Ajoute tes tests et deux commentaires expliquant def/appel et print/return. Exporte le .py."
+      ],
+      "deliverable": "Deux petits programmes dans la même partie : une surprise aléatoire et une fonction testant la réussite d’une attaque. Tkinter reste facultatif."
+    },
+    {
+      "concepts": [
+        {
+          "title": "1. L’indentation change le sens",
+          "text": "Les lignes indentées appartiennent au bloc situé au-dessus. Une ligne revenue à gauche est exécutée après ce bloc, quel que soit le chemin pris dans le if.",
+          "code": "potions = 0\nif potions == 0:\n    print(\"Repos\")\nelse:\n    print(\"Boire\")\nprint(\"Départ\")",
+          "result": "Repos\nDépart",
+          "trap": "Si Départ est indenté dans else, il ne s’affiche plus lorsque potions vaut 0."
+        },
+        {
+          "title": "2. Répéter avec for et range",
+          "text": "for fait prendre successivement plusieurs valeurs à une variable. Avec range(début, fin), le début est inclus et la fin exclue. Chaque valeur déclenche une exécution du bloc indenté.",
+          "code": "for numero in range(1, 4):\n    print(\"Pas\", numero)\nprint(\"Arrivée\")",
+          "result": "Pas 1\nPas 2\nPas 3\nArrivée",
+          "trap": "Pour afficher les nombres 1 à 10, il faut range(1, 11). range(10) donne 0 à 9."
+        },
+        {
+          "title": "3. Compter sans tout remettre à zéro",
+          "text": "Initialise un compteur avant la boucle. Augmente-le dans la boucle lorsque l’événement se produit. Affiche le bilan après la boucle pour l’obtenir une seule fois.",
+          "code": "compteur = 0\nfor i in range(3):\n    compteur = compteur + 1\nprint(compteur)",
+          "result": "3",
+          "trap": "Placer compteur = 0 dans la boucle efface le total précédent à chaque tour."
+        },
+        {
+          "title": "4. Découper un tirage en intervalles",
+          "text": "if / elif / else sélectionne un seul cas. Le elif n’est testé que si le if était faux : il n’est donc pas nécessaire de répéter la borne basse.",
+          "code": "x = 0.6\nif x < 0.5:\n    print(\"A\")\nelif x < 0.8:\n    print(\"B\")\nelse:\n    print(\"C\")",
+          "result": "B",
+          "trap": "Les intervalles sont [0 ; 0.5[, [0.5 ; 0.8[ et [0.8 ; 1[. Ils représentent 50 %, 30 % et 20 % des tirages, en théorie."
+        }
+      ],
+      "exercises": [
+        {
+          "title": "Échauffement A · trois portes",
+          "task": "Affiche Porte 1, Porte 2, Porte 3 avec une boucle. Ajoute une ligne Fin affichée une seule fois.",
+          "code": "# TODO : une boucle et son affichage\n# TODO : Fin après la boucle",
+          "expected": "Porte 1\nPorte 2\nPorte 3\nFin",
+          "hint": "range(1, 4) ; Fin reste sans indentation.",
+          "inputs": ""
+        },
+        {
+          "title": "Échauffement B · une bourse qui se remplit",
+          "task": "Commence avec 0 pièce. Gagne 2 pièces à chacun des 4 tours. Affiche seulement le total final.",
+          "code": "pieces = 0\nfor tour in range(4):\n    # TODO : augmenter la bourse\n    pass\nprint(pieces)",
+          "expected": "8",
+          "hint": "Augmente pieces dans le bloc ; ne remets pas pieces à 0 à chaque tour.",
+          "inputs": ""
+        }
+      ],
+      "steps": [
+        "Recopie l’exemple sur les potions dans Mon travail. Déplace seulement l’indentation de la ligne « Entrer dans la grotte » pour qu’elle soit exécutée uniquement lorsqu’on boit une potion.",
+        "Définis choisir_ennemi(x). Elle renvoie gobelin si x < 0.5, araignee si x < 0.8 après le premier test, troll sinon. Utilise if / elif / else.",
+        "Initialise nombre_gobelins à 0 avant la boucle des rencontres.",
+        "Écris une boucle de 1 à 10 inclus. À chaque tour, tire x avec random.random(), appelle choisir_ennemi(x), puis affiche le numéro et le nom de l’ennemi.",
+        "Si l’ennemi vaut gobelin, augmente le compteur. Après la boucle, affiche le nombre de gobelins une seule fois.",
+        "Teste les frontières de la fonction, puis remplace temporairement le tirage par 0.2 : tu dois compter 10 gobelins. Remets le hasard et exporte."
+      ],
+      "deliverable": "L’exercice d’indentation suivi d’une exploration de dix rencontres, avec un bilan final."
+    },
+    {
+      "concepts": [
+        {
+          "title": "1. Répéter tant qu’une condition est vraie",
+          "text": "while vérifie une condition avant chaque tour. Si elle est vraie, le bloc s’exécute puis le test recommence. Si elle est fausse dès le départ, le bloc ne s’exécute jamais.",
+          "code": "vie = 30\nwhile vie > 0:\n    vie = vie - 10\n    print(vie)",
+          "result": "20\n10\n0",
+          "trap": "Sans mise à jour de vie, cette boucle pourrait ne jamais se terminer. Le bouton Arrêter permet de reprendre la main."
+        },
+        {
+          "title": "2. Deux survivants sont nécessaires au combat",
+          "text": "and exige deux conditions vraies à la fois. Le combat doit continuer si le héros ET le monstre sont vivants. or suffirait si un seul était vivant : ce n’est pas la bonne règle.",
+          "code": "pv_hero = 0\npv_monstre = 40\nprint(pv_hero > 0 and pv_monstre > 0)",
+          "result": "False",
+          "trap": "Le héros est à 0 : aucun nouveau tour ne doit démarrer."
+        },
+        {
+          "title": "3. Sortir volontairement avec break",
+          "text": "break quitte immédiatement la boucle en cours. On peut s’en servir pour la fuite. Une variable booléenne peut mémoriser cette décision pour choisir le message final. not inverse un booléen.",
+          "code": "fuite = False\nwhile not fuite:\n    fuite = True\n    break\nprint(\"Sortie\")",
+          "result": "Sortie",
+          "trap": "break quitte uniquement la boucle qui le contient, pas toutes les boucles imbriquées."
+        },
+        {
+          "title": "4. Limiter les points de vie",
+          "text": "Après un soin, il faut vérifier que les PV ne dépassent pas 100. min renvoie la plus petite des valeurs données ; max la plus grande.",
+          "code": "pv = 95\npv = min(100, pv + 10)\nprint(pv)\nprint(max(0, -5))",
+          "result": "100\n0",
+          "trap": "Plafonne le soin avant l’attaque du monstre. Un héros peut ensuite redescendre à 80 après la riposte."
+        },
+        {
+          "title": "5. Respecter l’ordre d’un tour",
+          "text": "Le héros agit d’abord. Ensuite, vérifie si le monstre vit encore avant de le faire riposter. Il faut distinguer une action valide d’une saisie inconnue : cette dernière ne déclenche pas de tour.",
+          "code": "pv_monstre = 20\npv_monstre = pv_monstre - 20\nif pv_monstre > 0:\n    print(\"Riposte\")\nelse:\n    print(\"Monstre vaincu\")",
+          "result": "Monstre vaincu",
+          "trap": "Ne place pas l’attaque du monstre avant le contrôle de ses PV : un ennemi vaincu ne riposte pas."
+        }
+      ],
+      "exercises": [
+        {
+          "title": "Échauffement A · compte à rebours",
+          "task": "Avec while, affiche 3, 2, 1, puis « Départ ».",
+          "code": "compte = 3\n# TODO : boucle qui diminue compte\nprint(\"Départ\")",
+          "expected": "3\n2\n1\nDépart",
+          "hint": "Affiche compte puis retire 1 dans la boucle.",
+          "inputs": ""
+        },
+        {
+          "title": "Échauffement B · soin sans débordement",
+          "task": "Un héros possède 97 PV. Ajoute 10 PV et limite le résultat à 100. Fais aussi le test avec 50 PV.",
+          "code": "pv = 97\n# TODO : soigner et plafonner\nprint(pv)",
+          "expected": "97 → 100 ; 50 → 60",
+          "hint": "Utilise un if après l’addition, ou min(100, pv + 10).",
+          "inputs": ""
+        }
+      ],
+      "steps": [
+        "Échauffement dans Mon travail : crée un mini-jeu indépendant avec vie = 100. attaquer enlève 20 PV au héros, defendre rend 10 (plafond 100), rien enlève 5, fuir sort. Affiche la vie après chaque action et termine si vie <= 0.",
+        "Après l’échauffement, initialise un nouveau combat : pv_hero = 100 et pv_monstre = 100. Ces valeurs ne dépendent pas de l’échauffement.",
+        "Répète tant que les deux PV sont > 0. Demande exactement attaquer, defendre, rien ou fuir. Ici, attaquer ne retire pas directement de PV au héros.",
+        "Action du héros : attaquer lance un dé de 1 à 20, et enlève 20 PV au monstre si le dé > 10 ; defendre soigne de 10, plafond 100 ; rien ne fait rien ; fuir termine le combat.",
+        "Après attaquer, defendre ou rien, si le monstre est encore vivant, lance son dé. Il retire 20 PV au héros si le résultat > 10. Pour une action inconnue : affiche un message et redemande sans riposte.",
+        "Affiche les deux PV après chaque tour. À la fin, affiche une seule issue : Victoire, Défaite ou Fuite. Teste les cas proposés puis exporte."
+      ],
+      "deliverable": "Deux blocs successifs : le mini-jeu d’échauffement puis un combat indépendant. Dans les saisies du navigateur, prévoir aussi les réponses de l’échauffement, par exemple fuir pour le quitter."
+    },
+    {
+      "concepts": [
+        {
+          "title": "1. Créer une liste et lire un élément",
+          "text": "Une liste conserve plusieurs valeurs dans un ordre. Les éléments sont séparés par des virgules, entre crochets. Le premier élément a l’indice 0 ; len donne le nombre d’éléments.",
+          "code": "sac = [\"potion\", \"cle\", \"carte\"]\nprint(sac[0])\nprint(len(sac))",
+          "result": "potion\n3",
+          "trap": "sac[3] serait hors de la liste : les indices valides sont ici 0, 1 et 2."
+        },
+        {
+          "title": "2. Ajouter et retirer",
+          "text": "append ajoute à la fin. remove retire la première occurrence de la valeur demandée. Vérifie avec in si cette valeur est présente avant de la retirer.",
+          "code": "sac = [\"cle\"]\nsac.append(\"potion\")\nif \"cle\" in sac:\n    sac.remove(\"cle\")\nprint(sac)",
+          "result": "['potion']",
+          "trap": "remove sur un élément absent provoque une erreur. On retire une valeur, pas un indice."
+        },
+        {
+          "title": "3. Choisir sans tirer dans une liste vide",
+          "text": "random.choice choisit un élément parmi les positions de la liste. Une liste vide vaut faux dans un test ; if monstres protège donc l’appel à choice.",
+          "code": "import random\nmonstres = []\nif monstres:\n    print(random.choice(monstres))\nelse:\n    print(\"Forêt libérée !\")",
+          "result": "Forêt libérée !",
+          "trap": "Après la défaite du dernier monstre, il faut tester la liste avant de choisir un nouvel adversaire."
+        },
+        {
+          "title": "4. Nouvelle règle de combat",
+          "text": "À partir de cette partie, on remplace le test > 10. L’attaque touche si son dé est <= attaque. Le défenseur bloque si son dé est <= defense. Les dégâts arrivent seulement si l’attaque touche ET si la défense ne bloque pas.",
+          "code": "attaque = 12\ndefense = 7\nde_attaque = 12\nde_defense = 8\nprint(de_attaque <= attaque and de_defense > defense)",
+          "result": "True : cette attaque inflige 20 dégâts.",
+          "trap": "Avec un dé de défense égal à 7, il n’y a pas de dégâts. La valeur limite compte comme une défense réussie."
+        },
+        {
+          "title": "5. Garder l’état entre les combats",
+          "text": "Initialise les PV du héros avant la boucle des monstres. Initialise les PV du nouveau monstre à l’intérieur. Le héros conserve ainsi sa fatigue, tandis que chaque nouveau monstre arrive avec tous ses PV.",
+          "code": "pv_hero = 80\nmonstres = [\"gobelin\", \"troll\"]\nmonstres.remove(\"gobelin\")\nprint(pv_hero)\nprint(monstres)",
+          "result": "80\n['troll']",
+          "trap": "Ne recrée pas la liste complète au début de chaque tour : les ennemis vaincus reviendraient."
+        }
+      ],
+      "exercises": [
+        {
+          "title": "Échauffement A · sac à dos",
+          "task": "Crée une liste contenant cle, ajoute potion puis affiche la liste. Retire ensuite cle sans erreur.",
+          "code": "sac = [\"cle\"]\n# TODO : ajouter potion\n# TODO : retirer cle si présente\nprint(sac)",
+          "expected": "['potion']",
+          "hint": "Utilise append, puis if ... in ... et remove.",
+          "inputs": ""
+        },
+        {
+          "title": "Échauffement B · dernier ennemi",
+          "task": "Retire troll de la liste puis affiche « Victoire » si elle est vide. Ne fais aucun tirage.",
+          "code": "monstres = [\"troll\"]\n# TODO : retirer le troll\n# TODO : tester la liste vide",
+          "expected": "Victoire",
+          "hint": "not monstres est vrai si la liste est vide ; len(monstres) == 0 fonctionne aussi.",
+          "inputs": ""
+        }
+      ],
+      "steps": [
+        "Échauffement : crée une liste de courses vide et un menu a / r / l / q. a demande un article et l’ajoute ; r demande un article et le retire si présent ; l affiche ; q quitte cet échauffement.",
+        "Dans la partie 5, recopie le combat de la partie 4 sans effacer la partie 4. Crée monstres = [\"gobelin\", \"araignee\", \"troll\"]. Initialise le héros une seule fois à 100 PV.",
+        "Tant qu’il reste des monstres et que le héros vit, choisis un ennemi avec random.choice et donne-lui 100 PV. Le héros garde les PV du combat précédent.",
+        "Remplace la règle du dé > 10 par attaque/défense : héros (12,10), monstre (9,7). Une attaque qui touche et n’est pas bloquée retire 20 PV. Applique cette règle aux deux côtés.",
+        "Remplace defendre par potion : gain aléatoire de 10 à 20, plafond 100, puis riposte du monstre vivant. Les potions sont illimitées ici. Garde attaquer, rien et fuir ; une saisie inconnue ne consomme pas de tour.",
+        "Retire le monstre uniquement après sa défaite. Choisis ensuite un autre ennemi seulement s’il en reste. La liste vide donne « Victoire de la forêt ». Une fuite ou une défaite termine toute l’exploration.",
+        "Teste la dernière victoire, les seuils de défense et la conservation des PV, puis exporte."
+      ],
+      "deliverable": "Le menu de courses, puis une exploration de trois combats. Quitte les courses avec q avant de préparer les actions de combat dans les saisies."
+    },
+    {
+      "concepts": [
+        {
+          "title": "1. Lire une valeur grâce à sa clé",
+          "text": "Un dictionnaire associe des clés à des valeurs. On écrit des paires clé: valeur entre accolades. Ici les clés sont des textes ; le nom de la clé indique le sens de la donnée.",
+          "code": "hero = {\"nom\": \"Lina\", \"pv\": 100}\nprint(hero[\"nom\"])\nprint(hero[\"pv\"])",
+          "result": "Lina\n100",
+          "trap": "hero[0] ne désigne pas la première valeur. Un dictionnaire se lit par clé, pas par position."
+        },
+        {
+          "title": "2. Ajouter, modifier, supprimer",
+          "text": "Affecter une valeur à une nouvelle clé ajoute cette entrée. Affecter une valeur à une clé existante la modifie. del supprime une entrée. in teste la présence d’une clé.",
+          "code": "hero = {\"pv\": 100}\nhero[\"attaque\"] = 12\nhero[\"pv\"] = 80\ndel hero[\"attaque\"]\nprint(hero)",
+          "result": "{'pv': 80}",
+          "trap": "Accéder à une clé absente produit une erreur. Vérifie sa présence si elle vient d’une saisie."
+        },
+        {
+          "title": "3. Imbriquer pour décrire plusieurs monstres",
+          "text": "Un dictionnaire peut contenir d’autres dictionnaires. La première paire de crochets choisit le monstre ; la seconde choisit une de ses caractéristiques.",
+          "code": "bestiaire = {\n    \"gobelin\": {\"pv\": 60, \"attaque\": 9},\n    \"troll\": {\"pv\": 100, \"attaque\": 8}\n}\nprint(bestiaire[\"troll\"][\"attaque\"])",
+          "result": "8",
+          "trap": "Les nombres sont des valeurs, pas des textes : écris 100 sans guillemets si tu veux faire des calculs."
+        },
+        {
+          "title": "4. Séparer le modèle et le combattant",
+          "text": "Avec monstre = modele, les deux noms désignent le même dictionnaire. copy() crée un nouveau dictionnaire pour le combat. La copie est superficielle : elle suffit ici car les valeurs du modèle sont des nombres ou des chaînes.",
+          "code": "modele = {\"pv\": 60}\nmonstre = modele.copy()\nmonstre[\"pv\"] = 40\nprint(monstre[\"pv\"])\nprint(modele[\"pv\"])",
+          "result": "40\n60",
+          "trap": "Sans copy(), blesser le combattant modifierait aussi ses PV de départ dans le bestiaire."
+        },
+        {
+          "title": "5. Choisir parmi des clés",
+          "text": "list(dictionnaire) construit la liste de ses clés. Pour valider un choix, teste si le texte saisi est une clé du dictionnaire. Redemande tant que ce n’est pas le cas.",
+          "code": "heros = {\"mage\": 14, \"guerrier\": 12}\nprint(list(heros))\nprint(\"dragon\" in heros)",
+          "result": "['mage', 'guerrier']\nFalse",
+          "trap": "Dans le jeu final, copie le dictionnaire du héros choisi avant de modifier ses PV."
+        }
+      ],
+      "exercises": [
+        {
+          "title": "Échauffement A · panneau du bestiaire",
+          "task": "Crée le dictionnaire indiqué, puis ajoute la clé defense avec la valeur 7. Affiche seulement cette défense.",
+          "code": "gobelin = {\"pv\": 60, \"attaque\": 9}\n# TODO : ajouter puis afficher defense",
+          "expected": "7",
+          "hint": "gobelin[\"defense\"] = ... ajoute la clé.",
+          "inputs": ""
+        },
+        {
+          "title": "Échauffement B · garde le modèle neuf",
+          "task": "Complète pour que le monstre perde 20 PV sans changer le modèle.",
+          "code": "modele = {\"pv\": 60}\n# TODO : copier dans monstre\n# TODO : retirer 20 PV au monstre\nprint(modele[\"pv\"])",
+          "expected": "Le modèle doit encore afficher 60.",
+          "hint": "Utilise .copy() avant de modifier monstre[\"pv\"].",
+          "inputs": ""
+        }
+      ],
+      "steps": [
+        "Échauffement : crée trois descriptions dans un dictionnaire. Affiche l’une d’elles. Ajoute dragon, modifie sa description puis supprime cette entrée avec del.",
+        "Construis bestiaire avec les champs pv, attaque, defense, description. Valeurs (PV, attaque, défense) : gobelin (60,9,7), araignee (40,11,5), troll (100,8,9).",
+        "Construis heros avec pv, attaque, defense, description et image. Valeurs : mage (100,14,6), guerrier (100,12,10), archer (100,13,8). image contient seulement un nom de fichier, par exemple mage.png ; aucune image n’est chargée par le code console.",
+        "Demande mage, guerrier ou archer. Tant que le choix n’est pas une clé de heros, redemande. Copie ensuite le héros sélectionné avec .copy().",
+        "Recopie le combat de la partie 5 dans cette partie. Remplace les caractéristiques fixes par les valeurs des dictionnaires. Initialise les ennemis restants avec list(bestiaire). À chaque rencontre, copie le modèle du monstre choisi.",
+        "Conserve les règles de la partie 5 : test <= attaque, blocage <= defense, dégâts 20, potion 10 à 20 plafonnée à 100, pas de riposte après une victoire, fuite possible et PV du héros conservés.",
+        "Teste un choix inconnu, les trois monstres et l’absence de modification des modèles. Exporte ton fichier final en conservant les six parties."
+      ],
+      "deliverable": "Le bestiaire de descriptions, puis le jeu complet utilisant les dictionnaires. Le héros sélectionné peut maintenant changer les caractéristiques du combat."
+    }
+  ]
+}

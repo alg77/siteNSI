@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La Conversion des Entiers en Binaire — Cours 1ère NSI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Atkinson+Hyperlegible:ital,wght@0,400;0,700;1,400&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#232b36;
+    --ink-soft:#5b6472;
+    --blue:#2f6fb0;
+    --blue-deep:#1f4d80;
+    --blue-light:#eaf3fc;
+    --pink:#e8639c;
+    --pink-deep:#c94a80;
+    --pink-light:#fdeef4;
+    --amber:#c9861a;
+    --amber-light:#fff3d9;
+    --green:#3f9469;
+    --green-light:#e7f6ee;
+    --red:#c9484f;
+    --red-light:#fbe8e9;
+    --code-bg:#20293a;
+    --code-text:#e7ecf5;
+    --paper:#fffdfb;
+    --line:#e4e2df;
+    --radius:16px;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Atkinson Hyperlegible', sans-serif;
+    line-height:1.65;
+  }
+  h1,h2,h3,.nav-brand,.section-eyebrow,.pill,.diff-tag{font-family:'Baloo 2', sans-serif;}
+
+  /* --- sakura decorative wash --- */
+  .sakura-wash{
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(420px 260px at 92% -4%, rgba(232,99,156,.10), transparent 65%),
+      radial-gradient(520px 320px at -6% 8%, rgba(47,111,176,.08), transparent 60%);
+  }
+
+  /* --- top nav --- */
+  header.top{
+    position:sticky; top:0; z-index:20;
+    background:rgba(255,253,251,.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav-inner{
+    max-width:920px; margin:0 auto; padding:14px 24px;
+    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+  }
+  .nav-brand{
+    font-weight:700; color:var(--blue-deep); font-size:1.05rem;
+    display:flex; align-items:center; gap:8px; white-space:nowrap;
+  }
+  .nav-brand svg{flex:none;}
+  nav.pills{display:flex; gap:6px; flex-wrap:wrap;}
+  nav.pills a{
+    font-size:.82rem; font-weight:600; text-decoration:none;
+    color:var(--blue-deep); background:var(--blue-light);
+    padding:6px 12px; border-radius:999px; transition:background .15s, color .15s;
+    white-space:nowrap;
+  }
+  nav.pills a:hover{background:var(--blue); color:#fff;}
+
+  /* --- hero --- */
+  .hero{
+    max-width:760px; margin:0 auto; padding:56px 24px 8px;
+    position:relative; z-index:1;
+  }
+  .hero .eyebrow{
+    font-size:.85rem; font-weight:700; color:var(--pink-deep);
+    letter-spacing:.02em; margin-bottom:10px;
+  }
+  .hero h1{
+    font-size:2.3rem; line-height:1.15; margin:0 0 14px; color:var(--ink);
+    font-weight:800;
+  }
+  .hero p.lead{
+    font-size:1.08rem; color:var(--ink-soft); max-width:56ch; margin:0;
+  }
+
+  main{max-width:760px; margin:0 auto; padding:8px 24px 80px; position:relative; z-index:1;}
+
+  section{padding-top:52px; scroll-margin-top:84px;}
+  .section-eyebrow{
+    display:inline-flex; align-items:center; gap:10px;
+    font-weight:700; color:#fff; background:var(--blue);
+    padding:5px 14px 5px 10px; border-radius:999px; font-size:.85rem;
+    margin-bottom:16px;
+  }
+  .section-eyebrow .num{
+    background:rgba(255,255,255,.25); border-radius:999px;
+    padding:2px 9px; font-size:.8rem;
+  }
+  h2{font-size:1.5rem; margin:0 0 14px; color:var(--blue-deep); font-weight:700;}
+  h3{font-size:1.12rem; margin:26px 0 8px; color:var(--pink-deep); font-weight:700;}
+  p{margin:0 0 14px;}
+  ul, ol{margin:0 0 14px; padding-left:22px;}
+  li{margin-bottom:6px;}
+  strong{color:var(--ink);}
+
+  /* --- callout boxes --- */
+  .box{
+    border-radius:var(--radius);
+    padding:16px 18px;
+    margin:18px 0;
+    border:1px solid transparent;
+  }
+  .box .box-title{font-weight:700; display:flex; align-items:center; gap:8px; margin-bottom:6px;}
+  .box.def{background:var(--blue-light); border-color:#cfe3f6;}
+  .box.def .box-title{color:var(--blue-deep);}
+  .box.tip{background:var(--green-light); border-color:#c9e9d7;}
+  .box.tip .box-title{color:var(--green);}
+  .box.warn{background:var(--amber-light); border-color:#f0dba6;}
+  .box.warn .box-title{color:var(--amber);}
+  .box.trap{background:var(--red-light); border-color:#f0c6c8;}
+  .box.trap .box-title{color:var(--red);}
+  .box.sakura{background:var(--pink-light); border-color:#f5c9dc;}
+  .box.sakura .box-title{color:var(--pink-deep);}
+
+  /* --- code blocks --- */
+  pre{
+    background:var(--code-bg); color:var(--code-text);
+    border-radius:14px; padding:16px 18px; overflow-x:auto;
+    font-family:'JetBrains Mono', monospace; font-size:.86rem; line-height:1.6;
+    margin:14px 0;
+  }
+  code{font-family:'JetBrains Mono', monospace;}
+  p code, li code{
+    background:#eef1f6; color:#2a3648; padding:1px 6px; border-radius:6px; font-size:.88em;
+  }
+  .out{color:#9fd3a6;}
+  .cmt{color:#7c8aa8;}
+  .todo{color:#f0c46a;}
+
+  /* --- table --- */
+  table{width:100%; border-collapse:collapse; margin:16px 0; font-size:.94rem;}
+  th{background:var(--blue); color:#fff; text-align:left; padding:8px 12px; font-weight:600;}
+  td{padding:7px 12px; border-bottom:1px solid var(--line);}
+  tr:nth-child(even) td{background:#f7f9fc;}
+
+  /* --- exercises --- */
+  .exo{
+    border:1px solid var(--line); border-radius:var(--radius);
+    padding:18px 20px; margin:18px 0; background:#fff;
+  }
+  .exo .diff-tag{
+    display:inline-block; font-size:.82rem; font-weight:700;
+    background:var(--pink-light); color:var(--pink-deep);
+    padding:3px 11px; border-radius:999px; margin-bottom:10px;
+  }
+  details{margin-top:10px;}
+  summary{
+    cursor:pointer; font-weight:700; color:var(--blue);
+    padding:8px 0; list-style:none; display:flex; align-items:center; gap:6px;
+  }
+  summary::-webkit-details-marker{display:none;}
+  summary::before{content:"▶"; font-size:.7em; transition:transform .15s;}
+  details[open] summary::before{transform:rotate(90deg);}
+  details[open] summary{color:var(--pink-deep);}
+
+  /* --- checklist --- */
+  .checklist{list-style:none; padding:0; margin:0;}
+  .checklist li{
+    display:flex; gap:10px; align-items:flex-start;
+    padding:7px 0; border-bottom:1px dashed var(--line);
+  }
+  .checklist li::before{content:"☐"; color:var(--blue); font-size:1.1em; flex:none;}
+
+  /* --- converter widget --- */
+  .converter{
+    background:linear-gradient(135deg, var(--blue-light), var(--pink-light));
+    border-radius:20px; padding:26px 24px; margin:18px 0;
+    border:1px solid #e3d9e8;
+  }
+  .conv-row{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; margin-bottom:6px;}
+  .conv-field{flex:1; min-width:160px;}
+  .conv-field label{display:block; font-weight:700; font-size:.85rem; color:var(--blue-deep); margin-bottom:6px;}
+  .conv-field input, .conv-field select{
+    width:100%; padding:10px 12px; border-radius:10px; border:1px solid #d5d5d5;
+    font-family:'JetBrains Mono', monospace; font-size:1rem; background:#fff;
+  }
+  .conv-arrow{font-size:1.4rem; color:var(--pink-deep); padding-bottom:10px;}
+  .conv-note{font-size:.82rem; color:var(--ink-soft); margin-top:8px;}
+
+  footer{
+    text-align:center; padding:34px 24px 50px; color:var(--ink-soft); font-size:.85rem;
+    border-top:1px solid var(--line); margin-top:40px; position:relative; z-index:1;
+  }
+  footer .sig{color:var(--pink-deep); font-weight:700;}
+
+  @media (max-width:600px){
+    .hero h1{font-size:1.8rem;}
+    nav.pills{display:none;}
+  }
+</style>
+</head>
+<body>
+<div class="sakura-wash"></div>
+
+<header class="top">
+  <div class="nav-inner">
+    <div class="nav-brand">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+        <path d="M10 1c1 3 3 4.5 6 5-3 .5-5 2-6 5-1-3-3-4.5-6-5 3-.5 5-2 6-5z" fill="#e8639c"/>
+      </svg>
+      NSI · Binaire
+    </div>
+    <nav class="pills">
+      <a href="#s1">Intro</a>
+      <a href="#s2">Vocabulaire</a>
+      <a href="#s3">Compter</a>
+      <a href="#s4">Bin → Déc</a>
+      <a href="#s5">Déc → Bin</a>
+      <a href="#s6">Hexadécimal</a>
+      <a href="#s7">Base b</a>
+      <a href="#s8">Bin ↔ Hexa</a>
+      <a href="#s9">✏ Exercices</a>
+      <a href="#s10">⚠ Checklist</a>
+      <a href="#s11">🌸 Convertisseur</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="eyebrow">NSI · 1ère Spécialité · Représentation des données</div>
+  <h1>La conversion des entiers en binaire</h1>
+  <p class="lead">Cours complet — Méthodes de conversion — Python — Exercices progressifs 🌰 🌱 🌸 — Convertisseur interactif</p>
+</div>
+
+<main>
+
+<section id="s1">
+  <span class="section-eyebrow"><span class="num">01</span> Introduction</span>
+  <h2>Pourquoi le binaire ?</h2>
+  <p>Vus de l'extérieur, les ordinateurs manipulent des nombres, du texte, des images, du son. Mais à l'intérieur, chaque circuit électronique n'a que <strong>deux états possibles</strong> : le courant passe, ou il ne passe pas.</p>
+  <div class="box def">
+    <div class="box-title">📋 Définition</div>
+    Un système de numération en base <code>b</code> est un moyen de représenter les nombres avec <code>b</code> symboles. Selon sa place, chaque symbole « pèse » une valeur particulière : le système est dit <strong>de position</strong>.
+  </div>
+  <p>Pour représenter des nombres, du texte ou des images avec seulement deux états, il faut donc les écrire comme des suites de 0 et de 1 : c'est la <strong>base 2</strong>, ou système <strong>binaire</strong>.</p>
+</section>
+
+<section id="s2">
+  <span class="section-eyebrow"><span class="num">02</span> Vocabulaire</span>
+  <h2>Bit, octet, mot</h2>
+  <div class="box tip">
+    <div class="box-title">🔑 À connaître</div>
+    <ul style="margin-bottom:0">
+      <li><strong>bit</strong> (binary digit) : la plus petite unité d'information, elle vaut 0 ou 1.</li>
+      <li><strong>mot</strong> : une suite finie de bits, l'état d'un ensemble de circuits mémoire.</li>
+      <li><strong>octet</strong> (byte) : un groupe de <strong>8 bits</strong>. 1 octet = 1 o = 8 b.</li>
+    </ul>
+  </div>
+  <p>Exemple : le mot <code>100</code> représente l'état d'un circuit composé de 3 circuits mémoire un bit, dont les états sont 1, 0 et 0.</p>
+</section>
+
+<section id="s3">
+  <span class="section-eyebrow"><span class="num">03</span> Compter en binaire</span>
+  <h2>Le même principe qu'en base 10</h2>
+  <p>Quand un rang est plein, on passe au rang suivant — exactement comme en base 10, sauf qu'un rang binaire n'accepte que 0 ou 1.</p>
+  <table>
+    <tr><th>Décimal</th><th>Binaire</th></tr>
+    <tr><td>0</td><td>0</td></tr>
+    <tr><td>1</td><td>1</td></tr>
+    <tr><td>2</td><td>10</td></tr>
+    <tr><td>3</td><td>11</td></tr>
+    <tr><td>4</td><td>100</td></tr>
+    <tr><td>5</td><td>101</td></tr>
+    <tr><td>6</td><td>110</td></tr>
+    <tr><td>7</td><td>111</td></tr>
+    <tr><td>8</td><td>1000</td></tr>
+  </table>
+  <div class="box warn">
+    <div class="box-title">⚠ Combien de valeurs sur n bits ?</div>
+    Avec <code>n</code> bits, on peut coder exactement <code>2ⁿ</code> valeurs différentes, c'est-à-dire les entiers de <code>0</code> à <code>2ⁿ − 1</code>. Avec 1 bit : 2 valeurs. Avec 8 bits (1 octet) : 256 valeurs, de 0 à 255.
+  </div>
+</section>
+
+<section id="s4">
+  <span class="section-eyebrow"><span class="num">04</span> Binaire → Décimal</span>
+  <h2>Convertir un binaire en décimal</h2>
+  <p>Comme en base 10 où <code>352 = 3×10² + 5×10¹ + 2×10⁰</code>, en base 2 chaque position vaut une puissance de 2.</p>
+  <h3>Exemple guidé</h3>
+  <table>
+    <tr><th>2⁷</th><th>2⁶</th><th>2⁵</th><th>2⁴</th><th>2³</th><th>2²</th><th>2¹</th><th>2⁰</th></tr>
+    <tr><td>128</td><td>64</td><td>32</td><td>16</td><td>8</td><td>4</td><td>2</td><td>1</td></tr>
+    <tr><td>0</td><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr>
+  </table>
+  <p><code>64 + 8 + 4 + 1 = 77</code>, donc <strong>(01001101)₂ = (77)₁₀</strong>.</p>
+  <h3>En Python — prédire avant d'exécuter</h3>
+  <pre><span class="cmt"># que va afficher ce code ?</span>
+print(int('1101', 2))
+print(int('01001101', 2))
+
+<span class="out"># 13
+# 77</span>
+<span class="cmt"># int(chaine, 2) interprète la chaîne comme un nombre écrit en base 2</span></pre>
+</section>
+
+<section id="s5">
+  <span class="section-eyebrow"><span class="num">05</span> Décimal → Binaire</span>
+  <h2>Convertir un décimal en binaire</h2>
+  <p>On effectue une succession de <strong>divisions euclidiennes par 2</strong>, jusqu'à obtenir un quotient nul. Le résultat est la juxtaposition des restes, lus du dernier au premier.</p>
+  <table>
+    <tr><th>Division</th><th>Quotient</th><th>Reste</th></tr>
+    <tr><td>77 ÷ 2</td><td>38</td><td>1</td></tr>
+    <tr><td>38 ÷ 2</td><td>19</td><td>0</td></tr>
+    <tr><td>19 ÷ 2</td><td>9</td><td>1</td></tr>
+    <tr><td>9 ÷ 2</td><td>4</td><td>1</td></tr>
+    <tr><td>4 ÷ 2</td><td>2</td><td>0</td></tr>
+    <tr><td>2 ÷ 2</td><td>1</td><td>0</td></tr>
+    <tr><td>1 ÷ 2</td><td>0</td><td>1</td></tr>
+  </table>
+  <p>Restes lus de bas en haut : <strong>1001101</strong>, donc (77)₁₀ = (1001101)₂.</p>
+
+  <h3>Coder la conversion nous-mêmes</h3>
+  <pre>def entier_vers_binaire(n):
+    <span class="cmt">"""Convertit un entier naturel n en chaîne binaire."""</span>
+    if n == 0:
+        return '0'
+    chiffres = []
+    while n > 0:
+        chiffres.append(str(n % 2))   <span class="cmt"># le reste</span>
+        n = n // 2                     <span class="cmt"># le quotient</span>
+    chiffres.reverse()                 <span class="cmt"># remettre dans l'ordre</span>
+    return ''.join(chiffres)
+
+print(entier_vers_binaire(77))  <span class="out"># 1001101</span></pre>
+</section>
+
+<section id="s6">
+  <span class="section-eyebrow"><span class="num">06</span> Hexadécimal</span>
+  <h2>Le système hexadécimal (base 16)</h2>
+  <p>La base 16 a besoin de 16 symboles : les 10 chiffres 0 à 9, puis <strong>A, B, C, D, E, F</strong> pour 10 à 15.</p>
+  <p>Même principe que pour le binaire, avec des divisions successives par 16 :</p>
+  <table>
+    <tr><th>Division</th><th>Quotient</th><th>Reste</th></tr>
+    <tr><td>335 ÷ 16</td><td>20</td><td>15 (=F)</td></tr>
+    <tr><td>20 ÷ 16</td><td>1</td><td>4</td></tr>
+    <tr><td>1 ÷ 16</td><td>0</td><td>1</td></tr>
+  </table>
+  <p>Donc <strong>(335)₁₀ = (14F)₁₆</strong>.</p>
+  <div class="box sakura">
+    <div class="box-title">🌸 Et dans l'autre sens ?</div>
+    Pour (72C)₁₆ → décimal : chaque position pèse une puissance de 16.
+    <code>7×256 + 2×16 + 12×1 = 1792 + 32 + 12 = 1836</code>, donc (72C)₁₆ = (1836)₁₀ (rappel : C₁₆ = 12₁₀).
+  </div>
+</section>
+
+<section id="s7">
+  <span class="section-eyebrow"><span class="num">07</span> Généraliser</span>
+  <h2>Une fonction pour n'importe quelle base b</h2>
+  <p>Tout ce qu'on a vu pour la base 2 et la base 16 se généralise à une base <code>b ≥ 2</code> quelconque, avec la même méthode : divisions successives par <code>b</code>.</p>
+
+  <h3>🌰 Niveau facile — base b ≤ 10</h3>
+  <pre>def entier_vers_base(n, b):
+    if n == 0:
+        return '0'
+    chiffres = []
+    while n > 0:
+        chiffres.append(str(n % b))
+        n = n // b
+    chiffres.reverse()
+    return ''.join(chiffres)</pre>
+
+  <h3>🌱 Niveau intermédiaire — gérer la base 16</h3>
+  <p>Pour <code>b = 16</code>, un reste peut valoir jusqu'à 15 : il faut le traduire en symbole. La chaîne <code>"0123456789ABCDEF"</code> indexée par le reste donne directement le bon caractère.</p>
+  <pre>def entier_vers_base(n, b):
+    symboles = "0123456789ABCDEF"
+    if n == 0:
+        return '0'
+    chiffres = []
+    while n > 0:
+        chiffres.append(symboles[n % b])
+        n = n // b
+    chiffres.reverse()
+    return ''.join(chiffres)</pre>
+
+  <h3>🌸 Niveau avancé — vérifier avec les outils natifs</h3>
+  <pre>print(hex(335))          <span class="out"># 0x14f</span>
+print(format(335, 'X'))  <span class="out"># 14F</span>
+print(int('14F', 16))    <span class="out"># 335</span></pre>
+  <p class="conv-note" style="margin-top:-4px">hex() ajoute le préfixe 0x ; format(n, 'X') donne des majuscules.</p>
+</section>
+
+<section id="s8">
+  <span class="section-eyebrow"><span class="num">08</span> Binaire ↔ Hexadécimal</span>
+  <h2>La méthode courte : paquets de 4 bits</h2>
+  <p>Sur 4 bits, on représente exactement <code>2⁴ = 16</code> valeurs : chaque chiffre hexadécimal correspond donc exactement à un groupe de 4 bits.</p>
+  <table>
+    <tr><th>Binaire</th><td>0100</td><td>1101</td></tr>
+    <tr><th>Décimal</th><td>4</td><td>13</td></tr>
+    <tr><th>Hexadécimal</th><td>4</td><td>D</td></tr>
+  </table>
+  <p>Donc <strong>(0100 1101)₂ = (4D)₁₆</strong>.</p>
+  <pre>n = 0b01001101
+print(format(n, 'X'))         <span class="out"># 4D</span>
+print(format(0xB931, 'b'))    <span class="out"># 1011100100110001</span></pre>
+</section>
+
+<section id="s9">
+  <span class="section-eyebrow"><span class="num">09</span> Exercices</span>
+  <h2>Exercices progressifs</h2>
+  <p>Réfléchis avant de consulter la correction !</p>
+
+  <div class="exo">
+    <span class="diff-tag">🌰 Facile</span>
+    <p><strong>Exercice 1.</strong> Convertis en binaire : 9, 20, 50. Convertis en décimal : 1010₂, 11111₂.</p>
+    <details><summary>Voir la correction</summary>
+      <p>9 = 1001₂ · 20 = 10100₂ · 50 = 110010₂<br>1010₂ = 10 · 11111₂ = 31</p>
+    </details>
+  </div>
+
+  <div class="exo">
+    <span class="diff-tag">🌱 Intermédiaire</span>
+    <p><strong>Exercice 2.</strong> Sans exécuter : que renvoient <code>format(45, '08b')</code> et <code>int('101010', 2)</code> ? Puis convertis 60 en binaire sur 8 bits.</p>
+    <details><summary>Voir la correction</summary>
+      <p><code>format(45, '08b')</code> → <code>00101101</code><br><code>int('101010', 2)</code> → <code>42</code><br>60 = 00111100₂ (sur 8 bits)</p>
+    </details>
+  </div>
+
+  <div class="exo">
+    <span class="diff-tag">🌸 Avancé</span>
+    <p><strong>Exercice 3.</strong> Écris <code>poids_binaire(n)</code> qui renvoie le nombre de bits à 1 dans l'écriture binaire de n. Puis <code>est_puissance_de_deux(n)</code>, sans utiliser <code>bin()</code> ni <code>format()</code>.</p>
+    <details><summary>Voir la correction</summary>
+<pre style="margin:10px 0 0">def poids_binaire(n):
+    return entier_vers_binaire(n).count('1')
+
+def est_puissance_de_deux(n):
+    return n > 0 and poids_binaire(n) == 1
+<span class="cmt"># une puissance de 2 s'écrit toujours avec un seul bit à 1</span></pre>
+    </details>
+  </div>
+</section>
+
+<section id="s10">
+  <span class="section-eyebrow"><span class="num">10</span> Checklist</span>
+  <h2>Ce que tu dois maîtriser</h2>
+  <ul class="checklist">
+    <li>Convertir un binaire en décimal (somme des puissances de 2 où il y a un 1)</li>
+    <li>Convertir un décimal en binaire (divisions successives par 2, lecture des restes)</li>
+    <li>Savoir combien de valeurs on code avec n bits (2ⁿ)</li>
+    <li>Convertir décimal ↔ hexadécimal (divisions/puissances de 16, symboles A-F)</li>
+    <li>Convertir binaire ↔ hexadécimal par paquets de 4 bits</li>
+    <li>Écrire une fonction Python de conversion sans bin() ni format()</li>
+  </ul>
+  <div class="box trap">
+    <div class="box-title">🚨 Pièges classiques</div>
+    <ul style="margin-bottom:0">
+      <li>Oublier qu'un bit à 1 en position <code>k</code> pèse <code>2^k</code>, pas <code>k</code>.</li>
+      <li>Confondre <code>bin(n)</code> (avec le préfixe <code>0b</code>) et <code>format(n, 'b')</code> (sans préfixe).</li>
+      <li>Oublier de tester le dépassement de capacité sur un nombre de bits fixé.</li>
+    </ul>
+  </div>
+</section>
+
+<section id="s11">
+  <span class="section-eyebrow"><span class="num">11</span> 🌸 Bonus</span>
+  <h2>Convertisseur interactif</h2>
+  <p>Entre un nombre dans une base, il se convertit automatiquement dans les autres — utile pour vérifier tes calculs à la main.</p>
+  <div class="converter">
+    <div class="conv-row">
+      <div class="conv-field">
+        <label for="conv-dec">Décimal</label>
+        <input type="text" id="conv-dec" placeholder="ex : 77">
+      </div>
+      <div class="conv-arrow">⇄</div>
+      <div class="conv-field">
+        <label for="conv-bin">Binaire</label>
+        <input type="text" id="conv-bin" placeholder="ex : 1001101">
+      </div>
+      <div class="conv-arrow">⇄</div>
+      <div class="conv-field">
+        <label for="conv-hex">Hexadécimal</label>
+        <input type="text" id="conv-hex" placeholder="ex : 4D">
+      </div>
+    </div>
+    <p class="conv-note">Modifie n'importe quel champ, les deux autres se mettent à jour automatiquement.</p>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  NSI · 1ère Spécialité · Conversion des entiers en binaire · Cours complet + Exercices
+  <br><span class="sig">🌸 Mme Le Guern</span>
+</footer>
+
+<script>
+(function(){
+  const dec = document.getElementById('conv-dec');
+  const bin = document.getElementById('conv-bin');
+  const hex = document.getElementById('conv-hex');
+  let lock = false;
+
+  function update(source, value){
+    if(lock) return;
+    lock = true;
+    let n = null;
+    if(value.trim() === ''){ 
+      [dec,bin,hex].forEach(f=>{ if(f!==source) f.value=''; });
+      lock = false; return;
+    }
+    try{
+      if(source === dec) n = parseInt(value, 10);
+      if(source === bin) { if(!/^[01]+$/.test(value.trim())) throw 0; n = parseInt(value, 2); }
+      if(source === hex) { if(!/^[0-9a-fA-F]+$/.test(value.trim())) throw 0; n = parseInt(value, 16); }
+      if(n === null || isNaN(n) || n < 0){ throw 0; }
+      if(source !== dec) dec.value = n.toString(10);
+      if(source !== bin) bin.value = n.toString(2);
+      if(source !== hex) hex.value = n.toString(16).toUpperCase();
+    }catch(e){ /* saisie incomplète, on ignore */ }
+    lock = false;
+  }
+  dec.addEventListener('input', ()=>update(dec, dec.value));
+  bin.addEventListener('input', ()=>update(bin, bin.value));
+  hex.addEventListener('input', ()=>update(hex, hex.value));
+  dec.value = '77'; update(dec, '77');
+})();
+</script>
+
+</body>
+</html>
