@@ -1,0 +1,1231 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TNSI · Espace prof — Tirage ECE</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.css">
+<style>
+  :root{
+    --ink:#1c2541;
+    --ink-soft:#3a4470;
+    --paper:#fbfaf6;
+    --paper-dim:#efece2;
+    --line:#dcd6c4;
+    --blue:#2e6fab;
+    --blue-dim:#e7eef6;
+    --brick:#b3453d;
+    --brick-dim:#f6e6e4;
+    --brick-dark:#8a332c;
+    --green:#3f8f5f;
+    --green-dim:#e5f2ea;
+    --amber:#c98a1f;
+    --mono: 'JetBrains Mono', ui-monospace, Menlo, Consolas, monospace;
+    --sans: 'Inter', -apple-system, sans-serif;
+    --head: 'Space Grotesk', var(--sans);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--sans);
+    line-height:1.55;
+  }
+  ::selection{background:var(--amber);color:#fff}
+
+  /* ---------- top bar ---------- */
+  header.top{
+    position:sticky; top:0; z-index:30;
+    background:var(--ink); color:var(--paper);
+    padding:14px 22px;
+    display:flex; align-items:center; gap:18px; flex-wrap:wrap;
+    border-bottom:3px solid var(--amber);
+  }
+  header.top .brand{
+    font-family:var(--head); font-weight:700; font-size:1.15rem; letter-spacing:.2px;
+    display:flex; align-items:baseline; gap:8px;
+  }
+  header.top .brand small{font-family:var(--sans); font-weight:400; opacity:.72; font-size:.72rem}
+  nav.modes{display:flex; gap:6px; margin-left:auto}
+  nav.modes button{
+    font-family:var(--head); font-weight:600; font-size:.86rem;
+    background:transparent; color:var(--paper); opacity:.65;
+    border:1px solid rgba(251,250,246,.28); border-radius:7px;
+    padding:8px 14px; cursor:pointer; transition:.15s;
+  }
+  nav.modes button:hover{opacity:.9}
+  nav.modes button.active{
+    opacity:1; background:var(--paper); color:var(--ink); border-color:var(--paper);
+  }
+
+  main{max-width:1180px; margin:0 auto; padding:26px 20px 70px}
+  .view{display:none}
+  .view.active{display:block}
+
+  /* ---------- intro band ---------- */
+  .intro{
+    display:flex; gap:22px; align-items:flex-start; margin-bottom:26px;
+    padding-bottom:20px; border-bottom:1px solid var(--line);
+  }
+  .intro h1{font-family:var(--head); font-size:1.5rem; margin:0 0 6px; letter-spacing:.2px}
+  .intro p{margin:0; color:var(--ink-soft); max-width:60ch; font-size:.94rem}
+  .intro .pill{
+    flex-shrink:0; font-family:var(--mono); font-size:.72rem; background:var(--blue-dim);
+    color:var(--blue); border-radius:6px; padding:6px 10px; white-space:nowrap;
+  }
+
+  /* ---------- revision layout ---------- */
+  .rev-layout{display:grid; grid-template-columns:250px 1fr; gap:24px}
+  @media (max-width:860px){ .rev-layout{grid-template-columns:1fr} }
+
+  aside.exlist{position:sticky; top:78px; align-self:start; max-height:calc(100vh - 100px); overflow-y:auto}
+  aside.exlist .group-label{
+    font-family:var(--head); font-weight:600; font-size:.72rem; text-transform:uppercase;
+    letter-spacing:.08em; color:var(--ink-soft); margin:18px 0 8px;
+  }
+  aside.exlist .group-label:first-child{margin-top:0}
+  .exbtn{
+    width:100%; text-align:left; background:none; border:none; border-left:3px solid transparent;
+    padding:9px 10px; margin-bottom:2px; border-radius:0 6px 6px 0; cursor:pointer;
+    font-family:var(--sans); font-size:.87rem; color:var(--ink-soft); display:flex; gap:8px; align-items:center;
+  }
+  .exbtn .n{font-family:var(--mono); font-size:.72rem; color:var(--ink-soft); opacity:.6; width:1.3em}
+  .exbtn:hover{background:var(--paper-dim); color:var(--ink)}
+  .exbtn.active{background:var(--blue-dim); color:var(--blue); border-left-color:var(--blue); font-weight:600}
+
+  .exercise-card{background:#fff; border:1px solid var(--line); border-radius:10px; padding:24px 26px; margin-bottom:18px}
+  .ex-head{display:flex; justify-content:space-between; align-items:flex-start; gap:14px; margin-bottom:6px}
+  .ex-head h2{font-family:var(--head); font-size:1.2rem; margin:0}
+  .badge{font-family:var(--mono); font-size:.68rem; padding:4px 9px; border-radius:20px; white-space:nowrap}
+  .badge.trous{background:var(--blue-dim); color:var(--blue)}
+  .badge.complet{background:var(--green-dim); color:var(--green)}
+  .statement{font-size:.93rem; color:var(--ink-soft); margin:10px 0 16px}
+  .statement code, .statement strong{color:var(--ink)}
+  .statement code{font-family:var(--mono); font-size:.87em; background:var(--paper-dim); padding:1px 5px; border-radius:4px}
+  .statement ul{margin:6px 0; padding-left:20px}
+
+  textarea.code{
+    width:100%; min-height:220px; font-family:var(--mono); font-size:.86rem; line-height:1.55;
+    background:#1c2541; color:#e9e7dd; border:none; border-radius:8px; padding:16px;
+    resize:vertical; tab-size:4;
+  }
+  .code-toolbar{display:flex; gap:10px; align-items:center; margin-top:10px; flex-wrap:wrap}
+  button.run{
+    font-family:var(--head); font-weight:600; font-size:.84rem; background:var(--ink); color:#fff;
+    border:none; border-radius:7px; padding:9px 16px; cursor:pointer;
+  }
+  button.run:disabled{opacity:.5; cursor:wait}
+  button.ghost{
+    font-family:var(--sans); font-size:.82rem; background:none; color:var(--blue);
+    border:1px solid var(--blue); border-radius:7px; padding:8px 13px; cursor:pointer;
+  }
+  .pyodide-status{font-family:var(--mono); font-size:.74rem; color:var(--ink-soft)}
+
+  .results{margin-top:14px}
+  .result-row{
+    display:flex; gap:10px; align-items:flex-start; font-family:var(--mono); font-size:.8rem;
+    padding:8px 10px; border-radius:6px; margin-bottom:5px;
+  }
+  .result-row.ok{background:var(--green-dim); color:#1f5c3c}
+  .result-row.ko{background:var(--brick-dim); color:var(--brick-dark)}
+  .result-row .mark{font-weight:700; flex-shrink:0}
+
+  details.correction{margin-top:16px; border-top:1px dashed var(--line); padding-top:12px}
+  details.correction summary{cursor:pointer; font-family:var(--head); font-weight:600; font-size:.84rem; color:var(--ink-soft)}
+  details.correction pre{
+    background:var(--paper-dim); border-radius:8px; padding:14px 16px; font-family:var(--mono);
+    font-size:.82rem; overflow-x:auto; margin-top:10px;
+  }
+  .explain{margin-top:16px; padding:16px 18px; background:var(--blue-dim); border-radius:8px; border-left:3px solid var(--blue)}
+  .explain-label{font-family:var(--head); font-weight:600; font-size:.74rem; text-transform:uppercase; letter-spacing:.06em; color:var(--blue); margin-bottom:8px}
+  .explain p{margin:0 0 10px; font-size:.86rem; color:var(--ink-soft)}
+  .explain p:last-child{margin-bottom:0}
+  .explain ul{margin:0 0 10px; padding-left:20px; font-size:.86rem; color:var(--ink-soft)}
+  .explain strong{color:var(--ink)}
+  .explain code{font-family:var(--mono); font-size:.85em; background:#fff; padding:1px 5px; border-radius:4px}
+
+  /* ---------- teacher / ece mode ---------- */
+  .ece-panel{background:#fff; border:1px solid var(--line); border-radius:10px; padding:24px 26px; margin-bottom:20px}
+  .ece-panel h3{font-family:var(--head); margin:0 0 12px; font-size:1.02rem}
+  .row-fields{display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end}
+  .check-field{display:flex; align-items:center; gap:7px; font-size:.84rem; color:var(--ink-soft); padding-bottom:9px; cursor:pointer}
+  .check-field input{accent-color:var(--brick); width:16px; height:16px; cursor:pointer}
+  .field{display:flex; flex-direction:column; gap:5px}
+  .field label{font-size:.76rem; color:var(--ink-soft); font-family:var(--head); font-weight:600}
+  .field input, .field select{
+    font-family:var(--sans); font-size:.9rem; padding:8px 10px; border:1px solid var(--line);
+    border-radius:6px; background:var(--paper); min-width:180px;
+  }
+  button.primary{
+    font-family:var(--head); font-weight:700; font-size:.88rem; background:var(--brick); color:#fff;
+    border:none; border-radius:7px; padding:11px 20px; cursor:pointer;
+  }
+  button.primary:disabled{opacity:.45; cursor:not-allowed}
+  button.secondary{
+    font-family:var(--sans); font-size:.82rem; background:none; color:var(--ink-soft);
+    border:1px solid var(--line); border-radius:7px; padding:9px 14px; cursor:pointer;
+  }
+
+  .active-list{display:flex; gap:8px; flex-wrap:wrap; margin-top:12px}
+  .chip{font-family:var(--mono); font-size:.72rem; background:var(--paper-dim); border:1px solid var(--line);
+    border-radius:20px; padding:5px 11px; color:var(--ink-soft)}
+
+  .draw-result{
+    margin-top:22px; border:2px solid var(--brick); border-radius:10px; padding:22px 26px;
+    background:var(--brick-dim);
+  }
+  .draw-result .tag{font-family:var(--mono); font-size:.72rem; color:var(--brick-dark); text-transform:uppercase; letter-spacing:.06em}
+  .draw-result h2{font-family:var(--head); font-size:1.3rem; margin:6px 0 4px; color:var(--brick-dark)}
+  .draw-result .who{font-size:.86rem; color:var(--ink-soft); margin-bottom:14px}
+
+  .timer-block{display:flex; align-items:center; gap:16px; margin:16px 0; flex-wrap:wrap}
+  .timer-display{
+    font-family:var(--mono); font-weight:600; font-size:2.4rem; color:var(--ink);
+    background:#fff; border:1px solid var(--line); border-radius:10px; padding:6px 22px;
+    min-width:150px; text-align:center;
+  }
+  .timer-display.warn{color:var(--brick); border-color:var(--brick)}
+  .timer-controls button{margin-right:8px}
+
+  .rubric{margin-top:20px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:18px 22px}
+  .rubric-row{display:grid; grid-template-columns:1fr 220px 2.4em; gap:14px; align-items:center; padding:9px 0; border-bottom:1px solid var(--paper-dim)}
+  .rubric-row:last-of-type{border-bottom:none}
+  .rubric-row .crit{font-size:.87rem}
+  .rubric-row .crit small{display:block; color:var(--ink-soft); font-size:.74rem; margin-top:2px}
+  .rubric-row input[type=range]{width:100%; accent-color:var(--brick)}
+  .rubric-row .val{font-family:var(--mono); text-align:right; font-weight:600}
+  .rubric-total{display:flex; justify-content:space-between; align-items:center; margin-top:14px; padding-top:14px; border-top:1px solid var(--line)}
+  .rubric-total .score{font-family:var(--head); font-size:1.5rem; font-weight:700; color:var(--brick)}
+  textarea.notes{
+    width:100%; min-height:70px; font-family:var(--sans); font-size:.86rem; border:1px solid var(--line);
+    border-radius:7px; padding:10px; margin-top:12px; resize:vertical;
+  }
+
+  .log-table{width:100%; border-collapse:collapse; margin-top:14px; font-size:.84rem}
+  .log-table th{text-align:left; font-family:var(--head); font-size:.72rem; text-transform:uppercase; letter-spacing:.05em; color:var(--ink-soft); padding:8px 10px; border-bottom:2px solid var(--line)}
+  .log-table td{padding:8px 10px; border-bottom:1px solid var(--paper-dim)}
+  .log-table tr:last-child td{border-bottom:none}
+  .empty-log{color:var(--ink-soft); font-size:.86rem; font-style:italic; margin-top:10px}
+
+  .note-box{
+    font-size:.82rem; color:var(--ink-soft); background:var(--blue-dim); border-radius:8px;
+    padding:12px 15px; margin-bottom:18px;
+  }
+  .note-box.brick{background:var(--brick-dim); color:var(--brick-dark)}
+
+  code.k{font-family:var(--mono); background:var(--paper-dim); padding:1px 5px; border-radius:4px; font-size:.85em}
+
+  /* ---------- CodeMirror integration ---------- */
+  .CodeMirror{
+    height:auto; min-height:220px; border-radius:8px; padding:10px 0;
+    background:#1c2541; color:#e9e7dd;
+    font-family:var(--mono); font-size:.86rem; line-height:1.55;
+  }
+  .CodeMirror-gutters{ background:#1c2541; border-right:1px solid #2f3a63; }
+  .CodeMirror-linenumber{ color:#5a6491; }
+  .CodeMirror-cursor{ border-left:1.5px solid #e9e7dd; }
+  .CodeMirror-selected{ background:#2f3a63 !important; }
+  .cm-s-default .cm-keyword{ color:#e0a63a; font-weight:600; }
+  .cm-s-default .cm-def{ color:#8fd0c4; }
+  .cm-s-default .cm-variable{ color:#e9e7dd; }
+  .cm-s-default .cm-variable-2{ color:#9fc8e8; }
+  .cm-s-default .cm-string{ color:#a3d99b; }
+  .cm-s-default .cm-number{ color:#e39aa8; }
+  .cm-s-default .cm-comment{ color:#7d87ad; font-style:italic; }
+  .cm-s-default .cm-operator{ color:#e9e7dd; }
+  .cm-s-default .cm-punctuation{ color:#c8c4e0; }
+  .cm-s-default .cm-builtin{ color:#8fd0c4; }
+  .cm-s-default .cm-property{ color:#9fc8e8; }
+  .cm-s-default .cm-atom{ color:#e39aa8; }
+  .CodeMirror-matchingbracket{ color:#fff !important; background:#3a4a8a; border-radius:3px; }
+  .CodeMirror-hints{
+    font-family:var(--mono); font-size:.82rem; background:#1c2541; color:#e9e7dd;
+    border:1px solid #2f3a63; border-radius:6px; padding:2px; box-shadow:0 6px 20px rgba(0,0,0,.25);
+  }
+  .CodeMirror-hint{ padding:4px 10px; border-radius:4px; }
+  li.CodeMirror-hint-active{ background:#2e6fab; color:#fff; }
+  .editor-hint-note{ font-size:.72rem; color:var(--ink-soft); margin-top:6px; }
+
+  /* désactive les ligatures de police sur le code : != doit s'afficher != (pas ≠), == doit rester ==, etc. */
+  code, pre, textarea.code, .CodeMirror, .cm-s-default{
+    font-variant-ligatures: none;
+    -webkit-font-feature-settings: "liga" 0, "calt" 0;
+    font-feature-settings: "liga" 0, "calt" 0;
+  }
+
+
+  /* export buttons row */
+  .panel-head{display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; margin-bottom:4px}
+  .panel-head h3{margin:0}
+  .export-actions{display:flex; gap:8px}
+
+  /* print: isolate a single drawn subject */
+  @media print{
+    body *{ visibility:hidden; }
+    .draw-result, .draw-result *{ visibility:visible; }
+    .draw-result{ position:absolute; top:0; left:0; width:100%; border:none; background:#fff; padding:0; }
+    .draw-result .no-print{ display:none !important; }
+    .draw-result .tag{ color:#000; font-size:.8rem; }
+    .draw-result h2{ color:#000; }
+  }
+
+</style>
+</head>
+<body>
+
+<header class="top">
+  <div class="brand">TNSI <small>Espace prof · Tirage ECE — TP1</small></div>
+</header>
+
+<main>
+  <section class="view active">
+    <div class="intro">
+      <div>
+        <h1>Tirage au sort — interrogation individuelle</h1>
+        <p>Pour chaque élève : renseigner son nom, tirer un sujet (une version modifiée d'un des 10 exercices, ou l'énoncé identique en échauffement), lancer le chrono de 20 minutes, puis évaluer avec la grille de barème. Cette page est réservée au poste enseignant — les élèves utilisent la page de révision séparée, qui ne contient aucune des variantes ci-dessous.</p>
+      </div>
+      <div style="display:flex; flex-direction:column; gap:8px; align-items:flex-end;">
+        <span class="pill" id="pyostatus">Python : chargement…</span>
+        <span class="pill">Sans internet côté élève · sans IA</span>
+      </div>
+    </div>
+
+    <div class="note-box">
+      Le tirage et le journal de notes sont enregistrés dans le stockage local de <strong>ce navigateur</strong> (localStorage) — ça fonctionne hors ligne, mais reste propre à cet ordinateur. Pense à exporter régulièrement le journal en JSON/CSV pour en garder une copie durable (voir plus bas), surtout avant de vider le cache du navigateur. Les numéros de sujet correspondent à la banque de sujets PDF (1 à 10 = variantes, 11 à 20 = identiques). Pense aussi à charger cette page — donc Python — <strong>avant</strong> le début des interrogations : une fois chargé, l'exécution du code se fait localement, sans réseau. Le bouton « Imprimer ce sujet » n'affiche que l'énoncé tiré (aucune autre variante, aucune grille de notation) : à utiliser pour remettre le sujet à l'élève sans partager cet écran.
+    </div>
+
+    <div class="ece-panel">
+      <h3>Nouveau tirage</h3>
+      <div class="row-fields">
+        <div class="field">
+          <label for="studentName">Nom de l'élève</label>
+          <input type="text" id="studentName" placeholder="ex. Camille D.">
+        </div>
+        <label class="check-field">
+          <input type="checkbox" id="identicalMode">
+          Reprendre l'exercice à l'identique (pas de variante)
+        </label>
+        <button class="primary" onclick="drawSubject()">Tirer un sujet</button>
+        <button class="secondary" onclick="resetSession()">Réinitialiser la session (nouvelle classe)</button>
+      </div>
+      <div id="activeList"></div>
+    </div>
+
+    <div id="drawMount"></div>
+
+    <div class="ece-panel">
+      <div class="panel-head">
+        <h3>Historique des notes</h3>
+        <div class="export-actions">
+          <button class="secondary" onclick="exportJSON()">Exporter (JSON)</button>
+          <button class="secondary" onclick="exportCSV()">Exporter (CSV)</button>
+        </div>
+      </div>
+      <div id="logMount"><p class="empty-log">Aucune interrogation enregistrée pour l'instant.</p></div>
+    </div>
+  </section>
+</main>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/codemirror.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/mode/python/python.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/closebrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/edit/matchbrackets.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/show-hint.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/codemirror/5.65.16/addon/hint/anyword-hint.min.js"></script>
+<script>
+/* ======================================================================
+   DONNÉES — 10 exercices du TP1 + variantes ECE (réservé prof)
+   ====================================================================== */
+const EXERCISES = [
+{
+  id:"p1e1", partie:1, num:1, key:"binaire", title:"binaire",
+  statement:`Écrire <code>binaire(a)</code> : prend en paramètre un entier positif <code>a</code> et renvoie une chaîne de caractères contenant son écriture en base 2, obtenue par divisions euclidiennes successives par 2 (le premier reste calculé est le bit de poids faible).`,
+  starter:`def binaire(a):
+    """Convertit un nombre entier a en sa représentation binaire (chaîne de caractères)."""
+    if a == 0:
+        return ...
+    bin_a = ...
+    while ... :
+        bin_a = ... + bin_a
+        a = ...
+    return bin_a
+`,
+  tests:[["binaire(83)","'1010011'"],["binaire(6)","'110'"],["binaire(127)","'1111111'"],["binaire(0)","'0'"],["binaire(1)","'1'"]],
+  correction:`def binaire(a):
+    if a == 0:
+        return '0'
+    bin_a = ''
+    while a > 0:
+        bin_a = str(a % 2) + bin_a
+        a = a // 2
+    return bin_a`,
+  explanation:`<p><strong>Le cas particulier <code>a == 0</code></strong> est traité à part : si on laissait tourner la boucle, elle ne s'exécuterait jamais (0 n'est pas <code>&gt; 0</code>) et la fonction renverrait une chaîne vide au lieu de <code>'0'</code>.</p>
+<p><strong>L'idée de l'algorithme</strong> : à chaque division de <code>a</code> par 2, le <strong>reste</strong> (<code>a % 2</code>, qui vaut 0 ou 1) est le bit suivant à écrire — mais ces bits sortent dans l'ordre inverse de celui attendu (le premier reste calculé est le bit de <em>poids faible</em>, donc le dernier chiffre à afficher). C'est pourquoi on écrit <code>bin_a = str(a % 2) + bin_a</code> : on <strong>ajoute chaque nouveau chiffre au début</strong> de la chaîne déjà construite, au lieu de le mettre à la fin.</p>
+<p><strong>Pourquoi <code>a = a // 2</code></strong> : c'est la division entière, elle "avance" dans l'algorithme en passant au quotient suivant. Sans cette ligne, <code>a</code> ne changerait jamais et la boucle tournerait indéfiniment.</p>
+<p><strong>Astuce pour vérifier à la main</strong> : dérouler <code>binaire(6)</code> : 6%2=0, 6//2=3 → bin_a='0' ; 3%2=1, 3//2=1 → bin_a='10' ; 1%2=1, 1//2=0 → bin_a='110' ; a=0 donc on sort de la boucle. Résultat : <code>'110'</code>, conforme à l'exemple.</p>`,
+  variant:{
+    key:"octal", title:"octal — variante ECE de « binaire »",
+    statement:`Même principe, mais en base 8. Écrire <code>octal(a)</code> qui prend en paramètre un entier positif <code>a</code> et renvoie une chaîne de caractères contenant son écriture en base 8, obtenue par divisions euclidiennes successives par 8.`,
+    starter:`def octal(a):
+    """Convertit un nombre entier a en sa représentation en base 8 (chaîne de caractères)."""
+    if a == 0:
+        return ...
+    oct_a = ...
+    while ... :
+        oct_a = ... + oct_a
+        a = ...
+    return oct_a
+`,
+    tests:[["octal(83)","'123'"],["octal(8)","'10'"],["octal(0)","'0'"],["octal(511)","'777'"],["octal(64)","'100'"]],
+  }
+},
+{
+  id:"p1e2", partie:1, num:2, key:"distances", title:"distances",
+  statement:`On rappelle que la distance <code>d</code> entre deux points (x;y) et (x';y') vérifie d² = (x−x')² + (y−y')². Compléter <code>distance_carre(point1, point2)</code> (les points sont des tuples <code>(x, y)</code>) et <code>point_le_plus_proche(depart, tab)</code>, qui renvoie les coordonnées du premier point du tableau <code>tab</code> se trouvant à la plus courte distance du point <code>depart</code>.`,
+  starter:`def distance_carre(point1, point2):
+    """ Calcule et renvoie la distance au carré entre deux points."""
+    return (...)**2 + (...)**2
+
+def point_le_plus_proche(depart, tab):
+    """ Renvoie les coordonnées du premier point du tableau tab se trouvant à
+    la plus courte distance du point depart."""
+    min_point = tab[0]
+    min_dist = ...
+    for i in range(1, len(tab)):
+        if distance_carre(tab[i], depart) < ...:
+            min_point = ...
+            min_dist = ...
+    return min_point
+`,
+  tests:[["distance_carre((1,0),(5,3))","25"],["distance_carre((1,0),(0,1))","2"],["distance_carre((0,0),(0,0))","0"],
+         ["point_le_plus_proche((0,0),[(7,9),(2,5),(5,2)])","(2,5)"],["point_le_plus_proche((5,2),[(7,9),(2,5),(5,2)])","(5,2)"]],
+  correction:`def distance_carre(point1, point2):
+    return (point1[0]-point2[0])**2 + (point1[1]-point2[1])**2
+
+def point_le_plus_proche(depart, tab):
+    min_point = tab[0]
+    min_dist = distance_carre(tab[0], depart)
+    for i in range(1, len(tab)):
+        if distance_carre(tab[i], depart) < min_dist:
+            min_point = tab[i]
+            min_dist = distance_carre(tab[i], depart)
+    return min_point`,
+  explanation:`<p><strong>Pourquoi <code>distance_carre</code> et pas la vraie distance</strong> : comparer des distances au <em>carré</em> donne exactement le même résultat que comparer les vraies distances (la fonction "carré" ne change pas l'ordre pour des nombres positifs), mais évite un calcul de racine carrée inutile. <code>point1[0]</code> et <code>point1[1]</code> récupèrent respectivement <code>x</code> et <code>y</code> dans le tuple <code>(x, y)</code>.</p>
+<p><strong>Le principe de <code>point_le_plus_proche</code></strong> est celui du "champion" : on part du premier point du tableau en le déclarant provisoirement gagnant (<code>min_point = tab[0]</code>), puis on parcourt tous les <strong>autres</strong> points (d'où <code>range(1, len(tab))</code>, qui commence à l'indice 1) : dès qu'on en trouve un plus proche que le champion actuel, il devient le nouveau champion.</p>
+<p><strong>Pourquoi mettre à jour <code>min_dist</code> en même temps que <code>min_point</code></strong> : si on oubliait de mettre à jour <code>min_dist</code>, la comparaison suivante se ferait toujours contre l'ancienne distance, et l'algorithme donnerait parfois un mauvais résultat.</p>
+<p><strong>Erreur fréquente</strong> : recalculer <code>distance_carre(tab[0], depart)</code> "de tête" au lieu d'appeler la fonction — autant réutiliser la fonction qu'on vient d'écrire juste au-dessus, c'est tout l'intérêt de la découper en deux fonctions.</p>`,
+  variant:{
+    key:"point_le_plus_loin", title:"point_le_plus_loin — variante ECE de « distances »",
+    statement:`On garde <code>distance_carre(point1, point2)</code> à écrire comme dans l'exercice original. On souhaite maintenant trouver le point le plus <strong>éloigné</strong> du point de départ. Écrire <code>point_le_plus_loin(depart, tab)</code> sur le même principe (en cas d'égalité, on garde le premier point trouvé).`,
+    starter:`def distance_carre(point1, point2):
+    """ Calcule et renvoie la distance au carré entre deux points."""
+    return (...)**2 + (...)**2
+
+def point_le_plus_loin(depart, tab):
+    """ Renvoie les coordonnées du premier point du tableau tab se trouvant à
+    la plus GRANDE distance du point depart."""
+    max_point = tab[0]
+    max_dist = ...
+    for i in range(1, len(tab)):
+        if distance_carre(tab[i], depart) > ...:
+            max_point = ...
+            max_dist = ...
+    return max_point
+`,
+    tests:[["distance_carre((1,0),(5,3))","25"],["distance_carre((1,0),(0,1))","2"],
+           ["point_le_plus_loin((0,0),[(7,9),(2,5),(5,2)])","(7,9)"],["point_le_plus_loin((5,2),[(7,9),(2,5),(5,2)])","(7,9)"]],
+  }
+},
+{
+  id:"p1e3", partie:1, num:3, key:"listes", title:"listes (points de rupture)",
+  statement:`Un tableau <code>ordre</code> de longueur n contient des entiers distincts entre 1 et n : c'est un ordre de gènes de chromosome. Il y a un <strong>point de rupture</strong> si la première valeur n'est pas 1, si l'écart entre deux gènes consécutifs n'est pas égal à 1, ou si la dernière valeur n'est pas n. Compléter <code>est_un_ordre(tab)</code> (teste si <code>tab</code> est bien un ordre valide) et <code>nombre_points_rupture(ordre)</code> (compte les points de rupture).`,
+  starter:`def est_un_ordre(tab):
+    ''' Renvoie True si tab est de longueur n et contient tous les entiers de 1
+    à n, False sinon '''
+    n = len(tab)
+    vus = ...
+    for x in tab:
+        if x < ... or x > ... or ... :
+            return False
+        ....append(...)
+    return True
+
+def nombre_points_rupture(ordre):
+    ''' Renvoie le nombre de points de rupture de ordre qui représente un ordre
+    de gènes de chromosome '''
+    assert ...
+    n = len(ordre)
+    nb = 0
+    if ordre[...] != 1:
+        nb = nb + 1
+    i = 0
+    while i < ... :
+        if ... not in [-1, 1]:
+            nb = nb + 1
+        i = i + 1
+    if ordre[i] != ... :
+        nb = nb + 1
+    return nb
+`,
+  tests:[["est_un_ordre([1,6,2,8,3,7])","False"],["est_un_ordre([5,4,3,6,7,2,1,8,9])","True"],
+         ["nombre_points_rupture([5,4,3,6,7,2,1,8,9])","4"],["nombre_points_rupture([1,2,3,4,5])","0"],
+         ["nombre_points_rupture([1,6,2,8,3,7,4,5])","7"],["nombre_points_rupture([2,1,3,4])","2"]],
+  correction:`def est_un_ordre(tab):
+    n = len(tab)
+    vus = []
+    for x in tab:
+        if x < 1 or x > n or x in vus:
+            return False
+        vus.append(x)
+    return True
+
+def nombre_points_rupture(ordre):
+    assert est_un_ordre(ordre)
+    n = len(ordre)
+    nb = 0
+    if ordre[0] != 1:
+        nb = nb + 1
+    i = 0
+    while i < n - 1:
+        if ordre[i+1] - ordre[i] not in [-1, 1]:
+            nb = nb + 1
+        i = i + 1
+    if ordre[i] != n:
+        nb = nb + 1
+    return nb`,
+  explanation:`<p><strong><code>est_un_ordre</code></strong> vérifie deux choses à chaque élément <code>x</code> : qu'il est bien compris entre 1 et n (<code>x &lt; 1 or x &gt; n</code>), et qu'on ne l'a pas déjà vu (<code>x in vus</code>) — car un "ordre de gènes" ne doit pas contenir de doublon. La liste <code>vus</code> sert de mémoire : dès qu'un test échoue, on renvoie <code>False</code> immédiatement ; si on arrive au bout du tableau sans problème, c'est que <code>tab</code> est valide, d'où le <code>return True</code> final (après la boucle, pas dedans).</p>
+<p><strong><code>nombre_points_rupture</code></strong> traite les <strong>trois</strong> cas de rupture séparément, exactement comme dans l'énoncé :</p>
+<ul>
+<li>le début : <code>ordre[0] != 1</code> ;</li>
+<li>les écarts entre voisins : on parcourt les paires <code>(ordre[i], ordre[i+1])</code> avec une boucle <code>while</code>, et on compte une rupture chaque fois que l'écart n'est <strong>ni +1 ni -1</strong> — d'où le test <code>not in [-1, 1]</code> ;</li>
+<li>la fin : après la boucle, <code>i</code> vaut <code>n-1</code> (le dernier indice valide), donc <code>ordre[i]</code> est bien le dernier élément du tableau, à comparer à <code>n</code>.</li>
+</ul>
+<p><strong>Le piège classique</strong> ici est de se tromper dans la borne de la boucle : elle doit s'arrêter à <code>n - 1</code> (pas <code>n</code>), sinon <code>ordre[i+1]</code> sort du tableau (<code>IndexError</code>). Une bonne façon de vérifier : dérouler à la main sur un petit exemple de 3-4 éléments et compter les étapes une par une.</p>
+<p><strong>Le <code>assert</code></strong> en début de <code>nombre_points_rupture</code> n'est pas là par hasard : il n'est pas logique de compter des points de rupture sur un tableau qui n'est même pas un ordre de gènes valide, donc on s'appuie sur la fonction précédente pour le vérifier avant de continuer.</p>`,
+  variant:{
+    key:"genes_0", title:"listes (0-indexées) — variante ECE de « listes »",
+    statement:`Modification : les gènes sont maintenant numérotés de <strong>0 à n-1</strong> (au lieu de 1 à n). Le principe est le même que dans l'exercice original : il y a un point de rupture si la première valeur n'est pas 0, si l'écart entre deux gènes consécutifs n'est pas égal à 1, ou si la dernière valeur n'est pas n-1. Compléter <code>est_un_ordre_0(tab)</code> et <code>nombre_points_rupture_0(ordre)</code> sur ce principe.`,
+    starter:`def est_un_ordre_0(tab):
+    ''' Renvoie True si tab est de longueur n et contient tous les entiers de 0
+    à n-1, False sinon '''
+    n = len(tab)
+    vus = ...
+    for x in tab:
+        if x < ... or x > ... or ... :
+            return False
+        ....append(...)
+    return True
+
+def nombre_points_rupture_0(ordre):
+    ''' Renvoie le nombre de points de rupture de ordre (gènes numérotés de 0 à n-1) '''
+    assert ...
+    n = len(ordre)
+    nb = 0
+    if ordre[...] != 0:
+        nb = nb + 1
+    i = 0
+    while i < ... :
+        if ... not in [-1, 1]:
+            nb = nb + 1
+        i = i + 1
+    if ordre[i] != ... :
+        nb = nb + 1
+    return nb
+`,
+    tests:[["est_un_ordre_0([0,5,1,7,2,6])","False"],["est_un_ordre_0([4,3,2,5,6,1,0,7,8])","True"],
+           ["nombre_points_rupture_0([4,3,2,5,6,1,0,7,8])","4"],
+           ["nombre_points_rupture_0([0,1,2,3,4])","0"],
+           ["nombre_points_rupture_0([1,0,2,3])","2"]],
+  }
+},
+{
+  id:"p1e4", partie:1, num:4, key:"dictionnaires", title:"dictionnaires (plan d'envoi)",
+  statement:`Un « plan d'envoi » est un dictionnaire du type <code>{'A':'E','B':'F', ...}</code> où chaque personne envoie des messages à une seule personne (destinataire). Un <strong>cycle</strong> est une suite de personnes qui reboucle sur elle-même. Le plan est <strong>cyclique</strong> s'il ne comporte qu'un seul cycle qui couvre tout le monde. Compléter <code>est_cyclique(plan)</code> : en partant de <code>'A'</code>, on suit les destinataires jusqu'à retomber sur <code>'A'</code>, et on vérifie que tout le monde a été visité.`,
+  starter:`def est_cyclique(plan):
+    '''Renvoie True si le plan d'envoi de messages est cyclique et False sinon.'''
+    expediteur = 'A'
+    destinataire = plan[...]
+    nb_destinataires = 1
+    while destinataire != expediteur:
+        destinataire = ...
+        nb_destinataires = ...
+    return nb_destinataires == ...
+`,
+  tests:[["est_cyclique({'A':'E','F':'A','C':'D','E':'B','B':'F','D':'C'})","False"],
+         ["est_cyclique({'A':'E','F':'C','C':'D','E':'B','B':'F','D':'A'})","True"],
+         ["est_cyclique({'A':'B','F':'C','C':'D','E':'A','B':'F','D':'E'})","True"],
+         ["est_cyclique({'A':'B','F':'A','C':'D','E':'C','B':'F','D':'E'})","False"]],
+  correction:`def est_cyclique(plan):
+    expediteur = 'A'
+    destinataire = plan[expediteur]
+    nb_destinataires = 1
+    while destinataire != expediteur:
+        destinataire = plan[destinataire]
+        nb_destinataires = nb_destinataires + 1
+    return nb_destinataires == len(plan)`,
+  explanation:`<p><strong>L'idée</strong> : on part de <code>'A'</code> et on "suit la piste" en interrogeant le dictionnaire — <code>plan[destinataire]</code> donne toujours la personne suivante dans la chaîne d'envoi. On avance ainsi tant qu'on n'est pas revenu à <code>'A'</code> (l'expéditeur de départ), en comptant à chaque étape combien de personnes différentes on a traversées.</p>
+<p><strong>Pourquoi <code>nb_destinataires</code> commence à 1</strong> (et pas 0) : dès la ligne <code>destinataire = plan[expediteur]</code>, on a déjà compté une première personne (celle qui reçoit le tout premier message) avant même d'entrer dans la boucle.</p>
+<p><strong>Le test final</strong> <code>nb_destinataires == len(plan)</code> : un plan est cyclique seulement si <strong>tout le monde</strong> fait partie de l'unique cycle. Si le parcours revient à <code>'A'</code> trop tôt (avant d'avoir visité tout le monde), c'est qu'il existe un ou plusieurs autres cycles séparés — le plan n'est donc pas cyclique.</p>
+<p><strong>Piège à éviter</strong> : condition d'arrêt de la boucle sur <code>destinataire</code>, pas sur un compteur fixe — on ne sait pas à l'avance combien d'étapes le cycle va durer, c'est justement ce qu'on est en train de calculer.</p>`,
+  variant:{
+    key:"taille_cycle", title:"taille_cycle — variante ECE de « dictionnaires »",
+    statement:`On ne part plus forcément de <code>'A'</code> : écrire <code>taille_cycle(plan, personne)</code> qui renvoie la taille (le nombre de personnes) du cycle auquel appartient <code>personne</code> dans le plan d'envoi <code>plan</code>, en suivant le même principe que <code>est_cyclique</code> mais en partant de <code>personne</code> plutôt que de <code>'A'</code>, et en renvoyant le nombre de personnes du cycle plutôt qu'un booléen.`,
+    starter:`def taille_cycle(plan, personne):
+    '''Renvoie le nombre de personnes dans le cycle contenant personne.'''
+    expediteur = ...
+    destinataire = plan[...]
+    taille = 1
+    while destinataire != ... :
+        destinataire = ...
+        taille = ...
+    return taille
+`,
+    tests:[["taille_cycle({'A':'E','B':'F','C':'D','D':'C','E':'B','F':'A'},'A')","4"],
+           ["taille_cycle({'A':'E','B':'F','C':'D','D':'C','E':'B','F':'A'},'C')","2"],
+           ["taille_cycle({'A':'C','B':'F','C':'E','D':'A','E':'B','F':'D'},'B')","6"],
+           ["taille_cycle({'A':'A'},'A')","1"]],
+  }
+},
+{
+  id:"p2e1", partie:2, num:1, key:"max", title:"listes (max)",
+  statement:`Écrire <code>maximum_tableau(tab)</code>, qui prend en paramètre un tableau non vide de nombres <code>tab</code> et renvoie le plus grand élément de ce tableau. <em>(Code complet à écrire soi-même, avec commentaires.)</em>`,
+  starter:`def maximum_tableau(tab):
+    """
+    Renvoie le plus grand élément du tableau non vide tab.
+    """
+    # à écrire
+`,
+  tests:[["maximum_tableau([98,12,104,23,131,9])","131"],["maximum_tableau([-27,24,-3,15])","24"],["maximum_tableau([5])","5"]],
+  correction:`def maximum_tableau(tab):
+    m = tab[0]
+    for x in tab:
+        if x > m:
+            m = x
+    return m`,
+  explanation:`<p><strong>C'est le schéma "accumulateur"</strong> qu'on retrouve dans énormément d'exercices : on initialise une variable (ici <code>m</code>, le champion provisoire) avec la <strong>première</strong> valeur du tableau, puis on parcourt <strong>tous</strong> les éléments (y compris le premier — ça ne change rien de le comparer à lui-même) en mettant à jour <code>m</code> chaque fois qu'on trouve mieux.</p>
+<p><strong>Pourquoi initialiser avec <code>tab[0]</code></strong> et pas avec 0 ou une valeur arbitraire : le tableau peut ne contenir que des nombres négatifs (voir l'exemple <code>[-27, 24, -3, 15]</code>) — démarrer à 0 donnerait un résultat faux dans ce cas. Le premier élément du tableau est toujours une valeur sûre pour commencer.</p>
+<p><strong>Erreur fréquente</strong> : écrire <code>if x >= m</code> au lieu de <code>x > m</code>. Ça ne change pas le résultat final (le maximum reste le maximum), mais ça fait des mises à jour inutiles — à éviter par souci de clarté, même si ce n'est pas un bug.</p>`,
+  variant:{
+    key:"minimum", title:"minimum_tableau — variante ECE de « max »",
+    statement:`Écrire <code>minimum_tableau(tab)</code>, qui prend en paramètre un tableau non vide de nombres <code>tab</code> et renvoie le plus <strong>petit</strong> élément de ce tableau. L'utilisation de la fonction native <code>min</code> n'est pas autorisée.`,
+    starter:`def minimum_tableau(tab):
+    """
+    Renvoie le plus petit élément du tableau non vide tab.
+    """
+    # à écrire
+`,
+    tests:[["minimum_tableau([98,12,104,23,131,9])","9"],["minimum_tableau([-27,24,-3,15])","-27"],["minimum_tableau([5])","5"]],
+  }
+},
+{
+  id:"p2e2", partie:2, num:2, key:"recherche", title:"listes (recherche)",
+  statement:`Écrire <code>recherche(tab, n)</code>, qui prend en paramètre un tableau non vide d'entiers <code>tab</code> et un entier <code>n</code>, et renvoie l'indice de la <strong>dernière</strong> occurrence de <code>n</code> dans <code>tab</code>. Si <code>n</code> n'est pas présent, la fonction renvoie <code>None</code>.`,
+  starter:`def recherche(tab, n):
+    """
+    Renvoie l'indice de la dernière occurrence de n dans tab, ou None.
+    """
+    # à écrire
+`,
+  tests:[["recherche([5,3],1)","None"],["recherche([2,4],2)","0"],["recherche([2,3,5,2,4],2)","3"]],
+  correction:`def recherche(tab, n):
+    indice = None
+    for i in range(len(tab)):
+        if tab[i] == n:
+            indice = i
+    return indice`,
+  explanation:`<p><strong>Pourquoi <code>range(len(tab))</code></strong> et pas une boucle <code>for x in tab</code> : ici on a besoin de l'<strong>indice</strong> <code>i</code>, pas seulement de la valeur, donc on parcourt les indices avec <code>range</code> puis on accède à <code>tab[i]</code>.</p>
+<p><strong>L'astuce pour trouver la <em>dernière</em> occurrence</strong> : on ne s'arrête pas dès qu'on trouve une correspondance — on <strong>continue</strong> la boucle jusqu'au bout, en écrasant <code>indice</code> à chaque fois qu'on retombe sur <code>n</code>. Comme le tableau est parcouru de gauche à droite, la toute dernière mise à jour de <code>indice</code> correspond forcément à la dernière occurrence.</p>
+<p><strong>Pourquoi <code>indice = None</code> au départ</strong> : c'est la valeur qu'on veut renvoyer si <code>n</code> n'apparaît jamais dans <code>tab</code>. Si on avait initialisé avec 0 ou -1, on ne pourrait pas distinguer "trouvé à l'indice 0" de "pas trouvé".</p>
+<p><strong>Piège fréquent</strong> : utiliser <code>return</code> dès la première correspondance trouvée — cela donnerait la <em>première</em> occurrence, pas la dernière, ce qui ne correspond pas à la spécification.</p>`,
+  variant:{
+    key:"compte_occurrences", title:"compte_occurrences — variante ECE de « recherche »",
+    statement:`Écrire <code>compte_occurrences(tab, n)</code>, qui prend en paramètre un tableau non vide d'entiers <code>tab</code> et un entier <code>n</code>, et renvoie le <strong>nombre de fois</strong> où <code>n</code> apparaît dans <code>tab</code> (0 si absent).`,
+    starter:`def compte_occurrences(tab, n):
+    """
+    Renvoie le nombre d'occurrences de n dans tab.
+    """
+    # à écrire
+`,
+    tests:[["compte_occurrences([5,3],1)","0"],["compte_occurrences([2,4],2)","1"],["compte_occurrences([2,3,5,2,4],2)","2"],["compte_occurrences([7,7,7],7)","3"]],
+  }
+},
+{
+  id:"p2e3", partie:2, num:3, key:"max_indice", title:"listes (max et indice)",
+  statement:`Écrire <code>max_et_indice(tab)</code>, qui prend en paramètre un tableau non vide <code>tab</code> de nombres et renvoie un tuple <code>(valeur_max, indice)</code> avec la valeur du plus grand élément et l'indice de sa <strong>première</strong> apparition. L'utilisation de la fonction native <code>max</code> n'est pas autorisée.`,
+  starter:`def max_et_indice(tab):
+    """
+    Renvoie (valeur_max, indice_premiere_apparition).
+    """
+    # à écrire
+`,
+  tests:[["max_et_indice([1,5,6,9,1,2,3,7,9,8])","(9,3)"],["max_et_indice([-2])","(-2,0)"],
+         ["max_et_indice([-1,-1,3,3,3])","(3,2)"],["max_et_indice([1,1,1,1])","(1,0)"]],
+  correction:`def max_et_indice(tab):
+    m = tab[0]
+    indice = 0
+    for i in range(1, len(tab)):
+        if tab[i] > m:
+            m = tab[i]
+            indice = i
+    return (m, indice)`,
+  explanation:`<p><strong>Même schéma que <code>maximum_tableau</code></strong>, avec une variable supplémentaire <code>indice</code> qui "suit" toujours la position de <code>m</code> : à chaque mise à jour du maximum, on met aussi à jour son indice, sur la ligne juste en dessous.</p>
+<p><strong>Pourquoi <code>range(1, len(tab))</code></strong> et non <code>range(0, len(tab))</code> : on a déjà "consommé" l'élément d'indice 0 en l'utilisant pour initialiser <code>m</code> et <code>indice</code> ; inutile de le comparer à lui-même une deuxième fois.</p>
+<p><strong>Pourquoi le test est <code>tab[i] &gt; m</code></strong> (strictement supérieur) et non <code>&gt;=</code> : c'est ce qui garantit qu'on garde l'indice de la <strong>première</strong> apparition du maximum. Si un élément égal à <code>m</code> apparaît plus loin, <code>tab[i] &gt; m</code> est faux, donc <code>indice</code> n'est pas modifié — vérifiable sur l'exemple <code>[-1, -1, 3, 3, 3]</code> qui renvoie <code>(3, 2)</code> (le premier <code>3</code>, à l'indice 2) et non <code>(3, 4)</code>.</p>
+<p><strong>Sur l'interdiction d'utiliser <code>max()</code></strong> : c'est un choix pédagogique de l'énoncé — le but est de savoir reconstruire "à la main" un algorithme que Python sait déjà faire, car c'est ce raisonnement qui sera réutilisé pour des problèmes plus complexes.</p>`,
+  variant:{
+    key:"min_indice", title:"min_et_indice — variante ECE de « max et indice »",
+    statement:`Écrire <code>min_et_indice(tab)</code>, qui prend en paramètre un tableau non vide <code>tab</code> de nombres et renvoie un tuple <code>(valeur_min, indice)</code> avec la valeur du plus petit élément et l'indice de sa <strong>première</strong> apparition. L'utilisation de la fonction native <code>min</code> n'est pas autorisée.`,
+    starter:`def min_et_indice(tab):
+    """
+    Renvoie (valeur_min, indice_premiere_apparition).
+    """
+    # à écrire
+`,
+    tests:[["min_et_indice([5,1,6,9,1,2,3,7,1,8])","(1,1)"],["min_et_indice([-2])","(-2,0)"],
+           ["min_et_indice([-1,-1,3,3,3])","(-1,0)"],["min_et_indice([1,1,1,1])","(1,0)"]],
+  }
+},
+{
+  id:"p2e4", partie:2, num:4, key:"tri", title:"listes (tri)",
+  statement:`Écrire <code>verifie(tab)</code>, qui prend en paramètre un tableau de valeurs numériques et renvoie <code>True</code> si ce tableau est trié dans l'ordre croissant (<em>au sens large</em>, égalités autorisées), <code>False</code> sinon. Un tableau vide ou à un élément est considéré comme trié.`,
+  starter:`def verifie(tab):
+    """
+    Renvoie True si tab est trié en ordre croissant large, False sinon.
+    """
+    # à écrire
+`,
+  tests:[["verifie([0,5,8,8,9])","True"],["verifie([8,12,4])","False"],["verifie([-1,4])","True"],["verifie([])","True"],["verifie([5])","True"]],
+  correction:`def verifie(tab):
+    for i in range(len(tab)-1):
+        if tab[i] > tab[i+1]:
+            return False
+    return True`,
+  explanation:`<p><strong>Pourquoi <code>range(len(tab)-1)</code></strong> : on compare toujours un élément avec son <strong>voisin de droite</strong> (<code>tab[i]</code> avec <code>tab[i+1]</code>). Si on allait jusqu'à <code>len(tab)-1</code> inclus, <code>tab[i+1]</code> sortirait du tableau sur le dernier tour. Le <code>-1</code> évite ce dépassement.</p>
+<p><strong>Pourquoi on peut s'arrêter dès qu'on trouve un problème</strong> (<code>return False</code> immédiat) : il suffit d'<strong>une seule</strong> paire mal ordonnée pour que le tableau entier ne soit pas trié — inutile de continuer à vérifier le reste.</p>
+<p><strong>Pourquoi <code>return True</code> est en dehors de la boucle</strong> (et pas dedans) : on ne peut être sûr que le tableau est trié qu'après avoir vérifié <strong>toutes</strong> les paires sans exception. Le mettre à l'intérieur de la boucle renverrait <code>True</code> dès la première comparaison réussie, ce qui serait faux si un problème survient plus loin.</p>
+<p><strong>Cas particuliers gratuits</strong> : pour un tableau vide ou à un seul élément, <code>range(len(tab)-1)</code> vaut <code>range(-1)</code> ou <code>range(0)</code>, donc la boucle ne s'exécute jamais et on renvoie directement <code>True</code> — exactement ce qui est demandé.</p>`,
+  variant:{
+    key:"tri_strict", title:"verifie_strict — variante ECE de « tri »",
+    statement:`Écrire <code>verifie_strict(tab)</code>, qui prend en paramètre un tableau de valeurs numériques et renvoie <code>True</code> si ce tableau est trié dans l'ordre <strong>strictement</strong> croissant (deux éléments consécutifs égaux invalident le tri), <code>False</code> sinon. Un tableau vide ou à un élément est considéré comme trié.`,
+    starter:`def verifie_strict(tab):
+    """
+    Renvoie True si tab est trié en ordre strictement croissant, False sinon.
+    """
+    # à écrire
+`,
+    tests:[["verifie_strict([0,5,8,8,9])","False"],["verifie_strict([0,5,8,9])","True"],["verifie_strict([8,12,4])","False"],["verifie_strict([])","True"],["verifie_strict([5])","True"],["verifie_strict([-1,4])","True"]],
+  }
+},
+{
+  id:"p2e5", partie:2, num:5, key:"moyenne", title:"listes (moyenne)",
+  statement:`Écrire <code>moyenne(tab)</code>, qui prend en paramètre un tableau non vide de nombres flottants et renvoie la moyenne des valeurs du tableau.`,
+  starter:`def moyenne(tab):
+    """
+    Renvoie la moyenne des valeurs du tableau non vide tab.
+    """
+    # à écrire
+`,
+  tests:[["moyenne([1.0])","1.0"],["moyenne([1.0,2.0,4.0])","2.3333333333333335"]],
+  correction:`def moyenne(tab):
+    return sum(tab) / len(tab)`,
+  explanation:`<p><strong>C'est le seul exercice du TP qui se résout en une ligne</strong>, grâce à deux fonctions natives de Python : <code>sum(tab)</code> additionne tous les éléments du tableau, et <code>len(tab)</code> donne son nombre d'éléments. La moyenne, par définition, c'est la somme divisée par le nombre de valeurs.</p>
+<p><strong>Pourquoi le tableau doit être non vide</strong> : si <code>tab</code> était vide, <code>len(tab)</code> vaudrait 0 et la division provoquerait une erreur (<code>ZeroDivisionError</code>) — division par zéro. C'est pour ça que l'énoncé précise "tableau non vide" : on n'a pas besoin de gérer ce cas.</p>
+<p><strong>Pourquoi le résultat n'est pas toujours "rond"</strong> (ex. <code>2.3333333333333335</code> pour <code>[1.0, 2.0, 4.0]</code>) : c'est la façon normale dont Python représente les nombres à virgule qui ne "tombent pas juste" — ce n'est pas une erreur de votre code, les tests le vérifient tel quel.</p>`,
+  variant:{
+    key:"etendue", title:"etendue — variante ECE de « moyenne »",
+    statement:`Écrire <code>etendue(tab)</code>, qui prend en paramètre un tableau non vide de nombres flottants et renvoie son <strong>étendue</strong>, c'est-à-dire l'écart entre le plus grand et le plus petit élément du tableau (valeur maximale moins valeur minimale).`,
+    starter:`def etendue(tab):
+    """
+    Renvoie l'étendue (max - min) du tableau non vide tab.
+    """
+    # à écrire
+`,
+    tests:[["etendue([1.0,5.0,3.0])","4.0"],["etendue([2.0])","0.0"],["etendue([-3.0,7.0,0.0])","10.0"]],
+  }
+},
+{
+  id:"p2e6", partie:2, num:6, key:"trous_chaines", title:"chaînes de caractères",
+  statement:`On considère des « mots à trous » : chaînes ne contenant que des majuscules et des <code>*</code> (ex. <code>INFO*MA*IQUE</code>). Écrire <code>correspond(mot, mot_a_trous)</code> qui renvoie <code>True</code> si on peut obtenir <code>mot</code> en remplaçant convenablement les <code>*</code> de <code>mot_a_trous</code>, <code>False</code> sinon.`,
+  starter:`def correspond(mot, mot_a_trous):
+    """
+    Renvoie True si mot correspond au mot à trous mot_a_trous, False sinon.
+    """
+    # à écrire
+`,
+  tests:[["correspond('INFORMATIQUE','INFO*MA*IQUE')","True"],["correspond('AUTOMATIQUE','INFO*MA*IQUE')","False"],
+         ["correspond('STOP','S*')","False"],["correspond('AUTO','*UT*')","True"]],
+  correction:`def correspond(mot, mot_a_trous):
+    if len(mot) != len(mot_a_trous):
+        return False
+    for i in range(len(mot)):
+        if mot_a_trous[i] != '*' and mot_a_trous[i] != mot[i]:
+            return False
+    return True`,
+  explanation:`<p><strong>Le premier test est un raccourci indispensable</strong> : si <code>mot</code> et <code>mot_a_trous</code> n'ont pas la même longueur, il est impossible qu'ils correspondent, quels que soient les caractères — pas besoin d'aller plus loin, d'où le <code>return False</code> immédiat. C'est aussi ce qui garantit qu'on peut ensuite accéder à <code>mot[i]</code> sans risque de dépassement, puisque les deux chaînes ont la même longueur.</p>
+<p><strong>La boucle compare position par position</strong> : pour chaque indice <code>i</code>, deux cas rendent la correspondance impossible : le caractère de <code>mot_a_trous</code> n'est pas une étoile <strong>et</strong> il est différent du caractère de <code>mot</code> à la même position. Le <code>and</code> est essentiel : si <code>mot_a_trous[i]</code> vaut <code>'*'</code>, la deuxième condition n'a pas d'importance, ce caractère "passe" toujours.</p>
+<p><strong>Pourquoi <code>return True</code> à la fin</strong> : si on a traversé toute la chaîne sans jamais renvoyer <code>False</code>, c'est qu'aucune position n'a posé problème — le mot correspond donc bien au mot à trous.</p>
+<p><strong>Piège fréquent</strong> : oublier le test de longueur, et se retrouver avec une erreur (ou un résultat faux) dès que <code>mot</code> et <code>mot_a_trous</code> n'ont pas la même taille — toujours réfléchir aux cas limites avant de foncer dans la boucle principale.</p>`,
+  variant:{
+    key:"correspond_insensible", title:"correspond_insensible — variante ECE de « chaînes »",
+    statement:`Même principe, mais la comparaison doit être <strong>insensible à la casse</strong> : <code>mot</code> peut être écrit en minuscules, majuscules ou mélangé, et doit quand même correspondre au mot à trous (toujours en majuscules). Écrire <code>correspond_insensible(mot, mot_a_trous)</code>.`,
+    starter:`def correspond_insensible(mot, mot_a_trous):
+    """
+    Comme correspond, mais insensible à la casse.
+    """
+    # à écrire
+`,
+    tests:[["correspond_insensible('Informatique','INFO*MA*IQUE')","True"],["correspond_insensible('automatique','INFO*MA*IQUE')","False"],
+           ["correspond_insensible('stop','S*')","False"],["correspond_insensible('auto','*UT*')","True"],["correspond_insensible('AuTo','*uT*')","True"]],
+  }
+},
+];
+
+/* ======================================================================
+   PYODIDE
+   ====================================================================== */
+let pyodideReady = null;
+async function initPyodide(){
+  if(pyodideReady) return pyodideReady;
+  pyodideReady = (async () => {
+    const py = await loadPyodide();
+    return py;
+  })();
+  return pyodideReady;
+}
+async function runTests(studentCode, tests, statusEl, resultsEl, runBtn){
+  runBtn.disabled = true;
+  const prevLabel = runBtn.textContent;
+  runBtn.textContent = "Exécution…";
+  resultsEl.innerHTML = "";
+  try{
+    const py = await initPyodide();
+    statusEl.textContent = "Python : prêt";
+    let out = [];
+    for(const [expr, expectedSrc] of tests){
+      const harness = `
+${studentCode}
+import json
+def __run_one():
+    try:
+        _expected = (${expectedSrc})
+        _got = (${expr})
+        return {"ok": _got == _expected, "got": repr(_got), "error": None}
+    except Exception as e:
+        return {"ok": False, "got": None, "error": f"{type(e).__name__}: {e}"}
+json.dumps(__run_one())
+`;
+      try{
+        const jsonRes = await py.runPythonAsync(harness);
+        out.push({expr, expected: expectedSrc, ...JSON.parse(jsonRes)});
+      }catch(e){
+        out.push({expr, expected: expectedSrc, ok:false, got:null, error: "Erreur de syntaxe : " + e.message.split('\\n').slice(-2,-1)[0]});
+      }
+    }
+    resultsEl.innerHTML = out.map(r => {
+      if(r.ok){
+        return `<div class="result-row ok"><span class="mark">✓</span><span>${escapeHtml(r.expr)} → ${escapeHtml(r.got)}</span></div>`;
+      }else if(r.error){
+        return `<div class="result-row ko"><span class="mark">✗</span><span>${escapeHtml(r.expr)} — ${escapeHtml(r.error)}</span></div>`;
+      }else{
+        return `<div class="result-row ko"><span class="mark">✗</span><span>${escapeHtml(r.expr)} → obtenu ${escapeHtml(r.got)}, attendu ${escapeHtml(r.expected)}</span></div>`;
+      }
+    }).join("");
+  }catch(e){
+    resultsEl.innerHTML = `<div class="result-row ko"><span class="mark">✗</span><span>Erreur d'initialisation Python : ${escapeHtml(e.message||String(e))}</span></div>`;
+  }finally{
+    runBtn.disabled = false;
+    runBtn.textContent = prevLabel;
+  }
+}
+function escapeHtml(s){
+  return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+
+/* ======================================================================
+   ÉDITEUR DE CODE (CodeMirror : coloration + autocomplétion)
+   ====================================================================== */
+const editors = {};
+function mountEditor(textareaId){
+  const ta = document.getElementById(textareaId);
+  if(!ta) return null;
+  const cm = CodeMirror.fromTextArea(ta, {
+    mode: 'python',
+    lineNumbers: true,
+    indentUnit: 4,
+    tabSize: 4,
+    indentWithTabs: false,
+    autoCloseBrackets: true,
+    matchBrackets: true,
+    viewportMargin: Infinity,
+    extraKeys: {
+      "Tab": function(cmInst){ cmInst.replaceSelection("    ", "end"); },
+      "Ctrl-Space": "autocomplete"
+    }
+  });
+  cm.on("inputRead", function(cmInst, change){
+    if(change.origin !== "+input") return;
+    if(change.text.length === 1 && /[\w.]/.test(change.text[0])){
+      cmInst.showHint({hint: CodeMirror.hint.anyword, completeSingle:false});
+    }
+  });
+  editors[textareaId] = cm;
+  return cm;
+}
+function getEditorValue(textareaId){
+  const cm = editors[textareaId];
+  if(cm) return cm.getValue();
+  const ta = document.getElementById(textareaId);
+  return ta ? ta.value : '';
+}
+function setEditorValue(textareaId, value){
+  const cm = editors[textareaId];
+  if(cm){ cm.setValue(value); return; }
+  const ta = document.getElementById(textareaId);
+  if(ta) ta.value = value;
+}
+
+/* ======================================================================
+   VUE ECE — TIRAGE / TIMER / NOTATION / EXPORT
+   ====================================================================== */
+const ACTIVE_KEY = "ece:actifs";
+const LOG_KEY = "ece:journal";
+let currentDraw = null;   // {studentName, exId, drawId, startedAt}
+let timerInterval = null;
+let timerSeconds = 20*60;
+let timerRunning = false;
+
+// Numéro du sujet, identique à la numérotation de la banque de sujets PDF :
+// 1 à 10 = variantes modifiées (dans l'ordre du TP1), 11 à 20 = énoncés identiques.
+function subjectNumber(exId, identical){
+  const idx = EXERCISES.findIndex(e => e.id === exId);
+  if(idx === -1) return null;
+  return identical ? idx + 1 + EXERCISES.length : idx + 1;
+}
+
+// Stockage local du navigateur (fonctionne hors ligne, sans serveur).
+// Les données restent sur CET ordinateur/navigateur — pense à exporter
+// régulièrement en JSON/CSV pour en garder une copie durable.
+function getActive(){
+  try{
+    const raw = localStorage.getItem(ACTIVE_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ console.error('getActive', e); return []; }
+}
+function setActive(list){
+  try{ localStorage.setItem(ACTIVE_KEY, JSON.stringify(list)); }
+  catch(e){ console.error('setActive', e); alert("Le stockage local a échoué : " + e.message); }
+}
+function getLog(){
+  try{
+    const raw = localStorage.getItem(LOG_KEY);
+    return raw ? JSON.parse(raw) : [];
+  }catch(e){ console.error('getLog', e); return []; }
+}
+function setLog(list){
+  try{ localStorage.setItem(LOG_KEY, JSON.stringify(list)); }
+  catch(e){ console.error('setLog', e); alert("Le stockage local a échoué : " + e.message); }
+}
+
+async function renderActiveList(){
+  const active = await getActive();
+  const el = document.getElementById('activeList');
+  if(active.length === 0){
+    el.innerHTML = '';
+    return;
+  }
+  el.innerHTML = '<div class="active-list">' + active.map(a=>{
+    const ex = EXERCISES.find(e=>e.id===a.exId);
+    const label = a.identical ? (ex.key + " (identique)") : ex.variant.key;
+    const num = subjectNumber(a.exId, a.identical);
+    return `<span class="chip">n°${num} · ${escapeHtml(a.studentName)} — ${label}</span>`;
+  }).join('') + '</div>';
+}
+
+async function drawSubject(){
+  const nameInput = document.getElementById('studentName');
+  const studentName = nameInput.value.trim();
+  if(!studentName){
+    nameInput.focus();
+    nameInput.placeholder = "Indique un nom avant de tirer";
+    return;
+  }
+  const active = await getActive();
+  const activeExIds = active.map(a=>a.exId);
+  const log = await getLog();
+  const recentExIds = log.slice(-2).map(l=>l.exId);
+  const forbidden = new Set([...activeExIds, ...recentExIds]);
+
+  let pool = EXERCISES.filter(e => !forbidden.has(e.id));
+  if(pool.length === 0) pool = EXERCISES.filter(e => !activeExIds.includes(e.id));
+  if(pool.length === 0) pool = EXERCISES;
+
+  const chosen = pool[Math.floor(Math.random()*pool.length)];
+  const identical = document.getElementById('identicalMode').checked;
+  const drawId = studentName + "-" + Date.now();
+  currentDraw = {studentName, exId: chosen.id, drawId, identical};
+
+  active.push({studentName, exId: chosen.id, drawId, identical});
+  await setActive(active);
+  await renderActiveList();
+
+  timerSeconds = 20*60;
+  timerRunning = false;
+  clearInterval(timerInterval);
+
+  renderDraw(chosen, identical);
+  nameInput.value = "";
+  nameInput.placeholder = "ex. Camille D.";
+}
+
+function formatTime(s){
+  const m = Math.floor(s/60), sec = s%60;
+  return String(m).padStart(2,'0') + ':' + String(sec).padStart(2,'0');
+}
+
+function renderDraw(ex, identical){
+  const v = identical
+    ? {title: ex.title + " (énoncé identique au TP)", statement: ex.statement, starter: ex.starter, tests: ex.tests}
+    : ex.variant;
+  const num = subjectNumber(ex.id, identical);
+  const mount = document.getElementById('drawMount');
+  mount.innerHTML = `
+    <div class="draw-result">
+      <div class="tag">Sujet n°${num} · tiré pour ${escapeHtml(currentDraw.studentName)} ${identical ? '· version identique' : '· version modifiée'}</div>
+      <h2>${v.title}</h2>
+      <div class="who">D'après l'exercice « ${ex.title} » (Partie ${ex.partie}, n°${ex.num} du TP1)</div>
+      <div class="statement">${v.statement}</div>
+
+      <div class="no-print">
+        <button class="secondary" onclick="printSubject()">Imprimer ce sujet (PDF)</button>
+      </div>
+
+      <div class="timer-block no-print">
+        <div class="timer-display" id="timerDisplay">${formatTime(timerSeconds)}</div>
+        <div class="timer-controls">
+          <button class="primary" id="timerStart">Démarrer les 20 min</button>
+          <button class="secondary" id="timerPause">Pause</button>
+          <button class="secondary" id="timerReset">Réinitialiser</button>
+        </div>
+      </div>
+
+      <div class="no-print">
+        <textarea class="code" id="draw-code" spellcheck="false">${v.starter}</textarea>
+        <div class="code-toolbar">
+          <button class="run" id="draw-run">Lancer les tests</button>
+        </div>
+        <div class="editor-hint-note">Ctrl+Espace pour l'autocomplétion.</div>
+        <div class="results" id="draw-results"></div>
+      </div>
+    </div>
+
+    <div class="rubric" id="rubricBlock">
+      <h3 style="font-family:var(--head); margin:0 0 4px; font-size:1rem;">Grille d'évaluation</h3>
+      <p style="color:var(--ink-soft); font-size:.82rem; margin:0 0 6px;">Chaque critère noté de 0 à 4 → total sur 20. Ajustable manuellement si besoin.</p>
+      ${rubricRow("analyse","Analyse de l'énoncé","Comprend la spécification et les exemples fournis")}
+      ${rubricRow("structure","Structure de l'algorithme","Boucle/condition cohérentes avec le problème")}
+      ${rubricRow("tests","Jeu de tests","Teste au minimum les exemples de l'énoncé")}
+      ${rubricRow("debug","Façon de déboguer","Sait interpréter une erreur et corriger")}
+      ${rubricRow("explication","Capacité à expliquer","Explique clairement son code à l'oral")}
+      <div class="rubric-total">
+        <span>Note finale</span>
+        <span class="score"><span id="totalScore">0</span> / 20</span>
+      </div>
+      <textarea class="notes" id="drawNotes" placeholder="Remarques (facultatif)…"></textarea>
+      <div class="code-toolbar" style="margin-top:14px">
+        <button class="primary" onclick="saveGrade('${ex.id}')">Enregistrer la note</button>
+        <button class="secondary" onclick="cancelDraw('${ex.id}')">Annuler ce tirage</button>
+      </div>
+    </div>
+  `;
+
+  window._printData = {
+    studentName: currentDraw.studentName,
+    subjectNumber: num,
+    subjectTitle: v.title,
+    original: ex.title,
+    statementHtml: v.statement
+  };
+
+  mountEditor('draw-code');
+  document.getElementById('timerStart').onclick = ()=>{ timerRunning = true; startTimerLoop(); };
+  document.getElementById('timerPause').onclick = ()=>{ timerRunning = false; clearInterval(timerInterval); };
+  document.getElementById('timerReset').onclick = ()=>{ timerRunning=false; clearInterval(timerInterval); timerSeconds=20*60; updateTimerDisplay(); };
+  document.getElementById('draw-run').onclick = ()=>{
+    const code = getEditorValue('draw-code');
+    const status = document.getElementById('pyostatus');
+    const results = document.getElementById('draw-results');
+    const btn = document.getElementById('draw-run');
+    runTests(code, v.tests, status, results, btn);
+  };
+  document.querySelectorAll('.rubric-row input[type=range]').forEach(inp=>{
+    inp.addEventListener('input', updateTotalScore);
+  });
+  updateTotalScore();
+}
+
+function rubricRow(key, label, hint){
+  return `<div class="rubric-row">
+    <div class="crit">${label}<small>${hint}</small></div>
+    <input type="range" min="0" max="4" step="1" value="2" id="crit-${key}">
+    <div class="val" id="val-${key}">2</div>
+  </div>`;
+}
+
+function updateTotalScore(){
+  const keys = ['analyse','structure','tests','debug','explication'];
+  let total = 0;
+  keys.forEach(k=>{
+    const el = document.getElementById(`crit-${k}`);
+    if(!el) return;
+    document.getElementById(`val-${k}`).textContent = el.value;
+    total += Number(el.value);
+  });
+  const scoreOn20 = Math.round(total); // 5 criteria x 4 = 20 max
+  document.getElementById('totalScore').textContent = scoreOn20;
+}
+
+async function saveGrade(exId){
+  const ex = EXERCISES.find(e=>e.id===exId);
+  const keys = ['analyse','structure','tests','debug','explication'];
+  const scores = {};
+  keys.forEach(k=> scores[k] = Number(document.getElementById(`crit-${k}`).value));
+  const total = Object.values(scores).reduce((a,b)=>a+b,0);
+  const notes = document.getElementById('drawNotes').value.trim();
+
+  const log = await getLog();
+  log.push({
+    date: new Date().toLocaleDateString('fr-FR'),
+    studentName: currentDraw.studentName,
+    exId: ex.id,
+    subjectNumber: subjectNumber(ex.id, currentDraw.identical),
+    exTitle: currentDraw.identical ? (ex.key + " (identique)") : ex.variant.key,
+    scores, total, notes
+  });
+  await setLog(log);
+
+  await releaseActive(currentDraw.drawId);
+  currentDraw = null;
+  clearInterval(timerInterval);
+  document.getElementById('drawMount').innerHTML = '';
+  renderLog();
+}
+
+async function cancelDraw(exId){
+  if(currentDraw) await releaseActive(currentDraw.drawId);
+  currentDraw = null;
+  clearInterval(timerInterval);
+  document.getElementById('drawMount').innerHTML = '';
+}
+
+async function releaseActive(drawId){
+  const active = await getActive();
+  const filtered = active.filter(a => a.drawId !== drawId);
+  await setActive(filtered);
+  await renderActiveList();
+}
+
+function startTimerLoop(){
+  clearInterval(timerInterval);
+  timerInterval = setInterval(()=>{
+    if(!timerRunning) return;
+    timerSeconds--;
+    updateTimerDisplay();
+    if(timerSeconds <= 0){
+      timerRunning = false;
+      clearInterval(timerInterval);
+    }
+  }, 1000);
+}
+function updateTimerDisplay(){
+  const el = document.getElementById('timerDisplay');
+  if(!el) return;
+  el.textContent = formatTime(Math.max(0,timerSeconds));
+  el.classList.toggle('warn', timerSeconds <= 120);
+}
+
+async function renderLog(){
+  const log = await getLog();
+  const mount = document.getElementById('logMount');
+  if(log.length === 0){
+    mount.innerHTML = "<p class=\"empty-log\">Aucune interrogation enregistrée pour l'instant.</p>";
+    return;
+  }
+  const rows = log.slice().reverse().map(l=>`
+    <tr>
+      <td>${escapeHtml(l.date)}</td>
+      <td>${l.subjectNumber != null ? 'n°'+l.subjectNumber : '—'}</td>
+      <td>${escapeHtml(l.studentName)}</td>
+      <td>${escapeHtml(l.exTitle)}</td>
+      <td>${l.total} / 20</td>
+      <td>${escapeHtml(l.notes||'—')}</td>
+    </tr>
+  `).join('');
+  mount.innerHTML = `
+    <table class="log-table">
+      <thead><tr><th>Date</th><th>N°</th><th>Élève</th><th>Sujet</th><th>Note</th><th>Remarques</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+  `;
+}
+
+async function resetSession(){
+  if(!confirm("Réinitialiser la session : vide la liste des sujets actifs (le journal des notes est conservé). Continuer ?")) return;
+  await setActive([]);
+  await renderActiveList();
+}
+
+function printSubject(){
+  if(!window._printData){ alert("Aucun sujet tiré pour l'instant."); return; }
+  window.print();
+}
+
+function downloadFile(filename, content, mime){
+  const blob = new Blob([content], {type: mime || 'text/plain'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+function todayStr(){
+  const d = new Date();
+  return d.toISOString().slice(0,10);
+}
+
+async function exportJSON(){
+  const log = await getLog();
+  if(log.length === 0){ alert("Le journal est vide."); return; }
+  downloadFile(`notes-ece-${todayStr()}.json`, JSON.stringify(log, null, 2), 'application/json');
+}
+
+async function exportCSV(){
+  const log = await getLog();
+  if(log.length === 0){ alert("Le journal est vide."); return; }
+  const header = ['date','n_sujet','eleve','sujet','analyse','structure','jeu_de_tests','debug','explication','total_sur_20','remarques'];
+  const escapeCsv = v => `"${String(v==null?'':v).replace(/"/g,'""')}"`;
+  const rows = log.map(l => [
+    l.date, l.subjectNumber != null ? l.subjectNumber : '', l.studentName, l.exTitle,
+    l.scores.analyse, l.scores.structure, l.scores.tests, l.scores.debug, l.scores.explication,
+    l.total, l.notes || ''
+  ].map(escapeCsv).join(';'));
+  const csv = [header.map(escapeCsv).join(';'), ...rows].join('\n');
+  downloadFile(`notes-ece-${todayStr()}.csv`, '\ufeff' + csv, 'text/csv;charset=utf-8');
+}
+
+/* ======================================================================
+   INIT
+   ====================================================================== */
+renderActiveList();
+renderLog();
+initPyodide().then(()=>{ document.getElementById('pyostatus').textContent = "Python : prêt"; })
+  .catch(()=>{ document.getElementById('pyostatus').textContent = "Python : indisponible (connexion requise au premier chargement)"; });
+</script>
+</body>
+</html>

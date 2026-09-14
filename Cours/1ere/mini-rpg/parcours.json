@@ -50,24 +50,29 @@
     },
     {
       "id": 2,
-      "title": "Maîtriser le hasard et les fonctions",
-      "goal": "Simuler une surprise et comprendre un appel de fonction.",
+      "title": "Hasard, bibliothèques et premières fonctions",
+      "goal": "Créer puis réutiliser plusieurs fonctions dans une rencontre aléatoire.",
       "course": [
         "random est un module de la bibliothèque standard. Avec import random, on appelle random.random() ou random.randint(a, b). Éviter import * : le nom du module permet de retrouver l’origine de chaque fonction.",
         "random.random() renvoie un nombre dans [0 ; 1[ : 0 est possible, 1 est exclu. random.randint(1, 20) renvoie un entier de 1 à 20 inclus. int(random.random()*10) produit 0 à 9. Le hasard est pseudo-aléatoire : un algorithme produit une suite qui semble aléatoire.",
-        "def nom(parametre): définit une fonction ; son corps ne s’exécute qu’à l’appel nom(valeur). Le paramètre reçoit la valeur transmise. return renvoie un résultat et termine l’appel. print affiche ; il ne remplace pas return.",
+        "def nom(parametre): définit une fonction ; son corps ne s’exécute qu’à l’appel nom(valeur). Une fonction peut avoir zéro, un ou plusieurs paramètres. Les arguments sont les valeurs données lors de l’appel.",
+        "return renvoie un résultat et termine l’appel. print affiche ; il ne remplace pas return. Une valeur renvoyée peut être stockée, comparée ou transmise à une autre fonction.",
         "Pour vérifier un seuil, choisir des valeurs fixes avant de remettre le tirage aléatoire. Un petit nombre de tirages n’a pas nécessairement les proportions théoriques."
       ],
-      "example": "import random\n\ndef attaque_reussie(de):\n    return de > 10\n\nprint(attaque_reussie(10))\nprint(attaque_reussie(11))\nprint(\"Dé :\", random.randint(1, 20))",
+      "example": "import random\n\ndef lancer_de(nb_faces):\n    return random.randint(1, nb_faces)\n\ndef attaque_reussie(de):\n    return de > 10\n\nprint(attaque_reussie(10))\nprint(attaque_reussie(11))\nde = lancer_de(20)\nprint(\"Dé :\", de)\nprint(\"Attaque réussie :\", attaque_reussie(de))",
       "tasks": [
         "Écrire une surprise : tirer chance avec random.random() ; afficher Attaque surprise si chance < 0.5, sinon Aucun ennemi.",
-        "Définir attaque_reussie(de) qui renvoie True exactement lorsque de > 10. Afficher le résultat pour 10 puis 11, puis pour un dé à 20 faces tiré avec randint.",
-        "Expliquer dans deux commentaires la différence entre définir et appeler une fonction, puis entre print et return. L’interface graphique du TP original se trouve dans l’atelier complémentaire après les six parties."
+        "Définir lancer_de(nb_faces), qui renvoie un entier entre 1 et nb_faces. L’appeler avec 6 puis 20.",
+        "Définir attaque_reussie(de, seuil), qui renvoie le booléen de >= seuil. La tester avec des valeurs choisies de part et d’autre du seuil.",
+        "Définir calculer_degats(force, bonus), qui renvoie la somme des deux paramètres. Utiliser son résultat dans un affichage de rencontre.",
+        "Assembler les fonctions : lancer un dé à 20 faces, tester la réussite avec un seuil de 11, puis afficher les dégâts seulement en cas de réussite.",
+        "Expliquer dans trois commentaires : définition/appel, paramètre/argument et print/return. L’interface graphique reste dans l’atelier complémentaire."
       ],
       "tests": [
         "chance = 0.49 → surprise ; chance = 0.5 → aucun ennemi.",
-        "attaque_reussie(1) et (10) → False ; (11) et (20) → True.",
-        "Le dé vaut toujours entre 1 et 20 ; ne pas exiger un nombre précis de surprises."
+        "lancer_de(6) reste entre 1 et 6 ; lancer_de(20) reste entre 1 et 20.",
+        "attaque_reussie(10, 11) → False ; attaque_reussie(11, 11) → True.",
+        "calculer_degats(8, 3) → 11 ; le résultat est réutilisable."
       ],
       "criteria": [
         [
@@ -75,21 +80,25 @@
           1
         ],
         [
-          "Dé entier entre 1 et 20",
+          "lancer_de paramétrable et bornes correctes",
           1
         ],
         [
-          "Fonction avec paramètre et return corrects",
-          2
+          "Fonctions avec paramètres et return",
+          1
         ],
         [
-          "Tests de seuil et explications",
+          "Assemblage des fonctions dans la rencontre",
+          1
+        ],
+        [
+          "Tests de frontières et explications",
           1
         ]
       ],
-      "starter": "# PARTIE 2 — Hasard et fonctions\nimport random\n\ndef attaque_reussie(de):\n    # TODO : remplacer pass par le résultat à renvoyer.\n    pass\n\n# TODO : surprise, tests fixes, puis lancer de dé.\n# TEST 1 : entrées / attendu / observé\n# TEST 2 : entrées / attendu / observé\n",
+      "starter": "# PARTIE 2 — Hasard et fonctions\nimport random\n\ndef lancer_de(nb_faces):\n    # TODO : renvoyer un tirage adapté au nombre de faces.\n    pass\n\ndef attaque_reussie(de, seuil):\n    # TODO : renvoyer un booléen.\n    pass\n\ndef calculer_degats(force, bonus):\n    # TODO : renvoyer le total.\n    pass\n\n# TODO : surprise, tests fixes, puis rencontre assemblée.\n# TEST 1 : entrées / attendu / observé\n# TEST 2 : entrées / attendu / observé\n",
       "inputs": "",
-      "extension": "Après le parcours principal, créer une fenêtre avec un champ de nom et un bouton : atelier Tkinter fourni."
+      "extension": "Créer choisir_butin() sans paramètre, puis une variante choisir_butin(chance) facile à tester avec des valeurs fixes."
     },
     {
       "id": 3,
@@ -291,42 +300,48 @@
           "text": "Une variable est un nom associé à une valeur. Pour créer ou modifier cette association, on utilise =. Python exécute les lignes dans l’ordre : la dernière affectation remplace la précédente.",
           "code": "pv = 50\npv = pv - 10\nprint(pv)",
           "result": "40",
-          "trap": "= signifie « affecter », pas « est égal à » au sens d’un test. On calcule le côté droit avant de modifier la variable."
+          "trap": "= signifie « affecter », pas « est égal à » au sens d’un test. On calcule le côté droit avant de modifier la variable.",
+          "inputs": ""
         },
         {
           "title": "2. Texte et nombres ne se manipulent pas pareil",
           "text": "Une chaîne de caractères (str) se met entre guillemets. Un entier (int) s’écrit sans guillemets. + additionne des entiers ; entre deux chaînes, il colle les textes.",
           "code": "print(5 + 5)\nprint(\"5\" + \"5\")",
           "result": "10\n55",
-          "trap": "La valeur 5 et le texte « 5 » se ressemblent à l’écran, mais n’ont pas le même type."
+          "trap": "La valeur 5 et le texte « 5 » se ressemblent à l’écran, mais n’ont pas le même type.",
+          "inputs": ""
         },
         {
           "title": "3. Lire avec input, afficher avec print",
           "text": "input affiche une question, puis renvoie le texte tapé. print affiche une ou plusieurs valeurs. Les virgules dans print séparent les éléments à afficher.",
           "code": "nom = input(\"Ton nom ? \")\nprint(\"Bienvenue\", nom)",
           "result": "Si tu saisis Lina : Bienvenue Lina",
-          "trap": "input renvoie toujours du texte. Écrire input sans les parenthèses n’appelle pas la fonction."
+          "trap": "input renvoie toujours du texte. Écrire input sans les parenthèses n’appelle pas la fonction.",
+          "inputs": ""
         },
         {
           "title": "4. Convertir une saisie numérique",
           "text": "Pour calculer avec un nombre saisi, int transforme le texte en entier. Lis de l’intérieur vers l’extérieur : input récupère le texte, int le convertit, puis = affecte le résultat.",
           "code": "force = int(input(\"Force ? \"))\nprint(force + 2)",
           "result": "Si tu saisis 5 : 7",
-          "trap": "Pour cette séance, on suppose que l’élève tape un entier. Si on tape cinq en lettres, int provoque une erreur ; ce cas n’est pas demandé."
+          "trap": "Pour cette séance, on suppose que l’élève tape un entier. Si on tape cinq en lettres, int provoque une erreur ; ce cas n’est pas demandé.",
+          "inputs": ""
         },
         {
           "title": "5. Choisir un chemin avec if, elif et else",
           "text": "== compare deux valeurs. if exécute un bloc si son test est vrai ; elif teste un autre cas ; else traite les autres possibilités. Les quatre espaces au début d’une ligne montrent le bloc auquel elle appartient.",
           "code": "action = \"dormir\"\nif action == \"attaquer\":\n    print(\"À l’attaque !\")\nelif action == \"soigner\":\n    print(\"Une potion !\")\nelse:\n    print(\"Action inconnue\")",
           "result": "Action inconnue",
-          "trap": "Ne remplace pas elif action == \"soigner\" par else : sinon dormir déclencherait aussi un soin."
+          "trap": "Ne remplace pas elif action == \"soigner\" par else : sinon dormir déclencherait aussi un soin.",
+          "inputs": ""
         },
         {
           "title": "6. Vérifier plusieurs contraintes",
           "text": "and signifie que toutes les conditions reliées doivent être vraies. Pour valider le personnage, la somme doit être 15 ET chaque compétence doit être positive ou nulle.",
           "code": "points = 7\nvalide = points >= 0 and points <= 15\nprint(valide)",
           "result": "True",
-          "trap": "Une somme correcte ne suffit pas : -1 + 8 + 8 vaut 15, mais une compétence négative doit être refusée."
+          "trap": "Une somme correcte ne suffit pas : -1 + 8 + 8 vaut 15, mais une compétence négative doit être refusée.",
+          "inputs": ""
         }
       ],
       "exercises": [
@@ -364,35 +379,72 @@
           "text": "Un module regroupe des fonctions. import random permet d’utiliser celles du hasard. On écrit le nom du module, un point, puis le nom de la fonction.",
           "code": "import random\nde = random.randint(1, 20)\nprint(de)",
           "result": "Un entier entre 1 et 20, bornes incluses.",
-          "trap": "Ne nomme pas ton fichier random.py : il risquerait de masquer le module fourni avec Python."
+          "trap": "Ne nomme pas ton fichier random.py : il risquerait de masquer le module fourni avec Python.",
+          "inputs": ""
         },
         {
           "title": "2. Comprendre les bornes du hasard",
           "text": "random.random() donne un nombre supérieur ou égal à 0 et strictement inférieur à 1. random.randint(a, b) donne un entier entre a et b inclus. Le hasard est produit par un algorithme : il est pseudo-aléatoire.",
           "code": "import random\nprint(random.random())\nprint(random.randint(0, 10))",
           "result": "Par exemple 0.37 puis 8. Le résultat peut changer.",
-          "trap": "int(random.random()*10) donne 0 à 9, pas 0 à 10. Une petite série de tirages n’a pas forcément les proportions prévues."
+          "trap": "int(random.random()*10) donne 0 à 9, pas 0 à 10. Une petite série de tirages n’a pas forcément les proportions prévues.",
+          "inputs": ""
         },
         {
-          "title": "3. Définir puis appeler une fonction",
-          "text": "def définit un traitement réutilisable. Le paramètre est une variable qui reçoit la valeur donnée à l’appel. Le corps de la fonction ne s’exécute pas au moment du def, mais quand on appelle la fonction.",
-          "code": "def doubler(nombre):\n    return nombre * 2\n\nprint(doubler(4))\nprint(doubler(7))",
-          "result": "8\n14",
-          "trap": "doubler est le nom de la fonction ; doubler(4) est un appel avec la valeur 4."
+          "title": "3. Une fonction sans paramètre",
+          "text": "Une fonction peut ne recevoir aucune information. Les parenthèses restent obligatoires dans la définition et dans l’appel. Ici chaque appel effectue un nouveau tirage.",
+          "code": "import random\ndef lancer_piece():\n    return random.choice([\"pile\", \"face\"])\n\nprint(lancer_piece())",
+          "result": "pile ou face",
+          "trap": "Écrire print(lancer_piece) affiche une représentation de la fonction. Il faut les parenthèses pour l’appeler.",
+          "inputs": ""
         },
         {
-          "title": "4. Renvoyer avec return",
+          "title": "4. Paramètres et arguments",
+          "text": "Un paramètre est un nom utilisé dans la définition. Un argument est une valeur fournie pendant l’appel. Une même fonction devient réutilisable avec plusieurs arguments.",
+          "code": "def calculer_degats(force, bonus):\n    return force + bonus\n\nprint(calculer_degats(8, 3))\nprint(calculer_degats(12, 0))",
+          "result": "11\n12",
+          "trap": "L’ordre des arguments suit celui des paramètres. calculer_degats(8) provoque une erreur car il manque le bonus.",
+          "inputs": ""
+        },
+        {
+          "title": "5. Fabriquer un dé réutilisable",
+          "text": "Une fonction peut utiliser un paramètre dans l’appel d’une fonction de bibliothèque. lancer_de(6) et lancer_de(20) exécutent le même algorithme avec des bornes différentes.",
+          "code": "import random\ndef lancer_de(nb_faces):\n    return random.randint(1, nb_faces)\n\nprint(lancer_de(6))\nprint(lancer_de(20))",
+          "result": "Un entier de 1 à 6, puis un entier de 1 à 20.",
+          "trap": "La fonction renvoie le tirage. Elle ne doit pas toujours utiliser 20 à la place du paramètre nb_faces.",
+          "inputs": ""
+        },
+        {
+          "title": "6. Renvoyer avec return",
           "text": "return transmet un résultat au code qui a appelé la fonction et termine cet appel. print montre du texte à l’écran. Si tu veux réutiliser une valeur dans un calcul ou un test, il faut la renvoyer.",
-          "code": "def bonus(force):\n    return force + 2\n\nattaque = bonus(5)\nprint(attaque)",
-          "result": "7",
-          "trap": "Une fonction qui ne rencontre aucun return renvoie None. Afficher une valeur ne la renvoie pas."
+          "code": "def bonus_affiche(force):\n    print(force + 2)\n\ndef bonus_renvoie(force):\n    return force + 2\n\nbonus_affiche(5)\nattaque = bonus_renvoie(5)\nprint(attaque + 1)",
+          "result": "7\n8",
+          "trap": "Le premier 7 est seulement affiché. Le second 7 est d’abord renvoyé, stocké, puis réutilisé pour calculer 8.",
+          "inputs": ""
         },
         {
-          "title": "5. Tester les frontières avant le hasard",
-          "text": "Pour vérifier une règle, commence avec des valeurs choisies. Si la surprise se produit pour chance < 0.5, vérifie notamment 0.49 et 0.5. Remets le hasard seulement après ces essais.",
-          "code": "chance = 0.5\nprint(chance < 0.5)",
-          "result": "False",
-          "trap": "Une égalité avec le seuil change le résultat de <. Lis la règle de l’exercice avant de choisir < ou <=."
+          "title": "7. Une fonction peut renvoyer un booléen",
+          "text": "Une comparaison produit True ou False. La fonction peut renvoyer directement cette comparaison, puis son résultat peut contrôler un if.",
+          "code": "def attaque_reussie(de, seuil):\n    return de >= seuil\n\nif attaque_reussie(11, 11):\n    print(\"Touché !\")",
+          "result": "Touché !",
+          "trap": "Choisis >= ou > selon la règle. Teste toujours juste avant, exactement sur, puis juste après le seuil.",
+          "inputs": ""
+        },
+        {
+          "title": "8. Tester avant de remettre le hasard",
+          "text": "Pour vérifier une règle, commence avec des valeurs choisies. Vérifie les frontières, puis remets le tirage aléatoire. Un petit nombre de tirages n’a pas forcément les proportions théoriques.",
+          "code": "def attaque_reussie(de, seuil):\n    return de >= seuil\n\nprint(attaque_reussie(10, 11))\nprint(attaque_reussie(11, 11))\nprint(attaque_reussie(12, 11))",
+          "result": "False\nTrue\nTrue",
+          "trap": "Un test aléatoire peut réussir par hasard malgré une erreur. Les valeurs fixes rendent le test reproductible.",
+          "inputs": ""
+        },
+        {
+          "title": "9. Faire entrer une valeur dans une fonction",
+          "text": "input lit toujours du texte. Convertis la saisie, puis donne la valeur obtenue comme argument de la fonction. Tu peux changer la réponse ci-dessous avant chaque exécution.",
+          "code": "import random\ndef lancer_de(nb_faces):\n    return random.randint(1, nb_faces)\n\nfaces = int(input(\"Nombre de faces ? \"))\nresultat = lancer_de(faces)\nprint(\"Résultat :\", resultat)",
+          "result": "Avec 6 : un entier entre 1 et 6.",
+          "trap": "La valeur saisie doit être un entier positif. Dans cet exercice, on ne traite pas encore une saisie non numérique.",
+          "inputs": "6"
         }
       ],
       "exercises": [
@@ -411,17 +463,34 @@
           "expected": "7",
           "hint": "Remplace pass par return suivi du calcul.",
           "inputs": ""
+        },
+        {
+          "title": "Entraînement C · un dé à plusieurs faces",
+          "task": "Complète lancer_de(nb_faces), puis appelle-la avec 6, 10 et 20. Chaque résultat doit respecter sa borne.",
+          "code": "import random\n\ndef lancer_de(nb_faces):\n    # TODO : utiliser nb_faces\n    pass\n\nprint(lancer_de(6))\nprint(lancer_de(10))\nprint(lancer_de(20))",
+          "expected": "Trois entiers : 1–6, puis 1–10, puis 1–20.",
+          "hint": "Utilise random.randint(1, nb_faces), puis return.",
+          "inputs": ""
+        },
+        {
+          "title": "Entraînement D · print ou return ?",
+          "task": "Corrige bonus : le programme doit pouvoir calculer et afficher 10. Ne modifie pas la dernière ligne.",
+          "code": "def bonus(force):\n    print(force + 2)\n\nresultat = bonus(7)\nprint(resultat + 1)",
+          "expected": "10",
+          "hint": "La fonction doit renvoyer 9 au lieu de seulement l’afficher.",
+          "inputs": ""
         }
       ],
       "steps": [
         "Importe random au début de Mon travail.",
         "Tire chance avec random.random(). Affiche « Attaque surprise » si chance < 0.5, sinon « Aucun ennemi ».",
-        "Écris def attaque_reussie(de): avec un paramètre de. La fonction doit renvoyer le booléen du test de > 10.",
-        "Affiche attaque_reussie(10), puis attaque_reussie(11). Tu dois voir False, puis True.",
-        "Tire un entier de 1 à 20 avec randint, puis affiche ce dé et le résultat renvoyé par attaque_reussie pour ce dé.",
-        "Ajoute tes tests et deux commentaires expliquant def/appel et print/return. Exporte le .py."
+        "Écris lancer_de(nb_faces), qui renvoie un entier entre 1 et nb_faces. Appelle-la avec 6 puis 20.",
+        "Écris attaque_reussie(de, seuil), qui renvoie le booléen de >= seuil. Affiche ses résultats pour (10, 11), (11, 11) et (12, 11).",
+        "Écris calculer_degats(force, bonus), qui renvoie la somme de ses deux paramètres. Vérifie calculer_degats(8, 3).",
+        "Assemble les fonctions : lance un dé à 20 faces, teste une réussite au seuil 11 et affiche les dégâts calculés seulement si l’attaque réussit.",
+        "Ajoute trois commentaires expliquant définition/appel, paramètre/argument et print/return. Exporte le .py."
       ],
-      "deliverable": "Deux petits programmes dans la même partie : une surprise aléatoire et une fonction testant la réussite d’une attaque. Tkinter reste facultatif."
+      "deliverable": "Une surprise aléatoire, trois fonctions réutilisables et une petite rencontre qui assemble leurs résultats. Tkinter reste facultatif."
     },
     {
       "concepts": [
@@ -430,28 +499,48 @@
           "text": "Les lignes indentées appartiennent au bloc situé au-dessus. Une ligne revenue à gauche est exécutée après ce bloc, quel que soit le chemin pris dans le if.",
           "code": "potions = 0\nif potions == 0:\n    print(\"Repos\")\nelse:\n    print(\"Boire\")\nprint(\"Départ\")",
           "result": "Repos\nDépart",
-          "trap": "Si Départ est indenté dans else, il ne s’affiche plus lorsque potions vaut 0."
+          "trap": "Si Départ est indenté dans else, il ne s’affiche plus lorsque potions vaut 0.",
+          "inputs": ""
         },
         {
           "title": "2. Répéter avec for et range",
           "text": "for fait prendre successivement plusieurs valeurs à une variable. Avec range(début, fin), le début est inclus et la fin exclue. Chaque valeur déclenche une exécution du bloc indenté.",
           "code": "for numero in range(1, 4):\n    print(\"Pas\", numero)\nprint(\"Arrivée\")",
           "result": "Pas 1\nPas 2\nPas 3\nArrivée",
-          "trap": "Pour afficher les nombres 1 à 10, il faut range(1, 11). range(10) donne 0 à 9."
+          "trap": "Pour afficher les nombres 1 à 10, il faut range(1, 11). range(10) donne 0 à 9.",
+          "inputs": ""
         },
         {
           "title": "3. Compter sans tout remettre à zéro",
           "text": "Initialise un compteur avant la boucle. Augmente-le dans la boucle lorsque l’événement se produit. Affiche le bilan après la boucle pour l’obtenir une seule fois.",
           "code": "compteur = 0\nfor i in range(3):\n    compteur = compteur + 1\nprint(compteur)",
           "result": "3",
-          "trap": "Placer compteur = 0 dans la boucle efface le total précédent à chaque tour."
+          "trap": "Placer compteur = 0 dans la boucle efface le total précédent à chaque tour.",
+          "inputs": ""
         },
         {
           "title": "4. Découper un tirage en intervalles",
           "text": "if / elif / else sélectionne un seul cas. Le elif n’est testé que si le if était faux : il n’est donc pas nécessaire de répéter la borne basse.",
           "code": "x = 0.6\nif x < 0.5:\n    print(\"A\")\nelif x < 0.8:\n    print(\"B\")\nelse:\n    print(\"C\")",
           "result": "B",
-          "trap": "Les intervalles sont [0 ; 0.5[, [0.5 ; 0.8[ et [0.8 ; 1[. Ils représentent 50 %, 30 % et 20 % des tirages, en théorie."
+          "trap": "Les intervalles sont [0 ; 0.5[, [0.5 ; 0.8[ et [0.8 ; 1[. Ils représentent 50 %, 30 % et 20 % des tirages, en théorie.",
+          "inputs": ""
+        },
+        {
+          "title": "5. Appeler une fonction dans une boucle",
+          "text": "La fonction écrite une fois peut être appelée à chaque tour. La boucle organise la répétition ; la fonction garde un rôle précis. Cette séparation évite de recopier le même if plusieurs fois.",
+          "code": "def doubler(n):\n    return 2 * n\n\nfor valeur in range(1, 4):\n    print(doubler(valeur))",
+          "result": "2\n4\n6",
+          "trap": "Définis la fonction avant la boucle. Dans le RPG, choisir_ennemi reçoit un nouveau tirage à chaque tour.",
+          "inputs": ""
+        },
+        {
+          "title": "6. Choisir le nombre de répétitions avec input",
+          "text": "Une saisie convertie en int peut fixer le nombre de tours. range(1, nombre + 1) permet alors d’afficher exactement les numéros de 1 à nombre.",
+          "code": "nombre = int(input(\"Combien de rencontres ? \"))\nfor numero in range(1, nombre + 1):\n    print(\"Rencontre\", numero)",
+          "result": "Avec 3 :\nRencontre 1\nRencontre 2\nRencontre 3",
+          "trap": "Teste 1 puis 0. Avec 0, le parcours est vide et aucun numéro ne s’affiche.",
+          "inputs": "3"
         }
       ],
       "exercises": [
@@ -489,35 +578,40 @@
           "text": "while vérifie une condition avant chaque tour. Si elle est vraie, le bloc s’exécute puis le test recommence. Si elle est fausse dès le départ, le bloc ne s’exécute jamais.",
           "code": "vie = 30\nwhile vie > 0:\n    vie = vie - 10\n    print(vie)",
           "result": "20\n10\n0",
-          "trap": "Sans mise à jour de vie, cette boucle pourrait ne jamais se terminer. Le bouton Arrêter permet de reprendre la main."
+          "trap": "Sans mise à jour de vie, cette boucle pourrait ne jamais se terminer. Le bouton Arrêter permet de reprendre la main.",
+          "inputs": ""
         },
         {
           "title": "2. Deux survivants sont nécessaires au combat",
           "text": "and exige deux conditions vraies à la fois. Le combat doit continuer si le héros ET le monstre sont vivants. or suffirait si un seul était vivant : ce n’est pas la bonne règle.",
           "code": "pv_hero = 0\npv_monstre = 40\nprint(pv_hero > 0 and pv_monstre > 0)",
           "result": "False",
-          "trap": "Le héros est à 0 : aucun nouveau tour ne doit démarrer."
+          "trap": "Le héros est à 0 : aucun nouveau tour ne doit démarrer.",
+          "inputs": ""
         },
         {
           "title": "3. Sortir volontairement avec break",
           "text": "break quitte immédiatement la boucle en cours. On peut s’en servir pour la fuite. Une variable booléenne peut mémoriser cette décision pour choisir le message final. not inverse un booléen.",
           "code": "fuite = False\nwhile not fuite:\n    fuite = True\n    break\nprint(\"Sortie\")",
           "result": "Sortie",
-          "trap": "break quitte uniquement la boucle qui le contient, pas toutes les boucles imbriquées."
+          "trap": "break quitte uniquement la boucle qui le contient, pas toutes les boucles imbriquées.",
+          "inputs": ""
         },
         {
           "title": "4. Limiter les points de vie",
           "text": "Après un soin, il faut vérifier que les PV ne dépassent pas 100. min renvoie la plus petite des valeurs données ; max la plus grande.",
           "code": "pv = 95\npv = min(100, pv + 10)\nprint(pv)\nprint(max(0, -5))",
           "result": "100\n0",
-          "trap": "Plafonne le soin avant l’attaque du monstre. Un héros peut ensuite redescendre à 80 après la riposte."
+          "trap": "Plafonne le soin avant l’attaque du monstre. Un héros peut ensuite redescendre à 80 après la riposte.",
+          "inputs": ""
         },
         {
           "title": "5. Respecter l’ordre d’un tour",
           "text": "Le héros agit d’abord. Ensuite, vérifie si le monstre vit encore avant de le faire riposter. Il faut distinguer une action valide d’une saisie inconnue : cette dernière ne déclenche pas de tour.",
           "code": "pv_monstre = 20\npv_monstre = pv_monstre - 20\nif pv_monstre > 0:\n    print(\"Riposte\")\nelse:\n    print(\"Monstre vaincu\")",
           "result": "Monstre vaincu",
-          "trap": "Ne place pas l’attaque du monstre avant le contrôle de ses PV : un ennemi vaincu ne riposte pas."
+          "trap": "Ne place pas l’attaque du monstre avant le contrôle de ses PV : un ennemi vaincu ne riposte pas.",
+          "inputs": ""
         }
       ],
       "exercises": [
@@ -555,35 +649,40 @@
           "text": "Une liste conserve plusieurs valeurs dans un ordre. Les éléments sont séparés par des virgules, entre crochets. Le premier élément a l’indice 0 ; len donne le nombre d’éléments.",
           "code": "sac = [\"potion\", \"cle\", \"carte\"]\nprint(sac[0])\nprint(len(sac))",
           "result": "potion\n3",
-          "trap": "sac[3] serait hors de la liste : les indices valides sont ici 0, 1 et 2."
+          "trap": "sac[3] serait hors de la liste : les indices valides sont ici 0, 1 et 2.",
+          "inputs": ""
         },
         {
           "title": "2. Ajouter et retirer",
           "text": "append ajoute à la fin. remove retire la première occurrence de la valeur demandée. Vérifie avec in si cette valeur est présente avant de la retirer.",
           "code": "sac = [\"cle\"]\nsac.append(\"potion\")\nif \"cle\" in sac:\n    sac.remove(\"cle\")\nprint(sac)",
           "result": "['potion']",
-          "trap": "remove sur un élément absent provoque une erreur. On retire une valeur, pas un indice."
+          "trap": "remove sur un élément absent provoque une erreur. On retire une valeur, pas un indice.",
+          "inputs": ""
         },
         {
           "title": "3. Choisir sans tirer dans une liste vide",
           "text": "random.choice choisit un élément parmi les positions de la liste. Une liste vide vaut faux dans un test ; if monstres protège donc l’appel à choice.",
           "code": "import random\nmonstres = []\nif monstres:\n    print(random.choice(monstres))\nelse:\n    print(\"Forêt libérée !\")",
           "result": "Forêt libérée !",
-          "trap": "Après la défaite du dernier monstre, il faut tester la liste avant de choisir un nouvel adversaire."
+          "trap": "Après la défaite du dernier monstre, il faut tester la liste avant de choisir un nouvel adversaire.",
+          "inputs": ""
         },
         {
           "title": "4. Nouvelle règle de combat",
           "text": "À partir de cette partie, on remplace le test > 10. L’attaque touche si son dé est <= attaque. Le défenseur bloque si son dé est <= defense. Les dégâts arrivent seulement si l’attaque touche ET si la défense ne bloque pas.",
           "code": "attaque = 12\ndefense = 7\nde_attaque = 12\nde_defense = 8\nprint(de_attaque <= attaque and de_defense > defense)",
           "result": "True : cette attaque inflige 20 dégâts.",
-          "trap": "Avec un dé de défense égal à 7, il n’y a pas de dégâts. La valeur limite compte comme une défense réussie."
+          "trap": "Avec un dé de défense égal à 7, il n’y a pas de dégâts. La valeur limite compte comme une défense réussie.",
+          "inputs": ""
         },
         {
           "title": "5. Garder l’état entre les combats",
           "text": "Initialise les PV du héros avant la boucle des monstres. Initialise les PV du nouveau monstre à l’intérieur. Le héros conserve ainsi sa fatigue, tandis que chaque nouveau monstre arrive avec tous ses PV.",
           "code": "pv_hero = 80\nmonstres = [\"gobelin\", \"troll\"]\nmonstres.remove(\"gobelin\")\nprint(pv_hero)\nprint(monstres)",
           "result": "80\n['troll']",
-          "trap": "Ne recrée pas la liste complète au début de chaque tour : les ennemis vaincus reviendraient."
+          "trap": "Ne recrée pas la liste complète au début de chaque tour : les ennemis vaincus reviendraient.",
+          "inputs": ""
         }
       ],
       "exercises": [
@@ -622,35 +721,40 @@
           "text": "Un dictionnaire associe des clés à des valeurs. On écrit des paires clé: valeur entre accolades. Ici les clés sont des textes ; le nom de la clé indique le sens de la donnée.",
           "code": "hero = {\"nom\": \"Lina\", \"pv\": 100}\nprint(hero[\"nom\"])\nprint(hero[\"pv\"])",
           "result": "Lina\n100",
-          "trap": "hero[0] ne désigne pas la première valeur. Un dictionnaire se lit par clé, pas par position."
+          "trap": "hero[0] ne désigne pas la première valeur. Un dictionnaire se lit par clé, pas par position.",
+          "inputs": ""
         },
         {
           "title": "2. Ajouter, modifier, supprimer",
           "text": "Affecter une valeur à une nouvelle clé ajoute cette entrée. Affecter une valeur à une clé existante la modifie. del supprime une entrée. in teste la présence d’une clé.",
           "code": "hero = {\"pv\": 100}\nhero[\"attaque\"] = 12\nhero[\"pv\"] = 80\ndel hero[\"attaque\"]\nprint(hero)",
           "result": "{'pv': 80}",
-          "trap": "Accéder à une clé absente produit une erreur. Vérifie sa présence si elle vient d’une saisie."
+          "trap": "Accéder à une clé absente produit une erreur. Vérifie sa présence si elle vient d’une saisie.",
+          "inputs": ""
         },
         {
           "title": "3. Imbriquer pour décrire plusieurs monstres",
           "text": "Un dictionnaire peut contenir d’autres dictionnaires. La première paire de crochets choisit le monstre ; la seconde choisit une de ses caractéristiques.",
           "code": "bestiaire = {\n    \"gobelin\": {\"pv\": 60, \"attaque\": 9},\n    \"troll\": {\"pv\": 100, \"attaque\": 8}\n}\nprint(bestiaire[\"troll\"][\"attaque\"])",
           "result": "8",
-          "trap": "Les nombres sont des valeurs, pas des textes : écris 100 sans guillemets si tu veux faire des calculs."
+          "trap": "Les nombres sont des valeurs, pas des textes : écris 100 sans guillemets si tu veux faire des calculs.",
+          "inputs": ""
         },
         {
           "title": "4. Séparer le modèle et le combattant",
           "text": "Avec monstre = modele, les deux noms désignent le même dictionnaire. copy() crée un nouveau dictionnaire pour le combat. La copie est superficielle : elle suffit ici car les valeurs du modèle sont des nombres ou des chaînes.",
           "code": "modele = {\"pv\": 60}\nmonstre = modele.copy()\nmonstre[\"pv\"] = 40\nprint(monstre[\"pv\"])\nprint(modele[\"pv\"])",
           "result": "40\n60",
-          "trap": "Sans copy(), blesser le combattant modifierait aussi ses PV de départ dans le bestiaire."
+          "trap": "Sans copy(), blesser le combattant modifierait aussi ses PV de départ dans le bestiaire.",
+          "inputs": ""
         },
         {
           "title": "5. Choisir parmi des clés",
           "text": "list(dictionnaire) construit la liste de ses clés. Pour valider un choix, teste si le texte saisi est une clé du dictionnaire. Redemande tant que ce n’est pas le cas.",
           "code": "heros = {\"mage\": 14, \"guerrier\": 12}\nprint(list(heros))\nprint(\"dragon\" in heros)",
           "result": "['mage', 'guerrier']\nFalse",
-          "trap": "Dans le jeu final, copie le dictionnaire du héros choisi avant de modifier ses PV."
+          "trap": "Dans le jeu final, copie le dictionnaire du héros choisi avant de modifier ses PV.",
+          "inputs": ""
         }
       ],
       "exercises": [

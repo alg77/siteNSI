@@ -176,7 +176,7 @@ Une création de personnage en console. On ne combat pas encore dans le programm
 - Somme 15 et non-négativité vérifiées : 2 point(s)
 - Deux tests commentés avec attendu et observé : 1 point(s)
 
-## Partie 2 — Maîtriser le hasard et les fonctions
+## Partie 2 — Hasard, bibliothèques et premières fonctions
 
 ### 1. Utiliser un module
 
@@ -214,63 +214,157 @@ Par exemple 0.37 puis 8. Le résultat peut changer.
 
 À surveiller : int(random.random()*10) donne 0 à 9, pas 0 à 10. Une petite série de tirages n’a pas forcément les proportions prévues.
 
-### 3. Définir puis appeler une fonction
+### 3. Une fonction sans paramètre
 
-def définit un traitement réutilisable. Le paramètre est une variable qui reçoit la valeur donnée à l’appel. Le corps de la fonction ne s’exécute pas au moment du def, mais quand on appelle la fonction.
+Une fonction peut ne recevoir aucune information. Les parenthèses restent obligatoires dans la définition et dans l’appel. Ici chaque appel effectue un nouveau tirage.
 
 ```python
-def doubler(nombre):
-    return nombre * 2
+import random
+def lancer_piece():
+    return random.choice(["pile", "face"])
 
-print(doubler(4))
-print(doubler(7))
+print(lancer_piece())
 ```
 
 **À l’écran :**
 
 ```text
-8
-14
+pile ou face
 ```
 
-À surveiller : doubler est le nom de la fonction ; doubler(4) est un appel avec la valeur 4.
+À surveiller : Écrire print(lancer_piece) affiche une représentation de la fonction. Il faut les parenthèses pour l’appeler.
 
-### 4. Renvoyer avec return
+### 4. Paramètres et arguments
+
+Un paramètre est un nom utilisé dans la définition. Un argument est une valeur fournie pendant l’appel. Une même fonction devient réutilisable avec plusieurs arguments.
+
+```python
+def calculer_degats(force, bonus):
+    return force + bonus
+
+print(calculer_degats(8, 3))
+print(calculer_degats(12, 0))
+```
+
+**À l’écran :**
+
+```text
+11
+12
+```
+
+À surveiller : L’ordre des arguments suit celui des paramètres. calculer_degats(8) provoque une erreur car il manque le bonus.
+
+### 5. Fabriquer un dé réutilisable
+
+Une fonction peut utiliser un paramètre dans l’appel d’une fonction de bibliothèque. lancer_de(6) et lancer_de(20) exécutent le même algorithme avec des bornes différentes.
+
+```python
+import random
+def lancer_de(nb_faces):
+    return random.randint(1, nb_faces)
+
+print(lancer_de(6))
+print(lancer_de(20))
+```
+
+**À l’écran :**
+
+```text
+Un entier de 1 à 6, puis un entier de 1 à 20.
+```
+
+À surveiller : La fonction renvoie le tirage. Elle ne doit pas toujours utiliser 20 à la place du paramètre nb_faces.
+
+### 6. Renvoyer avec return
 
 return transmet un résultat au code qui a appelé la fonction et termine cet appel. print montre du texte à l’écran. Si tu veux réutiliser une valeur dans un calcul ou un test, il faut la renvoyer.
 
 ```python
-def bonus(force):
+def bonus_affiche(force):
+    print(force + 2)
+
+def bonus_renvoie(force):
     return force + 2
 
-attaque = bonus(5)
-print(attaque)
+bonus_affiche(5)
+attaque = bonus_renvoie(5)
+print(attaque + 1)
 ```
 
 **À l’écran :**
 
 ```text
 7
+8
 ```
 
-À surveiller : Une fonction qui ne rencontre aucun return renvoie None. Afficher une valeur ne la renvoie pas.
+À surveiller : Le premier 7 est seulement affiché. Le second 7 est d’abord renvoyé, stocké, puis réutilisé pour calculer 8.
 
-### 5. Tester les frontières avant le hasard
+### 7. Une fonction peut renvoyer un booléen
 
-Pour vérifier une règle, commence avec des valeurs choisies. Si la surprise se produit pour chance < 0.5, vérifie notamment 0.49 et 0.5. Remets le hasard seulement après ces essais.
+Une comparaison produit True ou False. La fonction peut renvoyer directement cette comparaison, puis son résultat peut contrôler un if.
 
 ```python
-chance = 0.5
-print(chance < 0.5)
+def attaque_reussie(de, seuil):
+    return de >= seuil
+
+if attaque_reussie(11, 11):
+    print("Touché !")
+```
+
+**À l’écran :**
+
+```text
+Touché !
+```
+
+À surveiller : Choisis >= ou > selon la règle. Teste toujours juste avant, exactement sur, puis juste après le seuil.
+
+### 8. Tester avant de remettre le hasard
+
+Pour vérifier une règle, commence avec des valeurs choisies. Vérifie les frontières, puis remets le tirage aléatoire. Un petit nombre de tirages n’a pas forcément les proportions théoriques.
+
+```python
+def attaque_reussie(de, seuil):
+    return de >= seuil
+
+print(attaque_reussie(10, 11))
+print(attaque_reussie(11, 11))
+print(attaque_reussie(12, 11))
 ```
 
 **À l’écran :**
 
 ```text
 False
+True
+True
 ```
 
-À surveiller : Une égalité avec le seuil change le résultat de <. Lis la règle de l’exercice avant de choisir < ou <=.
+À surveiller : Un test aléatoire peut réussir par hasard malgré une erreur. Les valeurs fixes rendent le test reproductible.
+
+### 9. Faire entrer une valeur dans une fonction
+
+input lit toujours du texte. Convertis la saisie, puis donne la valeur obtenue comme argument de la fonction. Tu peux changer la réponse ci-dessous avant chaque exécution.
+
+```python
+import random
+def lancer_de(nb_faces):
+    return random.randint(1, nb_faces)
+
+faces = int(input("Nombre de faces ? "))
+resultat = lancer_de(faces)
+print("Résultat :", resultat)
+```
+
+**À l’écran :**
+
+```text
+Avec 6 : un entier entre 1 et 6.
+```
+
+À surveiller : La valeur saisie doit être un entier positif. Dans cet exercice, on ne traite pas encore une saisie non numérique.
 
 ### Petites quêtes
 
@@ -304,34 +398,74 @@ Objectif : 7
 
 Indice : Remplace pass par return suivi du calcul.
 
+#### Entraînement C · un dé à plusieurs faces
+
+Complète lancer_de(nb_faces), puis appelle-la avec 6, 10 et 20. Chaque résultat doit respecter sa borne.
+
+```python
+import random
+
+def lancer_de(nb_faces):
+    # TODO : utiliser nb_faces
+    pass
+
+print(lancer_de(6))
+print(lancer_de(10))
+print(lancer_de(20))
+```
+
+Objectif : Trois entiers : 1–6, puis 1–10, puis 1–20.
+
+Indice : Utilise random.randint(1, nb_faces), puis return.
+
+#### Entraînement D · print ou return ?
+
+Corrige bonus : le programme doit pouvoir calculer et afficher 10. Ne modifie pas la dernière ligne.
+
+```python
+def bonus(force):
+    print(force + 2)
+
+resultat = bonus(7)
+print(resultat + 1)
+```
+
+Objectif : 10
+
+Indice : La fonction doit renvoyer 9 au lieu de seulement l’afficher.
+
 ### Mission
 
-Deux petits programmes dans la même partie : une surprise aléatoire et une fonction testant la réussite d’une attaque. Tkinter reste facultatif.
+Une surprise aléatoire, trois fonctions réutilisables et une petite rencontre qui assemble leurs résultats. Tkinter reste facultatif.
 
 1. Importe random au début de Mon travail.
 
 2. Tire chance avec random.random(). Affiche « Attaque surprise » si chance < 0.5, sinon « Aucun ennemi ».
 
-3. Écris def attaque_reussie(de): avec un paramètre de. La fonction doit renvoyer le booléen du test de > 10.
+3. Écris lancer_de(nb_faces), qui renvoie un entier entre 1 et nb_faces. Appelle-la avec 6 puis 20.
 
-4. Affiche attaque_reussie(10), puis attaque_reussie(11). Tu dois voir False, puis True.
+4. Écris attaque_reussie(de, seuil), qui renvoie le booléen de >= seuil. Affiche ses résultats pour (10, 11), (11, 11) et (12, 11).
 
-5. Tire un entier de 1 à 20 avec randint, puis affiche ce dé et le résultat renvoyé par attaque_reussie pour ce dé.
+5. Écris calculer_degats(force, bonus), qui renvoie la somme de ses deux paramètres. Vérifie calculer_degats(8, 3).
 
-6. Ajoute tes tests et deux commentaires expliquant def/appel et print/return. Exporte le .py.
+6. Assemble les fonctions : lance un dé à 20 faces, teste une réussite au seuil 11 et affiche les dégâts calculés seulement si l’attaque réussit.
+
+7. Ajoute trois commentaires expliquant définition/appel, paramètre/argument et print/return. Exporte le .py.
 
 ### Tests
 
 - chance = 0.49 → surprise ; chance = 0.5 → aucun ennemi.
-- attaque_reussie(1) et (10) → False ; (11) et (20) → True.
-- Le dé vaut toujours entre 1 et 20 ; ne pas exiger un nombre précis de surprises.
+- lancer_de(6) reste entre 1 et 6 ; lancer_de(20) reste entre 1 et 20.
+- attaque_reussie(10, 11) → False ; attaque_reussie(11, 11) → True.
+- calculer_degats(8, 3) → 11 ; le résultat est réutilisable.
 
 ### Barème sur 5
 
 - Surprise et seuil 0.5 corrects : 1 point(s)
-- Dé entier entre 1 et 20 : 1 point(s)
-- Fonction avec paramètre et return corrects : 2 point(s)
-- Tests de seuil et explications : 1 point(s)
+- lancer_de paramétrable et bornes correctes : 1 point(s)
+- Fonctions avec paramètres et return : 1 point(s)
+- Assemblage des fonctions dans la rencontre : 1 point(s)
+- Tests de frontières et explications : 1 point(s)
 
 ## Partie 3 — Explorer avec une boucle for
 
@@ -418,6 +552,49 @@ B
 ```
 
 À surveiller : Les intervalles sont [0 ; 0.5[, [0.5 ; 0.8[ et [0.8 ; 1[. Ils représentent 50 %, 30 % et 20 % des tirages, en théorie.
+
+### 5. Appeler une fonction dans une boucle
+
+La fonction écrite une fois peut être appelée à chaque tour. La boucle organise la répétition ; la fonction garde un rôle précis. Cette séparation évite de recopier le même if plusieurs fois.
+
+```python
+def doubler(n):
+    return 2 * n
+
+for valeur in range(1, 4):
+    print(doubler(valeur))
+```
+
+**À l’écran :**
+
+```text
+2
+4
+6
+```
+
+À surveiller : Définis la fonction avant la boucle. Dans le RPG, choisir_ennemi reçoit un nouveau tirage à chaque tour.
+
+### 6. Choisir le nombre de répétitions avec input
+
+Une saisie convertie en int peut fixer le nombre de tours. range(1, nombre + 1) permet alors d’afficher exactement les numéros de 1 à nombre.
+
+```python
+nombre = int(input("Combien de rencontres ? "))
+for numero in range(1, nombre + 1):
+    print("Rencontre", numero)
+```
+
+**À l’écran :**
+
+```text
+Avec 3 :
+Rencontre 1
+Rencontre 2
+Rencontre 3
+```
+
+À surveiller : Teste 1 puis 0. Avec 0, le parcours est vide et aucun numéro ne s’affiche.
 
 ### Petites quêtes
 
