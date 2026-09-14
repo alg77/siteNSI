@@ -1,0 +1,726 @@
+{
+  "projet": {
+    "titre": "Mini-RPG",
+    "sous_titre": "De la console à l'interface graphique — un programme, six séances",
+    "niveau": "Première NSI",
+    "accroche": "Un programme, six séances : vous allez construire, morceau par morceau, un mini jeu de rôle en Python — d'abord dans la console, puis avec une vraie interface graphique. Chaque séance ajoute une brique : variables, conditions, boucles, listes, dictionnaires."
+  },
+  "seances": [
+    {
+      "id": 1,
+      "slug": "fondations",
+      "titre": "Variables, affichage et premiers choix",
+      "sous_titre": "input, print et les premières conditions",
+      "icone": "📜",
+      "duree": "2h",
+      "objectifs": [
+        "Exécuter et modifier un programme Python (Spyder)",
+        "Utiliser input() pour récupérer une saisie utilisateur",
+        "Utiliser print() pour afficher un message",
+        "Déclarer et affecter des variables",
+        "Écrire une première condition if / else"
+      ],
+      "cours": [
+        {
+          "type": "texte",
+          "titre": "Introduction",
+          "contenu": "« Un ordinateur peut faire bien des choses, mais il faut d'abord les lui expliquer. »\n\nLa programmation est bien plus que la simple rédaction de lignes de code : c'est l'art de comprendre sa structure, son fonctionnement et son objectif. Un programme est, dans sa forme la plus basique, un ensemble d'expressions et d'instructions.\n\nNous allons, dans cette série de séances, construire ensemble un RPG ancré dans un univers de fantasy médiévale. Nous débuterons par une version textuelle du jeu pour progressivement incorporer des éléments graphiques, dans le but de développer un RPG complet.\n\nPour cette première séance, nous posons les fondations : déclaration et affectation de variables, ordonnancement des opérations et structures conditionnelles — le tout en construisant la première pierre de l'édifice de notre jeu."
+        },
+        {
+          "type": "exemple",
+          "titre": "Exécuter et modifier un programme",
+          "avant": "Avant d'aller plus loin, voyons comment exécuter un programme écrit en Python. Sur votre ordinateur, lancez Spyder. Recopiez et exécutez ce programme :",
+          "code": "# Demander au joueur d'entrer le nom de son héros\nnom_hero = input(\"Quel est le nom de ton héros ? \")\n\n# Afficher un message de bienvenue personnalisé\nprint(\"Bienvenue dans le monde de l'aventure,\", nom_hero, \"!\")\nprint(\"Que ta quête soit remplie de courage et de gloire !\")",
+          "runnable": true,
+          "stdin_defaut": "Aldric",
+          "apres": [
+            [
+              "input pour récupérer le nom du héros",
+              "le programme utilise la fonction input pour demander au joueur d'écrire le nom de son personnage. Ce nom est ensuite stocké dans la variable nom_hero."
+            ],
+            [
+              "Affichage du message personnalisé",
+              "la fonction print est utilisée pour montrer un message de bienvenue qui inclut le nom du personnage. Cela permet de personnaliser l'interaction."
+            ]
+          ],
+          "comprehension": [
+            "À quoi sert la fonction input ?",
+            "À quoi sert la fonction print ?"
+          ]
+        }
+      ],
+      "exercices": [
+        {
+          "id": "1.1",
+          "titre": "Choisis ton destin",
+          "icone": "🗡️",
+          "objectif": "Modifier et étendre le programme initial pour permettre au joueur de choisir une classe pour son héros et afficher un message de bienvenue.",
+          "code_a_completer": "# Demander au joueur d'entrer le nom de son héros\nnom_hero = input(\"Quel est le nom de ton héros ? \")\n\n# Demander au joueur de choisir une classe pour son héros\nclasse_hero = ___(\"Quelle est la classe de ton héros ?\")\n\n# Afficher un message de bienvenue personnalisé\nprint(\"Bienvenue dans le monde de l'aventure,\", nom_hero, \"le\", ___)\n\n___(\"Que ta quête soit remplie de courage et de gloire !\")",
+          "solution": "# Demander au joueur d'entrer le nom de son héros\nnom_hero = input(\"Quel est le nom de ton héros ? \")\n\n# Demander au joueur de choisir une classe pour son héros\nclasse_hero = input(\"Quelle est la classe de ton héros ?\")\n\n# Afficher un message de bienvenue personnalisé\nprint(\"Bienvenue dans le monde de l'aventure,\", nom_hero, \"le\", classe_hero)\n\nprint(\"Que ta quête soit remplie de courage et de gloire !\")",
+          "runnable": true,
+          "stdin_defaut": "Aldric\nGuerrier",
+          "explication_lignes": [
+            [
+              "nom_hero = input(\"Quel est le nom de ton héros ? \")",
+              "Affiche une question à l'écran. Ce qui est tapé est enregistré dans la variable nom_hero."
+            ],
+            [
+              "classe_hero = input(\"Quelle est la classe de ton héros ? \")",
+              "Même principe : on demande la classe (guerrier, mage, archer…) et on la stocke dans classe_hero."
+            ],
+            [
+              "print(\"Bienvenue…\", nom_hero, \"le\", classe_hero)",
+              "Combine les informations saisies pour un message personnalisé."
+            ],
+            [
+              "print(\"Que ta quête…\")",
+              "Un message d'encouragement pour débuter l'aventure."
+            ]
+          ]
+        },
+        {
+          "id": "1.2",
+          "titre": "Rencontre avec un gobelin",
+          "icone": "👹",
+          "objectif": "Gérer les points de vie (PV) du héros lors d'une interaction avec un gobelin. Le joueur doit décider d'attaquer ou de se soigner et voir comment cela affecte ses PV.",
+          "scenario": "Votre héros, un jeune aventurier, rencontre un gobelin dans une forêt sombre. Le gobelin est hostile et prêt à attaquer. Vous devez choisir entre attaquer le gobelin ou utiliser un objet de soin pour restaurer vos points de vie.",
+          "code_a_completer": "# Initialisation des variables\npv_hero = 50       # Points de vie initiaux du héros\npv_gobelin = 30    # Points de vie initiaux du gobelin\n\n# Accueil du joueur\n___(\"Tu rencontres un gobelin !\")\n___(\"Tu as\", pv_hero, \"PV et le gobelin en a\", ___, \".\")\n\n# Choix de l'action\naction = ___(\"Veux-tu attaquer (tape 'attaquer') ou te soigner (tape 'soigner') ? \")\n\n# Logique du jeu basée sur le choix\nif action == 'attaquer':\n    # Le héros attaque le gobelin\n    degats = 10\n    # Soustraire les dégâts des PV du gobelin\n    pv_gobelin = pv_gobelin ___ degats\n    print(\"Tu infliges\", degats, \"points de dégâts au gobelin.\")\nelse:\n    # Le héros se soigne\n    soin = 15\n    # Ajouter le soin aux PV du héros\n    pv_hero = pv_hero ___ soin\n    print(\"Tu utilises un objet de soin\")\n\n# Afficher le statut après l'action\nprint(\"Tes points de vie :\", ___)\nprint(\"Points de vie du gobelin :\", ___)",
+          "solution": "# Initialisation des variables\npv_hero = 50\npv_gobelin = 30\n\nprint(\"Tu rencontres un gobelin !\")\nprint(\"Tu as\", pv_hero, \"PV et le gobelin en a\", pv_gobelin, \".\")\n\naction = input(\"Veux-tu attaquer (tape 'attaquer') ou te soigner (tape 'soigner') ? \")\n\nif action == 'attaquer':\n    degats = 10\n    pv_gobelin = pv_gobelin - degats\n    print(\"Tu infliges\", degats, \"points de dégâts au gobelin.\")\nelse:\n    soin = 15\n    pv_hero = pv_hero + soin\n    print(\"Tu utilises un objet de soin\")\n\nprint(\"Tes points de vie :\", pv_hero)\nprint(\"Points de vie du gobelin :\", pv_gobelin)",
+          "runnable": true,
+          "stdin_defaut": "attaquer",
+          "explication_lignes": [
+            [
+              "pv_hero, pv_gobelin",
+              "des compteurs qui gardent une trace des points de vie du héros (50) et du gobelin (30)."
+            ],
+            [
+              "if action == 'attaquer' : …",
+              "si tu attaques, les PV du gobelin sont réduits de 10."
+            ],
+            [
+              "else : …",
+              "sinon, tu te soignes : tes PV augmentent de 15."
+            ]
+          ],
+          "note": "Dans une prochaine séance, nous explorerons comment utiliser if, else et elif pour prendre des décisions plus riches dans nos programmes."
+        }
+      ],
+      "challenge": {
+        "titre": "Création de personnage",
+        "icone": "⚔️",
+        "objectif": "Construire la première étape du jeu RPG en permettant au joueur de créer son propre personnage en choisissant son nom, sa classe, et en distribuant des points de compétence.",
+        "contexte": "Dans les jeux de rôle (RPG), un point de compétence est une unité que le joueur peut attribuer à différentes compétences de son personnage pour améliorer ses capacités : force (attaques physiques), intelligence (capacités magiques) et agilité (vitesse, précision). Distribuer des points de compétence permet au joueur de personnaliser son personnage selon son style de jeu préféré.",
+        "instructions": [
+          "Demander le nom du personnage.",
+          "Choisir la classe du personnage parmi 3 classes (guerrier, mage, archer).",
+          "Distribuer un nombre limité de points (15) entre 3 compétences (force, intelligence, agilité)."
+        ],
+        "code_a_completer": "# Accueil\n______(\"Bienvenue dans la création de personnage du RPG !\")\n\n# Demander le nom du personnage\nnom_personnage = ________________________________________\n\n# Choisir la classe du personnage\n______(\"Quelle classe veux-tu choisir pour ton personnage ?\")\nclasse_personnage = _____________________________________\n\n# Attribution des points de compétence\ntotal_points = 15   # Total de points à distribuer\nprint(\"Tu as\", ________, \"points de compétence à distribuer.\")\n\n______(\"Combien de points veux-tu attribuer à la Force ?\")\nforce = int(input())\ntotal_points = ______________________________________________\n\n______(\"Combien de points veux-tu attribuer à l'Intelligence ?\")\nintelligence = int(input())\ntotal_points = ______________________________________________\n\n______(\"Combien de points restants veux-tu attribuer à l'Agilité ?\")\nagilite = int(input())\ntotal_points = ______________________________________________\n\n# Récapitulatif du personnage créé\n______(\"Création de personnage terminée ! Voici les détails de ton héros :\")\nprint(\"Nom :\", ______________)\nprint(\"Classe :\", ______________)\nprint(\"Force :\", ______________)\nprint(\"Intelligence :\", ______________)\nprint(\"Agilité :\", ______________)\n\n# Vérifier si tous les points ont été correctement distribués\nif total_points == 0:\n    print(\"Tous les points ont été distribués correctement !\")\nelse:\n    print(\"Attention, il semble que la distribution des points soit incorrecte. Il te reste\", ______, \"points.\")",
+        "solution": "print(\"Bienvenue dans la création de personnage du RPG !\")\n\nnom_personnage = input(\"Quel est le nom de ton personnage ? \")\n\nprint(\"Quelle classe veux-tu choisir pour ton personnage ?\")\nclasse_personnage = input()\n\ntotal_points = 15\nprint(\"Tu as\", total_points, \"points de compétence à distribuer.\")\n\nprint(\"Combien de points veux-tu attribuer à la Force ?\")\nforce = int(input())\ntotal_points = total_points - force\n\nprint(\"Combien de points veux-tu attribuer à l'Intelligence ?\")\nintelligence = int(input())\ntotal_points = total_points - intelligence\n\nprint(\"Combien de points restants veux-tu attribuer à l'Agilité ?\")\nagilite = int(input())\ntotal_points = total_points - agilite\n\nprint(\"Création de personnage terminée ! Voici les détails de ton héros :\")\nprint(\"Nom :\", nom_personnage)\nprint(\"Classe :\", classe_personnage)\nprint(\"Force :\", force)\nprint(\"Intelligence :\", intelligence)\nprint(\"Agilité :\", agilite)\n\nif total_points == 0:\n    print(\"Tous les points ont été distribués correctement !\")\nelse:\n    print(\"Attention, il semble que la distribution des points soit incorrecte. Il te reste\", total_points, \"points.\")",
+        "runnable": true,
+        "stdin_defaut": "Aldric\nGuerrier\n5\n5\n5"
+      }
+    },
+    {
+      "id": 2,
+      "slug": "hasard",
+      "titre": "Le hasard et les conditions avancées",
+      "sous_titre": "l'indentation qui change tout, et la fonction random",
+      "icone": "🎲",
+      "duree": "2h",
+      "objectifs": [
+        "Comprendre le rôle de l'indentation dans un bloc if/else",
+        "Utiliser le module random pour introduire du hasard dans un programme",
+        "Comprendre pourquoi le hasard est utile dans un jeu"
+      ],
+      "cours": [
+        {
+          "type": "texte",
+          "titre": "Indentation et conditions",
+          "contenu": "Dans un RPG, l'action du héros dépend de ses choix et de ses ressources. Par exemple, si le héros n'a plus de PV, il doit décider quoi faire en fonction du nombre de potions disponibles : s'il en a, il en consomme une et entre dans une grotte ; sinon, il doit se reposer.\n\nCependant, en modifiant uniquement l'indentation du programme, il est possible de changer complètement le comportement du héros, en lui faisant toujours entrer dans la grotte, qu'il ait des potions ou non."
+        },
+        {
+          "type": "exercice_indentation",
+          "titre": "Exercice — l'indentation qui change tout",
+          "consigne": "Voici le programme sur lequel vous allez travailler. Lisez-le attentivement et déterminez ce qu'il fait en fonction de la valeur de potions.",
+          "code": "if potions == 0:\n    print(\"Vous devez vous reposer.\")\nelse:\n    print(\"Vous buvez une potion.\")\n    print(\"Vous entrez dans une grotte pour affronter un monstre.\")",
+          "consigne2": "Maintenant, modifiez uniquement l'indentation du programme pour que le héros entre dans la grotte dans tous les cas, qu'il ait des potions ou non.",
+          "runnable": true,
+          "stdin_defaut": "",
+          "variable_a_definir": "potions"
+        },
+        {
+          "type": "texte",
+          "titre": "La fonction random",
+          "contenu": "Parmi les opérations de base disponibles en Python, il existe la fonction random, qui renvoie un nombre aléatoire compris entre 0 et 1.\n\nSi l'on s'y arrête quelques secondes, l'existence d'une telle fonction est contradictoire avec la notion même d'algorithme : un processus suffisamment bien décrit et détaillé pour être exécuté sans erreur ni initiative de la part d'une machine ne peut pas mener à un résultat imprévisible et différent à chaque exécution.\n\nPourtant l'introduction de hasard dans les programmes est indispensable, par exemple pour créer des situations imprévues dans les jeux, mais aussi pour résoudre certains problèmes qui ne peuvent pas être résolus sans une part de hasard.\n\nDans ce TP, nous utiliserons le module random avec la syntaxe import random, puis random.random(), random.randint(...), etc. — c'est cette syntaxe (plutôt que from random import *) que nous garderons pour toute la suite du projet, afin de toujours savoir d'où vient chaque fonction utilisée."
+        },
+        {
+          "type": "exemple",
+          "titre": "Un nombre au hasard entre 0 et 10",
+          "code": "import random\n\n# met un nombre au hasard compris entre 0 et 10 dans la variable x\nx = int(random.random()*10)\n\n# affiche la valeur de x\nprint(x)",
+          "runnable": true
+        }
+      ],
+      "exercices": [
+        {
+          "id": "2.1",
+          "titre": "L'attaque surprise",
+          "icone": "🌙",
+          "contexte": "Dans l'univers des RPG, les rencontres aléatoires avec des ennemis sont courantes. Utilisons la fonction random pour simuler une attaque surprise par un ennemi.",
+          "objectif": "Écrire un programme qui décide aléatoirement si un héros est surpris par un ennemi lorsqu'il entre dans une nouvelle zone. Le programme affiche \"Attaque Surprise\" si le héros est attaqué et \"Aucun ennemi\" sinon.",
+          "code_a_completer": "# Importer le module nécessaire\nimport ___\n\n# Générer un événement aléatoire\nchance = ___.random()\n\n# Décider si le héros est attaqué par surprise\n# Supposons que 50 % du temps, il y a une attaque surprise\nif ___ < ___ :\n    print(\"Attaque surprise\")\nelse:\n    print(\"Aucun ennemi\")",
+          "solution": "import random\n\nchance = random.random()\n\nif chance < 0.5:\n    print(\"Attaque surprise\")\nelse:\n    print(\"Aucun ennemi\")",
+          "runnable": true
+        },
+        {
+          "id": "2.2",
+          "titre": "Le butin du coffre",
+          "icone": "🗝️",
+          "contexte": "Après une victoire, le héros ouvre un coffre. La rareté du butin dépend d'un tirage aléatoire. Pour gérer plus de deux cas, on enchaîne les conditions avec elif (contraction de « else if ») : Python les teste dans l'ordre et s'arrête à la première qui est vraie.",
+          "objectif": "Tirer un nombre entre 1 et 100 et afficher un butin différent selon sa valeur : commun (50 % de chances), rare (30 %), épique (15 %) ou légendaire (5 %).",
+          "code_a_completer": "import random\n\ntirage = random.___(1, 100)\n\nif tirage <= 50:\n    print(\"Tu trouves une potion de soin. (commun)\")\n___ tirage <= 80:\n    print(\"Tu trouves une arme rare !\")\nelif tirage ___ 95:\n    print(\"Tu trouves un objet épique !\")\n___:\n    print(\"Tu trouves un trésor légendaire !!!\")",
+          "solution": "import random\n\ntirage = random.randint(1, 100)\n\nif tirage <= 50:\n    print(\"Tu trouves une potion de soin. (commun)\")\nelif tirage <= 80:\n    print(\"Tu trouves une arme rare !\")\nelif tirage <= 95:\n    print(\"Tu trouves un objet épique !\")\nelse:\n    print(\"Tu trouves un trésor légendaire !!!\")",
+          "runnable": true,
+          "note": "La suite : en séance 3, on répète ce genre d'événement plusieurs fois de suite grâce à la boucle for."
+        }
+      ]
+    },
+    {
+      "id": 3,
+      "slug": "boucles-for",
+      "titre": "Les boucles for et les rencontres aléatoires",
+      "sous_titre": "répéter des instructions, et pondérer le hasard",
+      "icone": "🔁",
+      "duree": "2h",
+      "objectifs": [
+        "Écrire et lire une boucle for … in range(...)",
+        "Combiner boucle for et hasard pour simuler des rencontres répétées",
+        "Pondérer des probabilités avec random.choices"
+      ],
+      "cours": [
+        {
+          "type": "texte",
+          "titre": "Les boucles for",
+          "contenu": "« Un ordinateur est fait pour effectuer des calculs longs et répétitifs. »\n\nDans les programmes vus jusqu'ici, chaque instruction est exécutée au plus une fois. Or, on veut souvent exécuter certaines instructions plusieurs fois : c'est le rôle d'une boucle.\n\nLa boucle for est une instruction de la forme for i in range(e1, e2): suivie d'un corps indenté p. Exécuter cette boucle exécute p (n-m) fois, où m est la valeur de e1 et n celle de e2, la variable i prenant successivement les valeurs m, m+1, …, n-1."
+        },
+        {
+          "type": "exemple",
+          "titre": "Deux exemples de boucle for",
+          "code": "for i in range(1, 5):\n    print(\"allô \")\nprint(\"tu es où ?\")\n\n# --- autre exemple ---\n\nfor i in range(1, 11):\n    print(i)",
+          "runnable": true
+        },
+        {
+          "type": "exemple",
+          "titre": "Pondérer le hasard avec random.choices",
+          "avant": "En séance 2, chaque issue avait la même probabilité (50/50). Pour rendre certains événements plus rares que d'autres (par exemple un monstre légendaire rare), on utilise random.choices, qui accepte un paramètre weights : les poids n'ont pas besoin de totaliser 100, seule leur proportion les uns par rapport aux autres compte. Attention : random.choices renvoie toujours une liste, même pour un seul tirage — d'où le [0] pour récupérer l'élément tiré.",
+          "code": "import random\n\nmonstres = [\"gobelin\", \"araignee\", \"troll\"]\npoids    = [50,         30,          20]   # gobelin plus fréquent que troll\n\nennemi = random.choices(monstres, weights=poids)[0]\nprint(ennemi)",
+          "runnable": true
+        }
+      ],
+      "exercices": [
+        {
+          "id": "3.1",
+          "titre": "Les ennemis de la forêt interdite",
+          "icone": "🌲",
+          "objectif": "Le héros doit traverser une forêt interdite où différents types d'ennemis apparaissent à chaque pas. Simulez 10 rencontres aléatoires avec des ennemis, en utilisant une boucle for.",
+          "code_a_completer": "import random\n\nprint(\"Le héros entre dans la forêt interdite...\")\n\nfor i in ________(________, ________):\n    ennemi = \"\"\n    choix = random.randint(1, 3)\n    if choix == 1 : ennemi = \"Gobelin\"\n    if ______ == 2 : ________ = \"Troll\"\n    if ______ == 3 : ________ = \"Araignée\"\n    # Afficher le type d'ennemi rencontré\n    print(f\"Rencontre {i}: Un {________} apparaît !\")\n\nprint(\"Le héros est sorti de la forêt.\")",
+          "solution": "import random\n\nprint(\"Le héros entre dans la forêt interdite...\")\n\nfor i in range(1, 11):\n    ennemi = \"\"\n    choix = random.randint(1, 3)\n    if choix == 1 : ennemi = \"Gobelin\"\n    if choix == 2 : ennemi = \"Troll\"\n    if choix == 3 : ennemi = \"Araignée\"\n    print(f\"Rencontre {i}: Un {ennemi} apparaît !\")\n\nprint(\"Le héros est sorti de la forêt.\")",
+          "runnable": true
+        }
+      ],
+      "challenge": {
+        "titre": "Un peu plus de hasard...",
+        "icone": "🎯",
+        "objectif": "Reprenez l'exercice précédent et faites en sorte que certains ennemis soient plus rares que d'autres, à l'aide de random.choices et de son paramètre weights vus dans le cours : par exemple 50 % de chances de rencontrer un gobelin, 30 % pour une araignée, 20 % pour un troll.",
+        "code_a_completer": "import random\n\nnoms_ennemis = [\"Gobelin\", \"Araignée\", \"Troll\"]\npoids_ennemis = [___, ___, ___]   # doit correspondre à 50 % / 30 % / 20 %\n\nprint(\"Le héros entre dans la forêt interdite...\")\n\nfor i in range(1, 11):\n    ennemi = random.________(noms_ennemis, weights=___________)[___]\n    print(f\"Rencontre {i}: Un {ennemi} apparaît !\")\n\nprint(\"Le héros est sorti de la forêt.\")",
+        "solution": "import random\n\nnoms_ennemis = [\"Gobelin\", \"Araignée\", \"Troll\"]\npoids_ennemis = [50, 30, 20]\n\nprint(\"Le héros entre dans la forêt interdite...\")\n\nfor i in range(1, 11):\n    ennemi = random.choices(noms_ennemis, weights=poids_ennemis)[0]\n    print(f\"Rencontre {i}: Un {ennemi} apparaît !\")\n\nprint(\"Le héros est sorti de la forêt.\")",
+        "runnable": true,
+        "note_gui": "🔜 En séance 4, on ajoute la boucle while, un vrai combat au tour par tour, et la première interface graphique (Tkinter) pour donner un visage à ces rencontres — c'est là que l'affichage des images de monstres et le challenge « enrichir le bestiaire » (génération d'image par IA) reprendront."
+      }
+    },
+    {
+      "id": 4,
+      "slug": "while-interface",
+      "titre": "La boucle while, le combat et l'interface graphique",
+      "sous_titre": "répéter tant qu'une condition est vraie — et le voir à l'écran",
+      "icone": "🎮",
+      "duree": "2h (séance dense — voir note pour le professeur)",
+      "objectifs": [
+        "Comprendre la différence entre for (nombre de répétitions connu) et while (répétition tant qu'une condition est vraie)",
+        "Écrire une boucle while avec une condition d'arrêt",
+        "Simuler un combat au tour par tour avec un dé à 20 faces",
+        "Créer une interface graphique avec Tkinter (Label, Entry, Button)",
+        "Afficher une image dans une interface Tkinter"
+      ],
+      "cours": [
+        {
+          "type": "texte",
+          "titre": "Pourquoi une nouvelle boucle ?",
+          "contenu": "La boucle for est parfaite quand on connaît à l'avance le nombre de répétitions. Mais dans un combat, on ne sait pas à l'avance combien de tours vont se dérouler : cela dépend des points de vie, du hasard, des choix du joueur… On a besoin d'une boucle qui se répète tant qu'une condition reste vraie : la boucle while."
+        },
+        {
+          "type": "exemple",
+          "titre": "Un premier exemple : le compte à rebours",
+          "avant": "Avant le combat, un exemple simple pour voir la syntaxe : tant que la condition après while est vraie, le corps indenté se répète. Il faut que quelque chose, à l'intérieur de la boucle, finisse par rendre la condition fausse — sinon la boucle ne s'arrête jamais (boucle infinie).",
+          "code": "compte = 5\n\nwhile compte > 0:\n    print(compte)\n    compte = compte - 1   # sans cette ligne, la boucle ne s'arrête jamais\n\nprint(\"Décollage !\")",
+          "runnable": true
+        }
+      ],
+      "exercices": [
+        {
+          "id": "4.1",
+          "titre": "Un mini-jeu de survie",
+          "icone": "💀",
+          "objectif": "Vous contrôlez un personnage dont la vie commence à 100. Créez un programme qui simule le passage du temps et la perte de vie du personnage en fonction des événements qui se produisent.",
+          "etapes": [
+            "Créez une variable vie et initialisez-la à 100.",
+            "Utilisez une boucle while pour simuler le passage du temps tant que la vie du personnage est supérieure à 0.",
+            "À chaque itération, demandez à l'utilisateur ce qu'il souhaite faire (\"Attaquer\", \"Se défendre\", \"Rien\").",
+            "Mettez à jour la variable vie selon l'action choisie : Attaquer → -20 ; Se défendre → +10 (sans dépasser 100) ; Rien → -5.",
+            "À la fin de chaque itération, affichez la quantité de vie restante.",
+            "Si la vie atteint 0 ou moins, terminez la boucle et affichez un message indiquant que le personnage est tombé au combat."
+          ],
+          "code_a_completer": "vie = 100\n\nwhile vie ___ 0:\n    action = input(\"Que fais-tu ? (Attaquer / Se défendre / Rien) : \")\n    if action == \"Attaquer\":\n        vie = vie ___ 20\n    elif action == \"Se défendre\":\n        vie = vie ___ 10\n        if vie > 100:\n            vie = ___\n    else:\n        vie = vie ___ 5\n    print(\"Vie restante :\", vie)\n\nprint(\"Ton personnage est tombé au combat.\")",
+          "solution": "vie = 100\n\nwhile vie > 0:\n    action = input(\"Que fais-tu ? (Attaquer / Se défendre / Rien) : \")\n    if action == \"Attaquer\":\n        vie = vie - 20\n    elif action == \"Se défendre\":\n        vie = vie + 10\n        if vie > 100:\n            vie = 100\n    else:\n        vie = vie - 5\n    print(\"Vie restante :\", vie)\n\nprint(\"Ton personnage est tombé au combat.\")",
+          "runnable": true,
+          "stdin_defaut": "Rien\nAttaquer\nAttaquer\nAttaquer\nAttaquer\nAttaquer"
+        },
+        {
+          "id": "4.2",
+          "titre": "Combat avec un monstre",
+          "icone": "🐉",
+          "contexte": "Après avoir exploré le mini-jeu de la vie du personnage, ajoutons un combat contre un monstre. Le succès des attaques sera déterminé par le lancement d'un dé à 20 faces.",
+          "objectif": "Simuler un combat entre votre personnage et un monstre jusqu'à ce que l'un des deux n'ait plus de points de vie.",
+          "regles": [
+            "Votre personnage et le monstre commencent chacun avec 100 points de vie.",
+            "À chaque tour, vous pouvez choisir d'attaquer, de vous défendre ou de ne rien faire.",
+            "Lorsqu'une attaque est lancée, un dé à 20 faces (random.randint(1, 20)) est lancé : si le score est supérieur à 10, l'attaque réussit.",
+            "Une attaque réussie réduit les PV de l'adversaire de 20.",
+            "Se défendre permet de regagner 10 PV, jusqu'à un maximum de 100.",
+            "Le monstre attaque automatiquement à chaque tour, avec le même principe de dé à 20 faces."
+          ],
+          "code_a_completer": "import random\n\npv_hero = 100\npv_monstre = 100\n\nwhile pv_hero > 0 and pv_monstre > 0:\n    action = input(\"Attaquer, Se défendre ou Rien ? : \")\n    if action == \"Attaquer\":\n        de = random.randint(1, ___)\n        if de > 10:\n            pv_monstre = pv_monstre ___ 20\n            print(\"Attaque réussie ! PV monstre :\", pv_monstre)\n        else:\n            print(\"Attaque manquée.\")\n    elif action == \"Se défendre\":\n        pv_hero = pv_hero + 10\n        if pv_hero > ___:\n            pv_hero = 100\n\n    # Tour du monstre\n    de_monstre = random.randint(1, 20)\n    if de_monstre > 10:\n        pv_hero = pv_hero - ___\n        print(\"Le monstre vous touche ! PV héros :\", pv_hero)\n\nif pv_hero <= 0:\n    print(\"Vous avez été vaincu...\")\nelse:\n    print(\"Victoire ! Le monstre est vaincu.\")",
+          "solution": "import random\n\npv_hero = 100\npv_monstre = 100\n\nwhile pv_hero > 0 and pv_monstre > 0:\n    action = input(\"Attaquer, Se défendre ou Rien ? : \")\n    if action == \"Attaquer\":\n        de = random.randint(1, 20)\n        if de > 10:\n            pv_monstre = pv_monstre - 20\n            print(\"Attaque réussie ! PV monstre :\", pv_monstre)\n        else:\n            print(\"Attaque manquée.\")\n    elif action == \"Se défendre\":\n        pv_hero = pv_hero + 10\n        if pv_hero > 100:\n            pv_hero = 100\n\n    de_monstre = random.randint(1, 20)\n    if de_monstre > 10:\n        pv_hero = pv_hero - 20\n        print(\"Le monstre vous touche ! PV héros :\", pv_hero)\n\nif pv_hero <= 0:\n    print(\"Vous avez été vaincu...\")\nelse:\n    print(\"Victoire ! Le monstre est vaincu.\")",
+          "runnable": true,
+          "stdin_defaut": "Attaquer\nAttaquer\nAttaquer\nAttaquer\nAttaquer\nAttaquer",
+          "note": "Pause : le combat fonctionne, mais on ne voit rien du monstre qu'on affronte. La suite de la séance ajoute une vraie fenêtre — et une image."
+        },
+        {
+          "id": "4.3",
+          "titre": "Ta première fenêtre de personnage",
+          "icone": "🪟",
+          "objectif": "Prendre en main Tkinter : afficher une fenêtre, un champ de saisie et un bouton, et relier un clic à une fonction Python grâce au paramètre command.",
+          "contexte": "Tkinter est la bibliothèque graphique standard de Python — elle est déjà installée avec Python, inutile d'installer quoi que ce soit. Trois briques suffisent pour commencer : Label (afficher du texte), Entry (un champ de saisie) et Button (un bouton qui déclenche une fonction). Le paramètre command=ma_fonction attend le NOM de la fonction, sans parenthèses — écrire command=ma_fonction() l'appellerait tout de suite, au lieu d'attendre le clic.",
+          "code_a_completer": "import tkinter as tk\n\n# Cette fonction récupère le texte saisi et l'affiche dans le label\ndef afficher_nom():\n    nom = entry.get()\n    label_resultat.config(text=\"Bienvenue, \" + ___ + \" !\")\n\n# Création de la fenêtre principale\nroot = tk.Tk()\nroot.___(\"Création de personnage\")\n\n# Champ de saisie pour le nom du héros\nentry = tk.Entry(root)\nentry.pack(pady=10)\n\n# Bouton relié à la fonction afficher_nom\nbouton = tk.Button(root, text=\"Valider\", command=___)\nbouton.pack(pady=5)\n\n# Label qui affichera le résultat\nlabel_resultat = tk.Label(root, text=\"\")\nlabel_resultat.___(pady=10)\n\nroot.___()",
+          "solution": "import tkinter as tk\n\ndef afficher_nom():\n    nom = entry.get()\n    label_resultat.config(text=\"Bienvenue, \" + nom + \" !\")\n\nroot = tk.Tk()\nroot.title(\"Création de personnage\")\n\nentry = tk.Entry(root)\nentry.pack(pady=10)\n\nbouton = tk.Button(root, text=\"Valider\", command=afficher_nom)\nbouton.pack(pady=5)\n\nlabel_resultat = tk.Label(root, text=\"\")\nlabel_resultat.pack(pady=10)\n\nroot.mainloop()",
+          "runnable": false,
+          "note_gui": "Interface graphique Tkinter : à exécuter dans Spyder, pas dans le navigateur."
+        },
+        {
+          "id": "4.4",
+          "titre": "Affichage graphique des rencontres",
+          "icone": "🖼️",
+          "objectif": "Ajouter une image à une interface Tkinter : à chaque clic sur « Nouvelle Rencontre », on affiche le nom d'un ennemi et son image.",
+          "contexte": "Pour afficher une image dans Tkinter, il faut la bibliothèque Pillow (PIL), qui gère l'ouverture et le redimensionnement, puis ImageTk.PhotoImage() qui la convertit dans un format que Tkinter sait afficher. Étapes : 1) importer tkinter et PIL ; 2) créer la fenêtre ; 3) charger l'image avec Image.open() et la redimensionner avec resize() ; 4) la convertir avec ImageTk.PhotoImage() ; 5) l'afficher dans un Label ou un Canvas ; 6) lancer mainloop(). Une ligne à retenir : canvas.image = photo conserve une référence à l'image pour l'empêcher d'être supprimée par le garbage collector avant d'être affichée.",
+          "code_a_completer": "# import des librairies nécessaires\nimport tkinter as tk\nfrom PIL import Image, ImageTk\nimport random\n\n# Créer la fenêtre principale\nfenetre = tk.Tk()\nfenetre.title(\"Rencontres dans la forêt interdite\")\nfenetre.geometry(\"600x400\")\n\n# Widgets pour le nom et l'image\nlabel_nom = tk.Label(fenetre, text=\"\", font=(\"Arial\", 20))\nlabel_nom.________()\ncanvas = tk.Canvas(fenetre, width=300, height=300)\ncanvas.pack()\n\ndef choisir_ennemi():\n    choix = random.____________(1, 3)\n    if choix == 1 : return \"gobelin\"\n    elif __________ == 2 : __________\"araignee\"\n    else : return \"troll\"\n\ndef afficher_rencontre():\n    ennemi = choisir_ennemi()\n    label_nom.config(text = f\"Un {_________} apparaît !\")\n    # Charger et afficher l'image correspondante\n    image_path = ennemi + \".png\"\n    image = Image.open(image_path)\n    image = image.resize((200, 200))\n    photo = ImageTk.PhotoImage(image)\n    canvas.delete(\"all\")\n    canvas.create_image(150, 150, image=photo)\n    canvas.image = photo\n\nbouton = tk.Button(fenetre, text=\"Nouvelle Rencontre\", command=afficher_rencontre)\nbouton.pack()\n\nfenetre.__________()",
+          "solution": "import tkinter as tk\nfrom PIL import Image, ImageTk\nimport random\n\nfenetre = tk.Tk()\nfenetre.title(\"Rencontres dans la forêt interdite\")\nfenetre.geometry(\"600x400\")\n\nlabel_nom = tk.Label(fenetre, text=\"\", font=(\"Arial\", 20))\nlabel_nom.pack()\ncanvas = tk.Canvas(fenetre, width=300, height=300)\ncanvas.pack()\n\ndef choisir_ennemi():\n    choix = random.randint(1, 3)\n    if choix == 1 : return \"gobelin\"\n    elif choix == 2 : return \"araignee\"\n    else : return \"troll\"\n\ndef afficher_rencontre():\n    ennemi = choisir_ennemi()\n    label_nom.config(text = f\"Un {ennemi} apparaît !\")\n    image_path = ennemi + \".png\"\n    image = Image.open(image_path)\n    image = image.resize((200, 200))\n    photo = ImageTk.PhotoImage(image)\n    canvas.delete(\"all\")\n    canvas.create_image(150, 150, image=photo)\n    canvas.image = photo\n\nbouton = tk.Button(fenetre, text=\"Nouvelle Rencontre\", command=afficher_rencontre)\nbouton.pack()\n\nfenetre.mainloop()",
+          "runnable": false,
+          "note_gui": "Interface graphique Tkinter + images : à exécuter dans Spyder. Nécessite Pillow (pip install pillow si erreur à l'import). Images fournies sur Classroom.",
+          "extension": "Enrichir le bestiaire : utilise une IA (Copilot ou autre) pour générer l'image d'un nouveau monstre dans un style rétro (pixel, 8-bits), puis ajoute-le à la liste des ennemis possibles dans choisir_ennemi()."
+        }
+      ],
+      "challenge": {
+        "titre": "Gestion d'un combat dans la forêt interdite",
+        "icone": "⚔️",
+        "objectif": "Assembler tout ce qui vient d'être vu : reprendre le combat au dé à 20 faces (exercice 4.2) et lui donner une interface graphique complète, comme dans l'exercice 4.4.",
+        "instructions": [
+          "Un monstre est choisi au hasard parmi 2 ou 3 (comme en 4.4) et son image s'affiche.",
+          "Trois boutons permettent d'attaquer, de se défendre ou de ne rien faire (reprendre la logique de dé de l'exercice 4.2).",
+          "Un bouton « Choisir un nouveau monstre » relance une rencontre.",
+          "Les points de vie du héros et du monstre sont affichés et mis à jour après chaque tour (label_pv.config(text=...), comme pour le nom de l'ennemi)."
+        ],
+        "runnable": false,
+        "note_gui": "Interface graphique Tkinter : à exécuter dans Spyder."
+      }
+    },
+    {
+      "id": 5,
+      "slug": "listes",
+      "titre": "Les listes",
+      "sous_titre": "stocker, parcourir et modifier des collections d'éléments",
+      "icone": "📋",
+      "duree": "2h",
+      "objectifs": [
+        "Créer une liste et accéder à ses éléments par index",
+        "Ajouter (append) et retirer (remove) des éléments",
+        "Utiliser une liste pour stocker un ensemble d'objets du jeu (monstres, potions…)",
+        "Combiner liste et hasard avec random.choice"
+      ],
+      "cours": [
+        {
+          "type": "texte",
+          "titre": "Qu'est-ce qu'une liste ?",
+          "contenu": "Une liste en Python est une collection ordonnée d'éléments qui peuvent être de types différents. Les listes sont modifiables : on peut ajouter, supprimer ou modifier des éléments après la création de la liste."
+        },
+        {
+          "type": "exemple",
+          "titre": "Manipuler une liste",
+          "code": "# Création d'une liste de nombres\nnombres = [1, 2, 3, 4, 5]\n\n# Accéder à un élément (le premier élément est à l'index 0)\npremier_nombre = nombres[0]  # Résultat : 1\n\n# Modifier un élément de la liste\nnombres[0] = 6  # La liste devient [6, 2, 3, 4, 5]\n\n# Ajouter un élément à la fin de la liste\nnombres.append(7)  # La liste devient [6, 2, 3, 4, 5, 7]\n\n# Supprimer un élément de la liste\nnombres.remove(3)  # La liste devient [6, 2, 4, 5, 7]\n\nprint(nombres)",
+          "runnable": true
+        }
+      ],
+      "exercices": [
+        {
+          "id": "5.1",
+          "titre": "La liste de courses",
+          "icone": "🧾",
+          "objectif": "Créer un programme qui gère une liste de courses : ajouter des articles, les retirer, et les afficher.",
+          "etapes": [
+            "Créez une liste vide appelée liste_de_courses.",
+            "Utilisez une boucle while pour un menu interactif : a (ajouter), r (retirer), l (afficher la liste), q (quitter).",
+            "À chaque itération, demandez à l'utilisateur de choisir une option et effectuez l'action correspondante."
+          ],
+          "code_a_completer": "# Initialisation de la liste de courses\n______________________ = []\n\n# Boucle pour le menu interactif\nwhile True:\n    choix = input(\"Choisissez une option (a: ajouter, r: retirer, l: lister, q: quitter): \")\n    if choix == 'a':\n        article = input(\"Entrez l'article à ajouter : \")\n        liste_de_courses.______________(article)\n    elif choix == 'r':\n        article = input(\"Entrez l'article à retirer : \")\n        if article in liste_de_courses:\n            liste_de_courses.______________(article)\n        else:\n            print(\"Cet article n'est pas dans la liste.\")\n    elif choix == 'l':\n        print(\"Voici votre liste de courses : \", ________________________)\n    elif choix == 'q':\n        print(\"Fin du programme.\")\n        break",
+          "solution": "liste_de_courses = []\n\nwhile True:\n    choix = input(\"Choisissez une option (a: ajouter, r: retirer, l: lister, q: quitter): \")\n    if choix == 'a':\n        article = input(\"Entrez l'article à ajouter : \")\n        liste_de_courses.append(article)\n    elif choix == 'r':\n        article = input(\"Entrez l'article à retirer : \")\n        if article in liste_de_courses:\n            liste_de_courses.remove(article)\n        else:\n            print(\"Cet article n'est pas dans la liste.\")\n    elif choix == 'l':\n        print(\"Voici votre liste de courses : \", liste_de_courses)\n    elif choix == 'q':\n        print(\"Fin du programme.\")\n        break",
+          "runnable": true,
+          "stdin_defaut": "a\npomme\na\nlait\nl\nq"
+        }
+      ],
+      "challenge": {
+        "titre": "Suite du challenge de la forêt interdite",
+        "icone": "🌲",
+        "objectif": "Faire évoluer le combat de la forêt interdite grâce aux listes.",
+        "etapes": [
+          {
+            "titre": "Étape 1 — une liste de monstres",
+            "contenu": "Modifiez la fonction choisir_ennemi (vue en séance 4) afin d'utiliser une liste pour stocker tous les noms de monstres. La fonction devra ensuite sélectionner un monstre au hasard dans cette liste (random.choice) et le retourner. Cela rend le code plus clair et facile à étendre si de nouveaux monstres sont ajoutés.",
+            "code": "monstres = [\"gobelin\", \"araignee\", \"troll\"]\n\ndef choisir_ennemi():\n    return random.choice(monstres)"
+          },
+          {
+            "titre": "Étape 2 — retirer un monstre vaincu",
+            "contenu": "Modifiez votre programme pour qu'à chaque fois qu'un monstre est vaincu, il soit retiré de la liste des monstres. Un nouveau monstre apparaîtra ensuite. Si tous les monstres sont vaincus et que la liste est vide, affichez : « Victoire, vous avez débarrassé la forêt interdite de tous ses monstres ! »"
+          },
+          {
+            "titre": "Étape 3 — Attaque et Défense",
+            "contenu": "Le héros possède deux caractéristiques, Attaque et Défense, entre 1 et 20. Pour ce scénario : héros Attaque 12, Défense 10 ; monstres Attaque 9, Défense 7.\n\nRègle de combat : quand un personnage attaque, un dé à 20 faces est lancé. Si le résultat est inférieur ou égal à sa valeur d'Attaque, l'attaque réussit. Le défenseur lance alors un dé à 20 faces : si le résultat est inférieur ou égal à sa valeur de Défense, il bloque l'attaque ; sinon, il subit 20 points de dégâts.\n\nAvant d'assembler tout le combat, isolons ce mécanisme dans une fonction — ça se teste plus facilement, et ça évite de réécrire le même jet de dé pour l'attaque et pour la défense :",
+            "code": "import random\n\ndef jet_reussi(valeur_cible):\n    de = random.randint(1, 20)\n    return de <= valeur_cible\n\n# Test : le héros (Attaque 12) tente une attaque\nif jet_reussi(12):\n    print(\"Attaque réussie !\")\nelse:\n    print(\"Attaque manquée.\")",
+            "exemples": [
+              "Le héros lance un dé pour son attaque et obtient 7 (≤ 12) : l'attaque réussit. L'araignée lance un dé pour sa défense et obtient 17 (> 7) : la défense échoue. L'araignée subit 20 points de dégâts.",
+              "Même attaque réussie (7 ≤ 12), mais l'araignée obtient 5 (≤ 7) pour sa défense : elle pare l'attaque et ne subit aucun dégât.",
+              "Le troll attaque et obtient 8 (≤ 9) : l'attaque réussit. Le héros lance sa défense et obtient 11 (> 10) : la défense échoue, le héros subit 20 points de dégâts."
+            ]
+          },
+          {
+            "titre": "Étape 4 — la potion de soin",
+            "contenu": "Remplacez le bouton « Défendre » par « Boire une potion de soin ». Cette action permet au héros de gagner entre 10 et 20 points de vie (random.randint(10, 20)), mais il subit quand même l'attaque du monstre."
+          }
+        ],
+        "runnable": false
+      }
+    },
+    {
+      "id": 6,
+      "slug": "dictionnaires",
+      "titre": "Les dictionnaires",
+      "sous_titre": "associer des clés à des valeurs — la structure du bestiaire final",
+      "icone": "📖",
+      "duree": "2h",
+      "objectifs": [
+        "Créer un dictionnaire et accéder à ses valeurs par clé",
+        "Construire des dictionnaires imbriqués",
+        "Ajouter, modifier et supprimer des éléments d'un dictionnaire",
+        "Restructurer le bestiaire du RPG en dictionnaire de dictionnaires"
+      ],
+      "cours": [
+        {
+          "type": "texte",
+          "titre": "Qu'est-ce qu'un dictionnaire ?",
+          "contenu": "Un dictionnaire en Python est une structure de données qui permet d'associer des clés à des valeurs. Contrairement aux listes, qui sont indexées par des nombres, les dictionnaires utilisent des clés qui peuvent être de différents types, comme des chaînes de caractères ou des nombres."
+        },
+        {
+          "type": "exemple",
+          "titre": "Un premier dictionnaire",
+          "code": "# Création d'un dictionnaire\ncarnet_adresses = {\n    \"Alice\": \"123-456-7890\",\n    \"Bob\": \"987-654-3210\",\n    \"Charlie\": \"555-555-5555\"\n}\n\n# Affichage du numéro de téléphone d'Alice\nprint(carnet_adresses[\"Alice\"])",
+          "runnable": true
+        },
+        {
+          "type": "exemple",
+          "titre": "Dictionnaires imbriqués",
+          "avant": "Les dictionnaires peuvent également contenir d'autres dictionnaires en tant que valeurs — utile pour stocker plusieurs informations sur un même élément.",
+          "code": "# Dictionnaire principal\nmenu = {\n    \"Café\": {\"prix\": 2.50, \"contient_cafeine\": True},\n    \"Thé Vert\": {\"prix\": 3.00, \"contient_cafeine\": True},\n    \"Chocolat Chaud\": {\"prix\": 2.80, \"contient_cafeine\": False}\n}\n\nprint(\"Prix du Café :\", menu[\"Café\"][\"prix\"])\nprint(\"Le Thé Vert contient-il de la caféine ? :\")\nprint(menu[\"Thé Vert\"][\"contient_cafeine\"])",
+          "runnable": true
+        },
+        {
+          "type": "texte",
+          "titre": "Manipuler un dictionnaire",
+          "contenu": "Ajout d'un élément : affectez une valeur à une nouvelle clé — mon_dictionnaire[\"nouvelle_cle\"] = \"nouvelle_valeur\".\nModification : affectez une nouvelle valeur à une clé existante.\nSuppression : utilisez le mot-clé del — del mon_dictionnaire[\"cle\"]."
+        },
+        {
+          "type": "exemple",
+          "titre": "Un inventaire de magasin",
+          "code": "# Création d'un dictionnaire d'inventaire\ninventaire = {\"pommes\": 30, \"bananes\": 45, \"oranges\": 20}\n\n# Ajout de citrons dans l'inventaire\ninventaire[\"citrons\"] = 15\n\n# Modification de la quantité de bananes\ninventaire[\"bananes\"] = 50\n\n# Suppression des oranges de l'inventaire\ndel inventaire[\"oranges\"]\n\n# Affichage de l'inventaire mis à jour\nprint(inventaire)",
+          "runnable": true
+        },
+        {
+          "type": "exemple",
+          "titre": "Naviguer dans une liste en boucle (%)",
+          "avant": "Pour le challenge de cette séance, il faudra pouvoir passer au héros suivant, et boucler au début de la liste une fois arrivé au dernier — sans jamais sortir des index valides. L'opérateur % (modulo) renvoie le reste d'une division : c'est l'outil qui permet ce bouclage automatique.",
+          "code": "noms = [\"Guerrier\", \"Mage\", \"Archer\"]\nindex = 0\n\n# Passer au suivant : +1, puis modulo la longueur de la liste\nindex = (index + 1) % len(noms)\nprint(noms[index])   # Mage\n\nindex = (index + 1) % len(noms)\nprint(noms[index])   # Archer\n\nindex = (index + 1) % len(noms)\nprint(noms[index])   # Guerrier — on a rebouclé au début !\n\n# Passer au précédent fonctionne aussi, y compris pour revenir en arrière\n# depuis le premier élément :\nindex = (index - 1) % len(noms)\nprint(noms[index])   # Archer",
+          "runnable": true
+        }
+      ],
+      "exercices": [
+        {
+          "id": "6.1",
+          "titre": "Le bestiaire d'un RPG",
+          "icone": "🐲",
+          "objectif": "Créer un dictionnaire nommé bestiaire contenant différentes créatures. Les clés seront les noms des monstres (\"Dragon\", \"Troll\", \"Gobelin\"...), les valeurs une description de chaque créature.",
+          "code_a_completer": "bestiaire = {\n    \"Dragon\": ___________________________________,\n    \"Troll\": ____________________________________,\n    \"Gobelin\": __________________________________\n}\n\nprint(bestiaire[\"Dragon\"])",
+          "solution": "bestiaire = {\n    \"Dragon\": \"Une créature ailée cracheuse de feu, redoutée de tous.\",\n    \"Troll\": \"Un colosse lent mais capable de régénérer ses blessures.\",\n    \"Gobelin\": \"Une petite créature rusée qui chasse en groupe.\"\n}\n\nprint(bestiaire[\"Dragon\"])",
+          "runnable": true
+        },
+        {
+          "id": "6.2",
+          "titre": "Le bestiaire de la forêt interdite",
+          "icone": "🗂️",
+          "objectif": "En vous basant sur l'exemple du menu imbriqué, modifiez le code de la forêt interdite en créant un dictionnaire bestiaire qui contient, pour chaque monstre, ses points de vie (PV), son attaque, sa défense et une description. Adaptez ensuite votre programme pour utiliser ce dictionnaire lors des combats.",
+          "code_a_completer": "bestiaire = {\n    \"gobelin\": {\"pv\": 40, \"attaque\": ___, \"defense\": ___, \"description\": \"___________\"},\n    \"araignee\": {\"pv\": 30, \"attaque\": ___, \"defense\": ___, \"description\": \"___________\"},\n    \"troll\": {\"pv\": 70, \"attaque\": ___, \"defense\": ___, \"description\": \"___________\"}\n}\n\nennemi = random.choice(list(bestiaire.keys()))\nstats = bestiaire[___]\nprint(\"Un\", ennemi, \"apparaît !\", stats[\"description\"])\nprint(\"PV :\", stats[___], \"- Attaque :\", stats[\"attaque\"], \"- Défense :\", stats[___])",
+          "solution": "bestiaire = {\n    \"gobelin\": {\"pv\": 40, \"attaque\": 9, \"defense\": 7, \"description\": \"Rapide et rusé, il chasse en groupe.\"},\n    \"araignee\": {\"pv\": 30, \"attaque\": 11, \"defense\": 6, \"description\": \"Venimeuse et discrète.\"},\n    \"troll\": {\"pv\": 70, \"attaque\": 14, \"defense\": 9, \"description\": \"Lent mais redoutablement puissant.\"}\n}\n\nennemi = random.choice(list(bestiaire.keys()))\nstats = bestiaire[ennemi]\nprint(\"Un\", ennemi, \"apparaît !\", stats[\"description\"])\nprint(\"PV :\", stats[\"pv\"], \"- Attaque :\", stats[\"attaque\"], \"- Défense :\", stats[\"defense\"])",
+          "runnable": true,
+          "note": "Cet extrait utilise `random` : ajoutez `import random` en haut du fichier pour le tester seul."
+        }
+      ],
+      "challenge": {
+        "titre": "Ajout des héros",
+        "icone": "🧙",
+        "objectif": "Dans un RPG, le joueur peut choisir un type de héros parmi plusieurs archétypes (Mage, Guerrier, Voleur...). Intégrez cette mécanique :",
+        "instructions": [
+          "Créer un dictionnaire heros contenant, pour chaque archétype : un nom, une description, une valeur d'attaque, une valeur de défense et le nom de l'image associée.",
+          "Générer avec une IA (Copilot ou autre) une image pour chaque archétype de héros, dans le même style rétro que celles du bestiaire (séance 4).",
+          "Ajouter une nouvelle fenêtre permettant au joueur de sélectionner son héros avant d'entrer dans la forêt interdite. Cette fenêtre affiche toutes les caractéristiques du héros et son image, avec trois boutons : « Choisir ce héros », « Héros suivant », « Héros précédent » — utilise l'indexation cyclique (%) vue dans le cours pour naviguer entre les héros.",
+          "Mettre à jour les caractéristiques du joueur après le choix du héros et le lancement du jeu."
+        ],
+        "runnable": false,
+        "note_gui": "Interface graphique Tkinter : à exécuter dans Spyder."
+      }
+    }
+  ],
+  "bareme": {
+    "bareme_par_seance": 5,
+    "nb_seances_notees": 6,
+    "total": 30,
+    "criteres_generaux": [
+      "0-1 : rien de fonctionnel, blancs non complétés ou incohérents",
+      "2-3 : le code s'exécute mais contient des erreurs ou des blancs mal compris",
+      "4 : le code fonctionne, la logique est comprise, petites imperfections",
+      "5 : le code fonctionne et l'élève peut expliquer chaque ligne complétée"
+    ],
+    "seances": [
+      {
+        "id": 1,
+        "titre": "Fondations",
+        "parties": [
+          "Choisis ton destin",
+          "Rencontre avec un gobelin",
+          "Challenge — création de personnage"
+        ]
+      },
+      {
+        "id": 2,
+        "titre": "Hasard & conditions avancées",
+        "parties": [
+          "Indentation",
+          "Attaque surprise"
+        ]
+      },
+      {
+        "id": 3,
+        "titre": "Boucles for",
+        "parties": [
+          "Forêt interdite (console)",
+          "Un peu plus de hasard (random.choices)"
+        ]
+      },
+      {
+        "id": 4,
+        "titre": "While, combat & interface graphique",
+        "parties": [
+          "Mini-jeu de survie",
+          "Combat avec un monstre",
+          "Fenêtre Tkinter",
+          "Affichage graphique (images)",
+          "Challenge — combat GUI"
+        ]
+      },
+      {
+        "id": 5,
+        "titre": "Listes",
+        "parties": [
+          "Liste de courses",
+          "Forêt interdite avec liste de monstres"
+        ]
+      },
+      {
+        "id": 6,
+        "titre": "Dictionnaires",
+        "parties": [
+          "Bestiaire simple",
+          "Bestiaire structuré (PV/attaque/défense)",
+          "Challenge — héros"
+        ]
+      }
+    ]
+  },
+  "interrogation_orale": {
+    "intro": "On ne redemande jamais l'exercice tel quel. On isole une ligne ou un mécanisme du programme rendu par l'élève, on lui fait écrire ou prédire en direct, sans note, sans ordinateur si possible (ou éditeur vierge). 3 à 5 minutes par élève suffisent.",
+    "signaux_alerte": [
+      "L'élève ne sait pas dire à quoi sert une variable qu'il a lui-même nommée.",
+      "Il ne sait pas modifier une valeur alors que la modification est triviale (ex. changer 10 en 20).",
+      "Il confond print et input, ou ne sait pas dire ce qu'affiche son propre programme sur un exemple simple.",
+      "Il récite une explication généraliste (« ça sert à faire une boucle ») sans pouvoir relier au code précis qu'il a écrit.",
+      "Face à une petite erreur introduite par le professeur, il est incapable de la localiser alors que le code initial fonctionnait."
+    ],
+    "seances": [
+      {
+        "id": 1,
+        "titre": "Fondations",
+        "questions": [
+          {
+            "q": "Écris une ligne qui demande le nom du joueur et le stocke dans une variable pseudo.",
+            "cible": "input()"
+          },
+          {
+            "q": "Voici pv = 50. Écris la ligne qui enlève 15 points de vie.",
+            "cible": "affectation avec -"
+          },
+          {
+            "q": "Sur ton programme rendu : que se passe-t-il si je tape 'soigner' au lieu de 'attaquer' ? Montre-moi la ligne concernée.",
+            "cible": "lecture de son propre if/else"
+          },
+          {
+            "q": "Modifie en direct ton programme pour que le soin rende 25 points au lieu de 15.",
+            "cible": "modif triviale, doit être immédiate"
+          }
+        ]
+      },
+      {
+        "id": 2,
+        "titre": "Hasard & conditions avancées",
+        "questions": [
+          {
+            "q": "Sur feuille : réécris le bloc if/else en changeant seulement l'indentation pour obtenir le comportement inverse.",
+            "cible": "rôle de l'indentation"
+          },
+          {
+            "q": "Sans regarder ton code, explique ce que fait random.random() : quelles valeurs peut-elle renvoyer ?",
+            "cible": "0 à 1"
+          },
+          {
+            "q": "Modifie ton programme pour que l'attaque surprise ait 80 % de chances au lieu de 50 %.",
+            "cible": "seuil de comparaison"
+          },
+          {
+            "q": "Pourquoi écrit-on import random puis random.random(), plutôt que from random import * ? Qu'est-ce que ça change à l'écriture du code ?",
+            "cible": "savoir d'où vient chaque fonction utilisée"
+          }
+        ]
+      },
+      {
+        "id": 3,
+        "titre": "Boucles for",
+        "questions": [
+          {
+            "q": "for i in range(3, 8) : combien de tours, et quelles valeurs prend i ?",
+            "cible": "range(m, n) → m à n-1"
+          },
+          {
+            "q": "Modifie ta boucle pour simuler 20 rencontres au lieu de 10.",
+            "cible": "modif du range"
+          },
+          {
+            "q": "À quoi sert le [0] à la fin de random.choices(...)[0] ? Que se passe-t-il si on l'enlève ?",
+            "cible": "random.choices renvoie une liste"
+          },
+          {
+            "q": "Si je remplace weights=[50, 30, 20] par weights=[1, 1, 1], qu'est-ce que ça change au tirage ?",
+            "cible": "poids relatifs, pas des pourcentages absolus"
+          }
+        ]
+      },
+      {
+        "id": 4,
+        "titre": "While, combat & interface graphique",
+        "questions": [
+          {
+            "q": "Pourquoi une boucle while et pas une boucle for pour le combat ?",
+            "cible": "nombre de tours inconnu à l'avance"
+          },
+          {
+            "q": "Quelle est la condition d'arrêt de ta boucle while ? Montre-la.",
+            "cible": "lecture de sa condition"
+          },
+          {
+            "q": "Si je fixe le dé à toujours 20, que se passe-t-il dans ton combat ?",
+            "cible": "attaque toujours réussie"
+          },
+          {
+            "q": "Modifie en direct : la défense doit maintenant plafonner à 120 PV au lieu de 100.",
+            "cible": "modif triviale"
+          },
+          {
+            "q": "Dans ta fenêtre Tkinter, montre-moi la ligne qui crée le bouton, et explique ce que fait le paramètre command.",
+            "cible": "lien bouton → fonction, sans parenthèses"
+          },
+          {
+            "q": "À quoi sert canvas.image = photo ? (indice : garbage collector)",
+            "cible": "référence conservée pour empêcher la suppression de l'image"
+          }
+        ]
+      },
+      {
+        "id": 5,
+        "titre": "Listes",
+        "questions": [
+          {
+            "q": "Sur feuille : ma_liste = [3, 7, 1]. Donne l'état de la liste après ma_liste.append(9) puis ma_liste.remove(7).",
+            "cible": "append / remove"
+          },
+          {
+            "q": "Quelle est la différence entre une liste et une simple valeur ? Pourquoi utiliser une liste pour les monstres ?",
+            "cible": "collection, random.choice"
+          },
+          {
+            "q": "Dans ton menu interactif, montre la ligne qui vérifie si un article est déjà dans la liste avant de le retirer.",
+            "cible": "in / gestion d'erreur"
+          },
+          {
+            "q": "Que se passe-t-il si on essaie de retirer un article qui n'existe pas, sans le test 'if article in liste' ?",
+            "cible": "anticipation d'une erreur"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "titre": "Dictionnaires",
+        "questions": [
+          {
+            "q": "bestiaire = {\"troll\": {\"pv\": 70}}. Écris la ligne qui affiche les PV du troll.",
+            "cible": "accès imbriqué"
+          },
+          {
+            "q": "Quelle est la différence entre une liste et un dictionnaire ? Pourquoi un dictionnaire pour le bestiaire final ?",
+            "cible": "clé/valeur vs index"
+          },
+          {
+            "q": "Ajoute en direct une nouvelle créature 'squelette' avec pv=25 à ton dictionnaire bestiaire.",
+            "cible": "ajout de clé"
+          },
+          {
+            "q": "Explique la ligne stats = bestiaire[ennemi] : que contient stats après cette ligne ?",
+            "cible": "stats est un sous-dictionnaire"
+          }
+        ]
+      }
+    ]
+  }
+}

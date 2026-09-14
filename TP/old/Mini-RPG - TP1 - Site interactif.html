@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini-RPG — TP 1</title>
+<style>
+
+:root{
+  --ink:#20242c;
+  --ink-soft:#4d5566;
+  --paper:#faf8f4;
+  --paper-raised:#ffffff;
+  --line:#e4ddd0;
+  --blue:#2f5fb3;
+  --blue-soft:#e8eefb;
+  --green:#2f8f5b;
+  --green-soft:#e5f5ec;
+  --orange:#c76a1f;
+  --orange-soft:#fbecdd;
+  --red:#b3402f;
+  --red-soft:#fbe8e4;
+  --purple:#6b4ea0;
+  --purple-soft:#efe8fa;
+  --mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  --sans: Arial, Helvetica, sans-serif;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--sans);
+  color:var(--ink);
+  background:var(--paper);
+  line-height:1.55;
+}
+h1,h2,h3,h4,h5{font-family:var(--sans); font-weight:700; color:var(--ink); line-height:1.25;}
+code, .mono{font-family:var(--mono);}
+p{margin:0 0 0.9em 0;}
+
+.app-shell{display:flex; min-height:100vh;}
+.app-shell.no-sidebar .main-area{max-width:960px; margin:0 auto;}
+.app-shell.no-sidebar .menu-toggle{display:none;}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{
+  width:270px; flex-shrink:0;
+  background:#20242c;
+  color:#e9e7e1;
+  display:flex; flex-direction:column;
+  position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+.brand{display:flex; align-items:center; gap:12px; padding:22px 20px 18px 20px; border-bottom:1px solid rgba(255,255,255,0.08);}
+.brand-icon{font-size:28px;}
+.brand-title{font-weight:700; font-size:17px; letter-spacing:0.2px;}
+.brand-sub{font-size:12px; color:#a9ac b8; color:#a2a6b6; margin-top:2px;}
+.nav-list{display:flex; flex-direction:column; padding:14px 10px; gap:4px; flex:1;}
+.nav-item{
+  display:flex; align-items:center; gap:12px;
+  background:none; border:none; color:#cfd1dc;
+  text-align:left; padding:10px 12px; border-radius:10px;
+  cursor:pointer; font-family:var(--sans); font-size:13.5px;
+  transition:background .15s ease;
+}
+.nav-item:hover{background:rgba(255,255,255,0.07);}
+.nav-item.active{background:rgba(255,255,255,0.13); color:#fff;}
+.nav-icon{font-size:18px; width:22px; text-align:center;}
+.nav-text{display:flex; flex-direction:column;}
+.nav-num{font-size:10.5px; text-transform:uppercase; letter-spacing:0.6px; color:#9296a8;}
+.nav-item.active .nav-num{color:#c9cdea;}
+.nav-title{font-size:13.5px; font-weight:600;}
+.sidebar-footer{padding:16px 20px 22px 20px; border-top:1px solid rgba(255,255,255,0.08);}
+.progress-label{font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:#9296a8; margin-bottom:6px;}
+.progress-track{height:6px; border-radius:4px; background:rgba(255,255,255,0.12); overflow:hidden;}
+.progress-fill{height:100%; width:16.6%; background:linear-gradient(90deg,#5a7fd6,#8f6fd0); transition:width .3s ease;}
+.progress-text{font-size:12px; color:#a2a6b6; margin-top:8px;}
+
+/* ---------- MAIN ---------- */
+.main-area{flex:1; min-width:0;}
+.topbar{
+  position:sticky; top:0; z-index:20;
+  display:flex; align-items:center; gap:14px;
+  padding:12px 28px; background:rgba(250,248,244,0.92); backdrop-filter: blur(6px);
+  border-bottom:1px solid var(--line);
+}
+.menu-toggle{display:none; background:none; border:1px solid var(--line); border-radius:8px; font-size:18px; padding:4px 10px; cursor:pointer;}
+.topbar-title{font-weight:700; font-size:14.5px; color:var(--ink-soft);}
+.pyodide-status{margin-left:auto; font-size:12px; color:var(--ink-soft); font-family:var(--mono); padding:4px 10px; border-radius:20px; background:var(--paper-raised); border:1px solid var(--line);}
+.pyodide-status.ready{color:var(--green); border-color:var(--green);}
+.pyodide-status.loading{color:var(--orange); border-color:var(--orange);}
+
+.intro-banner{padding:44px 40px 30px 40px; max-width:900px;}
+.intro-banner h1{font-size:34px; margin:0 0 6px 0;}
+.intro-sub{font-size:16px; color:var(--ink-soft); margin-bottom:16px;}
+.intro-accroche{font-size:15px; color:var(--ink); max-width:680px;}
+.intro-hint{
+  margin-top:18px; padding:12px 16px; border-radius:10px;
+  background:var(--blue-soft); color:#28407a; font-size:13.5px; max-width:680px;
+  border:1px solid #d3e0f7;
+}
+
+.seance-section{padding:10px 40px 10px 40px; max-width:900px;}
+.seance-hero{display:flex; align-items:center; gap:18px; padding:26px 0 16px 0; border-bottom:2px solid var(--line); margin-bottom:24px;}
+.seance-hero-icon{font-size:40px; line-height:1;}
+.seance-eyebrow{font-size:12px; letter-spacing:.4px; color:var(--ink-soft); font-weight:600; margin-bottom:2px;}
+.seance-section h2{font-size:26px; margin:0;}
+.seance-subtitle{color:var(--ink-soft); font-size:14.5px; margin-top:4px;}
+
+.objectifs-box{
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:12px;
+  padding:16px 20px; margin-bottom:28px;
+}
+.objectifs-box strong{font-size:13px; text-transform:uppercase; letter-spacing:.4px; color:var(--blue);}
+.objectifs-box ul{margin:8px 0 0 0; padding-left:20px;}
+.objectifs-box li{margin-bottom:3px; font-size:14.5px;}
+
+.rendu-box{
+  background:linear-gradient(135deg, #fff7e0, #fffdf7); border:1px solid #f0dfa8; border-radius:12px;
+  padding:16px 20px; margin-bottom:28px;
+}
+.rendu-head{display:flex; gap:14px; align-items:flex-start;}
+.rendu-icon{font-size:24px; line-height:1.3;}
+.rendu-head strong{font-size:13.5px; text-transform:uppercase; letter-spacing:.4px; color:#8a6415;}
+.rendu-head p{margin:6px 0 0 0; font-size:13.8px; color:#5c4a1e;}
+.rendu-head code{background:#fff2cc; padding:1px 6px; border-radius:5px; font-size:12.5px;}
+.rendu-name-row{display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap;}
+.rendu-name-row label{font-size:12.5px; font-weight:600; color:#8a6415;}
+.rendu-name-row input{
+  font-family:var(--mono); font-size:13px; padding:6px 10px; border-radius:7px;
+  border:1px solid #e3cd8a; background:#fffdf7; min-width:220px;
+}
+.rendu-filename-preview{margin-top:8px; font-size:12.8px; color:#7a6320;}
+.rendu-filename-preview code{background:#fff2cc; padding:1px 6px; border-radius:5px;}
+.rendu-hint{color:#a5905a; font-style:italic;}
+.export-btn{
+  margin-top:12px; background:#a3760f; color:#fff; border:none; border-radius:8px;
+  padding:9px 18px; font-size:13.5px; font-weight:600; cursor:pointer;
+}
+.export-btn:hover{background:#8a6410;}
+
+.section-label{
+  font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:.6px;
+  color:var(--ink-soft); margin:28px 0 14px 0; padding-bottom:6px; border-bottom:1px solid var(--line);
+}
+.cours-block h3{font-size:19px; margin:22px 0 8px 0;}
+.cours-block h3:first-child{margin-top:0;}
+
+.explain-list{padding-left:20px; margin:10px 0;}
+.explain-list li{margin-bottom:6px; font-size:14px; color:var(--ink-soft);}
+.explain-list code{color:var(--ink); background:var(--blue-soft); padding:1px 5px; border-radius:4px; font-size:12.5px;}
+
+.comprehension-box{
+  background:var(--purple-soft); border-left:3px solid var(--purple); border-radius:0 10px 10px 0;
+  padding:12px 16px; margin:14px 0; font-size:14px;
+}
+.comprehension-box ul{margin:6px 0 0 0; padding-left:20px;}
+
+.challenge-followup{
+  background:var(--orange-soft); border-radius:10px; padding:10px 14px; font-size:14px; margin-top:10px;
+}
+
+/* ---------- CODE RUNNER ---------- */
+.code-runner{margin:14px 0 22px 0;}
+.gui-note{
+  background:var(--purple-soft); color:#4d3778; border:1px solid #ddceef;
+  padding:8px 14px; border-radius:8px 8px 0 0; font-size:13px; font-weight:600;
+}
+.code-editor-shell{
+  border-radius:10px; overflow:hidden; border:1px solid #333a4a; background:#20242c;
+}
+.gui-note + .code-editor-shell{border-radius:0 0 10px 10px;}
+.code-editor-bar{
+  display:flex; align-items:center; gap:6px; padding:8px 12px; background:#191c22;
+}
+.dot{width:9px; height:9px; border-radius:50%; display:inline-block;}
+.dot-r{background:#e5605a;} .dot-y{background:#e5b95a;} .dot-g{background:#5ac07e;}
+.editor-label{margin-left:8px; font-family:var(--mono); font-size:11.5px; color:#8a8fa3;}
+.code-editor{
+  width:100%; min-height:120px; resize:vertical;
+  background:#20242c; color:#eef0f5; border:none; outline:none;
+  font-family:var(--mono); font-size:13px; line-height:1.6; padding:16px;
+  white-space:pre; tab-size:4;
+}
+.code-static{
+  margin:0; padding:16px; background:#20242c; color:#eef0f5;
+  font-family:var(--mono); font-size:13px; line-height:1.6; overflow-x:auto; white-space:pre;
+}
+.stdin-row{display:flex; align-items:center; gap:10px; margin-top:10px; flex-wrap:wrap;}
+.stdin-row label{font-size:12.5px; color:var(--ink-soft);}
+.stdin-input{
+  flex:1; min-width:220px; font-family:var(--mono); font-size:12.5px;
+  padding:7px 10px; border-radius:7px; border:1px solid var(--line); background:var(--paper-raised);
+}
+.run-row{display:flex; gap:10px; margin-top:12px;}
+.run-btn{
+  background:var(--blue); color:#fff; border:none; border-radius:8px;
+  padding:9px 18px; font-size:13.5px; font-weight:600; cursor:pointer;
+  transition:background .15s ease;
+}
+.run-btn:hover{background:#254c92;}
+.run-btn:disabled{background:#9aa5c2; cursor:progress;}
+.reset-btn{
+  background:none; border:1px solid var(--line); color:var(--ink-soft); border-radius:8px;
+  padding:9px 14px; font-size:13px; cursor:pointer;
+}
+.reset-btn:hover{background:var(--paper-raised);}
+.output-panel{
+  margin-top:10px; background:#14161b; color:#d6f5df; padding:14px 16px; border-radius:9px;
+  font-family:var(--mono); font-size:12.8px; min-height:20px; max-height:320px; overflow:auto;
+  white-space:pre-wrap; word-break:break-word;
+}
+.output-panel[data-empty="true"]{color:#6d7280; font-style:italic;}
+.output-panel.has-error{color:#f6a8a0;}
+
+/* ---------- EXERCISE / CHALLENGE CARDS ---------- */
+.exercise-card{
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:14px;
+  padding:22px 24px; margin-bottom:22px;
+}
+.exercise-head{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+.exercise-badge{
+  background:var(--orange-soft); color:var(--orange); font-size:11.5px; font-weight:700;
+  padding:3px 10px; border-radius:20px; letter-spacing:.3px;
+}
+.exercise-icon{font-size:19px;}
+.exercise-head h4{margin:0; font-size:17px;}
+.context-line{color:var(--ink-soft); font-size:14px;}
+.objectif-line{font-size:14.5px; margin-top:2px;}
+.etapes-list{padding-left:20px; font-size:14px;}
+.etapes-list li{margin-bottom:5px;}
+.regles-box{
+  background:var(--red-soft); border-radius:10px; padding:12px 16px; margin:12px 0; font-size:13.8px;
+}
+.regles-box strong{color:var(--red); font-size:12.5px; text-transform:uppercase; letter-spacing:.4px;}
+.regles-box ul{margin:8px 0 0 0; padding-left:18px;}
+.resume-box{background:var(--green-soft); border-radius:10px; padding:12px 16px; margin-top:12px; font-size:13.8px;}
+.resume-box strong{color:var(--green); font-size:12.5px; text-transform:uppercase; letter-spacing:.4px;}
+.extension-line{margin-top:12px; font-size:13.8px; background:#fff7e0; padding:10px 14px; border-radius:9px;}
+.note-line{font-size:13px; color:var(--ink-soft); margin-top:8px;}
+.explain-details{margin-top:12px; font-size:13.8px;}
+.explain-details summary{cursor:pointer; font-weight:600; color:var(--blue);}
+.explain-details ul{margin-top:10px;}
+.explain-details li{margin-bottom:10px;}
+
+.solution-block{margin-top:14px;}
+.solution-block summary{
+  cursor:pointer; font-weight:600; font-size:13.5px; color:var(--green);
+  padding:8px 0;
+}
+.solution-block[open] summary{margin-bottom:6px;}
+
+.challenge-block{margin-bottom:10px;}
+.challenge-card{
+  background:linear-gradient(180deg, var(--red-soft), var(--paper-raised) 40%);
+  border:1px solid #ecd2cb; border-radius:14px; padding:24px 26px; margin-bottom:8px;
+}
+.challenge-head{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+.challenge-badge{
+  background:var(--red); color:#fff; font-size:11.5px; font-weight:700;
+  padding:3px 10px; border-radius:20px; letter-spacing:.3px;
+}
+.challenge-head h4{margin:0; font-size:18px;}
+.sub-etape{margin:16px 0; padding-top:14px; border-top:1px dashed #e3c6c0;}
+.sub-etape h5{margin:0 0 6px 0; font-size:15px; color:var(--red);}
+
+.site-footer{padding:40px; color:var(--ink-soft); font-size:12.5px; max-width:900px;}
+
+/* ---------- responsive ---------- */
+@media (max-width: 860px){
+  .sidebar{position:fixed; left:-280px; top:0; z-index:40; transition:left .2s ease; box-shadow:2px 0 30px rgba(0,0,0,.25);}
+  .sidebar.open{left:0;}
+  .menu-toggle{display:inline-block;}
+  .seance-section, .intro-banner{padding-left:20px; padding-right:20px;}
+  .topbar{padding:12px 16px;}
+}
+.seance-section{display:none;}
+.seance-section.visible{display:block;}
+.intro-banner.hidden{display:none;}
+
+</style>
+</head>
+<body>
+<div class="app-shell no-sidebar">
+  
+  <main class="main-area">
+    <div class="topbar">
+      
+      <div class="topbar-title" id="topbar-title">Mini-RPG — TP 1</div>
+      <div class="pyodide-status" id="pyodide-status">Python : non chargé</div>
+    </div>
+    
+    <section class="seance-section" id="seance-1" data-color="1">
+    <div class="seance-hero">
+      <div class="seance-hero-icon">📜</div>
+      <div>
+        <div class="seance-eyebrow">Séance 1 sur 6 · 2h</div>
+        <h2>Variables, affichage et premiers choix</h2>
+        <p class="seance-subtitle">input, print et les premières conditions</p>
+      </div>
+    </div>
+    <div class="objectifs-box"><strong>Objectifs de la séance</strong><ul><li>Exécuter et modifier un programme Python (Spyder)</li><li>Utiliser input() pour récupérer une saisie utilisateur</li><li>Utiliser print() pour afficher un message</li><li>Déclarer et affecter des variables</li><li>Écrire une première condition if / else</li></ul></div>
+    <div class="rendu-box">
+      <div class="rendu-head">
+        <span class="rendu-icon">📤</span>
+        <div>
+          <strong>Ce que tu dois rendre</strong>
+          <p>Complète les exercices ci-dessous directement dans cette page (le code s'y
+          exécute réellement), puis entre ton nom ci-dessous et télécharge ton fichier
+          <code>.py</code> — il sera automatiquement nommé au bon format. Dépose-le ensuite
+          sur l'espace de rendu indiqué en classe.</p>
+          <div class="rendu-name-row">
+            <label>NOM-Prénom</label>
+            <input type="text" class="student-name-input" oninput="updateFilenamePreview()" placeholder="ex : DUPONT-Julien">
+          </div>
+          <p class="rendu-filename-preview">Nom de fichier : <code class="filename-preview">mini_rpg_seance1_fondations.py</code>
+          <span class="rendu-hint">(exemple attendu : DUPONT-Julien-TP1-rpg.py)</span></p>
+        </div>
+      </div>
+      <button class="export-btn" onclick="exportPyFile()">📥 Télécharger mon fichier .py</button>
+    </div>
+    <div class="cours-block"><div class="section-label">🎓 Cours</div><h3>Introduction</h3><p>« Un ordinateur peut faire bien des choses, mais il faut d&#x27;abord les lui expliquer. »</p><p>La programmation est bien plus que la simple rédaction de lignes de code : c&#x27;est l&#x27;art de comprendre sa structure, son fonctionnement et son objectif. Un programme est, dans sa forme la plus basique, un ensemble d&#x27;expressions et d&#x27;instructions.</p><p>Nous allons, dans cette série de séances, construire ensemble un RPG ancré dans un univers de fantasy médiévale. Nous débuterons par une version textuelle du jeu pour progressivement incorporer des éléments graphiques, dans le but de développer un RPG complet.</p><p>Pour cette première séance, nous posons les fondations : déclaration et affectation de variables, ordonnancement des opérations et structures conditionnelles — le tout en construisant la première pierre de l&#x27;édifice de notre jeu.</p><h3>Exécuter et modifier un programme</h3><p>Avant d&#x27;aller plus loin, voyons comment exécuter un programme écrit en Python. Sur votre ordinateur, lancez Spyder. Recopiez et exécutez ce programme :</p>
+    <div class="code-runner" id="run42-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run42-code" spellcheck="false"># Demander au joueur d&#x27;entrer le nom de son héros
+nom_hero = input(&quot;Quel est le nom de ton héros ? &quot;)
+
+# Afficher un message de bienvenue personnalisé
+print(&quot;Bienvenue dans le monde de l&#x27;aventure,&quot;, nom_hero, &quot;!&quot;)
+print(&quot;Que ta quête soit remplie de courage et de gloire !&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run42-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run42-stdin" class="stdin-input" value="Aldric" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run42" onclick="runCode('run42')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run42')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run42-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <ul class="explain-list"><li><strong>input pour récupérer le nom du héros</strong> — le programme utilise la fonction input pour demander au joueur d&#x27;écrire le nom de son personnage. Ce nom est ensuite stocké dans la variable nom_hero.</li><li><strong>Affichage du message personnalisé</strong> — la fonction print est utilisée pour montrer un message de bienvenue qui inclut le nom du personnage. Cela permet de personnaliser l&#x27;interaction.</li></ul><div class="comprehension-box"><strong>À vous de jouer :</strong><ul><li>À quoi sert la fonction input ?</li><li>À quoi sert la fonction print ?</li></ul></div></div><div class="exercices-block"><div class="section-label">💻 Exercices</div><div class="exercise-card" id="ex-1.1"><div class="exercise-head"><span class="exercise-badge">Exercice 1.1</span><span class="exercise-icon">🗡️</span><h4>Choisis ton destin</h4></div><p class="objectif-line"><strong>Objectif :</strong> Modifier et étendre le programme initial pour permettre au joueur de choisir une classe pour son héros et afficher un message de bienvenue.</p>
+    <div class="code-runner" id="run43-wrap" data-export="true" data-export-label="Exercice 1.1 — Choisis ton destin">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run43-code" spellcheck="false"># Demander au joueur d&#x27;entrer le nom de son héros
+nom_hero = input(&quot;Quel est le nom de ton héros ? &quot;)
+
+# Demander au joueur de choisir une classe pour son héros
+classe_hero = ___(&quot;Quelle est la classe de ton héros ?&quot;)
+
+# Afficher un message de bienvenue personnalisé
+print(&quot;Bienvenue dans le monde de l&#x27;aventure,&quot;, nom_hero, &quot;le&quot;, ___)
+
+___(&quot;Que ta quête soit remplie de courage et de gloire !&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run43-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run43-stdin" class="stdin-input" value="Aldric
+Guerrier" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run43" onclick="runCode('run43')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run43')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run43-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <details class="explain-details"><summary>📎 Explication ligne par ligne</summary><ul class="explain-list"><li><code>nom_hero = input(&quot;Quel est le nom de ton héros ? &quot;)</code><br>Affiche une question à l&#x27;écran. Ce qui est tapé est enregistré dans la variable nom_hero.</li><li><code>classe_hero = input(&quot;Quelle est la classe de ton héros ? &quot;)</code><br>Même principe : on demande la classe (guerrier, mage, archer…) et on la stocke dans classe_hero.</li><li><code>print(&quot;Bienvenue…&quot;, nom_hero, &quot;le&quot;, classe_hero)</code><br>Combine les informations saisies pour un message personnalisé.</li><li><code>print(&quot;Que ta quête…&quot;)</code><br>Un message d&#x27;encouragement pour débuter l&#x27;aventure.</li></ul></details>
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static"># Demander au joueur d&#x27;entrer le nom de son héros
+nom_hero = input(&quot;Quel est le nom de ton héros ? &quot;)
+
+# Demander au joueur de choisir une classe pour son héros
+classe_hero = input(&quot;Quelle est la classe de ton héros ?&quot;)
+
+# Afficher un message de bienvenue personnalisé
+print(&quot;Bienvenue dans le monde de l&#x27;aventure,&quot;, nom_hero, &quot;le&quot;, classe_hero)
+
+print(&quot;Que ta quête soit remplie de courage et de gloire !&quot;)</pre>
+      </div>
+    </details>
+    </div><div class="exercise-card" id="ex-1.2"><div class="exercise-head"><span class="exercise-badge">Exercice 1.2</span><span class="exercise-icon">👹</span><h4>Rencontre avec un gobelin</h4></div><p class="context-line"><em>Votre héros, un jeune aventurier, rencontre un gobelin dans une forêt sombre. Le gobelin est hostile et prêt à attaquer. Vous devez choisir entre attaquer le gobelin ou utiliser un objet de soin pour restaurer vos points de vie.</em></p><p class="objectif-line"><strong>Objectif :</strong> Gérer les points de vie (PV) du héros lors d&#x27;une interaction avec un gobelin. Le joueur doit décider d&#x27;attaquer ou de se soigner et voir comment cela affecte ses PV.</p>
+    <div class="code-runner" id="run45-wrap" data-export="true" data-export-label="Exercice 1.2 — Rencontre avec un gobelin">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run45-code" spellcheck="false"># Initialisation des variables
+pv_hero = 50       # Points de vie initiaux du héros
+pv_gobelin = 30    # Points de vie initiaux du gobelin
+
+# Accueil du joueur
+___(&quot;Tu rencontres un gobelin !&quot;)
+___(&quot;Tu as&quot;, pv_hero, &quot;PV et le gobelin en a&quot;, ___, &quot;.&quot;)
+
+# Choix de l&#x27;action
+action = ___(&quot;Veux-tu attaquer (tape &#x27;attaquer&#x27;) ou te soigner (tape &#x27;soigner&#x27;) ? &quot;)
+
+# Logique du jeu basée sur le choix
+if action == &#x27;attaquer&#x27;:
+    # Le héros attaque le gobelin
+    degats = 10
+    # Soustraire les dégâts des PV du gobelin
+    pv_gobelin = pv_gobelin ___ degats
+    print(&quot;Tu infliges&quot;, degats, &quot;points de dégâts au gobelin.&quot;)
+else:
+    # Le héros se soigne
+    soin = 15
+    # Ajouter le soin aux PV du héros
+    pv_hero = pv_hero ___ soin
+    print(&quot;Tu utilises un objet de soin&quot;)
+
+# Afficher le statut après l&#x27;action
+print(&quot;Tes points de vie :&quot;, ___)
+print(&quot;Points de vie du gobelin :&quot;, ___)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run45-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run45-stdin" class="stdin-input" value="attaquer" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run45" onclick="runCode('run45')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run45')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run45-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <details class="explain-details"><summary>📎 Explication ligne par ligne</summary><ul class="explain-list"><li><code>pv_hero, pv_gobelin</code><br>des compteurs qui gardent une trace des points de vie du héros (50) et du gobelin (30).</li><li><code>if action == &#x27;attaquer&#x27; : …</code><br>si tu attaques, les PV du gobelin sont réduits de 10.</li><li><code>else : …</code><br>sinon, tu te soignes : tes PV augmentent de 15.</li></ul></details><p class="note-line">ℹ️ Dans une prochaine séance, nous explorerons comment utiliser if, else et elif pour prendre des décisions plus riches dans nos programmes.</p>
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static"># Initialisation des variables
+pv_hero = 50
+pv_gobelin = 30
+
+print(&quot;Tu rencontres un gobelin !&quot;)
+print(&quot;Tu as&quot;, pv_hero, &quot;PV et le gobelin en a&quot;, pv_gobelin, &quot;.&quot;)
+
+action = input(&quot;Veux-tu attaquer (tape &#x27;attaquer&#x27;) ou te soigner (tape &#x27;soigner&#x27;) ? &quot;)
+
+if action == &#x27;attaquer&#x27;:
+    degats = 10
+    pv_gobelin = pv_gobelin - degats
+    print(&quot;Tu infliges&quot;, degats, &quot;points de dégâts au gobelin.&quot;)
+else:
+    soin = 15
+    pv_hero = pv_hero + soin
+    print(&quot;Tu utilises un objet de soin&quot;)
+
+print(&quot;Tes points de vie :&quot;, pv_hero)
+print(&quot;Points de vie du gobelin :&quot;, pv_gobelin)</pre>
+      </div>
+    </details>
+    </div></div><div class="challenge-block"><div class="section-label">🏆 Challenge de fin de séance</div><div class="challenge-card"><div class="challenge-head"><span class="challenge-badge">🏆 Challenge</span><span class="exercise-icon">⚔️</span><h4>Création de personnage</h4></div><p>Dans les jeux de rôle (RPG), un point de compétence est une unité que le joueur peut attribuer à différentes compétences de son personnage pour améliorer ses capacités : force (attaques physiques), intelligence (capacités magiques) et agilité (vitesse, précision). Distribuer des points de compétence permet au joueur de personnaliser son personnage selon son style de jeu préféré.</p><p class="objectif-line"><strong>Objectif :</strong> Construire la première étape du jeu RPG en permettant au joueur de créer son propre personnage en choisissant son nom, sa classe, et en distribuant des points de compétence.</p><ol class="etapes-list"><li>Demander le nom du personnage.</li><li>Choisir la classe du personnage parmi 3 classes (guerrier, mage, archer).</li><li>Distribuer un nombre limité de points (15) entre 3 compétences (force, intelligence, agilité).</li></ol>
+    <div class="code-runner" id="run47-wrap" data-export="true" data-export-label="Challenge — Création de personnage">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run47-code" spellcheck="false"># Accueil
+______(&quot;Bienvenue dans la création de personnage du RPG !&quot;)
+
+# Demander le nom du personnage
+nom_personnage = ________________________________________
+
+# Choisir la classe du personnage
+______(&quot;Quelle classe veux-tu choisir pour ton personnage ?&quot;)
+classe_personnage = _____________________________________
+
+# Attribution des points de compétence
+total_points = 15   # Total de points à distribuer
+print(&quot;Tu as&quot;, ________, &quot;points de compétence à distribuer.&quot;)
+
+______(&quot;Combien de points veux-tu attribuer à la Force ?&quot;)
+force = int(input())
+total_points = ______________________________________________
+
+______(&quot;Combien de points veux-tu attribuer à l&#x27;Intelligence ?&quot;)
+intelligence = int(input())
+total_points = ______________________________________________
+
+______(&quot;Combien de points restants veux-tu attribuer à l&#x27;Agilité ?&quot;)
+agilite = int(input())
+total_points = ______________________________________________
+
+# Récapitulatif du personnage créé
+______(&quot;Création de personnage terminée ! Voici les détails de ton héros :&quot;)
+print(&quot;Nom :&quot;, ______________)
+print(&quot;Classe :&quot;, ______________)
+print(&quot;Force :&quot;, ______________)
+print(&quot;Intelligence :&quot;, ______________)
+print(&quot;Agilité :&quot;, ______________)
+
+# Vérifier si tous les points ont été correctement distribués
+if total_points == 0:
+    print(&quot;Tous les points ont été distribués correctement !&quot;)
+else:
+    print(&quot;Attention, il semble que la distribution des points soit incorrecte. Il te reste&quot;, ______, &quot;points.&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run47-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run47-stdin" class="stdin-input" value="Aldric
+Guerrier
+5
+5
+5" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run47" onclick="runCode('run47')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run47')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run47-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static">print(&quot;Bienvenue dans la création de personnage du RPG !&quot;)
+
+nom_personnage = input(&quot;Quel est le nom de ton personnage ? &quot;)
+
+print(&quot;Quelle classe veux-tu choisir pour ton personnage ?&quot;)
+classe_personnage = input()
+
+total_points = 15
+print(&quot;Tu as&quot;, total_points, &quot;points de compétence à distribuer.&quot;)
+
+print(&quot;Combien de points veux-tu attribuer à la Force ?&quot;)
+force = int(input())
+total_points = total_points - force
+
+print(&quot;Combien de points veux-tu attribuer à l&#x27;Intelligence ?&quot;)
+intelligence = int(input())
+total_points = total_points - intelligence
+
+print(&quot;Combien de points restants veux-tu attribuer à l&#x27;Agilité ?&quot;)
+agilite = int(input())
+total_points = total_points - agilite
+
+print(&quot;Création de personnage terminée ! Voici les détails de ton héros :&quot;)
+print(&quot;Nom :&quot;, nom_personnage)
+print(&quot;Classe :&quot;, classe_personnage)
+print(&quot;Force :&quot;, force)
+print(&quot;Intelligence :&quot;, intelligence)
+print(&quot;Agilité :&quot;, agilite)
+
+if total_points == 0:
+    print(&quot;Tous les points ont été distribués correctement !&quot;)
+else:
+    print(&quot;Attention, il semble que la distribution des points soit incorrecte. Il te reste&quot;, total_points, &quot;points.&quot;)</pre>
+      </div>
+    </details>
+    </div></div></section>
+    <footer class="site-footer">Mini-RPG — support de séance NSI — généré pour un usage pédagogique.</footer>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v314.0.6/full/pyodide.js"></script>
+<script>
+
+const SEANCE_COUNT = 6;
+const SEANCE_META = {"1": {"filename": "mini_rpg_seance1_fondations.py", "header": "# ============================================================\n#  MINI-RPG — Séance 1 : Variables, affichage et premiers choix\n# ============================================================\n#  NOM Prénom : ______________________\n#  Classe     : ______________________\n#\n#  Consigne : complète les zones marquées ___ directement dans ce\n#  fichier, teste dans Spyder, puis AVANT DE RENDRE, renomme ce\n#  fichier au format NOM-Prenom-TP1-rpg.py (exemple :\n#  DUPONT-Julien-TP1-rpg.py). Dépose-le ensuite sur l'espace de\n#  rendu indiqué en classe.\n# ============================================================\n"}, "2": {"filename": "mini_rpg_seance2_hasard.py", "header": "# ============================================================\n#  MINI-RPG — Séance 2 : Le hasard et les conditions avancées\n# ============================================================\n#  NOM Prénom : ______________________\n#  Classe     : ______________________\n#\n#  Consigne : complète les zones marquées ___ directement dans ce\n#  fichier, teste dans Spyder, puis AVANT DE RENDRE, renomme ce\n#  fichier au format NOM-Prenom-TP2-rpg.py (exemple :\n#  DUPONT-Julien-TP2-rpg.py). Dépose-le ensuite sur l'espace de\n#  rendu indiqué en classe.\n# ============================================================\n"}, "3": {"filename": "mini_rpg_seance3_boucles-for.py", "header": "# ============================================================\n#  MINI-RPG — Séance 3 : Les boucles for et les rencontres aléatoires\n# ============================================================\n#  NOM Prénom : ______________________\n#  Classe     : ______________________\n#\n#  Consigne : complète les zones marquées ___ directement dans ce\n#  fichier, teste dans Spyder, puis AVANT DE RENDRE, renomme ce\n#  fichier au format NOM-Prenom-TP3-rpg.py (exemple :\n#  DUPONT-Julien-TP3-rpg.py). Dépose-le ensuite sur l'espace de\n#  rendu indiqué en classe.\n# ============================================================\n"}, "4": {"filename": "mini_rpg_seance4_while-interface.py", "header": "# ============================================================\n#  MINI-RPG — Séance 4 : La boucle while, le combat et l'interface graphique\n# ============================================================\n#  NOM Prénom : ______________________\n#  Classe     : ______________________\n#\n#  Consigne : complète les zones marquées ___ directement dans ce\n#  fichier, teste dans Spyder, puis AVANT DE RENDRE, renomme ce\n#  fichier au format NOM-Prenom-TP4-rpg.py (exemple :\n#  DUPONT-Julien-TP4-rpg.py). Dépose-le ensuite sur l'espace de\n#  rendu indiqué en classe.\n# ============================================================\n"}, "5": {"filename": "mini_rpg_seance5_listes.py", "header": "# ============================================================\n#  MINI-RPG — Séance 5 : Les listes\n# ============================================================\n#  NOM Prénom : ______________________\n#  Classe     : ______________________\n#\n#  Consigne : complète les zones marquées ___ directement dans ce\n#  fichier, teste dans Spyder, puis AVANT DE RENDRE, renomme ce\n#  fichier au format NOM-Prenom-TP5-rpg.py (exemple :\n#  DUPONT-Julien-TP5-rpg.py). Dépose-le ensuite sur l'espace de\n#  rendu indiqué en classe.\n# ============================================================\n"}, "6": {"filename": "mini_rpg_seance6_dictionnaires.py", "header": "# ============================================================\n#  MINI-RPG — Séance 6 : Les dictionnaires\n# ============================================================\n#  NOM Prénom : ______________________\n#  Classe     : ______________________\n#\n#  Consigne : complète les zones marquées ___ directement dans ce\n#  fichier, teste dans Spyder, puis AVANT DE RENDRE, renomme ce\n#  fichier au format NOM-Prenom-TP6-rpg.py (exemple :\n#  DUPONT-Julien-TP6-rpg.py). Dépose-le ensuite sur l'espace de\n#  rendu indiqué en classe.\n# ============================================================\n"}};
+let currentSeance = 1;
+let pyodideReady = false;
+let pyodidePromise = null;
+
+function toggleSidebar(){
+  const sb = document.getElementById('sidebar');
+  if(sb){ sb.classList.toggle('open'); }
+}
+
+function showSeance(n){
+  currentSeance = n;
+  const introEl = document.getElementById('intro-banner');
+  if(introEl){ introEl.classList.add('hidden'); }
+  document.querySelectorAll('.seance-section').forEach(s => s.classList.remove('visible'));
+  const el = document.getElementById('seance-' + n);
+  if(el){ el.classList.add('visible'); }
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector('.nav-item[data-seance="'+n+'"]');
+  if(btn){ btn.classList.add('active'); }
+  const topbarTitle = document.getElementById('topbar-title');
+  if(topbarTitle){ topbarTitle.textContent = btn ? btn.querySelector('.nav-title').textContent : ''; }
+  const fill = document.getElementById('progress-fill');
+  if(fill){
+    const pct = Math.round((n / SEANCE_COUNT) * 100);
+    fill.style.width = pct + '%';
+  }
+  const ptext = document.getElementById('progress-text');
+  if(ptext){ ptext.textContent = 'Séance ' + n + ' / ' + SEANCE_COUNT; }
+  window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
+  const sb = document.getElementById('sidebar');
+  if(sb){ sb.classList.remove('open'); }
+}
+
+function sectionTitle(title){
+  const bar = '-'.repeat(title.length + 4);
+  return '\n# ' + bar + '\n# | ' + title + ' |\n# ' + bar + '\n\n';
+}
+
+function sanitizeNamePart(v){
+  return v.trim().replace(/\s+/g, '-');
+}
+
+function activeContainer(){
+  return document.getElementById('seance-' + currentSeance) || document;
+}
+
+function computeFilename(){
+  const meta = SEANCE_META[currentSeance];
+  if(!meta){ return 'mini_rpg.py'; }
+  const input = activeContainer().querySelector('.student-name-input');
+  const raw = input ? sanitizeNamePart(input.value) : '';
+  if(raw.length > 0){
+    return raw + '-TP' + currentSeance + '-rpg.py';
+  }
+  return meta.filename;
+}
+
+function updateFilenamePreview(){
+  const preview = activeContainer().querySelector('.filename-preview');
+  if(preview){ preview.textContent = computeFilename(); }
+}
+
+function exportPyFile(){
+  const meta = SEANCE_META[currentSeance];
+  if(!meta){ return; }
+  const container = document.getElementById('seance-' + currentSeance) || document;
+  const blocks = container.querySelectorAll('[data-export="true"]');
+  let content = meta.header + '\n';
+  blocks.forEach(b => {
+    const label = b.dataset.exportLabel || 'Exercice';
+    const ta = b.querySelector('.code-editor');
+    content += sectionTitle(label) + (ta ? ta.value : '') + '\n\n';
+  });
+  const blob = new Blob([content], {type: 'text/x-python'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = computeFilename();
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function ensurePyodide(){
+  if(pyodideReady) return;
+  if(pyodidePromise) return pyodidePromise;
+  const statusEl = document.getElementById('pyodide-status');
+  statusEl.textContent = 'Python : chargement…';
+  statusEl.className = 'pyodide-status loading';
+  pyodidePromise = loadPyodide().then(py => {
+    window.pyodide = py;
+    pyodideReady = true;
+    statusEl.textContent = 'Python : prêt ✓';
+    statusEl.className = 'pyodide-status ready';
+  }).catch(err => {
+    statusEl.textContent = 'Python : erreur de chargement';
+    console.error(err);
+  });
+  return pyodidePromise;
+}
+
+function resetCode(rid){
+  const ta = document.getElementById(rid + '-code');
+  if(ta && ta.dataset.original !== undefined){
+    ta.value = ta.dataset.original;
+  }
+  const out = document.getElementById(rid + '-output');
+  if(out){
+    out.textContent = 'La sortie de ton programme apparaîtra ici.';
+    out.dataset.empty = 'true';
+    out.classList.remove('has-error');
+  }
+}
+
+async function runCode(rid){
+  const btn = document.querySelector('.run-btn[data-target="'+rid+'"]');
+  const ta = document.getElementById(rid + '-code');
+  const out = document.getElementById(rid + '-output');
+  const stdinEl = document.getElementById(rid + '-stdin');
+  if(ta.dataset.original === undefined){ ta.dataset.original = ta.value; }
+
+  if(btn){ btn.disabled = true; btn.textContent = '… chargement'; }
+  await ensurePyodide();
+  if(btn){ btn.textContent = '▶ Exécuter'; btn.disabled = false; }
+  if(!pyodideReady){
+    out.textContent = "Impossible de charger Python dans le navigateur (pas de connexion internet ?).";
+    out.dataset.empty = 'false';
+    out.classList.add('has-error');
+    return;
+  }
+
+  const code = ta.value;
+  const stdinLines = stdinEl ? stdinEl.value.split('\n') : [];
+  const py = window.pyodide;
+
+  const setup = `
+import sys, io, builtins
+sys.stdout = io.StringIO()
+sys.stderr = sys.stdout
+_stdin_queue = ${JSON.stringify(stdinLines)}
+_stdin_index = 0
+def input(prompt=''):
+    global _stdin_index
+    sys.stdout.write(str(prompt))
+    global _stdin_queue
+    if _stdin_index < len(_stdin_queue):
+        val = _stdin_queue[_stdin_index]
+        _stdin_index += 1
+    else:
+        val = ''
+    sys.stdout.write(val + '\\n')
+    return val
+builtins.input = input
+`;
+  try{
+    const g = py.toPy({});
+    py.runPython(setup, {globals: g});
+    try{
+      py.runPython(code, {globals: g});
+    }catch(execErr){
+      const already = py.runPython('sys.stdout.getvalue()', {globals: g});
+      out.textContent = already + '\n--- Erreur ---\n' + execErr.message.split('\n').slice(-4).join('\n');
+      out.dataset.empty = 'false';
+      out.classList.add('has-error');
+      g.destroy();
+      return;
+    }
+    const result = py.runPython('sys.stdout.getvalue()', {globals: g});
+    out.textContent = result.trim().length ? result : '(le programme ne produit aucun affichage)';
+    out.dataset.empty = 'false';
+    out.classList.remove('has-error');
+    g.destroy();
+  }catch(e){
+    out.textContent = 'Erreur inattendue : ' + e.message;
+    out.dataset.empty = 'false';
+    out.classList.add('has-error');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  document.getElementById('seance-1').classList.add('visible'); currentSeance = 1;
+});
+
+</script>
+</body>
+</html>

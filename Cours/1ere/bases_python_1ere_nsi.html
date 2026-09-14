@@ -1,0 +1,461 @@
+<!DOCTYPE html><html lang="fr"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Les bases de Python — Cours Première NSI</title><style>
+:root {
+  --bg:       #ffffff;
+  --surface:  #f8fafc;
+  --surface2: #f1f5f9;
+  --border:   #e2e8f0;
+  --blue:     #2563eb;
+  --blue-lt:  #eff6ff;
+  --blue-dk:  #1e3a5f;
+  --green:    #059669;
+  --green-lt: #f0fdf4;
+  --orange:   #d97706;
+  --orange-lt:#fffbeb;
+  --red:      #dc2626;
+  --red-lt:   #fef2f2;
+  --purple:   #6366f1;
+  --purple-lt:#eef2ff;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --muted:    #64748b;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  font-size: 16px;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 60%, #1d4ed8 100%);
+  padding: 60px 40px 50px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 70%);
+}
+.hero-badge {
+  display:inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.35);
+  color: white;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px; letter-spacing:2px; text-transform:uppercase;
+  padding:4px 14px; border-radius:20px; margin-bottom:20px;
+}
+.hero h1 {
+  font-size: clamp(32px,6vw,66px);
+  font-weight:900; line-height:1.1;
+  letter-spacing:-2px; margin-bottom:14px; color:white;
+}
+.hero h1 span { color:#93c5fd; }
+.hero p {
+  color:rgba(255,255,255,0.78);
+  font-style:italic; font-size:18px;
+  max-width:520px; margin:0 auto;
+}
+
+/* ── NAV ── */
+.toc {
+  background: var(--surface2);
+  border-bottom: 2px solid var(--border);
+  padding:12px 28px;
+  display:flex; flex-wrap:wrap; gap:5px;
+  justify-content:center;
+  position:sticky; top:0; z-index:100;
+}
+.toc a {
+  font-family:'JetBrains Mono',monospace; font-size:11.5px;
+  color:var(--muted); text-decoration:none;
+  padding:5px 11px; border-radius:4px;
+  border:1px solid transparent; transition:all .2s;
+}
+.toc a:hover { color:var(--blue); border-color:var(--blue); background:var(--blue-lt); }
+
+/* ── LAYOUT ── */
+.container { max-width:920px; margin:0 auto; padding:0 28px; }
+.section { padding:56px 0 38px; border-bottom:1px solid var(--border); }
+.section:last-child { border-bottom:none; }
+
+/* ── SECTION HEADERS ── */
+.section-num {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:var(--blue); letter-spacing:3px; text-transform:uppercase; margin-bottom:6px;
+}
+.section h2 {
+  font-size:clamp(22px,4vw,36px); font-weight:900;
+  letter-spacing:-1px; margin-bottom:22px; line-height:1.15; color:var(--text);
+}
+.section h3 {
+  font-size:18px; font-weight:700; color:var(--orange);
+  margin:34px 0 12px;
+}
+.section h4 {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--blue-dk); margin:22px 0 8px; letter-spacing:1px;
+}
+.section p { color:var(--text2); margin-bottom:12px; }
+.section ul, .section ol { padding-left:22px; margin-bottom:12px; }
+.section li { color:var(--text2); margin-bottom:5px; }
+strong { color:var(--text); }
+p code, li code, td code, th code {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--green); background:var(--green-lt);
+  padding:1px 6px; border-radius:3px;
+}
+
+/* ── CODE BLOCKS (dark, intentional) ── */
+.code-block {
+  background:#0d1117; border:1px solid #2a2f45;
+  border-radius:10px; margin:18px 0; overflow:hidden;
+}
+.code-header {
+  background:#1e2333; border-bottom:1px solid #2a2f45;
+  padding:8px 16px; display:flex; align-items:center; gap:8px;
+  font-family:'JetBrains Mono',monospace; font-size:11px; color:#64748b;
+}
+.dot { width:10px; height:10px; border-radius:50%; }
+.dr{background:#ff5f56;} .dy{background:#ffbd2e;} .dg{background:#27c93f;}
+pre {
+  padding:18px 20px; overflow-x:auto;
+  font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7;
+  color:#e2e8f0;
+}
+/* Python syntax */
+.kw  { color:#c084fc; }   /* keyword */
+.fn  { color:#60a5fa; }   /* built-in function */
+.st  { color:#4ade80; }   /* string */
+.cm  { color:#475569; font-style:italic; } /* comment */
+.nb  { color:#fb923c; }   /* number */
+.op  { color:#94a3b8; }   /* operator */
+.df  { color:#fbbf24; }   /* def name */
+.bi  { color:#f472b6; }   /* bool / None */
+
+/* ── INFO BOXES ── */
+.box {
+  border-radius:10px; padding:16px 20px;
+  margin:18px 0; border-left:4px solid; font-size:15px;
+}
+.box-tip   { background:var(--green-lt);  border-color:var(--green); }
+.box-warn  { background:var(--orange-lt); border-color:var(--orange); }
+.box-info  { background:var(--blue-lt);   border-color:var(--blue); }
+.box-alert { background:var(--red-lt);    border-color:var(--red); }
+.box-key   { background:var(--purple-lt); border-color:var(--purple); }
+.box-title {
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  letter-spacing:2px; text-transform:uppercase; font-weight:700; margin-bottom:7px;
+}
+.box-tip .box-title   { color:var(--green); }
+.box-warn .box-title  { color:var(--orange); }
+.box-info .box-title  { color:var(--blue); }
+.box-alert .box-title { color:var(--red); }
+.box-key .box-title   { color:var(--purple); }
+
+/* ── TABLES ── */
+table { width:100%; border-collapse:collapse; margin:18px 0; font-size:15px; }
+th {
+  background:var(--blue-dk); color:white;
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  letter-spacing:1px; text-transform:uppercase;
+  padding:9px 14px; text-align:left; border:1px solid var(--blue-dk);
+}
+td { padding:9px 14px; border:1px solid var(--border); color:var(--text2); vertical-align:top; }
+tr:nth-child(even) td { background:var(--surface); }
+
+/* ── FUNCTION CARDS ── */
+.fn-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin:18px 0; }
+.fn-card {
+  border:1px solid var(--border); border-radius:8px; overflow:hidden;
+  transition:box-shadow .2s;
+}
+.fn-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+.fn-card-hdr {
+  background:var(--blue-dk); color:white;
+  padding:8px 14px;
+  font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700;
+}
+.fn-card-hdr span { color:#93c5fd; font-weight:400; font-size:12px; margin-left:8px; }
+.fn-card-body { padding:11px 14px; font-size:14px; color:var(--text2); line-height:1.6; background:white; }
+.fn-card-body code {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:var(--green); background:var(--green-lt);
+  padding:1px 5px; border-radius:3px;
+}
+.fn-card-ex {
+  background:var(--surface2); border-top:1px solid var(--border);
+  padding:8px 14px;
+  font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);
+}
+
+/* ── EXERCISES ── */
+.exo-card {
+  border:1px solid var(--border); border-radius:10px;
+  overflow:hidden; margin-bottom:22px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.exo-hdr { padding:12px 20px; display:flex; align-items:center; gap:14px; }
+.exo-hdr.easy   { background:linear-gradient(90deg,#1e5631,#059669); }
+.exo-hdr.medium { background:linear-gradient(90deg,#92400e,#d97706); }
+.exo-hdr.hard   { background:linear-gradient(90deg,#7f1d1d,#dc2626); }
+.exo-level {
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  color:rgba(255,255,255,.8); letter-spacing:2px; text-transform:uppercase;
+}
+.exo-title { font-weight:700; font-size:16px; color:white; }
+.exo-body { padding:20px 22px; background:white; }
+.exo-body p { margin-bottom:10px; color:var(--text2); }
+.exo-body ol { padding-left:20px; }
+.exo-body li { margin-bottom:7px; color:var(--text2); }
+
+.toggle-btn {
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+  margin-top:14px; padding:7px 16px; border-radius:6px;
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  transition:all .2s; user-select:none;
+}
+.btn-hint { background:var(--blue-lt); border:1px solid #bfdbfe; color:var(--blue); }
+.btn-hint:hover { background:#dbeafe; }
+.btn-corr { background:var(--green-lt); border:1px solid #a7f3d0; color:var(--green); }
+.btn-corr:hover { background:#d1fae5; }
+.toggle-icon { font-size:10px; }
+.hint-box, .corr-box { display:none; margin-top:14px; }
+.hint-box.open, .corr-box.open { display:block; }
+.hint-box { background:var(--blue-lt); border:1px solid #bfdbfe; border-radius:7px; padding:14px 16px; }
+.corr-box { background:var(--green-lt); border:1px solid #a7f3d0; border-radius:7px; padding:14px 16px; }
+.corr-box p { color:var(--text2) !important; }
+
+/* ── DST SECTION ── */
+.dst-section {
+  background:var(--red-lt); border:1px solid #fecaca;
+  border-radius:12px; padding:34px; margin:36px 0;
+}
+.dst-section h2 { color:var(--red) !important; }
+.dst-section .section-num { color:var(--red) !important; }
+.checklist { list-style:none; padding:0; }
+.checklist li {
+  padding:8px 0; border-bottom:1px solid #fecaca;
+  display:flex; align-items:flex-start; gap:12px; color:var(--text2);
+}
+.checklist li:last-child { border-bottom:none; }
+.checklist li::before { content:'□'; font-size:15px; color:var(--blue); flex-shrink:0; }
+
+/* ── QCM ── */
+.qcm-controls {
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:22px;
+}
+.qcm-size-opt {
+  display:flex; align-items:center; gap:8px; cursor:pointer;
+  padding:8px 18px; border-radius:8px;
+  border:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted);
+  transition:all .2s; user-select:none; background:white;
+}
+.qcm-size-opt:has(input:checked) { border-color:var(--blue); background:var(--blue-lt); color:var(--blue); }
+.qcm-size-opt input { accent-color:var(--blue); }
+.qcm-q {
+  background:white; border:1px solid var(--border);
+  border-radius:10px; padding:20px 22px; margin-bottom:14px;
+  transition:border-color .3s; box-shadow:0 1px 4px rgba(0,0,0,0.04);
+}
+.qcm-q.correct { border-color:var(--green); background:var(--green-lt); }
+.qcm-q.wrong   { border-color:var(--red);   background:var(--red-lt); }
+.qcm-num {
+  font-family:'JetBrains Mono',monospace; font-size:10px;
+  color:var(--blue); letter-spacing:2px; text-transform:uppercase; margin-bottom:7px;
+}
+.qcm-question { font-size:15px; font-weight:700; color:var(--text); margin-bottom:13px; line-height:1.5; }
+.qcm-question code {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--green); background:var(--green-lt); padding:1px 5px; border-radius:3px;
+}
+.qcm-opts { display:flex; flex-direction:column; gap:7px; }
+.qcm-opt {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:9px 13px; border:1px solid var(--border);
+  border-radius:7px; cursor:pointer; transition:all .15s;
+  font-size:14px; color:var(--text2); background:white;
+}
+.qcm-opt:hover { border-color:var(--blue); background:var(--blue-lt); }
+.qcm-opt input { accent-color:var(--blue); width:14px; height:14px; flex-shrink:0; margin-top:2px; }
+.qcm-opt.opt-ok  { border-color:var(--green)!important; background:var(--green-lt)!important; color:var(--green); font-weight:700; }
+.qcm-opt.opt-ko  { border-color:var(--red)!important;   background:var(--red-lt)!important;   color:var(--red); }
+.qcm-opt code { font-family:'JetBrains Mono',monospace; font-size:12px; background:var(--green-lt); padding:1px 4px; border-radius:3px; color:inherit; }
+.qcm-fb {
+  margin-top:9px; font-size:13px; font-family:'JetBrains Mono',monospace;
+  padding:7px 11px; border-radius:5px; display:none; line-height:1.55;
+}
+.qcm-fb.show { display:block; }
+.qcm-fb.ok { background:var(--green-lt); color:var(--green); }
+.qcm-fb.ko { background:var(--red-lt);   color:var(--red); }
+#qcm-result {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:12px; padding:26px; margin-top:22px; text-align:center; display:none;
+}
+.score-big { font-size:58px; font-weight:900; line-height:1; margin-bottom:6px; }
+.score-sub { color:var(--muted); font-size:14px; margin-bottom:14px; }
+.score-bar-bg { background:var(--border); border-radius:99px; height:10px; overflow:hidden; margin:14px 0; }
+.score-bar-fill { height:100%; border-radius:99px; transition:width .8s cubic-bezier(.4,0,.2,1); }
+.score-msg { font-size:17px; font-weight:700; margin-top:10px; }
+.qcm-btn {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  padding:9px 20px; border-radius:7px; border:none; cursor:pointer;
+  font-weight:700; transition:opacity .2s;
+}
+.qcm-btn-primary { background:var(--blue); color:white; }
+.qcm-btn-secondary { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+.qcm-btn:hover { opacity:.85; }
+
+footer {
+  text-align:center; padding:38px;
+  color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;
+  border-top:1px solid var(--border);
+}
+@media(max-width:640px){
+  .hero{padding:36px 18px 30px;}
+  .container{padding:0 14px;}
+  pre{font-size:12px;}
+  .fn-grid{grid-template-columns:1fr;}
+}
+pre,code{font-family:Consolas,"Courier New",monospace}pre{font-size:15px;white-space:pre-wrap;overflow-wrap:anywhere}.output{color:var(--text);padding:0}.box{width:100%;max-width:none}.section p{margin-bottom:14px}.section{scroll-margin-top:110px}details{padding:12px 0}summary{cursor:pointer;color:var(--blue);font-weight:bold}details p{margin-top:12px}.exo{margin:24px 0;border:1px solid var(--border);border-radius:12px;overflow:hidden}legend{font-weight:bold;padding:0 5px}.feedback{margin-top:16px;padding:12px;background:var(--surface2)}.hero a{color:white;position:relative}.toc{position:relative}button:focus-visible,a:focus-visible,summary:focus-visible,input:focus-visible{outline:3px solid var(--orange);outline-offset:3px}@media(max-width:600px){.container{padding:0 16px}.hero{padding:35px 16px}.toc{padding:12px}.qcm-q{padding:16px 12px}pre{font-size:13px}}@media print{.toc,button,.solution{display:none}.hero{background:white;color:black}.hero h1,.hero h1 span,.hero p,.hero a{color:black}.section{break-before:auto}.exo,.box,.code-block{break-inside:avoid}pre{color:black}.code-block,.code-header{background:#f1f5f9}.container{max-width:none}}</style></head><body><header class="hero"><a href="index.html">← Cours de Première NSI</a><br><div class="hero-badge">Première NSI · Cours et entraînement</div><h1>Les bases de <span>Python</span></h1><p>Comprendre, prédire, programmer et expliquer.</p></header><nav class="toc" aria-label="Sommaire"><a href="#s1">01 · Variables</a><a href="#s2">02 · Types</a><a href="#s3">03 · Saisies</a><a href="#s4">04 · Conditions</a><a href="#s5">05 · if</a><a href="#s6">06 · for</a><a href="#s7">07 · Accumulateurs</a><a href="#s8">08 · while</a><a href="#s9">09 · Validation</a><a href="#s10">10 · Fonctions</a><a href="#methode">Méthode</a><a href="#qcm">QCM</a></nav><main class="container"><section class="section"><h2>Un complément au Mini RPG</h2><p>Le projet donne du sens aux notions. Ici, tu les réutilises dans des situations variées : achats, températures, réservations et calculs.</p><p>Avance par étapes : lis un exemple, prédis sa sortie, puis résous les exercices avant d’ouvrir la correction.</p><div class="box box-key"><div class="box-title">Ton parcours</div><p>10 leçons · 20 exercices progressifs · 20 questions corrigées.</p><p>Utilise ton éditeur Python pour exécuter les exemples : cette page présente le cours et un QCM, sans moteur Python intégré. Elle reste utilisable hors connexion une fois téléchargée.</p></div></section><section class="section" id="s1"><div class="section-num">01 · Comprendre et pratiquer</div><h2>Variables et affectation</h2><p>Un programme exécute les instructions dans l’ordre, de haut en bas.</p><p>Une variable est un nom associé à une valeur. Choisis un nom explicite, sans espace, qui ne commence pas par un chiffre.</p><p>Le signe = affecte la valeur calculée à droite au nom écrit à gauche. Il ne signifie pas « est égal à » dans une comparaison.</p><p>Une nouvelle affectation remplace la valeur précédente. # introduit un commentaire ignoré à l’exécution.</p><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>places = 24
+places = places - 3
+print(places)
+# Trois places ont été réservées.</code></pre></div><div class="box box-tip"><div class="box-title">À l’écran</div><pre class="output">21</pre></div><div class="box box-warn"><div class="box-title">Attention</div><p>Python distingue places et Places. Lire un nom avant son affectation provoque une erreur.</p></div><article class="exo"><div class="exo-hdr easy"><span class="exo-level">Exercice 1</span><span class="exo-title">Prédire</span></div><div class="exo-body"><p>Sans exécuter, donne les valeurs finales de a et b après a = 4, b = a + 2, a = 10.</p><p><strong>Vérification :</strong> 10 6</p><details><summary>Un indice</summary><p>b conserve la valeur calculée au moment de son affectation.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>a = 4
+b = a + 2
+a = 10
+print(a, b)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article><article class="exo"><div class="exo-hdr easy"><span class="exo-level">Exercice 2</span><span class="exo-title">Programmer</span></div><div class="exo-body"><p>Un stock contient 18 cahiers. On en vend 5 puis on en reçoit 12. Affiche le stock final.</p><p><strong>Vérification :</strong> 25</p><details><summary>Un indice</summary><p>Modifie la même variable à chaque étape.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>stock = 18
+stock = stock - 5
+stock = stock + 12
+print(stock)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article></section><section class="section" id="s2"><div class="section-num">02 · Comprendre et pratiquer</div><h2>Types et calculs</h2><p>int représente les entiers ; float représente les nombres à virgule flottante, écrits avec un point.</p><p>str représente une chaîne de caractères entre guillemets. bool représente True ou False.</p><p>type(valeur) permet d’observer le type d’une valeur.</p><p>+, -, * et ** calculent une somme, une différence, un produit et une puissance.</p><p>/ effectue une division ; // donne le quotient entier arrondi vers moins l’infini ; % donne le reste. Pour les entiers positifs, on retrouve la division euclidienne.</p><p>Les parenthèses imposent l’ordre des calculs. Sinon, les puissances précèdent les produits et divisions, qui précèdent les sommes.</p><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>print(17 // 5, 17 % 5)
+print(17 / 5)
+print(2 + 3 * 4)
+print((2 + 3) * 4)</code></pre></div><div class="box box-tip"><div class="box-title">À l’écran</div><pre class="output">3 2
+3.4
+14
+20</pre></div><div class="box box-warn"><div class="box-title">Attention</div><p>&quot;12&quot; est du texte et 12 est un entier. &quot;12&quot; + &quot;3&quot; donne &quot;123&quot;. Les float peuvent représenter certaines valeurs de façon approchée.</p></div><article class="exo"><div class="exo-hdr easy"><span class="exo-level">Exercice 3</span><span class="exo-title">Appliquer</span></div><div class="exo-body"><p>Convertis 135 minutes en heures et minutes. Affiche les deux nombres.</p><p><strong>Vérification :</strong> 2 15</p><details><summary>Un indice</summary><p>Utilise // et % avec 60.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>minutes = 135
+print(minutes // 60, minutes % 60)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article><article class="exo"><div class="exo-hdr easy"><span class="exo-level">Exercice 4</span><span class="exo-title">Programmer</span></div><div class="exo-body"><p>Un rectangle mesure 8 sur 3. Calcule son aire et son périmètre dans deux variables, puis affiche-les.</p><p><strong>Vérification :</strong> 24 22</p><details><summary>Un indice</summary><p>Le périmètre vaut deux fois la somme des côtés.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>longueur = 8
+largeur = 3
+aire = longueur * largeur
+perimetre = 2 * (longueur + largeur)
+print(aire, perimetre)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article></section><section class="section" id="s3"><div class="section-num">03 · Comprendre et pratiquer</div><h2>Lire, convertir et afficher</h2><p>input(&quot;Question&quot;) affiche une question et renvoie le texte saisi.</p><p>int(texte) convertit un texte représentant un entier en int. float(texte) permet de lire un nombre décimal avec un point.</p><p>print(...) affiche ses arguments et termine normalement par un retour à la ligne. Les virgules séparent les arguments et ajoutent des espaces à l’affichage.</p><p>str(valeur) convertit une valeur en texte. Pour débuter, préfère print(&quot;Âge :&quot;, age) à une concaténation.</p><p>Dans les exercices suivants, les saisies sont supposées convertibles dans le type demandé, sauf mention contraire.</p><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>prix = &quot;7&quot;
+quantite = int(prix)
+print(prix + prix)
+print(quantite + quantite)</code></pre></div><div class="box box-tip"><div class="box-title">À l’écran</div><pre class="output">77
+14</pre></div><div class="box box-warn"><div class="box-title">Attention</div><p>int(&quot;3.5&quot;) et int(&quot;bonjour&quot;) provoquent ValueError. La validation d’un intervalle ne traite pas cette erreur de conversion.</p></div><article class="exo"><div class="exo-hdr easy"><span class="exo-level">Exercice 5</span><span class="exo-title">Corriger</span></div><div class="exo-body"><p>On veut ajouter 1 à un âge saisi. Corrige age = input(&quot;Âge ? &quot;) puis print(age + 1).</p><p><strong>Vérification :</strong> Pour 16 : 17</p><details><summary>Un indice</summary><p>Convertis le texte avant le calcul.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>age = int(input(&quot;Âge ? &quot;))
+print(age + 1)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article><article class="exo"><div class="exo-hdr easy"><span class="exo-level">Exercice 6</span><span class="exo-title">Programmer</span></div><div class="exo-body"><p>Demande une température en degrés Celsius et affiche sa conversion en Fahrenheit : F = 1.8 × C + 32.</p><p><strong>Vérification :</strong> Pour 0 : 32.0 ; pour 100 : 212.0</p><details><summary>Un indice</summary><p>Une température peut être décimale.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>celsius = float(input(&quot;Celsius ? &quot;))
+print(1.8 * celsius + 32)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article></section><section class="section" id="s4"><div class="section-num">04 · Comprendre et pratiquer</div><h2>Comparer et combiner des conditions</h2><p>== teste l’égalité ; != teste la différence. &lt;, &lt;=, &gt; et &gt;= comparent deux valeurs.</p><p>Une comparaison produit un booléen : True ou False.</p><p>and est vrai si les deux conditions sont vraies. or est vrai si au moins une condition est vraie.</p><p>not inverse une condition. Les parenthèses rendent les combinaisons plus lisibles.</p><p>0 &lt;= note &lt;= 20 vérifie les deux bornes incluses. On peut aussi écrire note &gt;= 0 and note &lt;= 20.</p><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>age = 17
+autorisation = True
+print(age &gt;= 18)
+print(age &gt;= 16 and autorisation)
+print(not autorisation)</code></pre></div><div class="box box-tip"><div class="box-title">À l’écran</div><pre class="output">False
+True
+False</pre></div><div class="box box-warn"><div class="box-title">Attention</div><p>Pour accepter &quot;oui&quot; ou &quot;o&quot;, écris reponse == &quot;oui&quot; or reponse == &quot;o&quot;. Chaque comparaison doit être complète.</p></div><article class="exo"><div class="exo-hdr medium"><span class="exo-level">Exercice 7</span><span class="exo-title">Compléter</span></div><div class="exo-body"><p>Avec n = 24, affiche si n est pair puis si n est compris entre 10 et 30 inclus.</p><p><strong>Vérification :</strong> True
+True</p><details><summary>Un indice</summary><p>Un entier pair a un reste nul dans la division par 2.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>n = 24
+print(n % 2 == 0)
+print(10 &lt;= n &lt;= 30)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article><article class="exo"><div class="exo-hdr medium"><span class="exo-level">Exercice 8</span><span class="exo-title">Tester</span></div><div class="exo-body"><p>Écris une condition qui détecte une note hors de [0 ; 20]. Teste -1, 0, 20, 21 en changeant note.</p><p><strong>Vérification :</strong> -1 : True ; 0 : False ; 20 : False ; 21 : True</p><details><summary>Un indice</summary><p>Une seule borne dépassée suffit : utilise or.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>note = 21
+print(note &lt; 0 or note &gt; 20)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article></section><section class="section" id="s5"><div class="section-num">05 · Comprendre et pratiquer</div><h2>Choisir avec if, elif et else</h2><p>if condition: exécute le bloc indenté seulement si la condition est vraie.</p><p>elif condition: teste une autre possibilité si les tests précédents ont échoué.</p><p>else: traite tous les cas restants. Il ne porte pas de condition.</p><p>Dans une chaîne if / elif / else, au plus un bloc est exécuté. Deux if indépendants peuvent tous deux s’exécuter.</p><p>Le deux-points ouvre le bloc. Indente de quatre espaces et aligne les instructions du même bloc.</p><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>age = 14
+if age &lt; 12:
+    prix = 5
+elif age &lt; 18:
+    prix = 8
+else:
+    prix = 12
+print(prix)</code></pre></div><div class="box box-tip"><div class="box-title">À l’écran</div><pre class="output">8</pre></div><div class="box box-warn"><div class="box-title">Attention</div><p>L’ordre des tests compte : tester note &gt;= 10 avant note &gt;= 16 dans une chaîne peut masquer le cas « très bien ».</p></div><article class="exo"><div class="exo-hdr medium"><span class="exo-level">Exercice 9</span><span class="exo-title">Programmer</span></div><div class="exo-body"><p>Affiche « négatif », « nul » ou « positif » selon la valeur de nombre. Teste -2, 0 et 5.</p><p><strong>Vérification :</strong> Pour 0 : nul</p><details><summary>Un indice</summary><p>Prévois trois cas exclusifs.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>nombre = 0
+if nombre &lt; 0:
+    print(&quot;négatif&quot;)
+elif nombre == 0:
+    print(&quot;nul&quot;)
+else:
+    print(&quot;positif&quot;)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article><article class="exo"><div class="exo-hdr medium"><span class="exo-level">Exercice 10</span><span class="exo-title">Transférer</span></div><div class="exo-body"><p>La livraison coûte 4 € si le panier est inférieur à 50 €, sinon elle est gratuite. Calcule le total. Teste 49, 50 et 80.</p><p><strong>Vérification :</strong> 49 → 53 ; 50 → 50 ; 80 → 80</p><details><summary>Un indice</summary><p>Le seuil 50 appartient au cas gratuit.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>panier = 50
+if panier &lt; 50:
+    total = panier + 4
+else:
+    total = panier
+print(total)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article></section><section class="section" id="s6"><div class="section-num">06 · Comprendre et pratiquer</div><h2>Répéter avec for et range</h2><p>for parcourt les éléments d’une séquence, par exemple les entiers produits par range ou les caractères d’un texte.</p><p>range(n) produit les entiers de 0 à n - 1. range(4) produit donc quatre valeurs.</p><p>range(debut, fin) inclut debut et exclut fin.</p><p>range(debut, fin, pas) fixe l’écart entre deux valeurs. Le pas ne peut pas être nul.</p><p>Le bloc indenté est exécuté une fois par valeur. Après le bloc, une instruction désindentée s’exécute une seule fois.</p><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>for numero in range(1, 4):
+    print(&quot;Tour&quot;, numero)
+print(&quot;Terminé&quot;)
+for lettre in &quot;NSI&quot;:
+    print(lettre)</code></pre></div><div class="box box-tip"><div class="box-title">À l’écran</div><pre class="output">Tour 1
+Tour 2
+Tour 3
+Terminé
+N
+S
+I</pre></div><div class="box box-warn"><div class="box-title">Attention</div><p>range(1, 5) ne contient pas 5. range(5, 1) est vide : utilise un pas négatif pour descendre.</p></div><article class="exo"><div class="exo-hdr medium"><span class="exo-level">Exercice 11</span><span class="exo-title">Programmer</span></div><div class="exo-body"><p>Affiche le compte à rebours 5, 4, 3, 2, 1 puis « Départ ! ».</p><p><strong>Vérification :</strong> 5
+4
+3
+2
+1
+Départ !</p><details><summary>Un indice</summary><p>Pour descendre, le pas vaut -1 et la borne exclue vaut 0.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>for n in range(5, 0, -1):
+    print(n)
+print(&quot;Départ !&quot;)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article><article class="exo"><div class="exo-hdr medium"><span class="exo-level">Exercice 12</span><span class="exo-title">Transférer</span></div><div class="exo-body"><p>Affiche les dix premiers multiples positifs de 7, un par ligne.</p><p><strong>Vérification :</strong> 7, 14, 21, 28, 35, 42, 49, 56, 63, 70 (une valeur par ligne)</p><details><summary>Un indice</summary><p>Parcours les multiplicateurs de 1 à 10 inclus.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>for i in range(1, 11):
+    print(7 * i)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article></section><section class="section" id="s7"><div class="section-num">07 · Comprendre et pratiquer</div><h2>Compteurs, accumulateurs et traces</h2><p>Un compteur mesure un nombre d’événements. Initialise-le à zéro avant la boucle et augmente-le quand la condition est satisfaite.</p><p>Un accumulateur construit une somme ou un produit. Une somme commence à 0 ; un produit commence à 1.</p><p>total += valeur est une écriture abrégée de total = total + valeur.</p><p>Pour comprendre une boucle, note la valeur des variables après chaque tour dans un tableau de trace.</p><p>Le placement de print à l’intérieur ou à l’extérieur de la boucle distingue les résultats intermédiaires du résultat final.</p><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>somme = 0
+for n in range(1, 5):
+    somme = somme + n
+    print(n, somme)</code></pre></div><div class="box box-tip"><div class="box-title">À l’écran</div><pre class="output">1 1
+2 3
+3 6
+4 10</pre></div><div class="box box-warn"><div class="box-title">Attention</div><p>Initialiser somme = 0 dans la boucle efface le résultat des tours précédents.</p></div><article class="exo"><div class="exo-hdr medium"><span class="exo-level">Exercice 13</span><span class="exo-title">Programmer</span></div><div class="exo-body"><p>Calcule la somme des entiers de 1 à 100 inclus avec une boucle, puis affiche une seule fois le résultat.</p><p><strong>Vérification :</strong> 5050</p><details><summary>Un indice</summary><p>Initialise avant la boucle ; affiche après.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>somme = 0
+for n in range(1, 101):
+    somme += n
+print(somme)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article><article class="exo"><div class="exo-hdr medium"><span class="exo-level">Exercice 14</span><span class="exo-title">Combiner</span></div><div class="exo-body"><p>Compte les multiples de 3 entre 1 et 20 inclus avec for et if.</p><p><strong>Vérification :</strong> 6</p><details><summary>Un indice</summary><p>À chaque multiple trouvé, augmente le compteur de 1.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>compteur = 0
+for n in range(1, 21):
+    if n % 3 == 0:
+        compteur += 1
+print(compteur)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article></section><section class="section" id="s8"><div class="section-num">08 · Comprendre et pratiquer</div><h2>Répéter tant que : while</h2><p>while condition: répète son bloc tant que la condition est vraie.</p><p>La condition est testée avant chaque tour : si elle est fausse au départ, aucun tour n’est exécuté.</p><p>Initialise les variables avant la boucle, fais évoluer l’état dans le bloc et identifie ce qui rendra la condition fausse.</p><p>Utilise souvent for lorsque le parcours est connu, et while lorsque l’arrêt dépend d’un seuil ou d’une saisie.</p><p>Une boucle qui ne peut pas atteindre sa condition d’arrêt peut tourner indéfiniment.</p><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>energie = 3
+while energie &gt; 0:
+    print(energie)
+    energie -= 1
+print(&quot;Repos&quot;)</code></pre></div><div class="box box-tip"><div class="box-title">À l’écran</div><pre class="output">3
+2
+1
+Repos</pre></div><div class="box box-warn"><div class="box-title">Attention</div><p>Oublier energie -= 1 maintient la condition vraie. Dans un éditeur Python, interromps alors le programme avec le bouton Stop.</p></div><article class="exo"><div class="exo-hdr medium"><span class="exo-level">Exercice 15</span><span class="exo-title">Corriger</span></div><div class="exo-body"><p>Une boucle commence avec n = 3 et répète print(n) tant que n &gt; 0. Ajoute la ligne qui la termine.</p><p><strong>Vérification :</strong> 3
+2
+1</p><details><summary>Un indice</summary><p>Fais diminuer n dans le bloc.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>n = 3
+while n &gt; 0:
+    print(n)
+    n -= 1</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article><article class="exo"><div class="exo-hdr medium"><span class="exo-level">Exercice 16</span><span class="exo-title">Transférer</span></div><div class="exo-body"><p>Tu as 20 €. Tu ajoutes 7 € par semaine. Combien de semaines faut-il pour atteindre au moins 50 € ?</p><p><strong>Vérification :</strong> 5 55</p><details><summary>Un indice</summary><p>Compte les semaines et augmente la somme à chaque tour.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>argent = 20
+semaines = 0
+while argent &lt; 50:
+    argent += 7
+    semaines += 1
+print(semaines, argent)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article></section><section class="section" id="s9"><div class="section-num">09 · Comprendre et pratiquer</div><h2>Saisies répétées et choix de boucle</h2><p>Pour redemander une saisie, lis une première valeur avant while, puis renouvelle-la dans le bloc.</p><p>Une sentinelle est une valeur spéciale qui termine la saisie. Elle ne doit pas être ajoutée au résultat.</p><p>break interrompt immédiatement la boucle la plus proche. C’est un outil complémentaire ; commence par savoir écrire une condition d’arrêt explicite.</p><p>Teste aussi les cas où la première saisie est déjà valide ou déjà la sentinelle.</p><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>nombre = 1
+total = 0
+while nombre &lt;= 3:
+    total += nombre
+    nombre += 1
+print(total)</code></pre></div><div class="box box-tip"><div class="box-title">À l’écran</div><pre class="output">6</pre></div><div class="box box-warn"><div class="box-title">Attention</div><p>Une saisie répétée doit pouvoir changer la condition. Ne suppose pas que l’utilisateur fera toujours un choix valide.</p></div><article class="exo"><div class="exo-hdr hard"><span class="exo-level">Exercice 17</span><span class="exo-title">Valider</span></div><div class="exo-body"><p>Demande un entier entre 1 et 5 inclus et recommence tant qu’il est hors intervalle. Les saisies sont des entiers.</p><p><strong>Vérification :</strong> Pour 0, 6, 3 : Choix accepté : 3</p><details><summary>Un indice</summary><p>Redemande la valeur dans le while.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>choix = int(input(&quot;Entier de 1 à 5 ? &quot;))
+while choix &lt; 1 or choix &gt; 5:
+    choix = int(input(&quot;Recommence : &quot;))
+print(&quot;Choix accepté :&quot;, choix)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article><article class="exo"><div class="exo-hdr hard"><span class="exo-level">Exercice 18</span><span class="exo-title">Combiner</span></div><div class="exo-body"><p>Additionne les entiers saisis jusqu’à la saisie de 0. Affiche seulement le total final, sans compter 0.</p><p><strong>Vérification :</strong> 4, -1, 0 → 3 ; 0 → 0</p><details><summary>Un indice</summary><p>Lis avant la boucle, puis à la fin de chaque tour.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>total = 0
+n = int(input(&quot;Entier, 0 pour finir : &quot;))
+while n != 0:
+    total += n
+    n = int(input(&quot;Entier, 0 pour finir : &quot;))
+print(total)</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article></section><section class="section" id="s10"><div class="section-num">10 · Comprendre et pratiquer</div><h2>Fonctions : paramètre, appel et return</h2><p>def nom(parametre): définit une fonction. Son corps ne s’exécute que lorsqu’on l’appelle.</p><p>Un paramètre est un nom utilisé dans la définition. Un argument est la valeur fournie lors d’un appel.</p><p>return renvoie une valeur à l’appelant et termine la fonction. Sans return exécuté, la fonction renvoie None.</p><p>print affiche une valeur mais ne la renvoie pas à l’appelant. Une fonction de calcul renvoie généralement son résultat.</p><p>Les variables créées dans une fonction sont normalement locales à cet appel. Utilise des paramètres et return pour échanger des valeurs.</p><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>def carre(x):
+    return x * x
+
+resultat = carre(5)
+print(resultat)
+print(carre(3) + 1)</code></pre></div><div class="box box-tip"><div class="box-title">À l’écran</div><pre class="output">25
+10</pre></div><div class="box box-warn"><div class="box-title">Attention</div><p>Ne remplace pas return par print si tu veux réutiliser le résultat dans un calcul.</p></div><article class="exo"><div class="exo-hdr hard"><span class="exo-level">Exercice 19</span><span class="exo-title">Programmer</span></div><div class="exo-body"><p>Écris une fonction est_pair(n) qui renvoie un booléen. Teste 8 et 9.</p><p><strong>Vérification :</strong> True
+False</p><details><summary>Un indice</summary><p>Tu peux renvoyer directement une comparaison.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>def est_pair(n):
+    return n % 2 == 0
+
+print(est_pair(8))
+print(est_pair(9))</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article><article class="exo"><div class="exo-hdr hard"><span class="exo-level">Exercice 20</span><span class="exo-title">Synthèse</span></div><div class="exo-body"><p>Écris somme_jusqua(n), pour n entier positif ou nul, qui renvoie la somme de 1 à n avec une boucle. Teste 0, 1 et 5.</p><p><strong>Vérification :</strong> 0 1 15</p><details><summary>Un indice</summary><p>L’accumulateur vaut 0 ; range(1, n + 1) inclut n.</p></details><details class="solution"><summary>Voir une correction après avoir essayé</summary><div class="code-block"><div class="code-header"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span> Python 3</div><pre><code>def somme_jusqua(n):
+    total = 0
+    for i in range(1, n + 1):
+        total += i
+    return total
+
+print(somme_jusqua(0), somme_jusqua(1), somme_jusqua(5))</code></pre></div><p>Explique chaque ligne, puis modifie une donnée pour vérifier que tu sais adapter le programme.</p></details></div></article></section><section class="section" id="methode"><div class="section-num">11 · Devenir autonome</div><h2>Tester, expliquer, transférer</h2><div class="box box-info"><div class="box-title">Une méthode en quatre étapes</div><ol><li>Prédire le résultat sur papier.</li><li>Écrire et exécuter dans ton éditeur Python.</li><li>Comparer au résultat attendu et tester les bornes.</li><li>Modifier une contrainte sans regarder la correction.</li></ol></div><h3>Reconnaître les erreurs</h3><p><strong>SyntaxError / IndentationError :</strong> vérifie les deux-points, les parenthèses et l’indentation.</p><p><strong>NameError :</strong> vérifie le nom et son affectation avant utilisation.</p><p><strong>TypeError / ValueError :</strong> vérifie le type des valeurs et la conversion des saisies.</p><p><strong>Erreur logique :</strong> le programme s’exécute mais donne un mauvais résultat ; construis une trace des variables.</p><h3>Quel outil choisir ?</h3><table><thead><tr><th>Besoin</th><th>Outil</th></tr></thead><tbody><tr><td>Choisir selon une condition</td><td>if / elif / else</td></tr><tr><td>Parcourir un texte ou un intervalle connu</td><td>for</td></tr><tr><td>Recommencer jusqu’à une saisie valide</td><td>while</td></tr><tr><td>Réutiliser un calcul avec d’autres valeurs</td><td>def et return</td></tr></tbody></table><h3>Avant de dire « je maîtrise »</h3><ul><li>Je sais prédire une sortie et tracer une boucle.</li><li>Je sais traiter une borne, un cas nul et un parcours vide.</li><li>Je sais corriger une erreur et expliquer sa cause.</li><li>Je sais écrire une variante dans un autre contexte sans correction.</li></ul><p>Le QCM vérifie tes repères ; il ne remplace pas l’écriture de code.</p><p><a href="mini-rpg/index.html">Mettre ces notions en pratique dans le Mini RPG</a> · <a href="listes_python_1ere_nsi.html">Poursuivre avec les listes</a></p></section><section class="section" id="qcm"><div class="section-num">12 · Vérifier ses repères</div><h2>QCM interactif · 20 questions</h2><p>Une seule bonne réponse par question. Réponds puis corrige : chaque réponse est expliquée. Tu peux recommencer autant que nécessaire.</p><form id="quiz"><fieldset class="qcm-q" id="q0"><legend>1. Après x = 4 puis x = x + 3, x vaut…</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q0" value="0">4</label><label class="qcm-opt"><input type="radio" name="q0" value="1">7</label><label class="qcm-opt"><input type="radio" name="q0" value="2">Une erreur</label></div><p class="feedback" id="f0" hidden></p></fieldset><fieldset class="qcm-q" id="q1"><legend>2. Quel est le type de &quot;12&quot; ?</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q1" value="0">int</label><label class="qcm-opt"><input type="radio" name="q1" value="1">float</label><label class="qcm-opt"><input type="radio" name="q1" value="2">str</label></div><p class="feedback" id="f1" hidden></p></fieldset><fieldset class="qcm-q" id="q2"><legend>3. Que vaut 17 % 5 ?</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q2" value="0">3</label><label class="qcm-opt"><input type="radio" name="q2" value="1">2</label><label class="qcm-opt"><input type="radio" name="q2" value="2">3.4</label></div><p class="feedback" id="f2" hidden></p></fieldset><fieldset class="qcm-q" id="q3"><legend>4. Que vaut 7 / 2 ?</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q3" value="0">3</label><label class="qcm-opt"><input type="radio" name="q3" value="1">1</label><label class="qcm-opt"><input type="radio" name="q3" value="2">3.5</label></div><p class="feedback" id="f3" hidden></p></fieldset><fieldset class="qcm-q" id="q4"><legend>5. input renvoie toujours…</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q4" value="0">un str</label><label class="qcm-opt"><input type="radio" name="q4" value="1">un int</label><label class="qcm-opt"><input type="radio" name="q4" value="2">un bool</label></div><p class="feedback" id="f4" hidden></p></fieldset><fieldset class="qcm-q" id="q5"><legend>6. Quel test compare x à 3 ?</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q5" value="0">x = 3</label><label class="qcm-opt"><input type="radio" name="q5" value="1">x == 3</label><label class="qcm-opt"><input type="radio" name="q5" value="2">x =&gt; 3</label></div><p class="feedback" id="f5" hidden></p></fieldset><fieldset class="qcm-q" id="q6"><legend>7. Pour x = 5, que vaut x &gt; 2 and x &lt; 4 ?</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q6" value="0">True</label><label class="qcm-opt"><input type="radio" name="q6" value="1">False</label><label class="qcm-opt"><input type="radio" name="q6" value="2">5</label></div><p class="feedback" id="f6" hidden></p></fieldset><fieldset class="qcm-q" id="q7"><legend>8. Quel test détecte x hors de [0 ; 10] ?</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q7" value="0">x &lt; 0 and x &gt; 10</label><label class="qcm-opt"><input type="radio" name="q7" value="1">0 &lt;= x &lt;= 10</label><label class="qcm-opt"><input type="radio" name="q7" value="2">x &lt; 0 or x &gt; 10</label></div><p class="feedback" id="f7" hidden></p></fieldset><fieldset class="qcm-q" id="q8"><legend>9. Combien de blocs une chaîne if / elif / else exécute-t-elle ?</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q8" value="0">Tous</label><label class="qcm-opt"><input type="radio" name="q8" value="1">Un seul</label><label class="qcm-opt"><input type="radio" name="q8" value="2">Toujours zéro</label></div><p class="feedback" id="f8" hidden></p></fieldset><fieldset class="qcm-q" id="q9"><legend>10. Quelles valeurs produit range(2, 5) ?</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q9" value="0">2, 3, 4</label><label class="qcm-opt"><input type="radio" name="q9" value="1">2, 3, 4, 5</label><label class="qcm-opt"><input type="radio" name="q9" value="2">0, 1, 2, 3, 4</label></div><p class="feedback" id="f9" hidden></p></fieldset><fieldset class="qcm-q" id="q10"><legend>11. Combien de tours fait for i in range(0) ?</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q10" value="0">1</label><label class="qcm-opt"><input type="radio" name="q10" value="1">Une infinité</label><label class="qcm-opt"><input type="radio" name="q10" value="2">0</label></div><p class="feedback" id="f10" hidden></p></fieldset><fieldset class="qcm-q" id="q11"><legend>12. Quel parcours donne 3, 2, 1 ?</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q11" value="0">range(3, 0, -1)</label><label class="qcm-opt"><input type="radio" name="q11" value="1">range(3, 1)</label><label class="qcm-opt"><input type="radio" name="q11" value="2">range(1, 3, -1)</label></div><p class="feedback" id="f11" hidden></p></fieldset><fieldset class="qcm-q" id="q12"><legend>13. Où initialise-t-on une somme cumulée ?</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q12" value="0">Dans chaque tour</label><label class="qcm-opt"><input type="radio" name="q12" value="1">Avant la boucle</label><label class="qcm-opt"><input type="radio" name="q12" value="2">Après la boucle</label></div><p class="feedback" id="f12" hidden></p></fieldset><fieldset class="qcm-q" id="q13"><legend>14. Que vaut s après s = 0 puis, pour i de 1 à 3 inclus, s += i ?</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q13" value="0">3</label><label class="qcm-opt"><input type="radio" name="q13" value="1">6</label><label class="qcm-opt"><input type="radio" name="q13" value="2">7</label></div><p class="feedback" id="f13" hidden></p></fieldset><fieldset class="qcm-q" id="q14"><legend>15. Si while teste False dès le départ, son bloc est exécuté…</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q14" value="0">zéro fois</label><label class="qcm-opt"><input type="radio" name="q14" value="1">une fois</label><label class="qcm-opt"><input type="radio" name="q14" value="2">deux fois</label></div><p class="feedback" id="f14" hidden></p></fieldset><fieldset class="qcm-q" id="q15"><legend>16. Avec n = 1, while n &gt; 0: n += 1…</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q15" value="0">termine après un tour</label><label class="qcm-opt"><input type="radio" name="q15" value="1">termine à 10</label><label class="qcm-opt"><input type="radio" name="q15" value="2">ne termine pas normalement</label></div><p class="feedback" id="f15" hidden></p></fieldset><fieldset class="qcm-q" id="q16"><legend>17. Pour redemander un entier valide, on privilégie…</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q16" value="0">if seul</label><label class="qcm-opt"><input type="radio" name="q16" value="1">while</label><label class="qcm-opt"><input type="radio" name="q16" value="2">print</label></div><p class="feedback" id="f16" hidden></p></fieldset><fieldset class="qcm-q" id="q17"><legend>18. Que fait return ?</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q17" value="0">Affiche et continue</label><label class="qcm-opt"><input type="radio" name="q17" value="1">Renvoie et termine la fonction</label><label class="qcm-opt"><input type="radio" name="q17" value="2">Définit une variable globale</label></div><p class="feedback" id="f17" hidden></p></fieldset><fieldset class="qcm-q" id="q18"><legend>19. Dans def double(x), x est…</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q18" value="0">un paramètre</label><label class="qcm-opt"><input type="radio" name="q18" value="1">un argument valant toujours 2</label><label class="qcm-opt"><input type="radio" name="q18" value="2">une instruction</label></div><p class="feedback" id="f18" hidden></p></fieldset><fieldset class="qcm-q" id="q19"><legend>20. Une fonction sans return exécuté renvoie…</legend><div class="qcm-opts"><label class="qcm-opt"><input type="radio" name="q19" value="0">0</label><label class="qcm-opt"><input type="radio" name="q19" value="1">False</label><label class="qcm-opt"><input type="radio" name="q19" value="2">None</label></div><p class="feedback" id="f19" hidden></p></fieldset></form><div class="qcm-controls"><button class="qcm-btn qcm-btn-primary" id="check">Corriger mes réponses</button><button class="qcm-btn qcm-btn-secondary" id="reset">Recommencer</button></div><p id="score" role="status" aria-live="polite"></p></section></main><footer>Première NSI · Les bases de Python · <a href="index.html">Tous les cours</a></footer><script>const answers=[{"a": 1, "explain": "La valeur 4 + 3 est calculée puis affectée à x."}, {"a": 2, "explain": "Les guillemets indiquent une chaîne."}, {"a": 1, "explain": "17 = 3 × 5 + 2."}, {"a": 2, "explain": "/ effectue une division, pas une division entière."}, {"a": 0, "explain": "Il faut convertir le texte pour calculer avec un nombre."}, {"a": 1, "explain": "= affecte ; == compare."}, {"a": 1, "explain": "La seconde condition est fausse."}, {"a": 2, "explain": "Dépasser une seule borne suffit."}, {"a": 1, "explain": "Avec else, un seul des blocs est choisi."}, {"a": 0, "explain": "La borne de fin est exclue."}, {"a": 2, "explain": "Le parcours est vide."}, {"a": 0, "explain": "Le pas est négatif et la borne exclue vaut 0."}, {"a": 1, "explain": "Sinon les résultats précédents seraient effacés."}, {"a": 1, "explain": "0 + 1 + 2 + 3 = 6."}, {"a": 0, "explain": "Le test précède le corps de la boucle."}, {"a": 2, "explain": "n augmente et reste positif."}, {"a": 1, "explain": "Le nombre d’essais n’est pas connu à l’avance."}, {"a": 1, "explain": "La valeur est transmise à l’appelant."}, {"a": 0, "explain": "Dans double(7), 7 est l’argument."}, {"a": 2, "explain": "Un affichage ne remplace pas une valeur de retour."}];
+document.getElementById('check').onclick=()=>{let score=0,done=0;answers.forEach((a,i)=>{const chosen=document.querySelector('input[name="q'+i+'"]:checked'),ok=chosen&&Number(chosen.value)===a.a;if(chosen)done++;if(ok)score++;const card=document.getElementById('q'+i);card.classList.toggle('correct',!!ok);card.classList.toggle('wrong',!ok);const f=document.getElementById('f'+i);f.hidden=false;f.textContent=(ok?'Bonne réponse. ':chosen?'À revoir. ':'Sans réponse. ')+a.explain;});document.getElementById('score').textContent=score+' / 20 — '+done+' questions renseignées. Reprends les notions à revoir, puis écris un petit programme sans aide.';};
+document.getElementById('reset').onclick=()=>{document.getElementById('quiz').reset();document.querySelectorAll('.feedback').forEach(e=>e.hidden=true);document.querySelectorAll('.qcm-q').forEach(e=>e.classList.remove('correct','wrong'));document.getElementById('score').textContent='Nouvel essai : les réponses ont été effacées.';};</script></body></html>

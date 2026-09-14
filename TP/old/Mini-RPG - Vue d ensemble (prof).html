@@ -1,0 +1,1974 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mini-RPG — vue d&#x27;ensemble (usage prof)</title>
+<style>
+
+:root{
+  --ink:#20242c;
+  --ink-soft:#4d5566;
+  --paper:#faf8f4;
+  --paper-raised:#ffffff;
+  --line:#e4ddd0;
+  --blue:#2f5fb3;
+  --blue-soft:#e8eefb;
+  --green:#2f8f5b;
+  --green-soft:#e5f5ec;
+  --orange:#c76a1f;
+  --orange-soft:#fbecdd;
+  --red:#b3402f;
+  --red-soft:#fbe8e4;
+  --purple:#6b4ea0;
+  --purple-soft:#efe8fa;
+  --mono: 'JetBrains Mono', 'Fira Code', Consolas, monospace;
+  --sans: Arial, Helvetica, sans-serif;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  margin:0;
+  font-family:var(--sans);
+  color:var(--ink);
+  background:var(--paper);
+  line-height:1.55;
+}
+h1,h2,h3,h4,h5{font-family:var(--sans); font-weight:700; color:var(--ink); line-height:1.25;}
+code, .mono{font-family:var(--mono);}
+p{margin:0 0 0.9em 0;}
+
+.app-shell{display:flex; min-height:100vh;}
+.app-shell.no-sidebar .main-area{max-width:960px; margin:0 auto;}
+.app-shell.no-sidebar .menu-toggle{display:none;}
+
+/* ---------- SIDEBAR ---------- */
+.sidebar{
+  width:270px; flex-shrink:0;
+  background:#20242c;
+  color:#e9e7e1;
+  display:flex; flex-direction:column;
+  position:sticky; top:0; height:100vh; overflow-y:auto;
+}
+.brand{display:flex; align-items:center; gap:12px; padding:22px 20px 18px 20px; border-bottom:1px solid rgba(255,255,255,0.08);}
+.brand-icon{font-size:28px;}
+.brand-title{font-weight:700; font-size:17px; letter-spacing:0.2px;}
+.brand-sub{font-size:12px; color:#a9ac b8; color:#a2a6b6; margin-top:2px;}
+.nav-list{display:flex; flex-direction:column; padding:14px 10px; gap:4px; flex:1;}
+.nav-item{
+  display:flex; align-items:center; gap:12px;
+  background:none; border:none; color:#cfd1dc;
+  text-align:left; padding:10px 12px; border-radius:10px;
+  cursor:pointer; font-family:var(--sans); font-size:13.5px;
+  transition:background .15s ease;
+}
+.nav-item:hover{background:rgba(255,255,255,0.07);}
+.nav-item.active{background:rgba(255,255,255,0.13); color:#fff;}
+.nav-icon{font-size:18px; width:22px; text-align:center;}
+.nav-text{display:flex; flex-direction:column;}
+.nav-num{font-size:10.5px; text-transform:uppercase; letter-spacing:0.6px; color:#9296a8;}
+.nav-item.active .nav-num{color:#c9cdea;}
+.nav-title{font-size:13.5px; font-weight:600;}
+.sidebar-footer{padding:16px 20px 22px 20px; border-top:1px solid rgba(255,255,255,0.08);}
+.progress-label{font-size:11px; text-transform:uppercase; letter-spacing:0.6px; color:#9296a8; margin-bottom:6px;}
+.progress-track{height:6px; border-radius:4px; background:rgba(255,255,255,0.12); overflow:hidden;}
+.progress-fill{height:100%; width:16.6%; background:linear-gradient(90deg,#5a7fd6,#8f6fd0); transition:width .3s ease;}
+.progress-text{font-size:12px; color:#a2a6b6; margin-top:8px;}
+
+/* ---------- MAIN ---------- */
+.main-area{flex:1; min-width:0;}
+.topbar{
+  position:sticky; top:0; z-index:20;
+  display:flex; align-items:center; gap:14px;
+  padding:12px 28px; background:rgba(250,248,244,0.92); backdrop-filter: blur(6px);
+  border-bottom:1px solid var(--line);
+}
+.menu-toggle{display:none; background:none; border:1px solid var(--line); border-radius:8px; font-size:18px; padding:4px 10px; cursor:pointer;}
+.topbar-title{font-weight:700; font-size:14.5px; color:var(--ink-soft);}
+.pyodide-status{margin-left:auto; font-size:12px; color:var(--ink-soft); font-family:var(--mono); padding:4px 10px; border-radius:20px; background:var(--paper-raised); border:1px solid var(--line);}
+.pyodide-status.ready{color:var(--green); border-color:var(--green);}
+.pyodide-status.loading{color:var(--orange); border-color:var(--orange);}
+
+.intro-banner{padding:44px 40px 30px 40px; max-width:900px;}
+.intro-banner h1{font-size:34px; margin:0 0 6px 0;}
+.intro-sub{font-size:16px; color:var(--ink-soft); margin-bottom:16px;}
+.intro-accroche{font-size:15px; color:var(--ink); max-width:680px;}
+.intro-hint{
+  margin-top:18px; padding:12px 16px; border-radius:10px;
+  background:var(--blue-soft); color:#28407a; font-size:13.5px; max-width:680px;
+  border:1px solid #d3e0f7;
+}
+
+.seance-section{padding:10px 40px 10px 40px; max-width:900px;}
+.seance-hero{display:flex; align-items:center; gap:18px; padding:26px 0 16px 0; border-bottom:2px solid var(--line); margin-bottom:24px;}
+.seance-hero-icon{font-size:40px; line-height:1;}
+.seance-eyebrow{font-size:12px; letter-spacing:.4px; color:var(--ink-soft); font-weight:600; margin-bottom:2px;}
+.seance-section h2{font-size:26px; margin:0;}
+.seance-subtitle{color:var(--ink-soft); font-size:14.5px; margin-top:4px;}
+
+.objectifs-box{
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:12px;
+  padding:16px 20px; margin-bottom:28px;
+}
+.objectifs-box strong{font-size:13px; text-transform:uppercase; letter-spacing:.4px; color:var(--blue);}
+.objectifs-box ul{margin:8px 0 0 0; padding-left:20px;}
+.objectifs-box li{margin-bottom:3px; font-size:14.5px;}
+
+.rendu-box{
+  background:linear-gradient(135deg, #fff7e0, #fffdf7); border:1px solid #f0dfa8; border-radius:12px;
+  padding:16px 20px; margin-bottom:28px;
+}
+.rendu-head{display:flex; gap:14px; align-items:flex-start;}
+.rendu-icon{font-size:24px; line-height:1.3;}
+.rendu-head strong{font-size:13.5px; text-transform:uppercase; letter-spacing:.4px; color:#8a6415;}
+.rendu-head p{margin:6px 0 0 0; font-size:13.8px; color:#5c4a1e;}
+.rendu-head code{background:#fff2cc; padding:1px 6px; border-radius:5px; font-size:12.5px;}
+.rendu-name-row{display:flex; align-items:center; gap:10px; margin-top:12px; flex-wrap:wrap;}
+.rendu-name-row label{font-size:12.5px; font-weight:600; color:#8a6415;}
+.rendu-name-row input{
+  font-family:var(--mono); font-size:13px; padding:6px 10px; border-radius:7px;
+  border:1px solid #e3cd8a; background:#fffdf7; min-width:220px;
+}
+.rendu-filename-preview{margin-top:8px; font-size:12.8px; color:#7a6320;}
+.rendu-filename-preview code{background:#fff2cc; padding:1px 6px; border-radius:5px;}
+.rendu-hint{color:#a5905a; font-style:italic;}
+.export-btn{
+  margin-top:12px; background:#a3760f; color:#fff; border:none; border-radius:8px;
+  padding:9px 18px; font-size:13.5px; font-weight:600; cursor:pointer;
+}
+.export-btn:hover{background:#8a6410;}
+
+.section-label{
+  font-size:12.5px; font-weight:700; text-transform:uppercase; letter-spacing:.6px;
+  color:var(--ink-soft); margin:28px 0 14px 0; padding-bottom:6px; border-bottom:1px solid var(--line);
+}
+.cours-block h3{font-size:19px; margin:22px 0 8px 0;}
+.cours-block h3:first-child{margin-top:0;}
+
+.explain-list{padding-left:20px; margin:10px 0;}
+.explain-list li{margin-bottom:6px; font-size:14px; color:var(--ink-soft);}
+.explain-list code{color:var(--ink); background:var(--blue-soft); padding:1px 5px; border-radius:4px; font-size:12.5px;}
+
+.comprehension-box{
+  background:var(--purple-soft); border-left:3px solid var(--purple); border-radius:0 10px 10px 0;
+  padding:12px 16px; margin:14px 0; font-size:14px;
+}
+.comprehension-box ul{margin:6px 0 0 0; padding-left:20px;}
+
+.challenge-followup{
+  background:var(--orange-soft); border-radius:10px; padding:10px 14px; font-size:14px; margin-top:10px;
+}
+
+/* ---------- CODE RUNNER ---------- */
+.code-runner{margin:14px 0 22px 0;}
+.gui-note{
+  background:var(--purple-soft); color:#4d3778; border:1px solid #ddceef;
+  padding:8px 14px; border-radius:8px 8px 0 0; font-size:13px; font-weight:600;
+}
+.code-editor-shell{
+  border-radius:10px; overflow:hidden; border:1px solid #333a4a; background:#20242c;
+}
+.gui-note + .code-editor-shell{border-radius:0 0 10px 10px;}
+.code-editor-bar{
+  display:flex; align-items:center; gap:6px; padding:8px 12px; background:#191c22;
+}
+.dot{width:9px; height:9px; border-radius:50%; display:inline-block;}
+.dot-r{background:#e5605a;} .dot-y{background:#e5b95a;} .dot-g{background:#5ac07e;}
+.editor-label{margin-left:8px; font-family:var(--mono); font-size:11.5px; color:#8a8fa3;}
+.code-editor{
+  width:100%; min-height:120px; resize:vertical;
+  background:#20242c; color:#eef0f5; border:none; outline:none;
+  font-family:var(--mono); font-size:13px; line-height:1.6; padding:16px;
+  white-space:pre; tab-size:4;
+}
+.code-static{
+  margin:0; padding:16px; background:#20242c; color:#eef0f5;
+  font-family:var(--mono); font-size:13px; line-height:1.6; overflow-x:auto; white-space:pre;
+}
+.stdin-row{display:flex; align-items:center; gap:10px; margin-top:10px; flex-wrap:wrap;}
+.stdin-row label{font-size:12.5px; color:var(--ink-soft);}
+.stdin-input{
+  flex:1; min-width:220px; font-family:var(--mono); font-size:12.5px;
+  padding:7px 10px; border-radius:7px; border:1px solid var(--line); background:var(--paper-raised);
+}
+.run-row{display:flex; gap:10px; margin-top:12px;}
+.run-btn{
+  background:var(--blue); color:#fff; border:none; border-radius:8px;
+  padding:9px 18px; font-size:13.5px; font-weight:600; cursor:pointer;
+  transition:background .15s ease;
+}
+.run-btn:hover{background:#254c92;}
+.run-btn:disabled{background:#9aa5c2; cursor:progress;}
+.reset-btn{
+  background:none; border:1px solid var(--line); color:var(--ink-soft); border-radius:8px;
+  padding:9px 14px; font-size:13px; cursor:pointer;
+}
+.reset-btn:hover{background:var(--paper-raised);}
+.output-panel{
+  margin-top:10px; background:#14161b; color:#d6f5df; padding:14px 16px; border-radius:9px;
+  font-family:var(--mono); font-size:12.8px; min-height:20px; max-height:320px; overflow:auto;
+  white-space:pre-wrap; word-break:break-word;
+}
+.output-panel[data-empty="true"]{color:#6d7280; font-style:italic;}
+.output-panel.has-error{color:#f6a8a0;}
+
+/* ---------- EXERCISE / CHALLENGE CARDS ---------- */
+.exercise-card{
+  background:var(--paper-raised); border:1px solid var(--line); border-radius:14px;
+  padding:22px 24px; margin-bottom:22px;
+}
+.exercise-head{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+.exercise-badge{
+  background:var(--orange-soft); color:var(--orange); font-size:11.5px; font-weight:700;
+  padding:3px 10px; border-radius:20px; letter-spacing:.3px;
+}
+.exercise-icon{font-size:19px;}
+.exercise-head h4{margin:0; font-size:17px;}
+.context-line{color:var(--ink-soft); font-size:14px;}
+.objectif-line{font-size:14.5px; margin-top:2px;}
+.etapes-list{padding-left:20px; font-size:14px;}
+.etapes-list li{margin-bottom:5px;}
+.regles-box{
+  background:var(--red-soft); border-radius:10px; padding:12px 16px; margin:12px 0; font-size:13.8px;
+}
+.regles-box strong{color:var(--red); font-size:12.5px; text-transform:uppercase; letter-spacing:.4px;}
+.regles-box ul{margin:8px 0 0 0; padding-left:18px;}
+.resume-box{background:var(--green-soft); border-radius:10px; padding:12px 16px; margin-top:12px; font-size:13.8px;}
+.resume-box strong{color:var(--green); font-size:12.5px; text-transform:uppercase; letter-spacing:.4px;}
+.extension-line{margin-top:12px; font-size:13.8px; background:#fff7e0; padding:10px 14px; border-radius:9px;}
+.note-line{font-size:13px; color:var(--ink-soft); margin-top:8px;}
+.explain-details{margin-top:12px; font-size:13.8px;}
+.explain-details summary{cursor:pointer; font-weight:600; color:var(--blue);}
+.explain-details ul{margin-top:10px;}
+.explain-details li{margin-bottom:10px;}
+
+.solution-block{margin-top:14px;}
+.solution-block summary{
+  cursor:pointer; font-weight:600; font-size:13.5px; color:var(--green);
+  padding:8px 0;
+}
+.solution-block[open] summary{margin-bottom:6px;}
+
+.challenge-block{margin-bottom:10px;}
+.challenge-card{
+  background:linear-gradient(180deg, var(--red-soft), var(--paper-raised) 40%);
+  border:1px solid #ecd2cb; border-radius:14px; padding:24px 26px; margin-bottom:8px;
+}
+.challenge-head{display:flex; align-items:center; gap:10px; margin-bottom:10px;}
+.challenge-badge{
+  background:var(--red); color:#fff; font-size:11.5px; font-weight:700;
+  padding:3px 10px; border-radius:20px; letter-spacing:.3px;
+}
+.challenge-head h4{margin:0; font-size:18px;}
+.sub-etape{margin:16px 0; padding-top:14px; border-top:1px dashed #e3c6c0;}
+.sub-etape h5{margin:0 0 6px 0; font-size:15px; color:var(--red);}
+
+.site-footer{padding:40px; color:var(--ink-soft); font-size:12.5px; max-width:900px;}
+
+/* ---------- responsive ---------- */
+@media (max-width: 860px){
+  .sidebar{position:fixed; left:-280px; top:0; z-index:40; transition:left .2s ease; box-shadow:2px 0 30px rgba(0,0,0,.25);}
+  .sidebar.open{left:0;}
+  .menu-toggle{display:inline-block;}
+  .seance-section, .intro-banner{padding-left:20px; padding-right:20px;}
+  .topbar{padding:12px 16px;}
+}
+.seance-section{display:none;}
+.seance-section.visible{display:block;}
+.intro-banner.hidden{display:none;}
+
+</style>
+</head>
+<body>
+<div class="app-shell">
+  
+  <aside class="sidebar" id="sidebar">
+    <div class="brand">
+      <div class="brand-icon">🗡️</div>
+      <div>
+        <div class="brand-title">Mini-RPG</div>
+        <div class="brand-sub">Première NSI</div>
+      </div>
+    </div>
+    <nav class="nav-list">
+      <button class="nav-item" data-seance="1" onclick="showSeance(1)"><span class="nav-icon">📜</span><span class="nav-text"><span class="nav-num">Séance 1</span><span class="nav-title">Variables, affichage et premiers choix</span></span></button><button class="nav-item" data-seance="2" onclick="showSeance(2)"><span class="nav-icon">🎲</span><span class="nav-text"><span class="nav-num">Séance 2</span><span class="nav-title">Le hasard et les conditions avancées</span></span></button><button class="nav-item" data-seance="3" onclick="showSeance(3)"><span class="nav-icon">🔁</span><span class="nav-text"><span class="nav-num">Séance 3</span><span class="nav-title">Les boucles for et les rencontres aléatoires</span></span></button><button class="nav-item" data-seance="4" onclick="showSeance(4)"><span class="nav-icon">🎮</span><span class="nav-text"><span class="nav-num">Séance 4</span><span class="nav-title">La boucle while, le combat et l&#x27;interface graphique</span></span></button><button class="nav-item" data-seance="5" onclick="showSeance(5)"><span class="nav-icon">📋</span><span class="nav-text"><span class="nav-num">Séance 5</span><span class="nav-title">Les listes</span></span></button><button class="nav-item" data-seance="6" onclick="showSeance(6)"><span class="nav-icon">📖</span><span class="nav-text"><span class="nav-num">Séance 6</span><span class="nav-title">Les dictionnaires</span></span></button>
+    </nav>
+    <div class="sidebar-footer">
+      <div class="progress-label">Progression</div>
+      <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+      <div class="progress-text" id="progress-text">Séance 1 / 6</div>
+    </div>
+  </aside>
+  <main class="main-area">
+    <div class="topbar">
+      <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Menu">☰</button>
+      <div class="topbar-title" id="topbar-title">Mini-RPG — vue d&#x27;ensemble (usage prof)</div>
+      <div class="pyodide-status" id="pyodide-status">Python : non chargé</div>
+    </div>
+    
+    <div class="intro-banner" id="intro-banner">
+      <h1>Mini-RPG — vue d&#x27;ensemble (usage prof)</h1>
+      <p class="intro-sub">De la console à l&#x27;interface graphique — un programme, six séances</p>
+      <p class="intro-accroche">Un programme, six séances : vous allez construire, morceau par morceau, un mini jeu de rôle en Python — d&#x27;abord dans la console, puis avec une vraie interface graphique. Chaque séance ajoute une brique : variables, conditions, boucles, listes, dictionnaires.</p>
+      
+      <div class="intro-hint">
+        💡 Les blocs de code avec un bouton « ▶ Exécuter » tournent directement dans cette
+        page (Python réel, via Pyodide). Les programmes avec une interface graphique
+        (Tkinter) ne peuvent pas s'exécuter dans un navigateur : ouvre-les dans Spyder.
+      </div>
+    </div>
+    <section class="seance-section" id="seance-1" data-color="1">
+    <div class="seance-hero">
+      <div class="seance-hero-icon">📜</div>
+      <div>
+        <div class="seance-eyebrow">Séance 1 sur 6 · 2h</div>
+        <h2>Variables, affichage et premiers choix</h2>
+        <p class="seance-subtitle">input, print et les premières conditions</p>
+      </div>
+    </div>
+    <div class="objectifs-box"><strong>Objectifs de la séance</strong><ul><li>Exécuter et modifier un programme Python (Spyder)</li><li>Utiliser input() pour récupérer une saisie utilisateur</li><li>Utiliser print() pour afficher un message</li><li>Déclarer et affecter des variables</li><li>Écrire une première condition if / else</li></ul></div>
+    <div class="rendu-box">
+      <div class="rendu-head">
+        <span class="rendu-icon">📤</span>
+        <div>
+          <strong>Ce que tu dois rendre</strong>
+          <p>Complète les exercices ci-dessous directement dans cette page (le code s'y
+          exécute réellement), puis entre ton nom ci-dessous et télécharge ton fichier
+          <code>.py</code> — il sera automatiquement nommé au bon format. Dépose-le ensuite
+          sur l'espace de rendu indiqué en classe.</p>
+          <div class="rendu-name-row">
+            <label>NOM-Prénom</label>
+            <input type="text" class="student-name-input" oninput="updateFilenamePreview()" placeholder="ex : DUPONT-Julien">
+          </div>
+          <p class="rendu-filename-preview">Nom de fichier : <code class="filename-preview">mini_rpg_seance1_fondations.py</code>
+          <span class="rendu-hint">(exemple attendu : DUPONT-Julien-TP1-rpg.py)</span></p>
+        </div>
+      </div>
+      <button class="export-btn" onclick="exportPyFile()">📥 Télécharger mon fichier .py</button>
+    </div>
+    <div class="cours-block"><div class="section-label">🎓 Cours</div><h3>Introduction</h3><p>« Un ordinateur peut faire bien des choses, mais il faut d&#x27;abord les lui expliquer. »</p><p>La programmation est bien plus que la simple rédaction de lignes de code : c&#x27;est l&#x27;art de comprendre sa structure, son fonctionnement et son objectif. Un programme est, dans sa forme la plus basique, un ensemble d&#x27;expressions et d&#x27;instructions.</p><p>Nous allons, dans cette série de séances, construire ensemble un RPG ancré dans un univers de fantasy médiévale. Nous débuterons par une version textuelle du jeu pour progressivement incorporer des éléments graphiques, dans le but de développer un RPG complet.</p><p>Pour cette première séance, nous posons les fondations : déclaration et affectation de variables, ordonnancement des opérations et structures conditionnelles — le tout en construisant la première pierre de l&#x27;édifice de notre jeu.</p><h3>Exécuter et modifier un programme</h3><p>Avant d&#x27;aller plus loin, voyons comment exécuter un programme écrit en Python. Sur votre ordinateur, lancez Spyder. Recopiez et exécutez ce programme :</p>
+    <div class="code-runner" id="run1-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run1-code" spellcheck="false"># Demander au joueur d&#x27;entrer le nom de son héros
+nom_hero = input(&quot;Quel est le nom de ton héros ? &quot;)
+
+# Afficher un message de bienvenue personnalisé
+print(&quot;Bienvenue dans le monde de l&#x27;aventure,&quot;, nom_hero, &quot;!&quot;)
+print(&quot;Que ta quête soit remplie de courage et de gloire !&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run1-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run1-stdin" class="stdin-input" value="Aldric" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run1" onclick="runCode('run1')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run1')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run1-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <ul class="explain-list"><li><strong>input pour récupérer le nom du héros</strong> — le programme utilise la fonction input pour demander au joueur d&#x27;écrire le nom de son personnage. Ce nom est ensuite stocké dans la variable nom_hero.</li><li><strong>Affichage du message personnalisé</strong> — la fonction print est utilisée pour montrer un message de bienvenue qui inclut le nom du personnage. Cela permet de personnaliser l&#x27;interaction.</li></ul><div class="comprehension-box"><strong>À vous de jouer :</strong><ul><li>À quoi sert la fonction input ?</li><li>À quoi sert la fonction print ?</li></ul></div></div><div class="exercices-block"><div class="section-label">💻 Exercices</div><div class="exercise-card" id="ex-1.1"><div class="exercise-head"><span class="exercise-badge">Exercice 1.1</span><span class="exercise-icon">🗡️</span><h4>Choisis ton destin</h4></div><p class="objectif-line"><strong>Objectif :</strong> Modifier et étendre le programme initial pour permettre au joueur de choisir une classe pour son héros et afficher un message de bienvenue.</p>
+    <div class="code-runner" id="run2-wrap" data-export="true" data-export-label="Exercice 1.1 — Choisis ton destin">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run2-code" spellcheck="false"># Demander au joueur d&#x27;entrer le nom de son héros
+nom_hero = input(&quot;Quel est le nom de ton héros ? &quot;)
+
+# Demander au joueur de choisir une classe pour son héros
+classe_hero = ___(&quot;Quelle est la classe de ton héros ?&quot;)
+
+# Afficher un message de bienvenue personnalisé
+print(&quot;Bienvenue dans le monde de l&#x27;aventure,&quot;, nom_hero, &quot;le&quot;, ___)
+
+___(&quot;Que ta quête soit remplie de courage et de gloire !&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run2-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run2-stdin" class="stdin-input" value="Aldric
+Guerrier" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run2" onclick="runCode('run2')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run2')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run2-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <details class="explain-details"><summary>📎 Explication ligne par ligne</summary><ul class="explain-list"><li><code>nom_hero = input(&quot;Quel est le nom de ton héros ? &quot;)</code><br>Affiche une question à l&#x27;écran. Ce qui est tapé est enregistré dans la variable nom_hero.</li><li><code>classe_hero = input(&quot;Quelle est la classe de ton héros ? &quot;)</code><br>Même principe : on demande la classe (guerrier, mage, archer…) et on la stocke dans classe_hero.</li><li><code>print(&quot;Bienvenue…&quot;, nom_hero, &quot;le&quot;, classe_hero)</code><br>Combine les informations saisies pour un message personnalisé.</li><li><code>print(&quot;Que ta quête…&quot;)</code><br>Un message d&#x27;encouragement pour débuter l&#x27;aventure.</li></ul></details>
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static"># Demander au joueur d&#x27;entrer le nom de son héros
+nom_hero = input(&quot;Quel est le nom de ton héros ? &quot;)
+
+# Demander au joueur de choisir une classe pour son héros
+classe_hero = input(&quot;Quelle est la classe de ton héros ?&quot;)
+
+# Afficher un message de bienvenue personnalisé
+print(&quot;Bienvenue dans le monde de l&#x27;aventure,&quot;, nom_hero, &quot;le&quot;, classe_hero)
+
+print(&quot;Que ta quête soit remplie de courage et de gloire !&quot;)</pre>
+      </div>
+    </details>
+    </div><div class="exercise-card" id="ex-1.2"><div class="exercise-head"><span class="exercise-badge">Exercice 1.2</span><span class="exercise-icon">👹</span><h4>Rencontre avec un gobelin</h4></div><p class="context-line"><em>Votre héros, un jeune aventurier, rencontre un gobelin dans une forêt sombre. Le gobelin est hostile et prêt à attaquer. Vous devez choisir entre attaquer le gobelin ou utiliser un objet de soin pour restaurer vos points de vie.</em></p><p class="objectif-line"><strong>Objectif :</strong> Gérer les points de vie (PV) du héros lors d&#x27;une interaction avec un gobelin. Le joueur doit décider d&#x27;attaquer ou de se soigner et voir comment cela affecte ses PV.</p>
+    <div class="code-runner" id="run4-wrap" data-export="true" data-export-label="Exercice 1.2 — Rencontre avec un gobelin">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run4-code" spellcheck="false"># Initialisation des variables
+pv_hero = 50       # Points de vie initiaux du héros
+pv_gobelin = 30    # Points de vie initiaux du gobelin
+
+# Accueil du joueur
+___(&quot;Tu rencontres un gobelin !&quot;)
+___(&quot;Tu as&quot;, pv_hero, &quot;PV et le gobelin en a&quot;, ___, &quot;.&quot;)
+
+# Choix de l&#x27;action
+action = ___(&quot;Veux-tu attaquer (tape &#x27;attaquer&#x27;) ou te soigner (tape &#x27;soigner&#x27;) ? &quot;)
+
+# Logique du jeu basée sur le choix
+if action == &#x27;attaquer&#x27;:
+    # Le héros attaque le gobelin
+    degats = 10
+    # Soustraire les dégâts des PV du gobelin
+    pv_gobelin = pv_gobelin ___ degats
+    print(&quot;Tu infliges&quot;, degats, &quot;points de dégâts au gobelin.&quot;)
+else:
+    # Le héros se soigne
+    soin = 15
+    # Ajouter le soin aux PV du héros
+    pv_hero = pv_hero ___ soin
+    print(&quot;Tu utilises un objet de soin&quot;)
+
+# Afficher le statut après l&#x27;action
+print(&quot;Tes points de vie :&quot;, ___)
+print(&quot;Points de vie du gobelin :&quot;, ___)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run4-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run4-stdin" class="stdin-input" value="attaquer" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run4" onclick="runCode('run4')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run4')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run4-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <details class="explain-details"><summary>📎 Explication ligne par ligne</summary><ul class="explain-list"><li><code>pv_hero, pv_gobelin</code><br>des compteurs qui gardent une trace des points de vie du héros (50) et du gobelin (30).</li><li><code>if action == &#x27;attaquer&#x27; : …</code><br>si tu attaques, les PV du gobelin sont réduits de 10.</li><li><code>else : …</code><br>sinon, tu te soignes : tes PV augmentent de 15.</li></ul></details><p class="note-line">ℹ️ Dans une prochaine séance, nous explorerons comment utiliser if, else et elif pour prendre des décisions plus riches dans nos programmes.</p>
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static"># Initialisation des variables
+pv_hero = 50
+pv_gobelin = 30
+
+print(&quot;Tu rencontres un gobelin !&quot;)
+print(&quot;Tu as&quot;, pv_hero, &quot;PV et le gobelin en a&quot;, pv_gobelin, &quot;.&quot;)
+
+action = input(&quot;Veux-tu attaquer (tape &#x27;attaquer&#x27;) ou te soigner (tape &#x27;soigner&#x27;) ? &quot;)
+
+if action == &#x27;attaquer&#x27;:
+    degats = 10
+    pv_gobelin = pv_gobelin - degats
+    print(&quot;Tu infliges&quot;, degats, &quot;points de dégâts au gobelin.&quot;)
+else:
+    soin = 15
+    pv_hero = pv_hero + soin
+    print(&quot;Tu utilises un objet de soin&quot;)
+
+print(&quot;Tes points de vie :&quot;, pv_hero)
+print(&quot;Points de vie du gobelin :&quot;, pv_gobelin)</pre>
+      </div>
+    </details>
+    </div></div><div class="challenge-block"><div class="section-label">🏆 Challenge de fin de séance</div><div class="challenge-card"><div class="challenge-head"><span class="challenge-badge">🏆 Challenge</span><span class="exercise-icon">⚔️</span><h4>Création de personnage</h4></div><p>Dans les jeux de rôle (RPG), un point de compétence est une unité que le joueur peut attribuer à différentes compétences de son personnage pour améliorer ses capacités : force (attaques physiques), intelligence (capacités magiques) et agilité (vitesse, précision). Distribuer des points de compétence permet au joueur de personnaliser son personnage selon son style de jeu préféré.</p><p class="objectif-line"><strong>Objectif :</strong> Construire la première étape du jeu RPG en permettant au joueur de créer son propre personnage en choisissant son nom, sa classe, et en distribuant des points de compétence.</p><ol class="etapes-list"><li>Demander le nom du personnage.</li><li>Choisir la classe du personnage parmi 3 classes (guerrier, mage, archer).</li><li>Distribuer un nombre limité de points (15) entre 3 compétences (force, intelligence, agilité).</li></ol>
+    <div class="code-runner" id="run6-wrap" data-export="true" data-export-label="Challenge — Création de personnage">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run6-code" spellcheck="false"># Accueil
+______(&quot;Bienvenue dans la création de personnage du RPG !&quot;)
+
+# Demander le nom du personnage
+nom_personnage = ________________________________________
+
+# Choisir la classe du personnage
+______(&quot;Quelle classe veux-tu choisir pour ton personnage ?&quot;)
+classe_personnage = _____________________________________
+
+# Attribution des points de compétence
+total_points = 15   # Total de points à distribuer
+print(&quot;Tu as&quot;, ________, &quot;points de compétence à distribuer.&quot;)
+
+______(&quot;Combien de points veux-tu attribuer à la Force ?&quot;)
+force = int(input())
+total_points = ______________________________________________
+
+______(&quot;Combien de points veux-tu attribuer à l&#x27;Intelligence ?&quot;)
+intelligence = int(input())
+total_points = ______________________________________________
+
+______(&quot;Combien de points restants veux-tu attribuer à l&#x27;Agilité ?&quot;)
+agilite = int(input())
+total_points = ______________________________________________
+
+# Récapitulatif du personnage créé
+______(&quot;Création de personnage terminée ! Voici les détails de ton héros :&quot;)
+print(&quot;Nom :&quot;, ______________)
+print(&quot;Classe :&quot;, ______________)
+print(&quot;Force :&quot;, ______________)
+print(&quot;Intelligence :&quot;, ______________)
+print(&quot;Agilité :&quot;, ______________)
+
+# Vérifier si tous les points ont été correctement distribués
+if total_points == 0:
+    print(&quot;Tous les points ont été distribués correctement !&quot;)
+else:
+    print(&quot;Attention, il semble que la distribution des points soit incorrecte. Il te reste&quot;, ______, &quot;points.&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run6-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run6-stdin" class="stdin-input" value="Aldric
+Guerrier
+5
+5
+5" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run6" onclick="runCode('run6')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run6')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run6-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static">print(&quot;Bienvenue dans la création de personnage du RPG !&quot;)
+
+nom_personnage = input(&quot;Quel est le nom de ton personnage ? &quot;)
+
+print(&quot;Quelle classe veux-tu choisir pour ton personnage ?&quot;)
+classe_personnage = input()
+
+total_points = 15
+print(&quot;Tu as&quot;, total_points, &quot;points de compétence à distribuer.&quot;)
+
+print(&quot;Combien de points veux-tu attribuer à la Force ?&quot;)
+force = int(input())
+total_points = total_points - force
+
+print(&quot;Combien de points veux-tu attribuer à l&#x27;Intelligence ?&quot;)
+intelligence = int(input())
+total_points = total_points - intelligence
+
+print(&quot;Combien de points restants veux-tu attribuer à l&#x27;Agilité ?&quot;)
+agilite = int(input())
+total_points = total_points - agilite
+
+print(&quot;Création de personnage terminée ! Voici les détails de ton héros :&quot;)
+print(&quot;Nom :&quot;, nom_personnage)
+print(&quot;Classe :&quot;, classe_personnage)
+print(&quot;Force :&quot;, force)
+print(&quot;Intelligence :&quot;, intelligence)
+print(&quot;Agilité :&quot;, agilite)
+
+if total_points == 0:
+    print(&quot;Tous les points ont été distribués correctement !&quot;)
+else:
+    print(&quot;Attention, il semble que la distribution des points soit incorrecte. Il te reste&quot;, total_points, &quot;points.&quot;)</pre>
+      </div>
+    </details>
+    </div></div></section><section class="seance-section" id="seance-2" data-color="2">
+    <div class="seance-hero">
+      <div class="seance-hero-icon">🎲</div>
+      <div>
+        <div class="seance-eyebrow">Séance 2 sur 6 · 2h</div>
+        <h2>Le hasard et les conditions avancées</h2>
+        <p class="seance-subtitle">l&#x27;indentation qui change tout, et la fonction random</p>
+      </div>
+    </div>
+    <div class="objectifs-box"><strong>Objectifs de la séance</strong><ul><li>Comprendre le rôle de l&#x27;indentation dans un bloc if/else</li><li>Utiliser le module random pour introduire du hasard dans un programme</li><li>Comprendre pourquoi le hasard est utile dans un jeu</li></ul></div>
+    <div class="rendu-box">
+      <div class="rendu-head">
+        <span class="rendu-icon">📤</span>
+        <div>
+          <strong>Ce que tu dois rendre</strong>
+          <p>Complète les exercices ci-dessous directement dans cette page (le code s'y
+          exécute réellement), puis entre ton nom ci-dessous et télécharge ton fichier
+          <code>.py</code> — il sera automatiquement nommé au bon format. Dépose-le ensuite
+          sur l'espace de rendu indiqué en classe.</p>
+          <div class="rendu-name-row">
+            <label>NOM-Prénom</label>
+            <input type="text" class="student-name-input" oninput="updateFilenamePreview()" placeholder="ex : DUPONT-Julien">
+          </div>
+          <p class="rendu-filename-preview">Nom de fichier : <code class="filename-preview">mini_rpg_seance2_hasard.py</code>
+          <span class="rendu-hint">(exemple attendu : DUPONT-Julien-TP2-rpg.py)</span></p>
+        </div>
+      </div>
+      <button class="export-btn" onclick="exportPyFile()">📥 Télécharger mon fichier .py</button>
+    </div>
+    <div class="cours-block"><div class="section-label">🎓 Cours</div><h3>Indentation et conditions</h3><p>Dans un RPG, l&#x27;action du héros dépend de ses choix et de ses ressources. Par exemple, si le héros n&#x27;a plus de PV, il doit décider quoi faire en fonction du nombre de potions disponibles : s&#x27;il en a, il en consomme une et entre dans une grotte ; sinon, il doit se reposer.</p><p>Cependant, en modifiant uniquement l&#x27;indentation du programme, il est possible de changer complètement le comportement du héros, en lui faisant toujours entrer dans la grotte, qu&#x27;il ait des potions ou non.</p><h3>Exercice — l&#x27;indentation qui change tout</h3><p>Voici le programme sur lequel vous allez travailler. Lisez-le attentivement et déterminez ce qu&#x27;il fait en fonction de la valeur de potions.</p>
+    <div class="code-runner" id="run8-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run8-code" spellcheck="false">potions = 2  # modifie cette valeur pour tester
+
+if potions == 0:
+    print(&quot;Vous devez vous reposer.&quot;)
+else:
+    print(&quot;Vous buvez une potion.&quot;)
+    print(&quot;Vous entrez dans une grotte pour affronter un monstre.&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run8-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run8-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run8" onclick="runCode('run8')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run8')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run8-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <p class="challenge-followup">👉 Maintenant, modifiez uniquement l&#x27;indentation du programme pour que le héros entre dans la grotte dans tous les cas, qu&#x27;il ait des potions ou non.</p><h3>La fonction random</h3><p>Parmi les opérations de base disponibles en Python, il existe la fonction random, qui renvoie un nombre aléatoire compris entre 0 et 1.</p><p>Si l&#x27;on s&#x27;y arrête quelques secondes, l&#x27;existence d&#x27;une telle fonction est contradictoire avec la notion même d&#x27;algorithme : un processus suffisamment bien décrit et détaillé pour être exécuté sans erreur ni initiative de la part d&#x27;une machine ne peut pas mener à un résultat imprévisible et différent à chaque exécution.</p><p>Pourtant l&#x27;introduction de hasard dans les programmes est indispensable, par exemple pour créer des situations imprévues dans les jeux, mais aussi pour résoudre certains problèmes qui ne peuvent pas être résolus sans une part de hasard.</p><p>Dans ce TP, nous utiliserons le module random avec la syntaxe import random, puis random.random(), random.randint(...), etc. — c&#x27;est cette syntaxe (plutôt que from random import *) que nous garderons pour toute la suite du projet, afin de toujours savoir d&#x27;où vient chaque fonction utilisée.</p><h3>Un nombre au hasard entre 0 et 10</h3>
+    <div class="code-runner" id="run9-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run9-code" spellcheck="false">import random
+
+# met un nombre au hasard compris entre 0 et 10 dans la variable x
+x = int(random.random()*10)
+
+# affiche la valeur de x
+print(x)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run9-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run9-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run9" onclick="runCode('run9')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run9')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run9-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    </div><div class="exercices-block"><div class="section-label">💻 Exercices</div><div class="exercise-card" id="ex-2.1"><div class="exercise-head"><span class="exercise-badge">Exercice 2.1</span><span class="exercise-icon">🌙</span><h4>L&#x27;attaque surprise</h4></div><p class="context-line"><em>Dans l&#x27;univers des RPG, les rencontres aléatoires avec des ennemis sont courantes. Utilisons la fonction random pour simuler une attaque surprise par un ennemi.</em></p><p class="objectif-line"><strong>Objectif :</strong> Écrire un programme qui décide aléatoirement si un héros est surpris par un ennemi lorsqu&#x27;il entre dans une nouvelle zone. Le programme affiche &quot;Attaque Surprise&quot; si le héros est attaqué et &quot;Aucun ennemi&quot; sinon.</p>
+    <div class="code-runner" id="run10-wrap" data-export="true" data-export-label="Exercice 2.1 — L&#x27;attaque surprise">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run10-code" spellcheck="false"># Importer le module nécessaire
+import ___
+
+# Générer un événement aléatoire
+chance = ___.random()
+
+# Décider si le héros est attaqué par surprise
+# Supposons que 50 % du temps, il y a une attaque surprise
+if ___ &lt; ___ :
+    print(&quot;Attaque surprise&quot;)
+else:
+    print(&quot;Aucun ennemi&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run10-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run10-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run10" onclick="runCode('run10')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run10')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run10-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static">import random
+
+chance = random.random()
+
+if chance &lt; 0.5:
+    print(&quot;Attaque surprise&quot;)
+else:
+    print(&quot;Aucun ennemi&quot;)</pre>
+      </div>
+    </details>
+    </div><div class="exercise-card" id="ex-2.2"><div class="exercise-head"><span class="exercise-badge">Exercice 2.2</span><span class="exercise-icon">🗝️</span><h4>Le butin du coffre</h4></div><p class="context-line"><em>Après une victoire, le héros ouvre un coffre. La rareté du butin dépend d&#x27;un tirage aléatoire. Pour gérer plus de deux cas, on enchaîne les conditions avec elif (contraction de « else if ») : Python les teste dans l&#x27;ordre et s&#x27;arrête à la première qui est vraie.</em></p><p class="objectif-line"><strong>Objectif :</strong> Tirer un nombre entre 1 et 100 et afficher un butin différent selon sa valeur : commun (50 % de chances), rare (30 %), épique (15 %) ou légendaire (5 %).</p>
+    <div class="code-runner" id="run12-wrap" data-export="true" data-export-label="Exercice 2.2 — Le butin du coffre">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run12-code" spellcheck="false">import random
+
+tirage = random.___(1, 100)
+
+if tirage &lt;= 50:
+    print(&quot;Tu trouves une potion de soin. (commun)&quot;)
+___ tirage &lt;= 80:
+    print(&quot;Tu trouves une arme rare !&quot;)
+elif tirage ___ 95:
+    print(&quot;Tu trouves un objet épique !&quot;)
+___:
+    print(&quot;Tu trouves un trésor légendaire !!!&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run12-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run12-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run12" onclick="runCode('run12')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run12')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run12-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <p class="note-line">ℹ️ La suite : en séance 3, on répète ce genre d&#x27;événement plusieurs fois de suite grâce à la boucle for.</p>
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static">import random
+
+tirage = random.randint(1, 100)
+
+if tirage &lt;= 50:
+    print(&quot;Tu trouves une potion de soin. (commun)&quot;)
+elif tirage &lt;= 80:
+    print(&quot;Tu trouves une arme rare !&quot;)
+elif tirage &lt;= 95:
+    print(&quot;Tu trouves un objet épique !&quot;)
+else:
+    print(&quot;Tu trouves un trésor légendaire !!!&quot;)</pre>
+      </div>
+    </details>
+    </div></div></section><section class="seance-section" id="seance-3" data-color="3">
+    <div class="seance-hero">
+      <div class="seance-hero-icon">🔁</div>
+      <div>
+        <div class="seance-eyebrow">Séance 3 sur 6 · 2h</div>
+        <h2>Les boucles for et les rencontres aléatoires</h2>
+        <p class="seance-subtitle">répéter des instructions, et pondérer le hasard</p>
+      </div>
+    </div>
+    <div class="objectifs-box"><strong>Objectifs de la séance</strong><ul><li>Écrire et lire une boucle for … in range(...)</li><li>Combiner boucle for et hasard pour simuler des rencontres répétées</li><li>Pondérer des probabilités avec random.choices</li></ul></div>
+    <div class="rendu-box">
+      <div class="rendu-head">
+        <span class="rendu-icon">📤</span>
+        <div>
+          <strong>Ce que tu dois rendre</strong>
+          <p>Complète les exercices ci-dessous directement dans cette page (le code s'y
+          exécute réellement), puis entre ton nom ci-dessous et télécharge ton fichier
+          <code>.py</code> — il sera automatiquement nommé au bon format. Dépose-le ensuite
+          sur l'espace de rendu indiqué en classe.</p>
+          <div class="rendu-name-row">
+            <label>NOM-Prénom</label>
+            <input type="text" class="student-name-input" oninput="updateFilenamePreview()" placeholder="ex : DUPONT-Julien">
+          </div>
+          <p class="rendu-filename-preview">Nom de fichier : <code class="filename-preview">mini_rpg_seance3_boucles-for.py</code>
+          <span class="rendu-hint">(exemple attendu : DUPONT-Julien-TP3-rpg.py)</span></p>
+        </div>
+      </div>
+      <button class="export-btn" onclick="exportPyFile()">📥 Télécharger mon fichier .py</button>
+    </div>
+    <div class="cours-block"><div class="section-label">🎓 Cours</div><h3>Les boucles for</h3><p>« Un ordinateur est fait pour effectuer des calculs longs et répétitifs. »</p><p>Dans les programmes vus jusqu&#x27;ici, chaque instruction est exécutée au plus une fois. Or, on veut souvent exécuter certaines instructions plusieurs fois : c&#x27;est le rôle d&#x27;une boucle.</p><p>La boucle for est une instruction de la forme for i in range(e1, e2): suivie d&#x27;un corps indenté p. Exécuter cette boucle exécute p (n-m) fois, où m est la valeur de e1 et n celle de e2, la variable i prenant successivement les valeurs m, m+1, …, n-1.</p><h3>Deux exemples de boucle for</h3>
+    <div class="code-runner" id="run14-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run14-code" spellcheck="false">for i in range(1, 5):
+    print(&quot;allô &quot;)
+print(&quot;tu es où ?&quot;)
+
+# --- autre exemple ---
+
+for i in range(1, 11):
+    print(i)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run14-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run14-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run14" onclick="runCode('run14')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run14')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run14-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <h3>Pondérer le hasard avec random.choices</h3><p>En séance 2, chaque issue avait la même probabilité (50/50). Pour rendre certains événements plus rares que d&#x27;autres (par exemple un monstre légendaire rare), on utilise random.choices, qui accepte un paramètre weights : les poids n&#x27;ont pas besoin de totaliser 100, seule leur proportion les uns par rapport aux autres compte. Attention : random.choices renvoie toujours une liste, même pour un seul tirage — d&#x27;où le [0] pour récupérer l&#x27;élément tiré.</p>
+    <div class="code-runner" id="run15-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run15-code" spellcheck="false">import random
+
+monstres = [&quot;gobelin&quot;, &quot;araignee&quot;, &quot;troll&quot;]
+poids    = [50,         30,          20]   # gobelin plus fréquent que troll
+
+ennemi = random.choices(monstres, weights=poids)[0]
+print(ennemi)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run15-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run15-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run15" onclick="runCode('run15')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run15')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run15-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    </div><div class="exercices-block"><div class="section-label">💻 Exercices</div><div class="exercise-card" id="ex-3.1"><div class="exercise-head"><span class="exercise-badge">Exercice 3.1</span><span class="exercise-icon">🌲</span><h4>Les ennemis de la forêt interdite</h4></div><p class="objectif-line"><strong>Objectif :</strong> Le héros doit traverser une forêt interdite où différents types d&#x27;ennemis apparaissent à chaque pas. Simulez 10 rencontres aléatoires avec des ennemis, en utilisant une boucle for.</p>
+    <div class="code-runner" id="run16-wrap" data-export="true" data-export-label="Exercice 3.1 — Les ennemis de la forêt interdite">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run16-code" spellcheck="false">import random
+
+print(&quot;Le héros entre dans la forêt interdite...&quot;)
+
+for i in ________(________, ________):
+    ennemi = &quot;&quot;
+    choix = random.randint(1, 3)
+    if choix == 1 : ennemi = &quot;Gobelin&quot;
+    if ______ == 2 : ________ = &quot;Troll&quot;
+    if ______ == 3 : ________ = &quot;Araignée&quot;
+    # Afficher le type d&#x27;ennemi rencontré
+    print(f&quot;Rencontre {i}: Un {________} apparaît !&quot;)
+
+print(&quot;Le héros est sorti de la forêt.&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run16-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run16-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run16" onclick="runCode('run16')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run16')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run16-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static">import random
+
+print(&quot;Le héros entre dans la forêt interdite...&quot;)
+
+for i in range(1, 11):
+    ennemi = &quot;&quot;
+    choix = random.randint(1, 3)
+    if choix == 1 : ennemi = &quot;Gobelin&quot;
+    if choix == 2 : ennemi = &quot;Troll&quot;
+    if choix == 3 : ennemi = &quot;Araignée&quot;
+    print(f&quot;Rencontre {i}: Un {ennemi} apparaît !&quot;)
+
+print(&quot;Le héros est sorti de la forêt.&quot;)</pre>
+      </div>
+    </details>
+    </div></div><div class="challenge-block"><div class="section-label">🏆 Challenge de fin de séance</div><div class="challenge-card"><div class="challenge-head"><span class="challenge-badge">🏆 Challenge</span><span class="exercise-icon">🎯</span><h4>Un peu plus de hasard...</h4></div><p class="objectif-line"><strong>Objectif :</strong> Reprenez l&#x27;exercice précédent et faites en sorte que certains ennemis soient plus rares que d&#x27;autres, à l&#x27;aide de random.choices et de son paramètre weights vus dans le cours : par exemple 50 % de chances de rencontrer un gobelin, 30 % pour une araignée, 20 % pour un troll.</p>
+    <div class="code-runner" id="run18-wrap" data-export="true" data-export-label="Challenge — Un peu plus de hasard...">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run18-code" spellcheck="false">import random
+
+noms_ennemis = [&quot;Gobelin&quot;, &quot;Araignée&quot;, &quot;Troll&quot;]
+poids_ennemis = [___, ___, ___]   # doit correspondre à 50 % / 30 % / 20 %
+
+print(&quot;Le héros entre dans la forêt interdite...&quot;)
+
+for i in range(1, 11):
+    ennemi = random.________(noms_ennemis, weights=___________)[___]
+    print(f&quot;Rencontre {i}: Un {ennemi} apparaît !&quot;)
+
+print(&quot;Le héros est sorti de la forêt.&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run18-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run18-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run18" onclick="runCode('run18')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run18')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run18-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static">import random
+
+noms_ennemis = [&quot;Gobelin&quot;, &quot;Araignée&quot;, &quot;Troll&quot;]
+poids_ennemis = [50, 30, 20]
+
+print(&quot;Le héros entre dans la forêt interdite...&quot;)
+
+for i in range(1, 11):
+    ennemi = random.choices(noms_ennemis, weights=poids_ennemis)[0]
+    print(f&quot;Rencontre {i}: Un {ennemi} apparaît !&quot;)
+
+print(&quot;Le héros est sorti de la forêt.&quot;)</pre>
+      </div>
+    </details>
+    </div></div></section><section class="seance-section" id="seance-4" data-color="4">
+    <div class="seance-hero">
+      <div class="seance-hero-icon">🎮</div>
+      <div>
+        <div class="seance-eyebrow">Séance 4 sur 6 · 2h (séance dense — voir note pour le professeur)</div>
+        <h2>La boucle while, le combat et l&#x27;interface graphique</h2>
+        <p class="seance-subtitle">répéter tant qu&#x27;une condition est vraie — et le voir à l&#x27;écran</p>
+      </div>
+    </div>
+    <div class="objectifs-box"><strong>Objectifs de la séance</strong><ul><li>Comprendre la différence entre for (nombre de répétitions connu) et while (répétition tant qu&#x27;une condition est vraie)</li><li>Écrire une boucle while avec une condition d&#x27;arrêt</li><li>Simuler un combat au tour par tour avec un dé à 20 faces</li><li>Créer une interface graphique avec Tkinter (Label, Entry, Button)</li><li>Afficher une image dans une interface Tkinter</li></ul></div>
+    <div class="rendu-box">
+      <div class="rendu-head">
+        <span class="rendu-icon">📤</span>
+        <div>
+          <strong>Ce que tu dois rendre</strong>
+          <p>Complète les exercices ci-dessous directement dans cette page (le code s'y
+          exécute réellement), puis entre ton nom ci-dessous et télécharge ton fichier
+          <code>.py</code> — il sera automatiquement nommé au bon format. Dépose-le ensuite
+          sur l'espace de rendu indiqué en classe.</p>
+          <div class="rendu-name-row">
+            <label>NOM-Prénom</label>
+            <input type="text" class="student-name-input" oninput="updateFilenamePreview()" placeholder="ex : DUPONT-Julien">
+          </div>
+          <p class="rendu-filename-preview">Nom de fichier : <code class="filename-preview">mini_rpg_seance4_while-interface.py</code>
+          <span class="rendu-hint">(exemple attendu : DUPONT-Julien-TP4-rpg.py)</span></p>
+        </div>
+      </div>
+      <button class="export-btn" onclick="exportPyFile()">📥 Télécharger mon fichier .py</button>
+    </div>
+    <div class="cours-block"><div class="section-label">🎓 Cours</div><h3>Pourquoi une nouvelle boucle ?</h3><p>La boucle for est parfaite quand on connaît à l&#x27;avance le nombre de répétitions. Mais dans un combat, on ne sait pas à l&#x27;avance combien de tours vont se dérouler : cela dépend des points de vie, du hasard, des choix du joueur… On a besoin d&#x27;une boucle qui se répète tant qu&#x27;une condition reste vraie : la boucle while.</p><h3>Un premier exemple : le compte à rebours</h3><p>Avant le combat, un exemple simple pour voir la syntaxe : tant que la condition après while est vraie, le corps indenté se répète. Il faut que quelque chose, à l&#x27;intérieur de la boucle, finisse par rendre la condition fausse — sinon la boucle ne s&#x27;arrête jamais (boucle infinie).</p>
+    <div class="code-runner" id="run20-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run20-code" spellcheck="false">compte = 5
+
+while compte &gt; 0:
+    print(compte)
+    compte = compte - 1   # sans cette ligne, la boucle ne s&#x27;arrête jamais
+
+print(&quot;Décollage !&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run20-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run20-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run20" onclick="runCode('run20')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run20')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run20-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    </div><div class="exercices-block"><div class="section-label">💻 Exercices</div><div class="exercise-card" id="ex-4.1"><div class="exercise-head"><span class="exercise-badge">Exercice 4.1</span><span class="exercise-icon">💀</span><h4>Un mini-jeu de survie</h4></div><p class="objectif-line"><strong>Objectif :</strong> Vous contrôlez un personnage dont la vie commence à 100. Créez un programme qui simule le passage du temps et la perte de vie du personnage en fonction des événements qui se produisent.</p><ol class="etapes-list"><li>Créez une variable vie et initialisez-la à 100.</li><li>Utilisez une boucle while pour simuler le passage du temps tant que la vie du personnage est supérieure à 0.</li><li>À chaque itération, demandez à l&#x27;utilisateur ce qu&#x27;il souhaite faire (&quot;Attaquer&quot;, &quot;Se défendre&quot;, &quot;Rien&quot;).</li><li>Mettez à jour la variable vie selon l&#x27;action choisie : Attaquer → -20 ; Se défendre → +10 (sans dépasser 100) ; Rien → -5.</li><li>À la fin de chaque itération, affichez la quantité de vie restante.</li><li>Si la vie atteint 0 ou moins, terminez la boucle et affichez un message indiquant que le personnage est tombé au combat.</li></ol>
+    <div class="code-runner" id="run21-wrap" data-export="true" data-export-label="Exercice 4.1 — Un mini-jeu de survie">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run21-code" spellcheck="false">vie = 100
+
+while vie ___ 0:
+    action = input(&quot;Que fais-tu ? (Attaquer / Se défendre / Rien) : &quot;)
+    if action == &quot;Attaquer&quot;:
+        vie = vie ___ 20
+    elif action == &quot;Se défendre&quot;:
+        vie = vie ___ 10
+        if vie &gt; 100:
+            vie = ___
+    else:
+        vie = vie ___ 5
+    print(&quot;Vie restante :&quot;, vie)
+
+print(&quot;Ton personnage est tombé au combat.&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run21-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run21-stdin" class="stdin-input" value="Rien
+Attaquer
+Attaquer
+Attaquer
+Attaquer
+Attaquer" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run21" onclick="runCode('run21')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run21')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run21-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static">vie = 100
+
+while vie &gt; 0:
+    action = input(&quot;Que fais-tu ? (Attaquer / Se défendre / Rien) : &quot;)
+    if action == &quot;Attaquer&quot;:
+        vie = vie - 20
+    elif action == &quot;Se défendre&quot;:
+        vie = vie + 10
+        if vie &gt; 100:
+            vie = 100
+    else:
+        vie = vie - 5
+    print(&quot;Vie restante :&quot;, vie)
+
+print(&quot;Ton personnage est tombé au combat.&quot;)</pre>
+      </div>
+    </details>
+    </div><div class="exercise-card" id="ex-4.2"><div class="exercise-head"><span class="exercise-badge">Exercice 4.2</span><span class="exercise-icon">🐉</span><h4>Combat avec un monstre</h4></div><p class="context-line"><em>Après avoir exploré le mini-jeu de la vie du personnage, ajoutons un combat contre un monstre. Le succès des attaques sera déterminé par le lancement d&#x27;un dé à 20 faces.</em></p><p class="objectif-line"><strong>Objectif :</strong> Simuler un combat entre votre personnage et un monstre jusqu&#x27;à ce que l&#x27;un des deux n&#x27;ait plus de points de vie.</p><div class="regles-box"><strong>Règles du jeu</strong><ul><li>Votre personnage et le monstre commencent chacun avec 100 points de vie.</li><li>À chaque tour, vous pouvez choisir d&#x27;attaquer, de vous défendre ou de ne rien faire.</li><li>Lorsqu&#x27;une attaque est lancée, un dé à 20 faces (random.randint(1, 20)) est lancé : si le score est supérieur à 10, l&#x27;attaque réussit.</li><li>Une attaque réussie réduit les PV de l&#x27;adversaire de 20.</li><li>Se défendre permet de regagner 10 PV, jusqu&#x27;à un maximum de 100.</li><li>Le monstre attaque automatiquement à chaque tour, avec le même principe de dé à 20 faces.</li></ul></div>
+    <div class="code-runner" id="run23-wrap" data-export="true" data-export-label="Exercice 4.2 — Combat avec un monstre">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run23-code" spellcheck="false">import random
+
+pv_hero = 100
+pv_monstre = 100
+
+while pv_hero &gt; 0 and pv_monstre &gt; 0:
+    action = input(&quot;Attaquer, Se défendre ou Rien ? : &quot;)
+    if action == &quot;Attaquer&quot;:
+        de = random.randint(1, ___)
+        if de &gt; 10:
+            pv_monstre = pv_monstre ___ 20
+            print(&quot;Attaque réussie ! PV monstre :&quot;, pv_monstre)
+        else:
+            print(&quot;Attaque manquée.&quot;)
+    elif action == &quot;Se défendre&quot;:
+        pv_hero = pv_hero + 10
+        if pv_hero &gt; ___:
+            pv_hero = 100
+
+    # Tour du monstre
+    de_monstre = random.randint(1, 20)
+    if de_monstre &gt; 10:
+        pv_hero = pv_hero - ___
+        print(&quot;Le monstre vous touche ! PV héros :&quot;, pv_hero)
+
+if pv_hero &lt;= 0:
+    print(&quot;Vous avez été vaincu...&quot;)
+else:
+    print(&quot;Victoire ! Le monstre est vaincu.&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run23-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run23-stdin" class="stdin-input" value="Attaquer
+Attaquer
+Attaquer
+Attaquer
+Attaquer
+Attaquer" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run23" onclick="runCode('run23')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run23')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run23-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <p class="note-line">ℹ️ Pause : le combat fonctionne, mais on ne voit rien du monstre qu&#x27;on affronte. La suite de la séance ajoute une vraie fenêtre — et une image.</p>
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static">import random
+
+pv_hero = 100
+pv_monstre = 100
+
+while pv_hero &gt; 0 and pv_monstre &gt; 0:
+    action = input(&quot;Attaquer, Se défendre ou Rien ? : &quot;)
+    if action == &quot;Attaquer&quot;:
+        de = random.randint(1, 20)
+        if de &gt; 10:
+            pv_monstre = pv_monstre - 20
+            print(&quot;Attaque réussie ! PV monstre :&quot;, pv_monstre)
+        else:
+            print(&quot;Attaque manquée.&quot;)
+    elif action == &quot;Se défendre&quot;:
+        pv_hero = pv_hero + 10
+        if pv_hero &gt; 100:
+            pv_hero = 100
+
+    de_monstre = random.randint(1, 20)
+    if de_monstre &gt; 10:
+        pv_hero = pv_hero - 20
+        print(&quot;Le monstre vous touche ! PV héros :&quot;, pv_hero)
+
+if pv_hero &lt;= 0:
+    print(&quot;Vous avez été vaincu...&quot;)
+else:
+    print(&quot;Victoire ! Le monstre est vaincu.&quot;)</pre>
+      </div>
+    </details>
+    </div><div class="exercise-card" id="ex-4.3"><div class="exercise-head"><span class="exercise-badge">Exercice 4.3</span><span class="exercise-icon">🪟</span><h4>Ta première fenêtre de personnage</h4></div><p class="context-line"><em>Tkinter est la bibliothèque graphique standard de Python — elle est déjà installée avec Python, inutile d&#x27;installer quoi que ce soit. Trois briques suffisent pour commencer : Label (afficher du texte), Entry (un champ de saisie) et Button (un bouton qui déclenche une fonction). Le paramètre command=ma_fonction attend le NOM de la fonction, sans parenthèses — écrire command=ma_fonction() l&#x27;appellerait tout de suite, au lieu d&#x27;attendre le clic.</em></p><p class="objectif-line"><strong>Objectif :</strong> Prendre en main Tkinter : afficher une fenêtre, un champ de saisie et un bouton, et relier un clic à une fonction Python grâce au paramètre command.</p>
+    <div class="code-runner" id="run25-wrap" data-export="true" data-export-label="Exercice 4.3 — Ta première fenêtre de personnage">
+      <div class="gui-note">🖥️ Interface graphique Tkinter : à exécuter dans Spyder, pas dans le navigateur.</div>
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run25-code" spellcheck="false">import tkinter as tk
+
+# Cette fonction récupère le texte saisi et l&#x27;affiche dans le label
+def afficher_nom():
+    nom = entry.get()
+    label_resultat.config(text=&quot;Bienvenue, &quot; + ___ + &quot; !&quot;)
+
+# Création de la fenêtre principale
+root = tk.Tk()
+root.___(&quot;Création de personnage&quot;)
+
+# Champ de saisie pour le nom du héros
+entry = tk.Entry(root)
+entry.pack(pady=10)
+
+# Bouton relié à la fonction afficher_nom
+bouton = tk.Button(root, text=&quot;Valider&quot;, command=___)
+bouton.pack(pady=5)
+
+# Label qui affichera le résultat
+label_resultat = tk.Label(root, text=&quot;&quot;)
+label_resultat.___(pady=10)
+
+root.___()</textarea>
+      </div>
+      
+      <div class="run-row">
+        
+        <button class="reset-btn" onclick="resetCode('run25')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run25-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static">import tkinter as tk
+
+def afficher_nom():
+    nom = entry.get()
+    label_resultat.config(text=&quot;Bienvenue, &quot; + nom + &quot; !&quot;)
+
+root = tk.Tk()
+root.title(&quot;Création de personnage&quot;)
+
+entry = tk.Entry(root)
+entry.pack(pady=10)
+
+bouton = tk.Button(root, text=&quot;Valider&quot;, command=afficher_nom)
+bouton.pack(pady=5)
+
+label_resultat = tk.Label(root, text=&quot;&quot;)
+label_resultat.pack(pady=10)
+
+root.mainloop()</pre>
+      </div>
+    </details>
+    </div><div class="exercise-card" id="ex-4.4"><div class="exercise-head"><span class="exercise-badge">Exercice 4.4</span><span class="exercise-icon">🖼️</span><h4>Affichage graphique des rencontres</h4></div><p class="context-line"><em>Pour afficher une image dans Tkinter, il faut la bibliothèque Pillow (PIL), qui gère l&#x27;ouverture et le redimensionnement, puis ImageTk.PhotoImage() qui la convertit dans un format que Tkinter sait afficher. Étapes : 1) importer tkinter et PIL ; 2) créer la fenêtre ; 3) charger l&#x27;image avec Image.open() et la redimensionner avec resize() ; 4) la convertir avec ImageTk.PhotoImage() ; 5) l&#x27;afficher dans un Label ou un Canvas ; 6) lancer mainloop(). Une ligne à retenir : canvas.image = photo conserve une référence à l&#x27;image pour l&#x27;empêcher d&#x27;être supprimée par le garbage collector avant d&#x27;être affichée.</em></p><p class="objectif-line"><strong>Objectif :</strong> Ajouter une image à une interface Tkinter : à chaque clic sur « Nouvelle Rencontre », on affiche le nom d&#x27;un ennemi et son image.</p>
+    <div class="code-runner" id="run27-wrap" data-export="true" data-export-label="Exercice 4.4 — Affichage graphique des rencontres">
+      <div class="gui-note">🖥️ Interface graphique Tkinter + images : à exécuter dans Spyder. Nécessite Pillow (pip install pillow si erreur à l&#x27;import). Images fournies sur Classroom.</div>
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run27-code" spellcheck="false"># import des librairies nécessaires
+import tkinter as tk
+from PIL import Image, ImageTk
+import random
+
+# Créer la fenêtre principale
+fenetre = tk.Tk()
+fenetre.title(&quot;Rencontres dans la forêt interdite&quot;)
+fenetre.geometry(&quot;600x400&quot;)
+
+# Widgets pour le nom et l&#x27;image
+label_nom = tk.Label(fenetre, text=&quot;&quot;, font=(&quot;Arial&quot;, 20))
+label_nom.________()
+canvas = tk.Canvas(fenetre, width=300, height=300)
+canvas.pack()
+
+def choisir_ennemi():
+    choix = random.____________(1, 3)
+    if choix == 1 : return &quot;gobelin&quot;
+    elif __________ == 2 : __________&quot;araignee&quot;
+    else : return &quot;troll&quot;
+
+def afficher_rencontre():
+    ennemi = choisir_ennemi()
+    label_nom.config(text = f&quot;Un {_________} apparaît !&quot;)
+    # Charger et afficher l&#x27;image correspondante
+    image_path = ennemi + &quot;.png&quot;
+    image = Image.open(image_path)
+    image = image.resize((200, 200))
+    photo = ImageTk.PhotoImage(image)
+    canvas.delete(&quot;all&quot;)
+    canvas.create_image(150, 150, image=photo)
+    canvas.image = photo
+
+bouton = tk.Button(fenetre, text=&quot;Nouvelle Rencontre&quot;, command=afficher_rencontre)
+bouton.pack()
+
+fenetre.__________()</textarea>
+      </div>
+      
+      <div class="run-row">
+        
+        <button class="reset-btn" onclick="resetCode('run27')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run27-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <p class="extension-line">🌟 <strong>Pour aller plus loin :</strong> Enrichir le bestiaire : utilise une IA (Copilot ou autre) pour générer l&#x27;image d&#x27;un nouveau monstre dans un style rétro (pixel, 8-bits), puis ajoute-le à la liste des ennemis possibles dans choisir_ennemi().</p>
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static">import tkinter as tk
+from PIL import Image, ImageTk
+import random
+
+fenetre = tk.Tk()
+fenetre.title(&quot;Rencontres dans la forêt interdite&quot;)
+fenetre.geometry(&quot;600x400&quot;)
+
+label_nom = tk.Label(fenetre, text=&quot;&quot;, font=(&quot;Arial&quot;, 20))
+label_nom.pack()
+canvas = tk.Canvas(fenetre, width=300, height=300)
+canvas.pack()
+
+def choisir_ennemi():
+    choix = random.randint(1, 3)
+    if choix == 1 : return &quot;gobelin&quot;
+    elif choix == 2 : return &quot;araignee&quot;
+    else : return &quot;troll&quot;
+
+def afficher_rencontre():
+    ennemi = choisir_ennemi()
+    label_nom.config(text = f&quot;Un {ennemi} apparaît !&quot;)
+    image_path = ennemi + &quot;.png&quot;
+    image = Image.open(image_path)
+    image = image.resize((200, 200))
+    photo = ImageTk.PhotoImage(image)
+    canvas.delete(&quot;all&quot;)
+    canvas.create_image(150, 150, image=photo)
+    canvas.image = photo
+
+bouton = tk.Button(fenetre, text=&quot;Nouvelle Rencontre&quot;, command=afficher_rencontre)
+bouton.pack()
+
+fenetre.mainloop()</pre>
+      </div>
+    </details>
+    </div></div><div class="challenge-block"><div class="section-label">🏆 Challenge de fin de séance</div><div class="challenge-card"><div class="challenge-head"><span class="challenge-badge">🏆 Challenge</span><span class="exercise-icon">⚔️</span><h4>Gestion d&#x27;un combat dans la forêt interdite</h4></div><p class="objectif-line"><strong>Objectif :</strong> Assembler tout ce qui vient d&#x27;être vu : reprendre le combat au dé à 20 faces (exercice 4.2) et lui donner une interface graphique complète, comme dans l&#x27;exercice 4.4.</p><ol class="etapes-list"><li>Un monstre est choisi au hasard parmi 2 ou 3 (comme en 4.4) et son image s&#x27;affiche.</li><li>Trois boutons permettent d&#x27;attaquer, de se défendre ou de ne rien faire (reprendre la logique de dé de l&#x27;exercice 4.2).</li><li>Un bouton « Choisir un nouveau monstre » relance une rencontre.</li><li>Les points de vie du héros et du monstre sont affichés et mis à jour après chaque tour (label_pv.config(text=...), comme pour le nom de l&#x27;ennemi).</li></ol><div class="gui-note">🖥️ Interface graphique Tkinter : à exécuter dans Spyder.</div></div></div></section><section class="seance-section" id="seance-5" data-color="5">
+    <div class="seance-hero">
+      <div class="seance-hero-icon">📋</div>
+      <div>
+        <div class="seance-eyebrow">Séance 5 sur 6 · 2h</div>
+        <h2>Les listes</h2>
+        <p class="seance-subtitle">stocker, parcourir et modifier des collections d&#x27;éléments</p>
+      </div>
+    </div>
+    <div class="objectifs-box"><strong>Objectifs de la séance</strong><ul><li>Créer une liste et accéder à ses éléments par index</li><li>Ajouter (append) et retirer (remove) des éléments</li><li>Utiliser une liste pour stocker un ensemble d&#x27;objets du jeu (monstres, potions…)</li><li>Combiner liste et hasard avec random.choice</li></ul></div>
+    <div class="rendu-box">
+      <div class="rendu-head">
+        <span class="rendu-icon">📤</span>
+        <div>
+          <strong>Ce que tu dois rendre</strong>
+          <p>Complète les exercices ci-dessous directement dans cette page (le code s'y
+          exécute réellement), puis entre ton nom ci-dessous et télécharge ton fichier
+          <code>.py</code> — il sera automatiquement nommé au bon format. Dépose-le ensuite
+          sur l'espace de rendu indiqué en classe.</p>
+          <div class="rendu-name-row">
+            <label>NOM-Prénom</label>
+            <input type="text" class="student-name-input" oninput="updateFilenamePreview()" placeholder="ex : DUPONT-Julien">
+          </div>
+          <p class="rendu-filename-preview">Nom de fichier : <code class="filename-preview">mini_rpg_seance5_listes.py</code>
+          <span class="rendu-hint">(exemple attendu : DUPONT-Julien-TP5-rpg.py)</span></p>
+        </div>
+      </div>
+      <button class="export-btn" onclick="exportPyFile()">📥 Télécharger mon fichier .py</button>
+    </div>
+    <div class="cours-block"><div class="section-label">🎓 Cours</div><h3>Qu&#x27;est-ce qu&#x27;une liste ?</h3><p>Une liste en Python est une collection ordonnée d&#x27;éléments qui peuvent être de types différents. Les listes sont modifiables : on peut ajouter, supprimer ou modifier des éléments après la création de la liste.</p><h3>Manipuler une liste</h3>
+    <div class="code-runner" id="run29-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run29-code" spellcheck="false"># Création d&#x27;une liste de nombres
+nombres = [1, 2, 3, 4, 5]
+
+# Accéder à un élément (le premier élément est à l&#x27;index 0)
+premier_nombre = nombres[0]  # Résultat : 1
+
+# Modifier un élément de la liste
+nombres[0] = 6  # La liste devient [6, 2, 3, 4, 5]
+
+# Ajouter un élément à la fin de la liste
+nombres.append(7)  # La liste devient [6, 2, 3, 4, 5, 7]
+
+# Supprimer un élément de la liste
+nombres.remove(3)  # La liste devient [6, 2, 4, 5, 7]
+
+print(nombres)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run29-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run29-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run29" onclick="runCode('run29')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run29')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run29-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    </div><div class="exercices-block"><div class="section-label">💻 Exercices</div><div class="exercise-card" id="ex-5.1"><div class="exercise-head"><span class="exercise-badge">Exercice 5.1</span><span class="exercise-icon">🧾</span><h4>La liste de courses</h4></div><p class="objectif-line"><strong>Objectif :</strong> Créer un programme qui gère une liste de courses : ajouter des articles, les retirer, et les afficher.</p><ol class="etapes-list"><li>Créez une liste vide appelée liste_de_courses.</li><li>Utilisez une boucle while pour un menu interactif : a (ajouter), r (retirer), l (afficher la liste), q (quitter).</li><li>À chaque itération, demandez à l&#x27;utilisateur de choisir une option et effectuez l&#x27;action correspondante.</li></ol>
+    <div class="code-runner" id="run30-wrap" data-export="true" data-export-label="Exercice 5.1 — La liste de courses">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run30-code" spellcheck="false"># Initialisation de la liste de courses
+______________________ = []
+
+# Boucle pour le menu interactif
+while True:
+    choix = input(&quot;Choisissez une option (a: ajouter, r: retirer, l: lister, q: quitter): &quot;)
+    if choix == &#x27;a&#x27;:
+        article = input(&quot;Entrez l&#x27;article à ajouter : &quot;)
+        liste_de_courses.______________(article)
+    elif choix == &#x27;r&#x27;:
+        article = input(&quot;Entrez l&#x27;article à retirer : &quot;)
+        if article in liste_de_courses:
+            liste_de_courses.______________(article)
+        else:
+            print(&quot;Cet article n&#x27;est pas dans la liste.&quot;)
+    elif choix == &#x27;l&#x27;:
+        print(&quot;Voici votre liste de courses : &quot;, ________________________)
+    elif choix == &#x27;q&#x27;:
+        print(&quot;Fin du programme.&quot;)
+        break</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run30-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run30-stdin" class="stdin-input" value="a
+pomme
+a
+lait
+l
+q" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run30" onclick="runCode('run30')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run30')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run30-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static">liste_de_courses = []
+
+while True:
+    choix = input(&quot;Choisissez une option (a: ajouter, r: retirer, l: lister, q: quitter): &quot;)
+    if choix == &#x27;a&#x27;:
+        article = input(&quot;Entrez l&#x27;article à ajouter : &quot;)
+        liste_de_courses.append(article)
+    elif choix == &#x27;r&#x27;:
+        article = input(&quot;Entrez l&#x27;article à retirer : &quot;)
+        if article in liste_de_courses:
+            liste_de_courses.remove(article)
+        else:
+            print(&quot;Cet article n&#x27;est pas dans la liste.&quot;)
+    elif choix == &#x27;l&#x27;:
+        print(&quot;Voici votre liste de courses : &quot;, liste_de_courses)
+    elif choix == &#x27;q&#x27;:
+        print(&quot;Fin du programme.&quot;)
+        break</pre>
+      </div>
+    </details>
+    </div></div><div class="challenge-block"><div class="section-label">🏆 Challenge de fin de séance</div><div class="challenge-card"><div class="challenge-head"><span class="challenge-badge">🏆 Challenge</span><span class="exercise-icon">🌲</span><h4>Suite du challenge de la forêt interdite</h4></div><p class="objectif-line"><strong>Objectif :</strong> Faire évoluer le combat de la forêt interdite grâce aux listes.</p><div class="sub-etape"><h5>Étape 1 — une liste de monstres</h5><p>Modifiez la fonction choisir_ennemi (vue en séance 4) afin d&#x27;utiliser une liste pour stocker tous les noms de monstres. La fonction devra ensuite sélectionner un monstre au hasard dans cette liste (random.choice) et le retourner. Cela rend le code plus clair et facile à étendre si de nouveaux monstres sont ajoutés.</p>
+    <div class="code-runner" id="run32-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run32-code" spellcheck="false">monstres = [&quot;gobelin&quot;, &quot;araignee&quot;, &quot;troll&quot;]
+
+def choisir_ennemi():
+    return random.choice(monstres)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run32-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run32-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run32" onclick="runCode('run32')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run32')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run32-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    </div><div class="sub-etape"><h5>Étape 2 — retirer un monstre vaincu</h5><p>Modifiez votre programme pour qu&#x27;à chaque fois qu&#x27;un monstre est vaincu, il soit retiré de la liste des monstres. Un nouveau monstre apparaîtra ensuite. Si tous les monstres sont vaincus et que la liste est vide, affichez : « Victoire, vous avez débarrassé la forêt interdite de tous ses monstres ! »</p></div><div class="sub-etape"><h5>Étape 3 — Attaque et Défense</h5><p>Le héros possède deux caractéristiques, Attaque et Défense, entre 1 et 20. Pour ce scénario : héros Attaque 12, Défense 10 ; monstres Attaque 9, Défense 7.</p><p>Règle de combat : quand un personnage attaque, un dé à 20 faces est lancé. Si le résultat est inférieur ou égal à sa valeur d&#x27;Attaque, l&#x27;attaque réussit. Le défenseur lance alors un dé à 20 faces : si le résultat est inférieur ou égal à sa valeur de Défense, il bloque l&#x27;attaque ; sinon, il subit 20 points de dégâts.</p><p>Avant d&#x27;assembler tout le combat, isolons ce mécanisme dans une fonction — ça se teste plus facilement, et ça évite de réécrire le même jet de dé pour l&#x27;attaque et pour la défense :</p>
+    <div class="code-runner" id="run33-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run33-code" spellcheck="false">import random
+
+def jet_reussi(valeur_cible):
+    de = random.randint(1, 20)
+    return de &lt;= valeur_cible
+
+# Test : le héros (Attaque 12) tente une attaque
+if jet_reussi(12):
+    print(&quot;Attaque réussie !&quot;)
+else:
+    print(&quot;Attaque manquée.&quot;)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run33-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run33-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run33" onclick="runCode('run33')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run33')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run33-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <ul class="explain-list"><li>Le héros lance un dé pour son attaque et obtient 7 (≤ 12) : l&#x27;attaque réussit. L&#x27;araignée lance un dé pour sa défense et obtient 17 (&gt; 7) : la défense échoue. L&#x27;araignée subit 20 points de dégâts.</li><li>Même attaque réussie (7 ≤ 12), mais l&#x27;araignée obtient 5 (≤ 7) pour sa défense : elle pare l&#x27;attaque et ne subit aucun dégât.</li><li>Le troll attaque et obtient 8 (≤ 9) : l&#x27;attaque réussit. Le héros lance sa défense et obtient 11 (&gt; 10) : la défense échoue, le héros subit 20 points de dégâts.</li></ul></div><div class="sub-etape"><h5>Étape 4 — la potion de soin</h5><p>Remplacez le bouton « Défendre » par « Boire une potion de soin ». Cette action permet au héros de gagner entre 10 et 20 points de vie (random.randint(10, 20)), mais il subit quand même l&#x27;attaque du monstre.</p></div></div></div></section><section class="seance-section" id="seance-6" data-color="6">
+    <div class="seance-hero">
+      <div class="seance-hero-icon">📖</div>
+      <div>
+        <div class="seance-eyebrow">Séance 6 sur 6 · 2h</div>
+        <h2>Les dictionnaires</h2>
+        <p class="seance-subtitle">associer des clés à des valeurs — la structure du bestiaire final</p>
+      </div>
+    </div>
+    <div class="objectifs-box"><strong>Objectifs de la séance</strong><ul><li>Créer un dictionnaire et accéder à ses valeurs par clé</li><li>Construire des dictionnaires imbriqués</li><li>Ajouter, modifier et supprimer des éléments d&#x27;un dictionnaire</li><li>Restructurer le bestiaire du RPG en dictionnaire de dictionnaires</li></ul></div>
+    <div class="rendu-box">
+      <div class="rendu-head">
+        <span class="rendu-icon">📤</span>
+        <div>
+          <strong>Ce que tu dois rendre</strong>
+          <p>Complète les exercices ci-dessous directement dans cette page (le code s'y
+          exécute réellement), puis entre ton nom ci-dessous et télécharge ton fichier
+          <code>.py</code> — il sera automatiquement nommé au bon format. Dépose-le ensuite
+          sur l'espace de rendu indiqué en classe.</p>
+          <div class="rendu-name-row">
+            <label>NOM-Prénom</label>
+            <input type="text" class="student-name-input" oninput="updateFilenamePreview()" placeholder="ex : DUPONT-Julien">
+          </div>
+          <p class="rendu-filename-preview">Nom de fichier : <code class="filename-preview">mini_rpg_seance6_dictionnaires.py</code>
+          <span class="rendu-hint">(exemple attendu : DUPONT-Julien-TP6-rpg.py)</span></p>
+        </div>
+      </div>
+      <button class="export-btn" onclick="exportPyFile()">📥 Télécharger mon fichier .py</button>
+    </div>
+    <div class="cours-block"><div class="section-label">🎓 Cours</div><h3>Qu&#x27;est-ce qu&#x27;un dictionnaire ?</h3><p>Un dictionnaire en Python est une structure de données qui permet d&#x27;associer des clés à des valeurs. Contrairement aux listes, qui sont indexées par des nombres, les dictionnaires utilisent des clés qui peuvent être de différents types, comme des chaînes de caractères ou des nombres.</p><h3>Un premier dictionnaire</h3>
+    <div class="code-runner" id="run34-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run34-code" spellcheck="false"># Création d&#x27;un dictionnaire
+carnet_adresses = {
+    &quot;Alice&quot;: &quot;123-456-7890&quot;,
+    &quot;Bob&quot;: &quot;987-654-3210&quot;,
+    &quot;Charlie&quot;: &quot;555-555-5555&quot;
+}
+
+# Affichage du numéro de téléphone d&#x27;Alice
+print(carnet_adresses[&quot;Alice&quot;])</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run34-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run34-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run34" onclick="runCode('run34')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run34')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run34-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <h3>Dictionnaires imbriqués</h3><p>Les dictionnaires peuvent également contenir d&#x27;autres dictionnaires en tant que valeurs — utile pour stocker plusieurs informations sur un même élément.</p>
+    <div class="code-runner" id="run35-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run35-code" spellcheck="false"># Dictionnaire principal
+menu = {
+    &quot;Café&quot;: {&quot;prix&quot;: 2.50, &quot;contient_cafeine&quot;: True},
+    &quot;Thé Vert&quot;: {&quot;prix&quot;: 3.00, &quot;contient_cafeine&quot;: True},
+    &quot;Chocolat Chaud&quot;: {&quot;prix&quot;: 2.80, &quot;contient_cafeine&quot;: False}
+}
+
+print(&quot;Prix du Café :&quot;, menu[&quot;Café&quot;][&quot;prix&quot;])
+print(&quot;Le Thé Vert contient-il de la caféine ? :&quot;)
+print(menu[&quot;Thé Vert&quot;][&quot;contient_cafeine&quot;])</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run35-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run35-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run35" onclick="runCode('run35')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run35')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run35-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <h3>Manipuler un dictionnaire</h3><p>Ajout d&#x27;un élément : affectez une valeur à une nouvelle clé — mon_dictionnaire[&quot;nouvelle_cle&quot;] = &quot;nouvelle_valeur&quot;.
+Modification : affectez une nouvelle valeur à une clé existante.
+Suppression : utilisez le mot-clé del — del mon_dictionnaire[&quot;cle&quot;].</p><h3>Un inventaire de magasin</h3>
+    <div class="code-runner" id="run36-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run36-code" spellcheck="false"># Création d&#x27;un dictionnaire d&#x27;inventaire
+inventaire = {&quot;pommes&quot;: 30, &quot;bananes&quot;: 45, &quot;oranges&quot;: 20}
+
+# Ajout de citrons dans l&#x27;inventaire
+inventaire[&quot;citrons&quot;] = 15
+
+# Modification de la quantité de bananes
+inventaire[&quot;bananes&quot;] = 50
+
+# Suppression des oranges de l&#x27;inventaire
+del inventaire[&quot;oranges&quot;]
+
+# Affichage de l&#x27;inventaire mis à jour
+print(inventaire)</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run36-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run36-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run36" onclick="runCode('run36')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run36')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run36-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <h3>Naviguer dans une liste en boucle (%)</h3><p>Pour le challenge de cette séance, il faudra pouvoir passer au héros suivant, et boucler au début de la liste une fois arrivé au dernier — sans jamais sortir des index valides. L&#x27;opérateur % (modulo) renvoie le reste d&#x27;une division : c&#x27;est l&#x27;outil qui permet ce bouclage automatique.</p>
+    <div class="code-runner" id="run37-wrap">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run37-code" spellcheck="false">noms = [&quot;Guerrier&quot;, &quot;Mage&quot;, &quot;Archer&quot;]
+index = 0
+
+# Passer au suivant : +1, puis modulo la longueur de la liste
+index = (index + 1) % len(noms)
+print(noms[index])   # Mage
+
+index = (index + 1) % len(noms)
+print(noms[index])   # Archer
+
+index = (index + 1) % len(noms)
+print(noms[index])   # Guerrier — on a rebouclé au début !
+
+# Passer au précédent fonctionne aussi, y compris pour revenir en arrière
+# depuis le premier élément :
+index = (index - 1) % len(noms)
+print(noms[index])   # Archer</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run37-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run37-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run37" onclick="runCode('run37')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run37')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run37-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    </div><div class="exercices-block"><div class="section-label">💻 Exercices</div><div class="exercise-card" id="ex-6.1"><div class="exercise-head"><span class="exercise-badge">Exercice 6.1</span><span class="exercise-icon">🐲</span><h4>Le bestiaire d&#x27;un RPG</h4></div><p class="objectif-line"><strong>Objectif :</strong> Créer un dictionnaire nommé bestiaire contenant différentes créatures. Les clés seront les noms des monstres (&quot;Dragon&quot;, &quot;Troll&quot;, &quot;Gobelin&quot;...), les valeurs une description de chaque créature.</p>
+    <div class="code-runner" id="run38-wrap" data-export="true" data-export-label="Exercice 6.1 — Le bestiaire d&#x27;un RPG">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run38-code" spellcheck="false">bestiaire = {
+    &quot;Dragon&quot;: ___________________________________,
+    &quot;Troll&quot;: ____________________________________,
+    &quot;Gobelin&quot;: __________________________________
+}
+
+print(bestiaire[&quot;Dragon&quot;])</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run38-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run38-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run38" onclick="runCode('run38')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run38')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run38-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static">bestiaire = {
+    &quot;Dragon&quot;: &quot;Une créature ailée cracheuse de feu, redoutée de tous.&quot;,
+    &quot;Troll&quot;: &quot;Un colosse lent mais capable de régénérer ses blessures.&quot;,
+    &quot;Gobelin&quot;: &quot;Une petite créature rusée qui chasse en groupe.&quot;
+}
+
+print(bestiaire[&quot;Dragon&quot;])</pre>
+      </div>
+    </details>
+    </div><div class="exercise-card" id="ex-6.2"><div class="exercise-head"><span class="exercise-badge">Exercice 6.2</span><span class="exercise-icon">🗂️</span><h4>Le bestiaire de la forêt interdite</h4></div><p class="objectif-line"><strong>Objectif :</strong> En vous basant sur l&#x27;exemple du menu imbriqué, modifiez le code de la forêt interdite en créant un dictionnaire bestiaire qui contient, pour chaque monstre, ses points de vie (PV), son attaque, sa défense et une description. Adaptez ensuite votre programme pour utiliser ce dictionnaire lors des combats.</p>
+    <div class="code-runner" id="run40-wrap" data-export="true" data-export-label="Exercice 6.2 — Le bestiaire de la forêt interdite">
+      
+      <div class="code-editor-shell">
+        <div class="code-editor-bar">
+          <span class="dot dot-r"></span><span class="dot dot-y"></span><span class="dot dot-g"></span>
+          <span class="editor-label">code_python.py</span>
+        </div>
+        <textarea class="code-editor" id="run40-code" spellcheck="false">bestiaire = {
+    &quot;gobelin&quot;: {&quot;pv&quot;: 40, &quot;attaque&quot;: ___, &quot;defense&quot;: ___, &quot;description&quot;: &quot;___________&quot;},
+    &quot;araignee&quot;: {&quot;pv&quot;: 30, &quot;attaque&quot;: ___, &quot;defense&quot;: ___, &quot;description&quot;: &quot;___________&quot;},
+    &quot;troll&quot;: {&quot;pv&quot;: 70, &quot;attaque&quot;: ___, &quot;defense&quot;: ___, &quot;description&quot;: &quot;___________&quot;}
+}
+
+ennemi = random.choice(list(bestiaire.keys()))
+stats = bestiaire[___]
+print(&quot;Un&quot;, ennemi, &quot;apparaît !&quot;, stats[&quot;description&quot;])
+print(&quot;PV :&quot;, stats[___], &quot;- Attaque :&quot;, stats[&quot;attaque&quot;], &quot;- Défense :&quot;, stats[___])</textarea>
+      </div>
+      
+        <div class="stdin-row">
+          <label for="run40-stdin">Valeurs pour <code>input()</code> (une par ligne)</label>
+          <input type="text" id="run40-stdin" class="stdin-input" value="" placeholder="ex: Aldric">
+        </div>
+      <div class="run-row">
+        <button class="run-btn" data-target="run40" onclick="runCode('run40')">▶ Exécuter</button>
+        <button class="reset-btn" onclick="resetCode('run40')" title="Revenir au code de départ">↺ Réinitialiser</button>
+      </div>
+      <pre class="output-panel" id="run40-output" data-empty="true">La sortie de ton programme apparaîtra ici.</pre>
+    </div>
+    <p class="note-line">ℹ️ Cet extrait utilise `random` : ajoutez `import random` en haut du fichier pour le tester seul.</p>
+    <details class="solution-block">
+      <summary>💡 Voir une solution possible</summary>
+      <div class="code-editor-shell solution">
+        <div class="code-editor-bar"><span class="editor-label">solution.py</span></div>
+        <pre class="code-static">bestiaire = {
+    &quot;gobelin&quot;: {&quot;pv&quot;: 40, &quot;attaque&quot;: 9, &quot;defense&quot;: 7, &quot;description&quot;: &quot;Rapide et rusé, il chasse en groupe.&quot;},
+    &quot;araignee&quot;: {&quot;pv&quot;: 30, &quot;attaque&quot;: 11, &quot;defense&quot;: 6, &quot;description&quot;: &quot;Venimeuse et discrète.&quot;},
+    &quot;troll&quot;: {&quot;pv&quot;: 70, &quot;attaque&quot;: 14, &quot;defense&quot;: 9, &quot;description&quot;: &quot;Lent mais redoutablement puissant.&quot;}
+}
+
+ennemi = random.choice(list(bestiaire.keys()))
+stats = bestiaire[ennemi]
+print(&quot;Un&quot;, ennemi, &quot;apparaît !&quot;, stats[&quot;description&quot;])
+print(&quot;PV :&quot;, stats[&quot;pv&quot;], &quot;- Attaque :&quot;, stats[&quot;attaque&quot;], &quot;- Défense :&quot;, stats[&quot;defense&quot;])</pre>
+      </div>
+    </details>
+    </div></div><div class="challenge-block"><div class="section-label">🏆 Challenge de fin de séance</div><div class="challenge-card"><div class="challenge-head"><span class="challenge-badge">🏆 Challenge</span><span class="exercise-icon">🧙</span><h4>Ajout des héros</h4></div><p class="objectif-line"><strong>Objectif :</strong> Dans un RPG, le joueur peut choisir un type de héros parmi plusieurs archétypes (Mage, Guerrier, Voleur...). Intégrez cette mécanique :</p><ol class="etapes-list"><li>Créer un dictionnaire heros contenant, pour chaque archétype : un nom, une description, une valeur d&#x27;attaque, une valeur de défense et le nom de l&#x27;image associée.</li><li>Générer avec une IA (Copilot ou autre) une image pour chaque archétype de héros, dans le même style rétro que celles du bestiaire (séance 4).</li><li>Ajouter une nouvelle fenêtre permettant au joueur de sélectionner son héros avant d&#x27;entrer dans la forêt interdite. Cette fenêtre affiche toutes les caractéristiques du héros et son image, avec trois boutons : « Choisir ce héros », « Héros suivant », « Héros précédent » — utilise l&#x27;indexation cyclique (%) vue dans le cours pour naviguer entre les héros.</li><li>Mettre à jour les caractéristiques du joueur après le choix du héros et le lancement du jeu.</li></ol><div class="gui-note">🖥️ Interface graphique Tkinter : à exécuter dans Spyder.</div></div></div></section>
+    <footer class="site-footer">Mini-RPG — support de séance NSI — généré pour un usage pédagogique.</footer>
+  </main>
+</div>
+
+<script src="https://cdn.jsdelivr.net/pyodide/v314.0.6/full/pyodide.js"></script>
+<script>
+
+const SEANCE_COUNT = 6;
+const SEANCE_META = {"1": {"filename": "mini_rpg_seance1_fondations.py", "header": "# ============================================================\n#  MINI-RPG — Séance 1 : Variables, affichage et premiers choix\n# ============================================================\n#  NOM Prénom : ______________________\n#  Classe     : ______________________\n#\n#  Consigne : complète les zones marquées ___ directement dans ce\n#  fichier, teste dans Spyder, puis AVANT DE RENDRE, renomme ce\n#  fichier au format NOM-Prenom-TP1-rpg.py (exemple :\n#  DUPONT-Julien-TP1-rpg.py). Dépose-le ensuite sur l'espace de\n#  rendu indiqué en classe.\n# ============================================================\n"}, "2": {"filename": "mini_rpg_seance2_hasard.py", "header": "# ============================================================\n#  MINI-RPG — Séance 2 : Le hasard et les conditions avancées\n# ============================================================\n#  NOM Prénom : ______________________\n#  Classe     : ______________________\n#\n#  Consigne : complète les zones marquées ___ directement dans ce\n#  fichier, teste dans Spyder, puis AVANT DE RENDRE, renomme ce\n#  fichier au format NOM-Prenom-TP2-rpg.py (exemple :\n#  DUPONT-Julien-TP2-rpg.py). Dépose-le ensuite sur l'espace de\n#  rendu indiqué en classe.\n# ============================================================\n"}, "3": {"filename": "mini_rpg_seance3_boucles-for.py", "header": "# ============================================================\n#  MINI-RPG — Séance 3 : Les boucles for et les rencontres aléatoires\n# ============================================================\n#  NOM Prénom : ______________________\n#  Classe     : ______________________\n#\n#  Consigne : complète les zones marquées ___ directement dans ce\n#  fichier, teste dans Spyder, puis AVANT DE RENDRE, renomme ce\n#  fichier au format NOM-Prenom-TP3-rpg.py (exemple :\n#  DUPONT-Julien-TP3-rpg.py). Dépose-le ensuite sur l'espace de\n#  rendu indiqué en classe.\n# ============================================================\n"}, "4": {"filename": "mini_rpg_seance4_while-interface.py", "header": "# ============================================================\n#  MINI-RPG — Séance 4 : La boucle while, le combat et l'interface graphique\n# ============================================================\n#  NOM Prénom : ______________________\n#  Classe     : ______________________\n#\n#  Consigne : complète les zones marquées ___ directement dans ce\n#  fichier, teste dans Spyder, puis AVANT DE RENDRE, renomme ce\n#  fichier au format NOM-Prenom-TP4-rpg.py (exemple :\n#  DUPONT-Julien-TP4-rpg.py). Dépose-le ensuite sur l'espace de\n#  rendu indiqué en classe.\n# ============================================================\n"}, "5": {"filename": "mini_rpg_seance5_listes.py", "header": "# ============================================================\n#  MINI-RPG — Séance 5 : Les listes\n# ============================================================\n#  NOM Prénom : ______________________\n#  Classe     : ______________________\n#\n#  Consigne : complète les zones marquées ___ directement dans ce\n#  fichier, teste dans Spyder, puis AVANT DE RENDRE, renomme ce\n#  fichier au format NOM-Prenom-TP5-rpg.py (exemple :\n#  DUPONT-Julien-TP5-rpg.py). Dépose-le ensuite sur l'espace de\n#  rendu indiqué en classe.\n# ============================================================\n"}, "6": {"filename": "mini_rpg_seance6_dictionnaires.py", "header": "# ============================================================\n#  MINI-RPG — Séance 6 : Les dictionnaires\n# ============================================================\n#  NOM Prénom : ______________________\n#  Classe     : ______________________\n#\n#  Consigne : complète les zones marquées ___ directement dans ce\n#  fichier, teste dans Spyder, puis AVANT DE RENDRE, renomme ce\n#  fichier au format NOM-Prenom-TP6-rpg.py (exemple :\n#  DUPONT-Julien-TP6-rpg.py). Dépose-le ensuite sur l'espace de\n#  rendu indiqué en classe.\n# ============================================================\n"}};
+let currentSeance = 1;
+let pyodideReady = false;
+let pyodidePromise = null;
+
+function toggleSidebar(){
+  const sb = document.getElementById('sidebar');
+  if(sb){ sb.classList.toggle('open'); }
+}
+
+function showSeance(n){
+  currentSeance = n;
+  const introEl = document.getElementById('intro-banner');
+  if(introEl){ introEl.classList.add('hidden'); }
+  document.querySelectorAll('.seance-section').forEach(s => s.classList.remove('visible'));
+  const el = document.getElementById('seance-' + n);
+  if(el){ el.classList.add('visible'); }
+  document.querySelectorAll('.nav-item').forEach(b => b.classList.remove('active'));
+  const btn = document.querySelector('.nav-item[data-seance="'+n+'"]');
+  if(btn){ btn.classList.add('active'); }
+  const topbarTitle = document.getElementById('topbar-title');
+  if(topbarTitle){ topbarTitle.textContent = btn ? btn.querySelector('.nav-title').textContent : ''; }
+  const fill = document.getElementById('progress-fill');
+  if(fill){
+    const pct = Math.round((n / SEANCE_COUNT) * 100);
+    fill.style.width = pct + '%';
+  }
+  const ptext = document.getElementById('progress-text');
+  if(ptext){ ptext.textContent = 'Séance ' + n + ' / ' + SEANCE_COUNT; }
+  window.scrollTo({top:0, behavior:'instant' in window ? 'instant' : 'auto'});
+  const sb = document.getElementById('sidebar');
+  if(sb){ sb.classList.remove('open'); }
+}
+
+function sectionTitle(title){
+  const bar = '-'.repeat(title.length + 4);
+  return '\n# ' + bar + '\n# | ' + title + ' |\n# ' + bar + '\n\n';
+}
+
+function sanitizeNamePart(v){
+  return v.trim().replace(/\s+/g, '-');
+}
+
+function activeContainer(){
+  return document.getElementById('seance-' + currentSeance) || document;
+}
+
+function computeFilename(){
+  const meta = SEANCE_META[currentSeance];
+  if(!meta){ return 'mini_rpg.py'; }
+  const input = activeContainer().querySelector('.student-name-input');
+  const raw = input ? sanitizeNamePart(input.value) : '';
+  if(raw.length > 0){
+    return raw + '-TP' + currentSeance + '-rpg.py';
+  }
+  return meta.filename;
+}
+
+function updateFilenamePreview(){
+  const preview = activeContainer().querySelector('.filename-preview');
+  if(preview){ preview.textContent = computeFilename(); }
+}
+
+function exportPyFile(){
+  const meta = SEANCE_META[currentSeance];
+  if(!meta){ return; }
+  const container = document.getElementById('seance-' + currentSeance) || document;
+  const blocks = container.querySelectorAll('[data-export="true"]');
+  let content = meta.header + '\n';
+  blocks.forEach(b => {
+    const label = b.dataset.exportLabel || 'Exercice';
+    const ta = b.querySelector('.code-editor');
+    content += sectionTitle(label) + (ta ? ta.value : '') + '\n\n';
+  });
+  const blob = new Blob([content], {type: 'text/x-python'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = computeFilename();
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+async function ensurePyodide(){
+  if(pyodideReady) return;
+  if(pyodidePromise) return pyodidePromise;
+  const statusEl = document.getElementById('pyodide-status');
+  statusEl.textContent = 'Python : chargement…';
+  statusEl.className = 'pyodide-status loading';
+  pyodidePromise = loadPyodide().then(py => {
+    window.pyodide = py;
+    pyodideReady = true;
+    statusEl.textContent = 'Python : prêt ✓';
+    statusEl.className = 'pyodide-status ready';
+  }).catch(err => {
+    statusEl.textContent = 'Python : erreur de chargement';
+    console.error(err);
+  });
+  return pyodidePromise;
+}
+
+function resetCode(rid){
+  const ta = document.getElementById(rid + '-code');
+  if(ta && ta.dataset.original !== undefined){
+    ta.value = ta.dataset.original;
+  }
+  const out = document.getElementById(rid + '-output');
+  if(out){
+    out.textContent = 'La sortie de ton programme apparaîtra ici.';
+    out.dataset.empty = 'true';
+    out.classList.remove('has-error');
+  }
+}
+
+async function runCode(rid){
+  const btn = document.querySelector('.run-btn[data-target="'+rid+'"]');
+  const ta = document.getElementById(rid + '-code');
+  const out = document.getElementById(rid + '-output');
+  const stdinEl = document.getElementById(rid + '-stdin');
+  if(ta.dataset.original === undefined){ ta.dataset.original = ta.value; }
+
+  if(btn){ btn.disabled = true; btn.textContent = '… chargement'; }
+  await ensurePyodide();
+  if(btn){ btn.textContent = '▶ Exécuter'; btn.disabled = false; }
+  if(!pyodideReady){
+    out.textContent = "Impossible de charger Python dans le navigateur (pas de connexion internet ?).";
+    out.dataset.empty = 'false';
+    out.classList.add('has-error');
+    return;
+  }
+
+  const code = ta.value;
+  const stdinLines = stdinEl ? stdinEl.value.split('\n') : [];
+  const py = window.pyodide;
+
+  const setup = `
+import sys, io, builtins
+sys.stdout = io.StringIO()
+sys.stderr = sys.stdout
+_stdin_queue = ${JSON.stringify(stdinLines)}
+_stdin_index = 0
+def input(prompt=''):
+    global _stdin_index
+    sys.stdout.write(str(prompt))
+    global _stdin_queue
+    if _stdin_index < len(_stdin_queue):
+        val = _stdin_queue[_stdin_index]
+        _stdin_index += 1
+    else:
+        val = ''
+    sys.stdout.write(val + '\\n')
+    return val
+builtins.input = input
+`;
+  try{
+    const g = py.toPy({});
+    py.runPython(setup, {globals: g});
+    try{
+      py.runPython(code, {globals: g});
+    }catch(execErr){
+      const already = py.runPython('sys.stdout.getvalue()', {globals: g});
+      out.textContent = already + '\n--- Erreur ---\n' + execErr.message.split('\n').slice(-4).join('\n');
+      out.dataset.empty = 'false';
+      out.classList.add('has-error');
+      g.destroy();
+      return;
+    }
+    const result = py.runPython('sys.stdout.getvalue()', {globals: g});
+    out.textContent = result.trim().length ? result : '(le programme ne produit aucun affichage)';
+    out.dataset.empty = 'false';
+    out.classList.remove('has-error');
+    g.destroy();
+  }catch(e){
+    out.textContent = 'Erreur inattendue : ' + e.message;
+    out.dataset.empty = 'false';
+    out.classList.add('has-error');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  showSeance(1);
+});
+
+</script>
+</body>
+</html>
