@@ -249,6 +249,10 @@
   .CodeMirror-hint{ padding:4px 10px; border-radius:4px; }
   li.CodeMirror-hint-active{ background:#2e6fab; color:#fff; }
   .editor-hint-note{ font-size:.72rem; color:var(--ink-soft); margin-top:6px; }
+  .identity-box{ font-size:.78rem; color:var(--ink-soft); text-align:right; }
+  .identity-box a{ color:var(--blue); text-decoration:none; }
+  .identity-box a:hover{ text-decoration:underline; }
+  .intro-actions{ display:flex; flex-direction:column; gap:10px; align-items:flex-end; flex-shrink:0; }
 
   /* désactive les ligatures de police sur le code : != doit s'afficher != (pas ≠), == doit rester ==, etc. */
   code, pre, textarea.code, .CodeMirror, .cm-s-default{
@@ -270,9 +274,13 @@
     <div class="intro">
       <div>
         <h1>Réactiver les bases de 1ère NSI</h1>
-        <p>Les 10 exercices du TP1 de rentrée, à tester directement dans le navigateur. Écrivez votre fonction, lancez les tests, comparez avec les exemples de l'énoncé — puis, si besoin, consultez une correction. Rien n'est envoyé ni noté ici : c'est pour vous entraîner avant l'interrogation individuelle.</p>
+        <p>Les 10 exercices du TP1 de rentrée, à tester directement dans le navigateur. Écrivez votre fonction, lancez les tests, comparez avec les exemples de l'énoncé — puis, si besoin, consultez une correction. Votre code est sauvegardé automatiquement dans ce navigateur ; rien n'est envoyé ni noté : c'est pour vous entraîner avant l'interrogation individuelle.</p>
       </div>
-      <span class="pill" id="pyostatus">Python : chargement…</span>
+      <div class="intro-actions">
+        <span class="pill" id="pyostatus">Python : chargement…</span>
+        <div class="identity-box" id="identityBox"></div>
+        <button class="ghost" onclick="downloadAllCode()">Télécharger tout le TP (.py)</button>
+      </div>
     </div>
 
     <div class="rev-layout">
@@ -456,7 +464,7 @@ def nombre_points_rupture(ordre):
 },
 {
   id:"p2e1", partie:2, num:1, key:"max", title:"listes (max)",
-  statement:`Écrire <code>maximum_tableau(tab)</code>, qui prend en paramètre un tableau non vide de nombres <code>tab</code> et renvoie le plus grand élément de ce tableau. <em>(Code complet à écrire soi-même, avec commentaires.)</em>`,
+  statement:`Écrire <code>maximum_tableau(tab)</code>, qui prend en paramètre un tableau non vide de nombres <code>tab</code> et renvoie le plus grand élément de ce tableau. L'utilisation de la fonction native <code>max</code> n'est pas autorisée. <em>(Code complet à écrire soi-même, avec commentaires.)</em>`,
   starter:`def maximum_tableau(tab):
     """
     Renvoie le plus grand élément du tableau non vide tab.
@@ -541,7 +549,7 @@ def nombre_points_rupture(ordre):
 },
 {
   id:"p2e5", partie:2, num:5, key:"moyenne", title:"listes (moyenne)",
-  statement:`Écrire <code>moyenne(tab)</code>, qui prend en paramètre un tableau non vide de nombres flottants et renvoie la moyenne des valeurs du tableau.`,
+  statement:`Écrire <code>moyenne(tab)</code>, qui prend en paramètre un tableau non vide de nombres flottants et renvoie la moyenne des valeurs du tableau. L'utilisation de la fonction native <code>sum</code> n'est pas autorisée.`,
   starter:`def moyenne(tab):
     """
     Renvoie la moyenne des valeurs du tableau non vide tab.
@@ -550,9 +558,13 @@ def nombre_points_rupture(ordre):
 `,
   tests:[["moyenne([1.0])","1.0"],["moyenne([1.0,2.0,4.0])","2.3333333333333335"]],
   correction:`def moyenne(tab):
-    return sum(tab) / len(tab)`,
-  explanation:`<p><strong>C'est le seul exercice du TP qui se résout en une ligne</strong>, grâce à deux fonctions natives de Python : <code>sum(tab)</code> additionne tous les éléments du tableau, et <code>len(tab)</code> donne son nombre d'éléments. La moyenne, par définition, c'est la somme divisée par le nombre de valeurs.</p>
-<p><strong>Pourquoi le tableau doit être non vide</strong> : si <code>tab</code> était vide, <code>len(tab)</code> vaudrait 0 et la division provoquerait une erreur (<code>ZeroDivisionError</code>) — division par zéro. C'est pour ça que l'énoncé précise "tableau non vide" : on n'a pas besoin de gérer ce cas.</p>
+    total = 0
+    for x in tab:
+        total = total + x
+    return total / len(tab)`,
+  explanation:`<p><strong>Le schéma "accumulateur"</strong>, encore lui : <code>total</code> démarre à 0, puis on ajoute chaque élément du tableau un par un au fil de la boucle. À la fin, <code>total</code> contient bien la somme de toutes les valeurs — exactement ce que <code>sum(tab)</code> aurait fait, mais écrit à la main puisque cette fonction native n'est pas autorisée ici.</p>
+<p><strong>Pourquoi <code>total = 0</code> au départ</strong> : c'est l'élément neutre de l'addition (ajouter 0 ne change rien), ce qui permet de démarrer l'accumulation sans fausser le résultat — contrairement à <code>maximum_tableau</code> où il fallait partir de <code>tab[0]</code> et non de 0.</p>
+<p><strong>Pourquoi le tableau doit être non vide</strong> : si <code>tab</code> était vide, <code>len(tab)</code> vaudrait 0 et la division finale provoquerait une erreur (<code>ZeroDivisionError</code>). C'est pour ça que l'énoncé précise "tableau non vide" : pas besoin de gérer ce cas.</p>
 <p><strong>Pourquoi le résultat n'est pas toujours "rond"</strong> (ex. <code>2.3333333333333335</code> pour <code>[1.0, 2.0, 4.0]</code>) : c'est la façon normale dont Python représente les nombres à virgule qui ne "tombent pas juste" — ce n'est pas une erreur de votre code, les tests le vérifient tel quel.</p>`,
 },
 {
@@ -645,8 +657,15 @@ function escapeHtml(s){
 /* ======================================================================
    ÉDITEUR DE CODE (CodeMirror : coloration + autocomplétion)
    ====================================================================== */
+function debounce(fn, delay){
+  let t = null;
+  return (...args) => {
+    clearTimeout(t);
+    t = setTimeout(() => fn(...args), delay);
+  };
+}
 const editors = {};
-function mountEditor(textareaId){
+function mountEditor(textareaId, onChange){
   const ta = document.getElementById(textareaId);
   if(!ta) return null;
   const cm = CodeMirror.fromTextArea(ta, {
@@ -669,6 +688,10 @@ function mountEditor(textareaId){
       cmInst.showHint({hint: CodeMirror.hint.anyword, completeSingle:false});
     }
   });
+  if(onChange){
+    const debounced = debounce(onChange, 400);
+    cm.on("change", (cmInst) => debounced(cmInst.getValue()));
+  }
   editors[textareaId] = cm;
   return cm;
 }
@@ -689,6 +712,100 @@ function setEditorValue(textareaId, value){
    VUE RÉVISION
    ====================================================================== */
 let currentExId = EXERCISES[0].id;
+
+/* ---------- sauvegarde locale du code des élèves ---------- */
+const CODE_PREFIX = "tnsi-code:";
+function loadSavedCode(exId, fallback){
+  try{
+    const v = localStorage.getItem(CODE_PREFIX + exId);
+    return (v != null) ? v : fallback;
+  }catch(e){ return fallback; }
+}
+function saveCode(exId, code){
+  try{ localStorage.setItem(CODE_PREFIX + exId, code); }catch(e){ /* stockage plein ou désactivé */ }
+}
+function clearSavedCode(exId){
+  try{ localStorage.removeItem(CODE_PREFIX + exId); }catch(e){}
+}
+
+/* ---------- identité élève (pour préfixer les fichiers téléchargés) ---------- */
+const IDENTITY_KEY = "tnsi-identite";
+function getIdentity(){
+  try{
+    const raw = localStorage.getItem(IDENTITY_KEY);
+    return raw ? JSON.parse(raw) : null;
+  }catch(e){ return null; }
+}
+function setIdentity(nom, prenom){
+  try{ localStorage.setItem(IDENTITY_KEY, JSON.stringify({nom, prenom})); }catch(e){}
+}
+function promptIdentity(){
+  const nom = prompt("Ton NOM de famille (pour nommer tes fichiers .py) :");
+  if(nom === null || !nom.trim()) return null;
+  const prenom = prompt("Ton prénom :");
+  if(prenom === null || !prenom.trim()) return null;
+  setIdentity(nom.trim(), prenom.trim());
+  renderIdentity();
+  return {nom: nom.trim(), prenom: prenom.trim()};
+}
+function ensureIdentity(){
+  return getIdentity() || promptIdentity();
+}
+function changeIdentity(){
+  promptIdentity();
+}
+function renderIdentity(){
+  const el = document.getElementById('identityBox');
+  if(!el) return;
+  const id = getIdentity();
+  el.innerHTML = id
+    ? `${escapeHtml(id.nom.toUpperCase())} ${escapeHtml(id.prenom)} · <a href="#" onclick="changeIdentity(); return false;">modifier</a>`
+    : `<a href="#" onclick="changeIdentity(); return false;">Renseigner mon nom</a>`;
+}
+function sanitizeNamePart(s){
+  return s.normalize('NFD').replace(/[\u0300-\u036f]/g,'')
+    .trim().replace(/\s+/g,'-').replace(/[^A-Za-z0-9-]/g,'');
+}
+function titleCase(s){
+  return s.split('-').map(w => w ? w[0].toUpperCase()+w.slice(1).toLowerCase() : '').join('-');
+}
+function studentFilePrefix(){
+  const id = ensureIdentity();
+  if(!id) return null;
+  const nom = sanitizeNamePart(id.nom).toUpperCase();
+  const prenom = titleCase(sanitizeNamePart(id.prenom));
+  if(!nom || !prenom) return null;
+  return `${nom}-${prenom}-tp1`;
+}
+
+function downloadFilePy(filename, content){
+  const blob = new Blob([content], {type:'text/x-python'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+function downloadCode(exId){
+  const prefix = studentFilePrefix();
+  if(!prefix) return;
+  const ex = EXERCISES.find(e=>e.id===exId);
+  const code = getEditorValue(`code-${exId}`);
+  downloadFilePy(`${prefix}-${ex.key}.py`, code);
+}
+function downloadAllCode(){
+  const prefix = studentFilePrefix();
+  if(!prefix) return;
+  // on force la sauvegarde de l'exercice actuellement ouvert avant de tout rassembler
+  if(editors[`code-${currentExId}`]){
+    saveCode(currentExId, editors[`code-${currentExId}`].getValue());
+  }
+  const sections = EXERCISES.map(ex => {
+    const code = loadSavedCode(ex.id, ex.starter);
+    return `# ============================================================\n# Exercice ${ex.num} (Partie ${ex.partie}) — ${ex.title}\n# ============================================================\n\n${code}`;
+  });
+  downloadFilePy(`${prefix}.py`, sections.join('\n\n\n'));
+}
 
 function renderExList(){
   const el = document.getElementById('exlist');
@@ -730,12 +847,13 @@ function renderExerciseCard(){
         <span class="badge ${badgeClass}">${badgeLabel}</span>
       </div>
       <div class="statement">${ex.statement}</div>
-      <textarea class="code" id="code-${ex.id}" spellcheck="false">${ex.starter}</textarea>
+      <textarea class="code" id="code-${ex.id}" spellcheck="false">${escapeHtml(loadSavedCode(ex.id, ex.starter))}</textarea>
       <div class="code-toolbar">
         <button class="run" id="run-${ex.id}">Lancer les tests</button>
+        <button class="ghost" onclick="downloadCode('${ex.id}')">Télécharger (.py)</button>
         <button class="ghost" onclick="resetStarter('${ex.id}')">Réinitialiser le code</button>
       </div>
-      <div class="editor-hint-note">Ctrl+Espace pour l'autocomplétion.</div>
+      <div class="editor-hint-note">Ctrl+Espace pour l'autocomplétion &middot; votre code est sauvegardé automatiquement dans ce navigateur.</div>
       <div class="results" id="results-${ex.id}"></div>
       <details class="correction">
         <summary>Voir une correction possible</summary>
@@ -755,7 +873,7 @@ function renderExerciseCard(){
       </details>
     </div>
   `;
-  mountEditor(`code-${ex.id}`);
+  mountEditor(`code-${ex.id}`, (code) => saveCode(ex.id, code));
   document.getElementById(`run-${ex.id}`).addEventListener('click', ()=>{
     const code = getEditorValue(`code-${ex.id}`);
     const status = document.getElementById('pyostatus');
@@ -767,6 +885,7 @@ function renderExerciseCard(){
 function resetStarter(id){
   const ex = EXERCISES.find(e=>e.id===id);
   setEditorValue(`code-${id}`, ex.starter);
+  clearSavedCode(id);
   const resEl = document.getElementById(`results-${id}`);
   if(resEl) resEl.innerHTML = '';
 }
@@ -776,6 +895,7 @@ function resetStarter(id){
    ====================================================================== */
 renderExList();
 renderExerciseCard();
+renderIdentity();
 initPyodide().then(()=>{ document.getElementById('pyostatus').textContent = "Python : prêt"; })
   .catch(()=>{ document.getElementById('pyostatus').textContent = "Python : indisponible (connexion requise au premier chargement)"; });
 </script>
