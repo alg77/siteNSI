@@ -1,0 +1,1216 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TP1 — Les tours de Hanoï</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>/* Piles et files — TP interactifs.
+   Même identité graphique que la plateforme ECE : papier clair, encre bleu nuit, accents
+   brique/bleu/vert/ambre, Space Grotesk pour les titres, Inter pour le texte, JetBrains Mono pour le code. */
+:root {
+  --ink: #1c2541;
+  --ink-soft: #3a4470;
+  --paper: #fbfaf6;
+  --paper-dim: #efece2;
+  --card: #ffffff;
+  --line: #dcd6c4;
+  --blue: #2e6fab;
+  --blue-dim: #e7eef6;
+  --brick: #b3453d;
+  --brick-dim: #f6e6e4;
+  --brick-dark: #8a332c;
+  --green: #3f8f5f;
+  --green-dim: #e5f2ea;
+  --amber: #c98a1f;
+  --ok: #3f8f5f;
+  --ko: #b3453d;
+  --warn: #a3691a;
+  --code-bg: #1c2541;
+  --code-fg: #e9e7dd;
+  --accent: #2e6fab;
+  --accent-soft: color-mix(in srgb, var(--accent) 12%, white);
+  --font-ui: 'Inter', -apple-system, "Segoe UI", system-ui, sans-serif;
+  --font-head: 'Space Grotesk', var(--font-ui);
+  --font-code: 'JetBrains Mono', ui-monospace, Menlo, Consolas, "DejaVu Sans Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.65 var(--font-ui);
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+
+a { color: var(--blue); }
+code, kbd { font-family: var(--font-code); font-size: .9em; background: var(--paper-dim); padding: .1em .35em; border-radius: 4px; }
+:focus-visible { outline: 2.5px solid var(--brick); outline-offset: 2px; }
+
+/* ---------- barre du haut ---------- */
+.barre {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--ink); color: #fff;
+  border-bottom: 1px solid #2f3a63;
+  padding: 10px 18px;
+  display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center;
+}
+.barre .marque { font: 700 17px var(--font-head); display: flex; align-items: center; gap: 8px; white-space: nowrap; letter-spacing: -.01em; }
+.barre .marque .pastille { width: 28px; height: 28px; display: grid; place-items: center; background: var(--accent); border-radius: 6px; font-size: 16px; }
+.barre .identite { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.barre label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #cfd3e6; }
+.barre input[type=text] {
+  width: 148px; padding: 6px 9px; border: 1px solid #3a4470; border-radius: 6px; background: #232d52; color: #fff; font: 14px var(--font-ui);
+}
+.barre input[type=text]::placeholder { color: #8891bb; }
+.barre input[type=text]:focus-visible { outline-color: #fff; }
+.barre .nom-fichier { font: 12px var(--font-code); color: #a9b0d6; }
+.barre .actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.puces { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+.puce {
+  width: 24px; height: 24px; border-radius: 5px; display: grid; place-items: center;
+  font: 700 11px var(--font-head); text-decoration: none; color: #fff;
+  background: #33406f; border: 1px solid #46538a;
+}
+.puce.defi { border-radius: 50%; }
+.puce.ran { background: var(--blue); border-color: var(--blue); }
+.puce.ok { background: var(--green); border-color: var(--green); }
+.puce.ko, .puce.err { background: var(--brick); border-color: var(--brick); }
+.puce.dirty { opacity: .6; border-style: dashed; }
+.etat-python { font-size: 13px; color: #cfd3e6; display: flex; align-items: center; gap: 6px; }
+.etat-python i { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); display: inline-block; }
+.etat-python.pret i { background: #6fce97; }
+.etat-python.erreur i { background: #e08a83; }
+
+/* ---------- boutons ---------- */
+.btn {
+  font: 650 14px var(--font-head); cursor: pointer; letter-spacing: -.005em;
+  border: 1px solid var(--line); background: var(--card); color: var(--ink-soft);
+  border-radius: 7px; padding: 9px 16px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn:hover:not(:disabled) { background: var(--paper-dim); }
+.btn:active:not(:disabled) { background: var(--line); }
+.btn:disabled { opacity: .5; cursor: wait; }
+.btn.primaire { background: var(--brick); border-color: var(--brick); color: #fff; }
+.btn.primaire:hover:not(:disabled) { background: var(--brick-dark); }
+.btn.discret { border-color: transparent; background: transparent; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; color: var(--blue); padding: 6px 4px; }
+.btn.discret:hover:not(:disabled) { background: var(--blue-dim); text-decoration: none; }
+.barre .btn { border-color: #3a4470; background: #232d52; color: #fff; }
+.barre .btn:hover:not(:disabled) { background: #2c3763; }
+.barre .btn.primaire { background: var(--brick); border-color: var(--brick); }
+.barre .btn.primaire:hover:not(:disabled) { background: var(--brick-dark); }
+
+/* ---------- mise en page ---------- */
+.page { max-width: 920px; margin: 0 auto; padding: 26px 16px 80px; }
+.cartouche {
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 26px;
+}
+.cartouche .bandeau {
+  background: var(--ink); color: #fff; display: flex; gap: 18px; align-items: center; padding: 22px 26px;
+}
+.cartouche .tuile { font-size: 40px; width: 72px; height: 72px; display: grid; place-items: center; background: rgba(255,255,255,.1); border-radius: 12px; flex: none; }
+.cartouche h1 { margin: 0; font: 700 1.9rem/1.2 var(--font-head); letter-spacing: -.02em; }
+.cartouche .sous-titre { margin: 5px 0 0; font-size: 1.02rem; color: #cfd3e6; }
+.cartouche .num { font: 700 11px var(--font-code); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; opacity: .9; }
+.cartouche .contenu { padding: 22px 26px 10px; }
+.cartouche .objectifs { margin: 0 0 12px; padding-left: 1.2em; }
+.cartouche .objectifs li { margin: 3px 0; }
+.cartouche .duree { display: inline-block; background: var(--paper-dim); border: 1px solid var(--line); border-radius: 999px; padding: 2px 13px; font-size: .88rem; margin-bottom: 12px; color: var(--ink-soft); }
+@media (max-width: 560px) { .cartouche .tuile { width: 52px; height: 52px; font-size: 26px; } .cartouche h1 { font-size: 1.4rem; } }
+
+/* texte des énoncés */
+.enonce > * { max-width: 70ch; }
+.enonce > table, .enonce > pre, .enonce > .adm { max-width: none; }
+.enonce h2 { font: 700 1.2rem/1.3 var(--font-head); margin: 1.2em 0 .4em; letter-spacing: -.01em; }
+.enonce h3 { font: 650 1.02rem/1.3 var(--font-head); margin: 1em 0 .3em; }
+.enonce p { margin: .6em 0; }
+.enonce ul, .enonce ol { padding-left: 1.4em; }
+.enonce li { margin: .25em 0; }
+.enonce table { border-collapse: collapse; margin: .8em 0; width: auto; min-width: 60%; font-size: .95rem; }
+.enonce th, .enonce td { border-bottom: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+.enonce th { background: var(--paper-dim); font-family: var(--font-head); font-weight: 650; }
+.enonce pre {
+  background: var(--paper-dim); border: 1px solid var(--line); border-left: 3px solid var(--blue);
+  border-radius: 8px; padding: 12px 16px; overflow-x: auto; font: 13px/1.6 var(--font-code); margin: .8em 0;
+}
+.enonce pre code { background: none; padding: 0; font-size: inherit; }
+.adm { border-radius: 8px; padding: 10px 16px; margin: 1em 0; border: 1px solid; border-left-width: 3px; max-width: 70ch; }
+.adm p { margin: .3em 0; }
+.adm .adm-titre { font: 650 .95rem var(--font-head); margin: 0 0 .15em; }
+.adm-astuce { background: var(--blue-dim); border-color: var(--blue); }
+.adm-attention { background: var(--brick-dim); border-color: var(--brick); }
+.adm-note { background: var(--green-dim); border-color: var(--green); }
+
+/* coloration syntaxique (extraits de code en lecture seule, fond clair) */
+.k { color: var(--amber); font-weight: 650; } .s { color: var(--green); } .c { color: var(--ink-soft); font-style: italic; } .n { color: var(--brick); } .b { color: #1f7a6c; } .f { color: var(--blue); }
+.enonce .k { color: #8a5f10; font-weight: 650; } .enonce .s { color: #226b46; } .enonce .c { color: var(--ink-soft); opacity: .8; font-style: italic; } .enonce .n { color: var(--brick-dark); } .enonce .b { color: #1f7a6c; } .enonce .f { color: var(--blue); }
+
+/* ---------- exercices ---------- */
+.exo {
+  background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: 10px; margin: 24px 0; padding: 0 0 18px;
+}
+.exo.defi { border-left-style: double; border-left-width: 6px; }
+.exo-tete { display: flex; align-items: center; gap: 12px; padding: 16px 22px 6px; flex-wrap: wrap; }
+.exo-tete h2 { margin: 0; font: 700 1.2rem var(--font-head); letter-spacing: -.01em; }
+.exo-tete .etiquette { background: var(--accent); color: #fff; border-radius: 6px; padding: 2px 10px; font: 650 .82rem var(--font-head); white-space: nowrap; }
+.exo.defi .etiquette { background: var(--ink); }
+.exo-tete .statut { margin-left: auto; font: 650 .88rem var(--font-head); }
+.statut.ok { color: var(--green); } .statut.ko, .statut.err { color: var(--brick); } .statut.ran { color: var(--blue); } .statut.todo { color: var(--ink-soft); font-weight: 500; }
+.exo .enonce { padding: 0 22px; }
+.chaine-note { padding: 0 22px; font-size: .85rem; color: var(--ink-soft); margin: 6px 0 0; }
+.exo .zone-code { padding: 0 22px; margin-top: 12px; }
+
+/* éditeur */
+.editeur {
+  display: flex; background: var(--code-bg); border-radius: 8px; overflow: hidden; border: 1px solid #2f3a63;
+  font: 14px/22px var(--font-code); color: var(--code-fg);
+}
+.ed-gut { flex: none; width: 44px; padding: 12px 8px 12px 0; text-align: right; color: #5a6491; background: #19203c; overflow: hidden; user-select: none; }
+.ed-gut div { height: 22px; }
+.ed-gut div.err { background: var(--brick); color: #fff; font-weight: 700; }
+.ed-zone { position: relative; flex: 1; min-width: 0; }
+.ed-hl, .ed-ta {
+  position: absolute; inset: 0; margin: 0; padding: 12px; border: 0; width: 100%; height: 100%;
+  font: inherit; line-height: 22px; white-space: pre; tab-size: 4; letter-spacing: 0; word-spacing: 0;
+  overflow: auto; overscroll-behavior: contain;
+}
+.ed-hl { overflow: hidden; pointer-events: none; color: var(--code-fg); }
+.ed-ta { background: transparent; color: transparent; caret-color: #fff; resize: none; outline: none; }
+.ed-ta::selection { background: #2f3a63; color: transparent; }
+.editeur:focus-within { outline: 2.5px solid var(--brick); outline-offset: 1px; }
+/* jetons dans l'éditeur (fond sombre, mêmes teintes que l'éditeur CodeMirror de la plateforme ECE) */
+.ed-hl .k { color: #e0a63a; font-weight: 650; }
+.ed-hl .s { color: #a3d99b; }
+.ed-hl .c { color: #7d87ad; font-style: italic; }
+.ed-hl .n { color: #e39aa8; }
+.ed-hl .b { color: #8fd0c4; }
+.ed-hl .f { color: #9fc8e8; }
+
+.actions-ex { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding: 12px 22px 0; }
+.secours { font-size: .88rem; color: var(--ink-soft); display: flex; gap: 6px; align-items: flex-start; padding: 8px 22px 0; max-width: 70ch; }
+.secours input { margin-top: 4px; accent-color: var(--brick); }
+.raccourci { font-size: .8rem; color: var(--ink-soft); margin-left: auto; }
+
+/* sortie / résultats */
+.lcd {
+  margin: 14px 22px 0; background: var(--paper-dim); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 8px;
+  font: 13px/1.55 var(--font-code); padding: 10px 14px; overflow-x: auto;
+}
+.lcd .titre-lcd { font: 650 11px var(--font-head); letter-spacing: .05em; text-transform: uppercase; opacity: .65; margin-bottom: 4px; }
+.lcd pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+.lcd .vide { opacity: .6; font-style: italic; font-family: var(--font-ui); }
+.erreur-box {
+  margin: 12px 22px 0; border: 1px solid var(--brick); border-left: 3px solid var(--brick); background: var(--brick-dim); color: var(--brick-dark); border-radius: 8px; padding: 8px 14px;
+}
+.erreur-box .src { font: 13px var(--font-code); background: #fff; border: 1px solid #eccac6; border-radius: 4px; padding: 3px 8px; margin-top: 6px; white-space: pre-wrap; }
+.avert-box { margin: 10px 22px 0; border: 1px solid var(--amber); border-left: 3px solid var(--amber); background: #fbf1de; color: #6b4e0f; border-radius: 8px; padding: 6px 14px; font-size: .9rem; }
+.tests { list-style: none; margin: 14px 22px 0; padding: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.tests-resume { padding: 9px 14px; font: 650 .95rem var(--font-head); background: var(--paper-dim); border-bottom: 1px solid var(--line); }
+.tests-resume.ok { background: var(--green-dim); color: #205c3c; } .tests-resume.ko { background: var(--brick-dim); color: var(--brick-dark); }
+.tests li { padding: 6px 14px; border-top: 1px solid var(--line); display: flex; gap: 10px; font-size: .92rem; }
+.tests li:first-child { border-top: 0; }
+.tests li .mark { flex: none; width: 1.4em; }
+.tests li.ok .mark { color: var(--green); } .tests li.ko .mark { color: var(--brick); }
+.tests li .detail { color: var(--ink-soft); font: 13px var(--font-code); display: block; }
+
+/* corrigé (prof) */
+.prof-bloc { margin: 14px 22px 0; border: 1px solid var(--blue); border-left: 3px solid var(--blue); background: var(--blue-dim); border-radius: 8px; padding: 9px 14px; }
+.prof-bloc summary { cursor: pointer; font: 650 .95rem var(--font-head); color: var(--blue); }
+.prof-bloc pre { background: var(--code-bg); color: var(--code-fg); border-radius: 6px; padding: 10px 14px; overflow-x: auto; font: 13px/1.55 var(--font-code); }
+.prof-bloc .notes { font-size: .95rem; }
+.prof-banner { background: var(--blue-dim); border: 1px solid var(--blue); border-left: 3px solid var(--blue); color: #1d4a70; padding: 9px 14px; border-radius: 8px; margin: 0 0 20px; font-size: .95rem; }
+
+/* lien de passerelle vers une autre ressource */
+.lien-suite { margin: 30px 0; background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--brick); border-radius: 10px; padding: 16px 20px; }
+.lien-suite p { margin: 4px 0 0; }
+.lien-suite strong { font-family: var(--font-head); }
+.lien-suite a { font-weight: 650; color: var(--brick); }
+
+/* ---------- visuels ---------- */
+.visuel { margin: 14px 22px 0; border: 1px solid var(--line); border-radius: 10px; background: var(--card); overflow: hidden; }
+.visuel .v-tete { background: var(--ink); color: #fff; padding: 7px 14px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: .9rem; }
+.visuel .v-tete strong { font: 650 1rem var(--font-head); }
+.visuel .v-info { margin-left: auto; font: 13px var(--font-code); color: #cfd3e6; }
+.visuel .v-corps { padding: 10px 12px; }
+.visuel canvas { width: 100%; height: auto; display: block; border-radius: 6px; }
+.visuel .v-ctrl { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 8px 12px 12px; font-size: .9rem; }
+.visuel .v-ctrl label { display: flex; align-items: center; gap: 6px; }
+.visuel select, .visuel input[type=number] { font: inherit; padding: 4px 7px; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+.visuel input[type=number] { width: 72px; }
+.visuel .msg { padding: 0 14px 10px; font-size: .92rem; }
+.visuel .msg.err { color: var(--brick); font-weight: 650; }
+.v-double { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 720px) { .v-double { grid-template-columns: 1fr; } }
+.v-double h4 { margin: 0 0 4px; font: 650 .95rem var(--font-head); }
+.v-double .stat { font: 13px var(--font-code); margin-top: 4px; min-height: 2.6em; color: var(--ink-soft); }
+.v-double .stat.err { color: var(--brick); font-family: var(--font-ui); font-weight: 650; }
+.snake-cadre { background: var(--paper-dim); padding: 10px; }
+.snake-score { font: 700 15px var(--font-code); }
+.dpad { display: grid; grid-template-columns: repeat(3, 42px); grid-template-rows: repeat(2, 38px); gap: 4px; }
+.dpad button { font-size: 17px; border: 1px solid var(--line); background: #fff; border-radius: 8px; cursor: pointer; }
+.dpad .haut { grid-column: 2; grid-row: 1; } .dpad .gauche { grid-column: 1; grid-row: 2; } .dpad .bas { grid-column: 2; grid-row: 2; } .dpad .droite { grid-column: 3; grid-row: 2; }
+
+/* ---------- divers ---------- */
+.toast {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 50;
+  background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 8px; box-shadow: 0 8px 24px rgba(28,37,65,.28);
+  max-width: min(92vw, 560px); font-size: .95rem;
+}
+.toast.ko { background: var(--brick); }
+.pied { margin-top: 40px; font-size: .85rem; color: var(--ink-soft); max-width: 70ch; }
+.bandeau-reseau { background: var(--brick-dim); border: 1px solid var(--brick); border-left: 3px solid var(--brick); color: var(--brick-dark); padding: 10px 16px; border-radius: 8px; margin-bottom: 18px; }
+.attente { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--ink-soft); border-top-color: transparent; border-radius: 50%; animation: tourne .8s linear infinite; vertical-align: -2px; }
+@keyframes tourne { to { transform: rotate(360deg); } }
+@media print { .barre, .actions-ex, .secours, .visuel { display: none; } }
+</style>
+</head>
+<body>
+<div class="barre">
+  <div class="marque"><span class="pastille">🗼</span> TP1 — Les tours de Hanoï</div>
+  <div class="identite">
+    <label>Nom <input type="text" class="ch-nom" placeholder="NOM"></label>
+    <label>Prénom <input type="text" class="ch-prenom" placeholder="Prénom"></label>
+    <span class="nom-fichier"></span>
+  </div>
+  <div class="puces"></div>
+  <div class="actions">
+    <span class="etat-python"><i></i><span>Python : chargement…</span></span>
+    <button class="btn btn-charger">📂 Charger</button>
+    <input type="file" class="input-fichier" accept=".py" style="display:none">
+    <button class="btn primaire btn-sauver">💾 Enregistrer</button>
+  </div>
+</div>
+<div class="page">
+  <div class="bandeau-reseau-zone"></div>
+  <div class="cartouche">
+    <div class="bandeau">
+      <div class="tuile">🗼</div>
+      <div>
+        <div class="num">TP1 — Piles et files</div>
+        <h1>Les tours de Hanoï</h1>
+        <p class="sous-titre">Piles : interface, récursivité, animation</p>
+      </div>
+    </div>
+    <div class="contenu">
+      <span class="duree">⏱ 1 h 30 – 2 h</span>
+      <ul class="objectifs"><li>Manipuler une pile uniquement par son interface (`empiler`, `depiler`, `sommet`, `est_vide`).</li><li>Modéliser un problème avec plusieurs piles et respecter des contraintes de coups.</li><li>Écrire un algorithme récursif et le relier à la pile d&#x27;appels.</li><li>Implémenter une pile (défi) et dérécursiver un algorithme avec une pile explicite (défi).</li></ul>
+      <div class="enonce"><h2>Rappel : la pile (LIFO)</h2>
+<p>Une <strong>pile</strong> est une structure de données dans laquelle on ne peut agir que sur le <strong>sommet</strong> : le dernier élément arrivé est le premier à sortir (*Last In, First Out*). Pense à une pile d&#x27;assiettes.</p>
+<table><thead><tr><th>Opération</th><th>Effet</th></tr></thead><tbody><tr><td><code>p = Pile()</code></td><td>crée une pile vide</td></tr><tr><td><code>p.est_vide()</code></td><td>renvoie <code>True</code> si la pile est vide</td></tr><tr><td><code>p.empiler(x)</code></td><td>pose <code>x</code> au sommet</td></tr><tr><td><code>p.depiler()</code></td><td>retire le sommet <strong>et le renvoie</strong> (erreur si la pile est vide)</td></tr><tr><td><code>p.sommet()</code></td><td>renvoie le sommet <strong>sans le retirer</strong></td></tr><tr><td><code>p.taille()</code></td><td>nombre d&#x27;éléments</td></tr></tbody></table>
+<div class="adm adm-astuce"><p class="adm-titre">Interface et implémentation</p><p>Dans ce TP, la classe <code>Pile</code> est <strong>déjà écrite</strong> : tu l&#x27;utilises sans savoir comment elle est codée. C&#x27;est tout l&#x27;intérêt d&#x27;une *interface*. Tu écriras ta propre version dans le défi A.</p></div>
+<p>Trois outils te sont fournis pour le jeu : <code>init_tours(n)</code> crée les trois tours <code>A</code>, <code>B</code>, <code>C</code> avec <code>n</code> disques sur <code>A</code> ; <code>contenu(p)</code> renvoie le contenu d&#x27;une pile <strong>pour l&#x27;afficher</strong> (du bas vers le sommet) ; <code>nb_coups_effectues()</code> compte les disques déplacés.</p></div>
+    </div>
+  </div>
+  <div class="exercices"></div>
+  <div class="lien-suite"><p><strong>🖨️ Pour aller plus loin</strong></p><p><a href="../nsi-maker/index.html#defi">Passe à l&#x27;atelier maker : conçois et imprime en 3D ta propre tour de Hanoï (ressource NSI Maker) →</a></p></div>
+  <p class="pied">TP1 — Les tours de Hanoï · piles et files, NSI Terminale</p>
+</div>
+<script>// Éditeur de code : textarea transparente par-dessus une couche de surlignage, gouttière avec numéros de ligne.
+(function () {
+  const MOTS_CLES = new Set("False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield".split(" "));
+  const CONSTRUITS = new Set("abs all any bool dict enumerate float format int len list max min print range repr round set sorted str sum tuple type zip isinstance super object".split(" "));
+  const TOKEN_RE = /(#.*$)|("""[\s\S]*?"""|'''[\s\S]*?'''|"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|(\b\d+(?:\.\d+)?\b)|(\b[A-Za-z_][A-Za-z0-9_]*\b)|(\()/gm;
+
+  function echapper(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function colorer(code) {
+    let out = "";
+    let pos = 0;
+    let dernierNomIdx = -1;
+    let morceaux = [];
+    TOKEN_RE.lastIndex = 0;
+    let m;
+    while ((m = TOKEN_RE.exec(code))) {
+      morceaux.push(echapper(code.slice(pos, m.index)));
+      pos = TOKEN_RE.lastIndex;
+      if (m[1] !== undefined) {
+        morceaux.push('<span class="c">' + echapper(m[1]) + "</span>");
+        dernierNomIdx = -1;
+      } else if (m[2] !== undefined) {
+        morceaux.push('<span class="s">' + echapper(m[2]) + "</span>");
+        dernierNomIdx = -1;
+      } else if (m[3] !== undefined) {
+        morceaux.push('<span class="n">' + echapper(m[3]) + "</span>");
+        dernierNomIdx = -1;
+      } else if (m[4] !== undefined) {
+        const w = m[4];
+        if (MOTS_CLES.has(w)) {
+          morceaux.push('<span class="k">' + w + "</span>");
+          dernierNomIdx = -1;
+        } else if (CONSTRUITS.has(w)) {
+          morceaux.push('<span class="b">' + w + "</span>");
+          dernierNomIdx = -1;
+        } else {
+          morceaux.push(w);
+          dernierNomIdx = morceaux.length - 1;
+        }
+      } else if (m[5] !== undefined) {
+        if (dernierNomIdx >= 0) {
+          morceaux[dernierNomIdx] = '<span class="f">' + morceaux[dernierNomIdx] + "</span>";
+        }
+        morceaux.push("(");
+        dernierNomIdx = -1;
+      }
+    }
+    morceaux.push(echapper(code.slice(pos)));
+    return morceaux.join("");
+  }
+
+  function creerEditeur(conteneur, codeInitial, options) {
+    options = options || {};
+    conteneur.classList.add("editeur");
+    conteneur.innerHTML =
+      '<div class="ed-gut"></div><div class="ed-zone"><pre class="ed-hl"></pre>' +
+      '<textarea class="ed-ta" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off"></textarea></div>';
+    const gut = conteneur.querySelector(".ed-gut");
+    const hl = conteneur.querySelector(".ed-hl");
+    const ta = conteneur.querySelector(".ed-ta");
+    ta.value = codeInitial;
+
+    function majGouttiere() {
+      const n = ta.value.split("\n").length;
+      let html = "";
+      for (let i = 1; i <= n; i++) html += "<div>" + i + "</div>";
+      gut.innerHTML = html;
+    }
+    function majHighlight() {
+      let v = ta.value;
+      if (v.endsWith("\n")) v += " ";
+      hl.innerHTML = colorer(v);
+    }
+    function majTout() {
+      majGouttiere();
+      majHighlight();
+    }
+    function syncScroll() {
+      hl.scrollTop = ta.scrollTop;
+      hl.scrollLeft = ta.scrollLeft;
+      gut.scrollTop = ta.scrollTop;
+    }
+    ta.addEventListener("input", () => {
+      majTout();
+      effacerErreur();
+      if (options.onchange) options.onchange(ta.value);
+    });
+    ta.addEventListener("scroll", syncScroll);
+    ta.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        const s = ta.selectionStart,
+          f = ta.selectionEnd;
+        ta.value = ta.value.slice(0, s) + "    " + ta.value.slice(f);
+        ta.selectionStart = ta.selectionEnd = s + 4;
+        majTout();
+        if (options.onchange) options.onchange(ta.value);
+      } else if (e.key === "Enter") {
+        const s = ta.selectionStart;
+        const avant = ta.value.slice(0, s);
+        const ligne = avant.slice(avant.lastIndexOf("\n") + 1);
+        const indent = (ligne.match(/^\s*/) || [""])[0];
+        const plus = /:\s*$/.test(ligne) ? "    " : "";
+        if (indent || plus) {
+          e.preventDefault();
+          const ins = "\n" + indent + plus;
+          ta.value = ta.value.slice(0, s) + ins + ta.value.slice(ta.selectionEnd);
+          ta.selectionStart = ta.selectionEnd = s + ins.length;
+          majTout();
+          if (options.onchange) options.onchange(ta.value);
+        }
+      }
+    });
+
+    function marquerErreur(ligne) {
+      effacerErreur();
+      const d = gut.children[ligne - 1];
+      if (d) d.classList.add("err");
+    }
+    function effacerErreur() {
+      Array.from(gut.children).forEach((d) => d.classList.remove("err"));
+    }
+
+    majTout();
+    return {
+      getValue: () => ta.value,
+      setValue: (v) => {
+        ta.value = v;
+        majTout();
+      },
+      focus: () => ta.focus(),
+      marquerErreur,
+      effacerErreur,
+      el: ta,
+    };
+  }
+
+  window.creerEditeur = creerEditeur;
+  window._colorerPython = colorer;
+})();
+</script>
+<script>// Animations liées à certains exercices. Appelées par app.js via initVisuel(container, engine, ex).
+(function () {
+  const COULEURS_DISQUES = ["#b3453d", "#c98a1f", "#3f8f5f", "#2e6fab", "#8a332c", "#1f7a6c", "#3a4470", "#a3691a", "#205c3c", "#1d4a70"];
+  const FN_HANOI = { ex3: "hanoi", defiB: "hanoi_iteratif" };
+  const FN_SNAKE = { ex4: "avancer", defi: "avancer_tore" };
+
+  // ---------------------------------------------------------------- HANOÏ
+  function initHanoiVisuel(conteneur, engine, ex) {
+    const fn = FN_HANOI[ex.id] || "hanoi";
+    conteneur.innerHTML =
+      '<div class="v-tete"><strong>🗼 Animation</strong>' +
+      '<label>n = <input type="number" class="hn-n" min="1" max="8" value="4" style="width:52px"></label>' +
+      '<button class="btn discret hn-go">▶ Lancer</button>' +
+      '<span class="v-info hn-info"></span></div><div class="v-corps"><canvas class="hn-cv" width="640" height="260"></canvas></div>' +
+      '<div class="msg hn-msg"></div>';
+    const cv = conteneur.querySelector(".hn-cv");
+    const ctx = cv.getContext("2d");
+    const msg = conteneur.querySelector(".hn-msg");
+    const info = conteneur.querySelector(".hn-info");
+    let anim = null;
+
+    function dessiner(etats, n) {
+      const W = cv.width, H = cv.height;
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#efece2";
+      ctx.fillRect(0, 0, W, H);
+      const baseY = H - 30;
+      const pegX = [W * 0.2, W * 0.5, W * 0.8];
+      const maxW = W * 0.27;
+      ctx.fillStyle = "#7d87ad";
+      ctx.fillRect(20, baseY, W - 40, 8);
+      ["A", "B", "C"].forEach((nom, i) => {
+        ctx.fillStyle = "#1c2541";
+        ctx.fillRect(pegX[i] - 4, baseY - 150, 8, 150);
+        ctx.font = "13px monospace";
+        ctx.fillStyle = "#1c2541";
+        ctx.textAlign = "center";
+        ctx.fillText(nom, pegX[i], baseY + 24);
+        const pile = etats[nom] || [];
+        pile.forEach((d, k) => {
+          const w = 26 + (d / n) * maxW;
+          const h = 16;
+          const y = baseY - 8 - (k + 1) * (h + 3);
+          ctx.fillStyle = COULEURS_DISQUES[(d - 1) % COULEURS_DISQUES.length];
+          ctx.strokeStyle = "#1c2541";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.roundRect(pegX[i] - w / 2, y, w, h, 4);
+          ctx.fill();
+          ctx.stroke();
+        });
+      });
+    }
+
+    async function lancer() {
+      if (anim) clearInterval(anim);
+      const n = Math.max(1, Math.min(8, parseInt(conteneur.querySelector(".hn-n").value) || 4));
+      msg.textContent = "";
+      msg.className = "msg hn-msg";
+      info.textContent = "calcul…";
+      const expr = "(" + fn + "(" + n + ", 0, 2, 1, init_tours(" + n + ")), _etat_hanoi())[-1]";
+      let res;
+      try {
+        res = await engine.call(ex.id, expr);
+      } catch (e) {
+        msg.textContent = "Erreur : " + e.message;
+        msg.className = "msg hn-msg err";
+        info.textContent = "";
+        return;
+      }
+      if (!res || res.pas_ns) {
+        msg.textContent = "Exécute d'abord ton code (bouton « Exécuter »).";
+        msg.className = "msg hn-msg err";
+        info.textContent = "";
+        return;
+      }
+      if (res.erreur) {
+        msg.textContent = res.erreur.type + " : " + res.erreur.msg;
+        msg.className = "msg hn-msg err";
+        info.textContent = "";
+        return;
+      }
+      const etat = res.val;
+      if (!etat || !etat.events) {
+        msg.textContent = "Pas d'information d'animation disponible.";
+        info.textContent = "";
+        return;
+      }
+      const etats = { A: [], B: [], C: [] };
+      for (let d = n; d >= 1; d--) etats.A.push(d);
+      dessiner(etats, n);
+      let i = 0;
+      const events = etat.events;
+      info.textContent = "0 / " + events.length + " coups";
+      const delai = Math.max(35, 700 - events.length * 4);
+      anim = setInterval(() => {
+        if (i >= events.length) {
+          clearInterval(anim);
+          info.textContent = events.length + " coups joués";
+          return;
+        }
+        const genre = events[i][0], peg = events[i][1], disque = events[i][2];
+        if (genre === "+") etats[peg].push(disque);
+        else etats[peg].pop();
+        dessiner(etats, n);
+        i++;
+        info.textContent = i + " / " + events.length + " coups";
+      }, delai);
+    }
+    conteneur.querySelector(".hn-go").addEventListener("click", lancer);
+    dessiner({ A: [4, 3, 2, 1], B: [], C: [] }, 4);
+  }
+
+  // ---------------------------------------------------------------- SNAKE
+  function initSnakeVisuel(conteneur, engine, ex) {
+    const fn = FN_SNAKE[ex.id] || "avancer";
+    conteneur.innerHTML =
+      '<div class="v-tete"><strong>🐍 Joue avec ta fonction</strong>' +
+      '<span class="v-info sk-score">score : 0</span></div>' +
+      '<div class="v-corps snake-cadre"><canvas class="sk-cv" width="400" height="400"></canvas></div>' +
+      '<div class="v-ctrl"><button class="btn primaire sk-go">▶ Nouvelle partie</button>' +
+      '<div class="dpad">' +
+      '<button class="haut" data-d="haut">▲</button><button class="gauche" data-d="gauche">◀</button>' +
+      '<button class="bas" data-d="bas">▼</button><button class="droite" data-d="droite">▶</button></div>' +
+      '<span class="raccourci">clique dans la grille puis utilise les flèches</span></div>' +
+      '<div class="msg sk-msg"></div>';
+    const cv = conteneur.querySelector(".sk-cv");
+    const ctx = cv.getContext("2d");
+    const scoreEl = conteneur.querySelector(".sk-score");
+    const msg = conteneur.querySelector(".sk-msg");
+    const L = 16, H = 16;
+    let boucle = null, dirCourante = "droite", enCours = false;
+
+    function dessiner(etat) {
+      const cs = cv.width / etat.l;
+      ctx.fillStyle = "#efece2";
+      ctx.fillRect(0, 0, cv.width, cv.height);
+      ctx.fillStyle = "#3f8f5f";
+      etat.corps.forEach(function (c) { ctx.fillRect(c[0] * cs + 1, c[1] * cs + 1, cs - 2, cs - 2); });
+      if (etat.corps.length) {
+        const t = etat.corps[etat.corps.length - 1];
+        ctx.fillStyle = "#1c2541";
+        ctx.fillRect(t[0] * cs + 1, t[1] * cs + 1, cs - 2, cs - 2);
+      }
+      if (etat.pomme) {
+        ctx.fillStyle = "#b3453d";
+        ctx.beginPath();
+        ctx.arc(etat.pomme[0] * cs + cs / 2, etat.pomme[1] * cs + cs / 2, cs * 0.38, 0, 7);
+        ctx.fill();
+      }
+      scoreEl.textContent = "score : " + etat.score;
+      if (etat.statut !== "ok") {
+        clearInterval(boucle);
+        enCours = false;
+        if (etat.statut === "mort") {
+          msg.textContent = "Perdu ! Score final : " + etat.score;
+          msg.className = "msg sk-msg err";
+        } else if (etat.statut === "erreur") {
+          msg.textContent = "Erreur : " + etat.message;
+          msg.className = "msg sk-msg err";
+        } else if (etat.statut === "gagne") {
+          msg.textContent = "Grille remplie, bravo !";
+          msg.className = "msg sk-msg";
+        }
+      }
+    }
+
+    async function tick() {
+      let res;
+      try {
+        res = await engine.call(ex.id, "_jeu_pas('" + dirCourante + "')");
+      } catch (e) {
+        clearInterval(boucle);
+        enCours = false;
+        msg.textContent = "Erreur : " + e.message;
+        msg.className = "msg sk-msg err";
+        return;
+      }
+      dessiner(res.val || res);
+    }
+
+    async function nouvellePartie() {
+      if (boucle) clearInterval(boucle);
+      msg.textContent = "";
+      dirCourante = "droite";
+      const graine = Math.floor(Math.random() * 100000);
+      const expr = "_jeu_nouveau(" + L + ", " + H + ", " + graine + ", '" + fn + "')";
+      let res;
+      try {
+        res = await engine.call(ex.id, expr);
+      } catch (e) {
+        msg.textContent = "Erreur : " + e.message;
+        msg.className = "msg sk-msg err";
+        return;
+      }
+      if (!res || res.pas_ns) {
+        msg.textContent = "Exécute d'abord ton code (bouton « Exécuter »).";
+        msg.className = "msg sk-msg err";
+        return;
+      }
+      dessiner(res.val || res);
+      enCours = true;
+      boucle = setInterval(tick, 160);
+    }
+
+    function tourner(d) {
+      if (!enCours) return;
+      dirCourante = d;
+    }
+    conteneur.querySelectorAll(".dpad button").forEach(function (b) { b.addEventListener("click", function () { tourner(b.dataset.d); }); });
+    cv.tabIndex = 0;
+    cv.addEventListener("keydown", function (e) {
+      const map = { ArrowUp: "haut", ArrowDown: "bas", ArrowLeft: "gauche", ArrowRight: "droite", z: "haut", s: "bas", q: "gauche", d: "droite" };
+      if (map[e.key]) {
+        e.preventDefault();
+        tourner(map[e.key]);
+      }
+    });
+    conteneur.querySelector(".sk-go").addEventListener("click", nouvellePartie);
+    ctx.fillStyle = "#efece2";
+    ctx.fillRect(0, 0, cv.width, cv.height);
+  }
+
+  // ---------------------------------------------------------------- LABYRINTHE
+  function initMazeVisuel(conteneur, engine, ex, algos) {
+    const double = algos.length > 1;
+    let panneaux = "";
+    const titres = { pile: "Pile (profondeur)", file: "File (largeur)" };
+    algos.forEach(function (a) {
+      panneaux +=
+        '<div><h4>' + titres[a] + '</h4><canvas class="mz-cv" data-a="' + a + '" width="360" height="360"></canvas>' +
+        '<div class="stat" data-a="' + a + '"></div></div>';
+    });
+    conteneur.innerHTML =
+      '<div class="v-tete"><strong>🧭 Parcours</strong>' +
+      '<label>taille <select class="mz-taille"><option value="15,11">petit</option><option value="21,15" selected>moyen</option><option value="31,21">grand</option></select></label>' +
+      '<label>boucles <select class="mz-boucles"><option value="0">aucune</option><option value="0.15">un peu</option><option value="0.3" selected>quelques-unes</option></select></label>' +
+      '<button class="btn primaire mz-go">▶ Nouveau labyrinthe</button></div>' +
+      '<div class="v-corps"><div class="' + (double ? "v-double" : "") + '">' + panneaux + "</div></div>" +
+      '<div class="msg mz-msg"></div>';
+    const msg = conteneur.querySelector(".mz-msg");
+    let anims = [];
+
+    function dessinerGrille(ctx, grille, cs) {
+      ctx.fillStyle = "#efece2";
+      ctx.fillRect(0, 0, grille[0].length * cs, grille.length * cs);
+      for (let y = 0; y < grille.length; y++) {
+        for (let x = 0; x < grille[y].length; x++) {
+          if (grille[y][x] === "#") {
+            ctx.fillStyle = "#1c2541";
+            ctx.fillRect(x * cs, y * cs, cs, cs);
+          }
+        }
+      }
+    }
+
+    async function lancer() {
+      anims.forEach(function (a) { clearInterval(a); });
+      anims = [];
+      msg.textContent = "";
+      const taille = conteneur.querySelector(".mz-taille").value.split(",").map(Number);
+      const largeur = taille[0], hauteur = taille[1];
+      const boucles = parseFloat(conteneur.querySelector(".mz-boucles").value);
+      const graine = Math.floor(Math.random() * 100000);
+      const algosJs = "[" + algos.map(function (a) { return "'" + a + "'"; }).join(",") + "]";
+      const expr = "_lab_compare(" + algosJs + ", " + largeur + ", " + hauteur + ", " + graine + ", " + boucles + ", True)";
+      let res;
+      try {
+        res = await engine.call(ex.id, expr);
+      } catch (e) {
+        msg.textContent = "Erreur : " + e.message;
+        msg.className = "msg mz-msg err";
+        return;
+      }
+      if (!res || res.pas_ns) {
+        msg.textContent = "Exécute d'abord ton code (bouton « Exécuter »).";
+        msg.className = "msg mz-msg err";
+        return;
+      }
+      if (res.erreur) {
+        msg.textContent = res.erreur.type + " : " + res.erreur.msg;
+        msg.className = "msg mz-msg err";
+        return;
+      }
+      const data = res.val;
+      const grille = data.grille;
+      const cs = Math.floor(360 / Math.max(grille.length, grille[0].length));
+      algos.forEach(function (a) {
+        const cv = conteneur.querySelector('.mz-cv[data-a="' + a + '"]');
+        const statEl = conteneur.querySelector('.stat[data-a="' + a + '"]');
+        cv.width = grille[0].length * cs;
+        cv.height = grille.length * cs;
+        const ctx = cv.getContext("2d");
+        dessinerGrille(ctx, grille, cs);
+        const r = data.res[a];
+        if (!r) return;
+        if (r.erreur) {
+          statEl.textContent = r.erreur;
+          statEl.className = "stat err";
+          return;
+        }
+        const visites = r.visites;
+        let i = 0;
+        const delai = Math.max(6, Math.floor(900 / visites.length));
+        const anim = setInterval(function () {
+          if (i >= visites.length) {
+            clearInterval(anim);
+            if (r.chemin && r.chemin.length) {
+              ctx.strokeStyle = "#b3453d";
+              ctx.lineWidth = Math.max(2, cs * 0.3);
+              ctx.beginPath();
+              r.chemin.forEach(function (c, k) {
+                const cx = c[0] * cs + cs / 2, cy = c[1] * cs + cs / 2;
+                if (k === 0) ctx.moveTo(cx, cy);
+                else ctx.lineTo(cx, cy);
+              });
+              ctx.stroke();
+              statEl.textContent = visites.length + " cases explorées · chemin de " + (r.chemin.length - 1) + " pas";
+            } else {
+              statEl.textContent = visites.length + " cases explorées · arrivée non atteinte";
+            }
+            statEl.className = "stat";
+            return;
+          }
+          const c = visites[i];
+          ctx.fillStyle = "#9fc8e8";
+          ctx.fillRect(c[0] * cs + 1, c[1] * cs + 1, cs - 2, cs - 2);
+          i++;
+        }, delai);
+        anims.push(anim);
+      });
+      const d = data.depart, a2 = data.arrivee;
+      algos.forEach(function (a) {
+        const cv = conteneur.querySelector('.mz-cv[data-a="' + a + '"]');
+        const ctx = cv.getContext("2d");
+        ctx.fillStyle = "#3f8f5f";
+        ctx.fillRect(d[0] * cs + 3, d[1] * cs + 3, cs - 6, cs - 6);
+        ctx.fillStyle = "#c98a1f";
+        ctx.fillRect(a2[0] * cs + 3, a2[1] * cs + 3, cs - 6, cs - 6);
+      });
+    }
+    conteneur.querySelector(".mz-go").addEventListener("click", lancer);
+  }
+
+  window.initVisuel = function (conteneur, engine, ex) {
+    if (ex.visuel === "hanoi") initHanoiVisuel(conteneur, engine, ex);
+    else if (ex.visuel === "snake") initSnakeVisuel(conteneur, engine, ex);
+    else if (ex.visuel === "maze_pile") initMazeVisuel(conteneur, engine, ex, ["pile"]);
+    else if (ex.visuel === "maze_both") initMazeVisuel(conteneur, engine, ex, ["pile", "file"]);
+  };
+})();
+</script>
+<script>
+const TP_DATA = {"id": "tp1", "num": 1, "slug": "hanoi", "titre": "Les tours de Hanoï", "prelude": "\n_journal = []\n_ops = [0]\n_init = [None]\n_MAX_JOURNAL = 60000\n\n\nclass Pile:\n    \"\"\"Pile (LIFO). Interface : est_vide, empiler, depiler, sommet, taille.\"\"\"\n\n    def __init__(self, nom=\"\"):\n        self._elts = []\n        self.nom = nom\n\n    def est_vide(self):\n        return len(self._elts) == 0\n\n    def empiler(self, x):\n        _ops[0] += 1\n        self._elts.append(x)\n        if self.nom and len(_journal) < _MAX_JOURNAL:\n            _journal.append((\"+\", self.nom, x))\n\n    def depiler(self):\n        if len(self._elts) == 0:\n            raise IndexError(\"depiler : la pile est vide\")\n        _ops[0] += 1\n        x = self._elts.pop()\n        if self.nom and len(_journal) < _MAX_JOURNAL:\n            _journal.append((\"-\", self.nom, x))\n        return x\n\n    def sommet(self):\n        if len(self._elts) == 0:\n            raise IndexError(\"sommet : la pile est vide\")\n        return self._elts[-1]\n\n    def taille(self):\n        return len(self._elts)\n\n    def __repr__(self):\n        if not self._elts:\n            return \"Pile(vide)\"\n        return \"Pile(\" + \", \".join(repr(x) for x in self._elts) + \" <- sommet)\"\n\n\ndef init_tours(n):\n    \"\"\"Renvoie la liste [A, B, C] de trois piles ; les n disques (n en bas, 1 au sommet) sont sur A.\"\"\"\n    tours = [Pile(\"A\"), Pile(\"B\"), Pile(\"C\")]\n    for d in range(n, 0, -1):\n        tours[0].empiler(d)\n    _journal.clear()\n    _init[0] = n\n    return tours\n\n\ndef contenu(pile):\n    \"\"\"Contenu d'une pile sous forme de liste (bas -> sommet). Pour l'affichage et les tests uniquement.\"\"\"\n    return list(pile._elts)\n\n\ndef nb_coups_effectues():\n    \"\"\"Nombre de disques déplacés depuis le dernier init_tours.\"\"\"\n    return len(_journal) // 2\n\n\ndef _etat_hanoi():\n    if _init[0] is None:\n        return None\n    return {\"n\": _init[0], \"events\": [list(e) for e in _journal]}\n", "exercices": [{"id": "ex1", "kind": "exercice", "titre": "Prendre la pile en main", "abbr": "E1", "enonce_html": "<p><strong>Partie A – Prédire.</strong> Avant d&#x27;exécuter, écris sur ton brouillon ce que le programme affiche. Puis vérifie.</p>\n<p><strong>Partie B – Écrire.</strong> Complète les deux fonctions ci-dessous <strong>en utilisant une <code>Pile</code></strong> (pas de <code>[::-1]</code>, pas de <code>reverse()</code>, pas de <code>pop()</code> de liste).</p>\n<ul><li><code>inverser(liste)</code> renvoie une <strong>nouvelle</strong> liste avec les éléments dans l&#x27;ordre inverse.</li><li><code>est_palindrome(mot)</code> renvoie <code>True</code> si <code>mot</code> se lit de la même façon dans les deux sens.</li></ul>\n<div class=\"adm adm-astuce\"><p class=\"adm-titre\">Idée</p><p>Empile tous les éléments : à la sortie, ils reviennent dans l&#x27;ordre inverse.</p></div>", "starter": "# --- Partie A : prédire, puis exécuter pour vérifier ---\np = Pile()\np.empiler(4)\np.empiler(7)\np.empiler(1)\nprint(p.depiler())\nprint(p.sommet())\np.empiler(9)\nprint(p.depiler(), p.depiler())\nprint(p.est_vide())\n# Ma prévision : ...\n\n\n# --- Partie B : à compléter ---\ndef inverser(liste):\n    \"\"\"Renvoie une nouvelle liste : les éléments de liste dans l'ordre inverse.\"\"\"\n    pass\n\n\ndef est_palindrome(mot):\n    \"\"\"Renvoie True si mot est un palindrome (ex. 'radar'), False sinon.\"\"\"\n    pass\n", "tests": "\negal(\"inverser([1, 2, 3]) == [3, 2, 1]\", lambda: inverser([1, 2, 3]), [3, 2, 1])\negal(\"inverser([]) == []\", lambda: inverser([]), [])\negal(\"inverser(['a', 'b']) == ['b', 'a']\", lambda: inverser(['a', 'b']), ['b', 'a'])\n_l = [5, 6, 7]\ninverser(_l)\nvrai(\"inverser ne modifie pas la liste d'origine\", lambda: _l == [5, 6, 7])\ndef _usage(f, arg):\n    _ops[0] = 0\n    f(arg)\n    return _ops[0]\nvrai(\"inverser utilise bien une Pile (empiler/depiler)\", lambda: _usage(inverser, [1, 2, 3]) >= 6,\n     \"Aucune opération de pile détectée : utilise Pile()\")\negal(\"est_palindrome('radar')\", lambda: est_palindrome(\"radar\"), True)\negal(\"est_palindrome('kayak')\", lambda: est_palindrome(\"kayak\"), True)\negal(\"est_palindrome('python')\", lambda: est_palindrome(\"python\"), False)\negal(\"est_palindrome('abca')\", lambda: est_palindrome(\"abca\"), False)\negal(\"est_palindrome('') (mot vide)\", lambda: est_palindrome(\"\"), True)\n", "aide_code": null, "visuel": null}, {"id": "ex2", "kind": "exercice", "titre": "Déplacer un disque", "abbr": "E2", "enonce_html": "<p>Trois tours <code>A</code>, <code>B</code>, <code>C</code> (indices <code>0</code>, <code>1</code>, <code>2</code> dans la liste <code>tours</code>). Un disque porte un nombre : plus il est grand, plus le disque est large. <strong>Règle : on ne pose jamais un disque sur un disque plus petit.</strong></p>\n<p>Écris <code>deplacer(tours, i, j)</code> qui déplace le disque du sommet de <code>tours[i]</code> vers <code>tours[j]</code> <strong>si le coup est légal</strong> :</p>\n<ul><li>elle renvoie <code>True</code> si le déplacement a été effectué ;</li><li>elle renvoie <code>False</code> <strong>sans rien modifier</strong> si le coup est interdit (tour de départ vide, disque posé sur un plus petit, ou <code>i == j</code>).</li></ul>\n<div class=\"adm adm-attention\"><p class=\"adm-titre\">Attention</p><p>Vérifie que le coup est légal <strong>avant</strong> de dépiler : un disque dépilé puis rejeté est un disque perdu.</p></div>\n<p>Le programme de test en bas du code te permet d&#x27;essayer à la main.</p>", "starter": "def deplacer(tours, i, j):\n    \"\"\"Déplace le disque du sommet de tours[i] vers tours[j] si c'est légal.\n    Renvoie True si le déplacement a eu lieu, False sinon (rien n'est modifié).\"\"\"\n    pass\n\n\n# Essais\ntours = init_tours(3)\nprint(contenu(tours[0]), contenu(tours[1]), contenu(tours[2]))\nprint(deplacer(tours, 0, 1))   # légal ?\nprint(deplacer(tours, 0, 1))   # légal ?\nprint(contenu(tours[0]), contenu(tours[1]), contenu(tours[2]))\n", "tests": "\ndef _etat(t):\n    return [contenu(t[0]), contenu(t[1]), contenu(t[2])]\n_t = init_tours(3)\negal(\"1er coup légal : deplacer(tours, 0, 1) renvoie True\", lambda: deplacer(_t, 0, 1), True)\negal(\"le disque 1 est passé sur B\", lambda: _etat(_t), [[3, 2], [1], []])\negal(\"disque 2 sur disque 1 : renvoie False\", lambda: deplacer(_t, 0, 1), False)\negal(\"... et rien n'a bougé\", lambda: _etat(_t), [[3, 2], [1], []])\negal(\"départ vide : deplacer(tours, 2, 0) renvoie False\", lambda: deplacer(_t, 2, 0), False)\negal(\"disque 1 sur disque 2 : renvoie True\", lambda: deplacer(_t, 1, 0), True)\negal(\"... état final\", lambda: _etat(_t), [[3, 2, 1], [], []])\negal(\"i == j : renvoie False et rien ne bouge\", lambda: (deplacer(_t, 0, 0), _etat(_t)), (False, [[3, 2, 1], [], []]))\n", "aide_code": null, "visuel": null}, {"id": "ex3", "kind": "exercice", "titre": "La récursivité entre en scène", "abbr": "E3", "enonce_html": "<p>Ta fonction <code>deplacer</code> de l&#x27;exercice 2 est disponible ici automatiquement.</p>\n<p><strong>Idée récursive.</strong> Pour déplacer <code>n</code> disques de la tour <code>source</code> vers la tour <code>cible</code> en s&#x27;aidant de la tour <code>aux</code> :</p>\n<ol><li>déplacer <code>n - 1</code> disques de <code>source</code> vers <code>aux</code> (en s&#x27;aidant de <code>cible</code>) ;</li><li>déplacer le plus grand disque de <code>source</code> vers <code>cible</code> ;</li><li>déplacer <code>n - 1</code> disques de <code>aux</code> vers <code>cible</code> (en s&#x27;aidant de <code>source</code>).</li></ol>\n<p>Écris <code>hanoi(n, source, cible, aux, tours)</code>. Quel est le <strong>cas de base</strong> ?</p>\n<p>Quand ton programme fonctionne, <strong>l&#x27;animation</strong> se lance toute seule sous le code. Change la valeur de <code>n</code> et observe.</p>\n<div class=\"adm adm-astuce\"><p class=\"adm-titre\">La pile d&#x27;appels</p><p>À chaque appel récursif, Python empile un « cadre » dans la <strong>pile d&#x27;appels</strong>. C&#x27;est encore une pile : celle du langage lui-même !</p></div>", "starter": "def hanoi(n, source, cible, aux, tours):\n    \"\"\"Déplace n disques de tours[source] vers tours[cible] en s'aidant de tours[aux].\"\"\"\n    pass\n\n\nn = 3\ntours = init_tours(n)\nhanoi(n, 0, 2, 1, tours)\nprint(\"Tour C :\", contenu(tours[2]))     # doit afficher [3, 2, 1]\nprint(\"Coups joués :\", nb_coups_effectues())\n", "tests": "\ndef _jouer(n):\n    t = init_tours(n)\n    hanoi(n, 0, 2, 1, t)\n    return [contenu(t[0]), contenu(t[1]), contenu(t[2])], nb_coups_effectues()\nfor _n in range(0, 6):\n    egal(\"n = %d : tous les disques sont sur la tour C, dans le bon ordre\" % _n,\n         lambda _n=_n: _jouer(_n)[0], [[], [], list(range(_n, 0, -1))])\nfor _n in (1, 2, 3, 4, 5):\n    egal(\"n = %d : %d coups exactement\" % (_n, 2 ** _n - 1), lambda _n=_n: _jouer(_n)[1], 2 ** _n - 1)\n", "aide_code": "def deplacer(tours, i, j):\n    \"\"\"Déplace le disque du sommet de tours[i] vers tours[j] si c'est légal.\n    Renvoie True si le déplacement a eu lieu, False sinon (rien n'est modifié).\"\"\"\n    if i == j or tours[i].est_vide():\n        return False\n    disque = tours[i].sommet()\n    if not tours[j].est_vide() and tours[j].sommet() < disque:\n        return False\n    tours[j].empiler(tours[i].depiler())\n    return True", "visuel": "hanoi"}, {"id": "ex4", "kind": "exercice", "titre": "Combien de coups ?", "abbr": "E4", "enonce_html": "<p>Sans jouer la partie, on peut <strong>compter</strong> les coups. Soit <code>T(n)</code> le nombre minimal de coups pour <code>n</code> disques.</p>\n<ol><li>Justifie, avec l&#x27;idée récursive de l&#x27;exercice 3, que <code>T(n) = 2 × T(n − 1) + 1</code> et donne <code>T(0)</code>.</li><li>Écris <strong>récursivement</strong> <code>nb_coups(n)</code>.</li><li>Exécute le programme : complète le tableau et <strong>conjecture</strong> une formule pour <code>T(n)</code>.</li><li>Un moine déplace un disque par seconde. Combien d&#x27;années lui faut-il pour <code>n = 64</code> disques ? (Utilise <code>print</code> avec <code>nb_coups(64)</code>.)</li></ol>\n<div class=\"adm adm-astuce\"><p class=\"adm-titre\">Pour aller plus loin</p><p>Prouve ta conjecture par récurrence. Tu peux aussi comparer avec <code>nb_coups_effectues()</code> de l&#x27;exercice précédent.</p></div>", "starter": "def nb_coups(n):\n    \"\"\"Nombre minimal de coups pour déplacer n disques (sans les jouer).\"\"\"\n    pass\n\n\nfor n in range(0, 11):\n    print(n, nb_coups(n))\n\n# Question 4 : le moine\n# print(...)\n", "tests": "\negal(\"nb_coups(0) == 0\", lambda: nb_coups(0), 0)\negal(\"nb_coups(1) == 1\", lambda: nb_coups(1), 1)\negal(\"nb_coups(2) == 3\", lambda: nb_coups(2), 3)\negal(\"nb_coups(3) == 7\", lambda: nb_coups(3), 7)\negal(\"nb_coups(10) == 1023\", lambda: nb_coups(10), 1023)\negal(\"nb_coups(20) == 1048575\", lambda: nb_coups(20), 1048575)\n", "aide_code": null, "visuel": null}, {"id": "defiA", "kind": "defi", "titre": "Défi A – Écrire sa propre classe Pile", "abbr": "DA", "enonce_html": "<p>Jusqu&#x27;ici, la classe <code>Pile</code> t&#x27;était fournie. Écris la tienne, <strong>avec une liste Python</strong> comme stockage.</p>\n<p>Contraintes :</p>\n<ul><li><code>Pile()</code> crée une pile vide ; <strong>deux piles ne doivent pas partager la même liste</strong> ;</li><li><code>depiler()</code> et <code>sommet()</code> lèvent <code>IndexError</code> sur une pile vide ;</li><li><code>taille()</code> renvoie le nombre d&#x27;éléments.</li></ul>\n<p>Ta classe doit passer tous les tests. Ensuite, réponds à l&#x27;oral : quel est le coût de <code>empiler</code> et <code>depiler</code> ? Pourquoi choisir la <strong>fin</strong> de la liste comme sommet ?</p>", "starter": "class Pile:\n    def __init__(self):\n        pass\n\n    def est_vide(self):\n        pass\n\n    def empiler(self, x):\n        pass\n\n    def depiler(self):\n        pass\n\n    def sommet(self):\n        pass\n\n    def taille(self):\n        pass\n", "tests": "\np = Pile()\negal(\"une pile neuve est vide\", lambda: p.est_vide(), True)\negal(\"sa taille est 0\", lambda: p.taille(), 0)\np.empiler(1); p.empiler(2); p.empiler(3)\negal(\"après 3 empiler : pas vide\", lambda: p.est_vide(), False)\negal(\"taille 3\", lambda: p.taille(), 3)\negal(\"sommet() renvoie 3 (dernier empilé)\", lambda: p.sommet(), 3)\negal(\"sommet() ne retire rien : taille 3\", lambda: p.taille(), 3)\negal(\"depiler() renvoie 3\", lambda: p.depiler(), 3)\negal(\"depiler() renvoie 2\", lambda: p.depiler(), 2)\negal(\"depiler() renvoie 1\", lambda: p.depiler(), 1)\negal(\"la pile est de nouveau vide\", lambda: p.est_vide(), True)\nleve(\"depiler() sur pile vide lève IndexError\", lambda: p.depiler(), IndexError)\nleve(\"sommet() sur pile vide lève IndexError\", lambda: p.sommet(), IndexError)\n_a, _b = Pile(), Pile()\n_a.empiler(\"x\")\negal(\"deux piles sont indépendantes\", lambda: _b.est_vide(), True)\n", "aide_code": null, "visuel": null}, {"id": "defiB", "kind": "defi", "titre": "Défi B – Hanoï sans récursivité", "abbr": "DB", "enonce_html": "<p>Toute fonction récursive peut être écrite avec une <strong>pile explicite</strong> qui remplace la pile d&#x27;appels.</p>\n<p>Écris <code>hanoi_iteratif(n, source, cible, aux, tours)</code> <strong>sans aucun appel récursif</strong>. Tu utiliseras une <code>Pile</code> de <strong>tâches</strong> : chaque tâche est un tuple <code>(k, s, c, a)</code> qui signifie « déplacer <code>k</code> disques de <code>s</code> vers <code>c</code> en s&#x27;aidant de <code>a</code> ».</p>\n<p>Principe :</p>\n<ol><li>on empile la tâche <code>(n, source, cible, aux)</code> ;</li><li>tant que la pile n&#x27;est pas vide : on dépile une tâche ;\n   - si <code>k == 0</code>, rien à faire ; si <code>k == 1</code>, on déplace un disque avec <code>deplacer</code> ;\n   - sinon on <strong>remplace</strong> la tâche par trois tâches plus petites.</li></ol>\n<div class=\"adm adm-attention\"><p class=\"adm-titre\">Attention à l&#x27;ordre</p><p>La pile est LIFO : la tâche qui doit être exécutée <strong>en premier</strong> doit être empilée <strong>en dernier</strong>.</p></div>", "starter": "def hanoi_iteratif(n, source, cible, aux, tours):\n    \"\"\"Même résultat que hanoi, sans récursivité (pile de tâches).\"\"\"\n    pass\n\n\nn = 4\ntours = init_tours(n)\nhanoi_iteratif(n, 0, 2, 1, tours)\nprint(contenu(tours[2]), nb_coups_effectues())\n", "tests": "\ndef _jouer(n):\n    t = init_tours(n)\n    hanoi_iteratif(n, 0, 2, 1, t)\n    return [contenu(t[0]), contenu(t[1]), contenu(t[2])], nb_coups_effectues()\nfor _n in (1, 2, 3, 4, 5, 6):\n    egal(\"n = %d : disques bien rangés sur C\" % _n, lambda _n=_n: _jouer(_n)[0], [[], [], list(range(_n, 0, -1))])\n    egal(\"n = %d : %d coups\" % (_n, 2 ** _n - 1), lambda _n=_n: _jouer(_n)[1], 2 ** _n - 1)\nvrai(\"la fonction ne s'appelle pas elle-même (pas de récursivité)\",\n     lambda: \"hanoi_iteratif\" not in hanoi_iteratif.__code__.co_names,\n     \"Ton code contient encore un appel récursif à hanoi_iteratif\")\nvrai(\"une Pile de tâches est bien utilisée\", lambda: (_ops.__setitem__(0, 0), hanoi_iteratif(3, 0, 2, 1, init_tours(3)), _ops[0] > 17)[2],\n     \"Utilise une Pile pour stocker les tâches\")\n", "aide_code": "def deplacer(tours, i, j):\n    \"\"\"Déplace le disque du sommet de tours[i] vers tours[j] si c'est légal.\n    Renvoie True si le déplacement a eu lieu, False sinon (rien n'est modifié).\"\"\"\n    if i == j or tours[i].est_vide():\n        return False\n    disque = tours[i].sommet()\n    if not tours[j].est_vide() and tours[j].sommet() < disque:\n        return False\n    tours[j].empiler(tours[i].depiler())\n    return True", "visuel": "hanoi"}]};
+const WORKER_SOURCE = "// Worker Pyodide (module worker : Pyodide r\u00e9cent l'exige, importScripts ne suffit plus).\n// https://cdn.jsdelivr.net/pyodide/v314.0.7/full/ et \"# -*- coding: utf-8 -*-\\n\\\"\\\"\\\"Moteur Python ex\\u00e9cut\\u00e9 dans Pyodide (worker) \\u2014 protocole JSON via handle().\\nAussi importable sous CPython pour valider les corrig\\u00e9s au moment du build.\\\"\\\"\\\"\\nimport sys, io, json, ast, traceback, builtins\\n\\n_MAXOUT = 30000\\n_state = {\\\"prelude\\\": \\\"\\\"}\\n_NS = {}\\n\\n\\nclass _Capture(io.StringIO):\\n    def __init__(self):\\n        super().__init__()\\n        self.tronque = False\\n\\n    def write(self, s):\\n        if self.tell() >= _MAXOUT:\\n            self.tronque = True\\n            return len(s)\\n        return super().write(s)\\n\\n\\ndef _input_indisponible(*a, **k):\\n    raise RuntimeError(\\\"input() n'est pas disponible dans ces TP : passe les valeurs en param\\u00e8tres de tes fonctions.\\\")\\n\\n\\nbuiltins.input = _input_indisponible\\n\\n\\ndef _err(e, code, nom=\\\"<ton_code>\\\"):\\n    \\\"\\\"\\\"D\\u00e9crit une exception : ligne dans le code de l'\\u00e9l\\u00e8ve, message, fonction fautive.\\\"\\\"\\\"\\n    lignes = code.splitlines()\\n    info = {\\\"type\\\": type(e).__name__, \\\"msg\\\": str(e), \\\"ligne\\\": None, \\\"src\\\": \\\"\\\", \\\"ou\\\": None, \\\"fonction\\\": None}\\n    if isinstance(e, SyntaxError):\\n        if e.lineno:\\n            info[\\\"ligne\\\"] = e.lineno\\n            info[\\\"src\\\"] = (e.text or \\\"\\\").rstrip(\\\"\\\\n\\\")\\n        info[\\\"msg\\\"] = e.msg\\n        info[\\\"syntaxe\\\"] = True\\n        return info\\n    tb = traceback.extract_tb(e.__traceback__)\\n    if tb:\\n        dernier = tb[-1]\\n        if dernier.filename.startswith(\\\"<ex:\\\"):\\n            info[\\\"ou\\\"] = dernier.filename[4:-1]\\n            info[\\\"fonction\\\"] = dernier.name\\n            info[\\\"ligne_ou\\\"] = dernier.lineno\\n    cadres = [f for f in tb if f.filename == nom]\\n    if cadres:\\n        n = cadres[-1].lineno\\n        info[\\\"ligne\\\"] = n\\n        if 1 <= n <= len(lignes):\\n            info[\\\"src\\\"] = lignes[n - 1]\\n    return info\\n\\n\\ndef _definitions(code):\\n    \\\"\\\"\\\"Ne garde que les d\\u00e9finitions (def, class, import, constantes litt\\u00e9rales) d'un code.\\\"\\\"\\\"\\n    arbre = ast.parse(code, \\\"<chaine>\\\")\\n    gardes = []\\n    for noeud in arbre.body:\\n        if isinstance(noeud, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Import, ast.ImportFrom)):\\n            gardes.append(noeud)\\n        elif isinstance(noeud, ast.Assign):\\n            try:\\n                ast.literal_eval(noeud.value)\\n                gardes.append(noeud)\\n            except Exception:\\n                pass\\n    return ast.Module(body=gardes, type_ignores=[])\\n\\n\\ndef _nouveau_ns(chaine, aide):\\n    ns = {\\\"__name__\\\": \\\"__main__\\\", \\\"__builtins__\\\": builtins}\\n    exec(compile(_state[\\\"prelude\\\"], \\\"<prelude>\\\", \\\"exec\\\"), ns)\\n    avert = []\\n    for ex_id, code in chaine:\\n        try:\\n            mod = _definitions(code)\\n            exec(compile(mod, \\\"<ex:%s>\\\" % ex_id, \\\"exec\\\"), ns)\\n        except SyntaxError:\\n            avert.append(\\\"Le code de l'exercice %s contient une erreur de syntaxe : il n'a pas \\u00e9t\\u00e9 charg\\u00e9.\\\" % ex_id)\\n        except Exception as e:\\n            avert.append(\\\"Le code de l'exercice %s n'a pas pu \\u00eatre charg\\u00e9 (%s).\\\" % (ex_id, type(e).__name__))\\n    if aide:\\n        exec(compile(aide, \\\"<aide>\\\", \\\"exec\\\"), ns)\\n    return ns, avert\\n\\n\\ndef _exec_capture(fonction):\\n    cap = _Capture()\\n    anciens = sys.stdout, sys.stderr\\n    sys.stdout = sys.stderr = cap\\n    try:\\n        return cap, fonction()\\n    finally:\\n        sys.stdout, sys.stderr = anciens\\n\\n\\ndef _run_tests(ns, tests_code):\\n    resultats = []\\n\\n    def _court(x):\\n        t = repr(x)\\n        return t if len(t) <= 140 else t[:137] + \\\"...\\\"\\n\\n    def egal(titre, f, attendu):\\n        try:\\n            obtenu = f()\\n        except Exception as e:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": False, \\\"detail\\\": \\\"Erreur : %s: %s\\\" % (type(e).__name__, e)})\\n            return\\n        if obtenu == attendu:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": True, \\\"detail\\\": \\\"\\\"})\\n        else:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": False,\\n                              \\\"detail\\\": \\\"attendu %s, obtenu %s\\\" % (_court(attendu), _court(obtenu))})\\n\\n    def vrai(titre, f, aide=\\\"\\\"):\\n        try:\\n            ok = bool(f())\\n            detail = \\\"\\\" if ok else aide\\n        except Exception as e:\\n            ok, detail = False, \\\"Erreur : %s: %s\\\" % (type(e).__name__, e)\\n        resultats.append({\\\"label\\\": titre, \\\"ok\\\": ok, \\\"detail\\\": detail})\\n\\n    def leve(titre, f, exception):\\n        try:\\n            f()\\n        except exception:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": True, \\\"detail\\\": \\\"\\\"})\\n            return\\n        except Exception as e:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": False, \\\"detail\\\": \\\"mauvaise exception : %s\\\" % type(e).__name__})\\n            return\\n        resultats.append({\\\"label\\\": titre, \\\"ok\\\": False, \\\"detail\\\": \\\"aucune exception lev\\u00e9e\\\"})\\n\\n    ns.update(egal=egal, vrai=vrai, leve=leve)\\n\\n    def go():\\n        try:\\n            exec(compile(tests_code, \\\"<tests>\\\", \\\"exec\\\"), ns)\\n        except Exception:\\n            e = sys.exc_info()[1]\\n            resultats.append({\\\"label\\\": \\\"Les tests s'arr\\u00eatent ici : une de tes fonctions a lev\\u00e9 une exception\\\", \\\"ok\\\": False,\\n                              \\\"detail\\\": \\\"%s: %s\\\" % (type(e).__name__, e)})\\n\\n    _exec_capture(go)\\n    return resultats\\n\\n\\ndef _op_setup(m):\\n    _state[\\\"prelude\\\"] = m[\\\"prelude\\\"]\\n    _NS.clear()\\n    return {\\\"ok\\\": True}\\n\\n\\ndef _op_run(m):\\n    code = m[\\\"code\\\"]\\n    try:\\n        ns, avert = _nouveau_ns(m.get(\\\"chaine\\\", []), m.get(\\\"aide\\\"))\\n    except Exception:\\n        return {\\\"interne\\\": \\\"pr\\u00e9lude : \\\" + traceback.format_exc()[-400:]}\\n    _NS[m[\\\"ex\\\"]] = ns\\n\\n    def go():\\n        try:\\n            exec(compile(code, \\\"<ton_code>\\\", \\\"exec\\\"), ns)\\n            return None\\n        except (Exception, SystemExit) as e:\\n            return _err(e, code)\\n\\n    cap, erreur = _exec_capture(go)\\n    res = {\\\"stdout\\\": cap.getvalue(), \\\"tronque\\\": cap.tronque, \\\"erreur\\\": erreur, \\\"tests\\\": None, \\\"avert\\\": avert}\\n    if m.get(\\\"tests\\\") is not None and not (erreur and erreur.get(\\\"syntaxe\\\")):\\n        res[\\\"tests\\\"] = _run_tests(ns, m[\\\"tests\\\"])\\n    return res\\n\\n\\ndef _op_call(m):\\n    ns = _NS.get(m[\\\"ex\\\"])\\n    if ns is None:\\n        return {\\\"pas_ns\\\": True}\\n\\n    def go():\\n        try:\\n            return {\\\"val\\\": eval(compile(m[\\\"expr\\\"], \\\"<appel>\\\", \\\"eval\\\"), ns)}\\n        except (Exception, SystemExit) as e:\\n            return {\\\"erreur\\\": _err(e, m.get(\\\"code\\\", \\\"\\\"))}\\n\\n    cap, r = _exec_capture(go)\\n    r[\\\"stdout\\\"] = cap.getvalue()\\n    return r\\n\\n\\ndef _op_repl(m):\\n    ns = _NS.get(m[\\\"ex\\\"])\\n    if ns is None:\\n        return {\\\"pas_ns\\\": True}\\n    ligne = m[\\\"ligne\\\"]\\n\\n    def go():\\n        try:\\n            try:\\n                obj = compile(ligne, \\\"<console>\\\", \\\"eval\\\")\\n                v = eval(obj, ns)\\n                if v is not None:\\n                    print(repr(v))\\n            except SyntaxError:\\n                exec(compile(ligne, \\\"<console>\\\", \\\"exec\\\"), ns)\\n            return None\\n        except (Exception, SystemExit) as e:\\n            return {\\\"type\\\": type(e).__name__, \\\"msg\\\": str(e) if not isinstance(e, SyntaxError) else e.msg}\\n\\n    cap, erreur = _exec_capture(go)\\n    return {\\\"stdout\\\": cap.getvalue(), \\\"erreur\\\": erreur}\\n\\n\\n_OPS = {\\\"setup\\\": _op_setup, \\\"run\\\": _op_run, \\\"call\\\": _op_call, \\\"repl\\\": _op_repl}\\n\\n\\ndef handle(s):\\n    m = json.loads(s)\\n    try:\\n        r = _OPS[m[\\\"op\\\"]](m)\\n    except Exception:\\n        r = {\\\"interne\\\": traceback.format_exc()[-600:]}\\n    return json.dumps(r, ensure_ascii=False, default=repr)\\n\" sont substitu\u00e9s par le g\u00e9n\u00e9rateur.\nimport { loadPyodide } from \"https://cdn.jsdelivr.net/pyodide/v314.0.7/full/pyodide.mjs\";\n\nlet pyodideReady = null;\nlet handle = null;\n\nasync function initPyodide() {\n  const pyodide = await loadPyodide({ indexURL: \"https://cdn.jsdelivr.net/pyodide/v314.0.7/full/\" });\n  pyodide.runPython(\"# -*- coding: utf-8 -*-\\n\\\"\\\"\\\"Moteur Python ex\\u00e9cut\\u00e9 dans Pyodide (worker) \\u2014 protocole JSON via handle().\\nAussi importable sous CPython pour valider les corrig\\u00e9s au moment du build.\\\"\\\"\\\"\\nimport sys, io, json, ast, traceback, builtins\\n\\n_MAXOUT = 30000\\n_state = {\\\"prelude\\\": \\\"\\\"}\\n_NS = {}\\n\\n\\nclass _Capture(io.StringIO):\\n    def __init__(self):\\n        super().__init__()\\n        self.tronque = False\\n\\n    def write(self, s):\\n        if self.tell() >= _MAXOUT:\\n            self.tronque = True\\n            return len(s)\\n        return super().write(s)\\n\\n\\ndef _input_indisponible(*a, **k):\\n    raise RuntimeError(\\\"input() n'est pas disponible dans ces TP : passe les valeurs en param\\u00e8tres de tes fonctions.\\\")\\n\\n\\nbuiltins.input = _input_indisponible\\n\\n\\ndef _err(e, code, nom=\\\"<ton_code>\\\"):\\n    \\\"\\\"\\\"D\\u00e9crit une exception : ligne dans le code de l'\\u00e9l\\u00e8ve, message, fonction fautive.\\\"\\\"\\\"\\n    lignes = code.splitlines()\\n    info = {\\\"type\\\": type(e).__name__, \\\"msg\\\": str(e), \\\"ligne\\\": None, \\\"src\\\": \\\"\\\", \\\"ou\\\": None, \\\"fonction\\\": None}\\n    if isinstance(e, SyntaxError):\\n        if e.lineno:\\n            info[\\\"ligne\\\"] = e.lineno\\n            info[\\\"src\\\"] = (e.text or \\\"\\\").rstrip(\\\"\\\\n\\\")\\n        info[\\\"msg\\\"] = e.msg\\n        info[\\\"syntaxe\\\"] = True\\n        return info\\n    tb = traceback.extract_tb(e.__traceback__)\\n    if tb:\\n        dernier = tb[-1]\\n        if dernier.filename.startswith(\\\"<ex:\\\"):\\n            info[\\\"ou\\\"] = dernier.filename[4:-1]\\n            info[\\\"fonction\\\"] = dernier.name\\n            info[\\\"ligne_ou\\\"] = dernier.lineno\\n    cadres = [f for f in tb if f.filename == nom]\\n    if cadres:\\n        n = cadres[-1].lineno\\n        info[\\\"ligne\\\"] = n\\n        if 1 <= n <= len(lignes):\\n            info[\\\"src\\\"] = lignes[n - 1]\\n    return info\\n\\n\\ndef _definitions(code):\\n    \\\"\\\"\\\"Ne garde que les d\\u00e9finitions (def, class, import, constantes litt\\u00e9rales) d'un code.\\\"\\\"\\\"\\n    arbre = ast.parse(code, \\\"<chaine>\\\")\\n    gardes = []\\n    for noeud in arbre.body:\\n        if isinstance(noeud, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Import, ast.ImportFrom)):\\n            gardes.append(noeud)\\n        elif isinstance(noeud, ast.Assign):\\n            try:\\n                ast.literal_eval(noeud.value)\\n                gardes.append(noeud)\\n            except Exception:\\n                pass\\n    return ast.Module(body=gardes, type_ignores=[])\\n\\n\\ndef _nouveau_ns(chaine, aide):\\n    ns = {\\\"__name__\\\": \\\"__main__\\\", \\\"__builtins__\\\": builtins}\\n    exec(compile(_state[\\\"prelude\\\"], \\\"<prelude>\\\", \\\"exec\\\"), ns)\\n    avert = []\\n    for ex_id, code in chaine:\\n        try:\\n            mod = _definitions(code)\\n            exec(compile(mod, \\\"<ex:%s>\\\" % ex_id, \\\"exec\\\"), ns)\\n        except SyntaxError:\\n            avert.append(\\\"Le code de l'exercice %s contient une erreur de syntaxe : il n'a pas \\u00e9t\\u00e9 charg\\u00e9.\\\" % ex_id)\\n        except Exception as e:\\n            avert.append(\\\"Le code de l'exercice %s n'a pas pu \\u00eatre charg\\u00e9 (%s).\\\" % (ex_id, type(e).__name__))\\n    if aide:\\n        exec(compile(aide, \\\"<aide>\\\", \\\"exec\\\"), ns)\\n    return ns, avert\\n\\n\\ndef _exec_capture(fonction):\\n    cap = _Capture()\\n    anciens = sys.stdout, sys.stderr\\n    sys.stdout = sys.stderr = cap\\n    try:\\n        return cap, fonction()\\n    finally:\\n        sys.stdout, sys.stderr = anciens\\n\\n\\ndef _run_tests(ns, tests_code):\\n    resultats = []\\n\\n    def _court(x):\\n        t = repr(x)\\n        return t if len(t) <= 140 else t[:137] + \\\"...\\\"\\n\\n    def egal(titre, f, attendu):\\n        try:\\n            obtenu = f()\\n        except Exception as e:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": False, \\\"detail\\\": \\\"Erreur : %s: %s\\\" % (type(e).__name__, e)})\\n            return\\n        if obtenu == attendu:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": True, \\\"detail\\\": \\\"\\\"})\\n        else:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": False,\\n                              \\\"detail\\\": \\\"attendu %s, obtenu %s\\\" % (_court(attendu), _court(obtenu))})\\n\\n    def vrai(titre, f, aide=\\\"\\\"):\\n        try:\\n            ok = bool(f())\\n            detail = \\\"\\\" if ok else aide\\n        except Exception as e:\\n            ok, detail = False, \\\"Erreur : %s: %s\\\" % (type(e).__name__, e)\\n        resultats.append({\\\"label\\\": titre, \\\"ok\\\": ok, \\\"detail\\\": detail})\\n\\n    def leve(titre, f, exception):\\n        try:\\n            f()\\n        except exception:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": True, \\\"detail\\\": \\\"\\\"})\\n            return\\n        except Exception as e:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": False, \\\"detail\\\": \\\"mauvaise exception : %s\\\" % type(e).__name__})\\n            return\\n        resultats.append({\\\"label\\\": titre, \\\"ok\\\": False, \\\"detail\\\": \\\"aucune exception lev\\u00e9e\\\"})\\n\\n    ns.update(egal=egal, vrai=vrai, leve=leve)\\n\\n    def go():\\n        try:\\n            exec(compile(tests_code, \\\"<tests>\\\", \\\"exec\\\"), ns)\\n        except Exception:\\n            e = sys.exc_info()[1]\\n            resultats.append({\\\"label\\\": \\\"Les tests s'arr\\u00eatent ici : une de tes fonctions a lev\\u00e9 une exception\\\", \\\"ok\\\": False,\\n                              \\\"detail\\\": \\\"%s: %s\\\" % (type(e).__name__, e)})\\n\\n    _exec_capture(go)\\n    return resultats\\n\\n\\ndef _op_setup(m):\\n    _state[\\\"prelude\\\"] = m[\\\"prelude\\\"]\\n    _NS.clear()\\n    return {\\\"ok\\\": True}\\n\\n\\ndef _op_run(m):\\n    code = m[\\\"code\\\"]\\n    try:\\n        ns, avert = _nouveau_ns(m.get(\\\"chaine\\\", []), m.get(\\\"aide\\\"))\\n    except Exception:\\n        return {\\\"interne\\\": \\\"pr\\u00e9lude : \\\" + traceback.format_exc()[-400:]}\\n    _NS[m[\\\"ex\\\"]] = ns\\n\\n    def go():\\n        try:\\n            exec(compile(code, \\\"<ton_code>\\\", \\\"exec\\\"), ns)\\n            return None\\n        except (Exception, SystemExit) as e:\\n            return _err(e, code)\\n\\n    cap, erreur = _exec_capture(go)\\n    res = {\\\"stdout\\\": cap.getvalue(), \\\"tronque\\\": cap.tronque, \\\"erreur\\\": erreur, \\\"tests\\\": None, \\\"avert\\\": avert}\\n    if m.get(\\\"tests\\\") is not None and not (erreur and erreur.get(\\\"syntaxe\\\")):\\n        res[\\\"tests\\\"] = _run_tests(ns, m[\\\"tests\\\"])\\n    return res\\n\\n\\ndef _op_call(m):\\n    ns = _NS.get(m[\\\"ex\\\"])\\n    if ns is None:\\n        return {\\\"pas_ns\\\": True}\\n\\n    def go():\\n        try:\\n            return {\\\"val\\\": eval(compile(m[\\\"expr\\\"], \\\"<appel>\\\", \\\"eval\\\"), ns)}\\n        except (Exception, SystemExit) as e:\\n            return {\\\"erreur\\\": _err(e, m.get(\\\"code\\\", \\\"\\\"))}\\n\\n    cap, r = _exec_capture(go)\\n    r[\\\"stdout\\\"] = cap.getvalue()\\n    return r\\n\\n\\ndef _op_repl(m):\\n    ns = _NS.get(m[\\\"ex\\\"])\\n    if ns is None:\\n        return {\\\"pas_ns\\\": True}\\n    ligne = m[\\\"ligne\\\"]\\n\\n    def go():\\n        try:\\n            try:\\n                obj = compile(ligne, \\\"<console>\\\", \\\"eval\\\")\\n                v = eval(obj, ns)\\n                if v is not None:\\n                    print(repr(v))\\n            except SyntaxError:\\n                exec(compile(ligne, \\\"<console>\\\", \\\"exec\\\"), ns)\\n            return None\\n        except (Exception, SystemExit) as e:\\n            return {\\\"type\\\": type(e).__name__, \\\"msg\\\": str(e) if not isinstance(e, SyntaxError) else e.msg}\\n\\n    cap, erreur = _exec_capture(go)\\n    return {\\\"stdout\\\": cap.getvalue(), \\\"erreur\\\": erreur}\\n\\n\\n_OPS = {\\\"setup\\\": _op_setup, \\\"run\\\": _op_run, \\\"call\\\": _op_call, \\\"repl\\\": _op_repl}\\n\\n\\ndef handle(s):\\n    m = json.loads(s)\\n    try:\\n        r = _OPS[m[\\\"op\\\"]](m)\\n    except Exception:\\n        r = {\\\"interne\\\": traceback.format_exc()[-600:]}\\n    return json.dumps(r, ensure_ascii=False, default=repr)\\n\");\n  handle = pyodide.globals.get(\"handle\");\n  return pyodide;\n}\npyodideReady = initPyodide();\n\nself.onmessage = async (ev) => {\n  const { id, op, payload } = ev.data;\n  try {\n    await pyodideReady;\n    if (op === \"__ping__\") {\n      self.postMessage({ id, result: { ok: true } });\n      return;\n    }\n    const req = Object.assign({ op }, payload);\n    const out = handle(JSON.stringify(req));\n    self.postMessage({ id, result: JSON.parse(out) });\n  } catch (e) {\n    self.postMessage({ id, fatal: String((e && e.message) || e) });\n  }\n};\n";
+</script>
+<script>// App principale. TP_DATA et EST_PROF sont injectés par le générateur avant ce script.
+(function () {
+  "use strict";
+
+  class Engine {
+    constructor(workerUrl) {
+      this.worker = new Worker(workerUrl, { type: "module" });
+      this.pending = new Map();
+      this.nextId = 1;
+      this.worker.onmessage = (ev) => {
+        const d = ev.data;
+        const p = this.pending.get(d.id);
+        if (!p) return;
+        this.pending.delete(d.id);
+        if (d.fatal) p.reject(new Error(d.fatal));
+        else p.resolve(d.result);
+      };
+      this.worker.onerror = (ev) => {
+        for (const [, p] of this.pending) p.reject(new Error("erreur worker : " + ev.message));
+        this.pending.clear();
+      };
+    }
+    request(op, payload) {
+      const id = this.nextId++;
+      return new Promise((resolve, reject) => {
+        this.pending.set(id, { resolve, reject });
+        this.worker.postMessage({ id, op, payload: payload || {} });
+      });
+    }
+    ping() { return this.request("__ping__", {}); }
+    setup(prelude) { return this.request("setup", { prelude }); }
+    run(ex, code, chaine, tests, aide) { return this.request("run", { ex, code, chaine, tests, aide: aide || null }); }
+    call(ex, expr) { return this.request("call", { ex, expr, code: "" }); }
+  }
+
+  function el(tag, cls, html) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html !== undefined) e.innerHTML = html;
+    return e;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function sansAccents(s) {
+    return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+  function nettoyerNom(s) {
+    return sansAccents(s || "").replace(/[^A-Za-z0-9]+/g, "").trim();
+  }
+
+  const STORE_KEY = "tp-" + TP_DATA.slug + "-v1";
+  function chargerStock() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); } catch (e) { return {}; }
+  }
+  function sauverStock(obj) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); } catch (e) {}
+  }
+  function chargerIdentite() {
+    try { return JSON.parse(localStorage.getItem("tp-identite-v1") || "{}"); } catch (e) { return {}; }
+  }
+  function sauverIdentite(obj) {
+    try { localStorage.setItem("tp-identite-v1", JSON.stringify(obj)); } catch (e) {}
+  }
+
+  function nomFichier(nom, prenom) {
+    const N = nettoyerNom(nom).toUpperCase() || "NOM";
+    const P = nettoyerNom(prenom) || "Prenom";
+    const Pc = P.charAt(0).toUpperCase() + P.slice(1);
+    return N + "-" + Pc + "-TP" + TP_DATA.num + "-" + TP_DATA.slug + ".py";
+  }
+
+  function toast(texte, ko) {
+    const t = el("div", "toast" + (ko ? " ko" : ""), esc(texte));
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3200);
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const stock = chargerStock();
+    const identite = chargerIdentite();
+    const etats = {}; // id -> {status, editor, ex}
+
+    // ----- barre du haut -----
+    const barre = document.querySelector(".barre");
+    const champNom = barre.querySelector(".ch-nom");
+    const champPrenom = barre.querySelector(".ch-prenom");
+    const nomFichierEl = barre.querySelector(".nom-fichier");
+    const etatPy = barre.querySelector(".etat-python");
+    champNom.value = identite.nom || "";
+    champPrenom.value = identite.prenom || "";
+    function majNomFichier() {
+      nomFichierEl.textContent = nomFichier(champNom.value, champPrenom.value);
+    }
+    majNomFichier();
+    [champNom, champPrenom].forEach((c) =>
+      c.addEventListener("input", () => {
+        sauverIdentite({ nom: champNom.value, prenom: champPrenom.value });
+        majNomFichier();
+      })
+    );
+
+    const puces = {};
+    TP_DATA.exercices.forEach((ex) => {
+      const a = el("a", "puce" + (ex.kind === "defi" ? " defi" : ""), esc(ex.abbr));
+      a.href = "#" + ex.id;
+      a.title = ex.titre;
+      barre.querySelector(".puces").appendChild(a);
+      puces[ex.id] = a;
+    });
+
+    // ----- worker (créé depuis une source intégrée : page 100% autonome) -----
+    const workerBlob = new Blob([WORKER_SOURCE], { type: "application/javascript" });
+    const workerUrl = URL.createObjectURL(workerBlob);
+    const engine = new Engine(workerUrl);
+    let pret = false;
+    engine
+      .ping()
+      .then(() => engine.setup(TP_DATA.prelude))
+      .then(() => {
+        pret = true;
+        etatPy.classList.add("pret");
+        etatPy.querySelector("span").textContent = "Python prêt";
+        document.querySelectorAll(".btn-exec").forEach((b) => (b.disabled = false));
+      })
+      .catch((e) => {
+        etatPy.classList.add("erreur");
+        etatPy.querySelector("span").textContent = "Python indisponible";
+        document.querySelector(".bandeau-reseau-zone").innerHTML =
+          '<div class="bandeau-reseau">Le moteur Python n\'a pas pu se charger (réseau bloqué ou hors-ligne ?). ' +
+          "Détail : " + esc(e.message) + "</div>";
+      });
+
+    function chaineActuelle(avantId) {
+      const res = [];
+      for (const ex of TP_DATA.exercices) {
+        if (ex.id === avantId) break;
+        if (ex.kind === "exercice") res.push([ex.id, etats[ex.id].editor.getValue()]);
+      }
+      return res;
+    }
+
+    function rendreTests(zone, tests) {
+      zone.innerHTML = "";
+      if (!tests || !tests.length) return;
+      const ok = tests.every((t) => t.ok);
+      const resume = el("div", "tests-resume " + (ok ? "ok" : "ko"), (ok ? "✓ " : "✗ ") + tests.filter((t) => t.ok).length + " / " + tests.length + " tests réussis");
+      const liste = el("ul", "tests");
+      liste.appendChild(resume);
+      tests.forEach((t) => {
+        const li = el("li", t.ok ? "ok" : "ko");
+        li.innerHTML = '<span class="mark">' + (t.ok ? "✓" : "✗") + "</span><span>" + esc(t.label) + (t.detail ? '<span class="detail">' + esc(t.detail) + "</span>" : "") + "</span>";
+        liste.appendChild(li);
+      });
+      zone.appendChild(liste);
+    }
+
+    function majPuce(ex, statut) {
+      const p = puces[ex.id];
+      p.classList.remove("ok", "ko", "ran", "err");
+      if (statut) p.classList.add(statut);
+    }
+
+    async function executer(ex) {
+      if (!pret) return;
+      const st = etats[ex.id];
+      const zoneLcd = st.el.querySelector(".lcd pre");
+      const lcdVide = st.el.querySelector(".lcd .vide");
+      const erreurBox = st.el.querySelector(".erreur-box");
+      const avertBox = st.el.querySelector(".avert-box");
+      const testsZone = st.el.querySelector(".tests-zone");
+      const statutSpan = st.el.querySelector(".statut");
+      const boutons = st.el.querySelectorAll(".btn-exec");
+      boutons.forEach((b) => (b.disabled = true));
+      statutSpan.textContent = "exécution…";
+      statutSpan.className = "statut ran";
+      st.editor.effacerErreur();
+      erreurBox.style.display = "none";
+      avertBox.style.display = "none";
+      const code = st.editor.getValue();
+      const secoursBox = st.el.querySelector(".secours input");
+      const aide = secoursBox && secoursBox.checked ? ex.aide_code : null;
+      let res;
+      try {
+        res = await engine.run(ex.id, code, chaineActuelle(ex.id), ex.tests, aide);
+      } catch (e) {
+        statutSpan.textContent = "erreur interne";
+        statutSpan.className = "statut err";
+        erreurBox.style.display = "block";
+        erreurBox.textContent = "Erreur interne du moteur : " + e.message;
+        boutons.forEach((b) => (b.disabled = false));
+        return;
+      }
+      boutons.forEach((b) => (b.disabled = false));
+      if (res.interne) {
+        statutSpan.textContent = "erreur";
+        statutSpan.className = "statut err";
+        erreurBox.style.display = "block";
+        erreurBox.textContent = "Impossible d'exécuter : " + res.interne;
+        majPuce(ex, "err");
+        return;
+      }
+      if (res.avert && res.avert.length) {
+        avertBox.style.display = "block";
+        avertBox.textContent = res.avert.join(" ");
+      }
+      if (res.stdout) {
+        zoneLcd.textContent = res.stdout + (res.tronque ? "\n… (sortie tronquée)" : "");
+        lcdVide.style.display = "none";
+        zoneLcd.style.display = "block";
+      } else {
+        zoneLcd.style.display = "none";
+        lcdVide.style.display = "block";
+      }
+      if (res.erreur) {
+        erreurBox.style.display = "block";
+        let txt = res.erreur.type + " : " + res.erreur.msg;
+        erreurBox.innerHTML = esc(txt);
+        if (res.erreur.src) {
+          const pre = el("div", "src", esc(res.erreur.src));
+          erreurBox.appendChild(pre);
+        }
+        if (res.erreur.ligne) st.editor.marquerErreur(res.erreur.ligne);
+        statutSpan.textContent = "erreur";
+        statutSpan.className = "statut err";
+        majPuce(ex, "err");
+        testsZone.innerHTML = "";
+      } else {
+        rendreTests(testsZone, res.tests);
+        const ok = res.tests && res.tests.every((t) => t.ok);
+        if (res.tests && res.tests.length) {
+          statutSpan.textContent = ok ? "réussi" : "à revoir";
+          statutSpan.className = "statut " + (ok ? "ok" : "ko");
+          majPuce(ex, ok ? "ok" : "ko");
+        } else {
+          statutSpan.textContent = "exécuté";
+          statutSpan.className = "statut ran";
+          majPuce(ex, "ran");
+        }
+      }
+      stock[ex.id] = code;
+      sauverStock(stock);
+    }
+
+    // ----- construction de la page -----
+    const racine = document.querySelector(".exercices");
+    if (TP_DATA.prof_extra_html) {
+      const banniere = el("div", "prof-banner", "Mode professeur : corrigés, notes pédagogiques et variante DST visibles. La version élève masque tout cela.");
+      racine.parentNode.insertBefore(banniere, racine);
+    }
+
+    TP_DATA.exercices.forEach((ex) => {
+      const bloc = el("section", "exo" + (ex.kind === "defi" ? " defi" : ""));
+      bloc.id = ex.id;
+      const tete = el("div", "exo-tete");
+      tete.innerHTML =
+        '<span class="etiquette">' + (ex.kind === "defi" ? "Défi" : "Exercice") + "</span>" +
+        "<h2>" + esc(ex.titre) + '</h2><span class="statut todo">à faire</span>';
+      bloc.appendChild(tete);
+      const enonce = el("div", "enonce", ex.enonce_html);
+      bloc.appendChild(enonce);
+
+      const editeurWrap = el("div", "zone-code");
+      const editeurDiv = el("div");
+      editeurWrap.appendChild(editeurDiv);
+      bloc.appendChild(editeurWrap);
+
+      const actions = el("div", "actions-ex");
+      const btnExec = el("button", "btn primaire btn-exec", "▶ Exécuter");
+      btnExec.disabled = true;
+      const btnReset = el("button", "btn discret", "↺ Réinitialiser l'énoncé");
+      actions.appendChild(btnExec);
+      actions.appendChild(btnReset);
+      if (TP_DATA.prof_extra_html !== undefined && ex.solution) {
+        const btnCorr = el("button", "btn discret", "👁 Charger le corrigé");
+        btnCorr.addEventListener("click", () => {
+          editeur.setValue(ex.solution);
+        });
+        actions.appendChild(btnCorr);
+      }
+      const raccourci = el("span", "raccourci", "Ctrl+Entrée pour exécuter");
+      actions.appendChild(raccourci);
+      bloc.appendChild(actions);
+
+      if (ex.aide_code) {
+        const secours = el("label", "secours");
+        secours.innerHTML = '<input type="checkbox"> 🆘 Utiliser une version fournie pour les fonctions précédentes dont j\'ai besoin ici (si je suis bloqué)';
+        bloc.appendChild(secours);
+      }
+
+      const lcd = el("div", "lcd");
+      lcd.innerHTML = '<div class="titre-lcd">Sortie du programme</div><pre style="display:none"></pre><span class="vide">(rien affiché pour l\'instant)</span>';
+      bloc.appendChild(lcd);
+      const erreurBox = el("div", "erreur-box");
+      erreurBox.style.display = "none";
+      bloc.appendChild(erreurBox);
+      const avertBox = el("div", "avert-box");
+      avertBox.style.display = "none";
+      bloc.appendChild(avertBox);
+      const testsZone = el("div", "tests-zone");
+      bloc.appendChild(testsZone);
+
+      if (ex.visuel) {
+        const visuelDiv = el("div", "visuel");
+        bloc.appendChild(visuelDiv);
+        setTimeout(() => window.initVisuel(visuelDiv, engine, ex), 0);
+      }
+
+      if (TP_DATA.prof_extra_html !== undefined && ex.notes_prof) {
+        const profBloc = el("details", "prof-bloc");
+        profBloc.innerHTML =
+          "<summary>Notes pour le professeur</summary>" +
+          '<div class="notes">' + ex.notes_html + "</div>" +
+          "<p><strong>Corrigé :</strong></p><pre><code>" + ex.solution_html + "</code></pre>";
+        bloc.appendChild(profBloc);
+      }
+
+      racine.appendChild(bloc);
+
+      const codeInitial = stock[ex.id] !== undefined ? stock[ex.id] : ex.starter;
+      const editeur = window.creerEditeur(editeurDiv, codeInitial);
+      editeurDiv.addEventListener("keydown", (e) => {
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+          e.preventDefault();
+          executer(ex);
+        }
+      });
+      btnExec.addEventListener("click", () => executer(ex));
+      btnReset.addEventListener("click", () => {
+        if (confirm("Revenir au code de départ de cet exercice ? Ton code actuel sera perdu.")) {
+          editeur.setValue(ex.starter);
+          delete stock[ex.id];
+          sauverStock(stock);
+        }
+      });
+
+      etats[ex.id] = { editor: editeur, el: bloc, ex };
+    });
+
+    if (TP_DATA.prof_extra_html) {
+      const bloc = el("div", "cartouche");
+      bloc.innerHTML = '<div class="contenu">' + TP_DATA.prof_extra_html + "</div>";
+      document.querySelector(".page").appendChild(bloc);
+    }
+
+    // ----- sauvegarde / chargement -----
+    const btnSauver = document.querySelector(".btn-sauver");
+    const btnCharger = document.querySelector(".btn-charger");
+    const inputFichier = document.querySelector(".input-fichier");
+
+    btnSauver.addEventListener("click", () => {
+      const nom = champNom.value.trim(), prenom = champPrenom.value.trim();
+      if (!nom || !prenom) {
+        toast("Indique ton nom et ton prénom en haut de la page avant d'enregistrer.", true);
+        (nom ? champPrenom : champNom).focus();
+        return;
+      }
+      let contenu = "# TP" + TP_DATA.num + " — " + TP_DATA.titre + "\n# " + nom.toUpperCase() + " " + prenom + "\n\n";
+      TP_DATA.exercices.forEach((ex) => {
+        contenu += "# ===== [" + ex.id + "] " + ex.titre + " =====\n" + etats[ex.id].editor.getValue().replace(/\s+$/, "") + "\n\n";
+      });
+      const nomF = nomFichier(nom, prenom);
+      const blob = new Blob([contenu], { type: "text/x-python" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = nomF;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      toast("Fichier enregistré : " + nomF);
+    });
+
+    btnCharger.addEventListener("click", () => inputFichier.click());
+    inputFichier.addEventListener("change", () => {
+      const f = inputFichier.files[0];
+      if (!f) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        const texte = String(reader.result);
+        const re = /#\s*=====\s*\[([a-zA-Z0-9]+)\][^\n]*=====\n([\s\S]*?)(?=\n#\s*=====\s*\[|$)/g;
+        let m, trouve = 0;
+        while ((m = re.exec(texte))) {
+          const id = m[1];
+          if (etats[id]) {
+            etats[id].editor.setValue(m[2].replace(/\s+$/, ""));
+            trouve++;
+          }
+        }
+        const mNom = texte.match(/^#\s*[A-ZÀ-Ý].*?\n#\s*([A-ZÀ-Ý' -]+)\s+(\S+)/);
+        if (mNom) {
+          champNom.value = mNom[1].trim();
+          champPrenom.value = mNom[2].trim();
+          sauverIdentite({ nom: champNom.value, prenom: champPrenom.value });
+          majNomFichier();
+        }
+        toast(trouve ? trouve + " exercice(s) rechargé(s) depuis " + f.name : "Aucun exercice reconnu dans ce fichier.", !trouve);
+      };
+      reader.readAsText(f, "utf-8");
+      inputFichier.value = "";
+    });
+  });
+})();
+</script>
+</body>
+</html>
