@@ -1,0 +1,1288 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>TP2 — Piles et files</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>/* Piles et files — TP interactifs.
+   Même identité graphique que la plateforme ECE : papier clair, encre bleu nuit, accents
+   brique/bleu/vert/ambre, Space Grotesk pour les titres, Inter pour le texte, JetBrains Mono pour le code. */
+:root {
+  --ink: #1c2541;
+  --ink-soft: #3a4470;
+  --paper: #fbfaf6;
+  --paper-dim: #efece2;
+  --card: #ffffff;
+  --line: #dcd6c4;
+  --blue: #2e6fab;
+  --blue-dim: #e7eef6;
+  --brick: #b3453d;
+  --brick-dim: #f6e6e4;
+  --brick-dark: #8a332c;
+  --green: #3f8f5f;
+  --green-dim: #e5f2ea;
+  --amber: #c98a1f;
+  --ok: #3f8f5f;
+  --ko: #b3453d;
+  --warn: #a3691a;
+  --code-bg: #1c2541;
+  --code-fg: #e9e7dd;
+  --accent: #2e6fab;
+  --accent-soft: color-mix(in srgb, var(--accent) 12%, white);
+  --font-ui: 'Inter', -apple-system, "Segoe UI", system-ui, sans-serif;
+  --font-head: 'Space Grotesk', var(--font-ui);
+  --font-code: 'JetBrains Mono', ui-monospace, Menlo, Consolas, "DejaVu Sans Mono", monospace;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 84px; }
+body {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font: 16px/1.65 var(--font-ui);
+}
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } * { transition: none !important; animation: none !important; } }
+
+a { color: var(--blue); }
+code, kbd { font-family: var(--font-code); font-size: .9em; background: var(--paper-dim); padding: .1em .35em; border-radius: 4px; }
+:focus-visible { outline: 2.5px solid var(--brick); outline-offset: 2px; }
+
+/* ---------- barre du haut ---------- */
+.barre {
+  position: sticky; top: 0; z-index: 20;
+  background: var(--ink); color: #fff;
+  border-bottom: 1px solid #2f3a63;
+  padding: 10px 18px;
+  display: flex; flex-wrap: wrap; gap: 10px 16px; align-items: center;
+}
+.barre .marque { font: 700 17px var(--font-head); display: flex; align-items: center; gap: 8px; white-space: nowrap; letter-spacing: -.01em; }
+.barre .marque .pastille { width: 28px; height: 28px; display: grid; place-items: center; background: var(--accent); border-radius: 6px; font-size: 16px; }
+.barre .identite { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.barre label { display: flex; align-items: center; gap: 6px; font-size: 13px; color: #cfd3e6; }
+.barre input[type=text] {
+  width: 148px; padding: 6px 9px; border: 1px solid #3a4470; border-radius: 6px; background: #232d52; color: #fff; font: 14px var(--font-ui);
+}
+.barre input[type=text]::placeholder { color: #8891bb; }
+.barre input[type=text]:focus-visible { outline-color: #fff; }
+.barre .nom-fichier { font: 12px var(--font-code); color: #a9b0d6; }
+.barre .actions { margin-left: auto; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+.puces { display: flex; gap: 5px; align-items: center; flex-wrap: wrap; }
+.puce {
+  width: 24px; height: 24px; border-radius: 5px; display: grid; place-items: center;
+  font: 700 11px var(--font-head); text-decoration: none; color: #fff;
+  background: #33406f; border: 1px solid #46538a;
+}
+.puce.defi { border-radius: 50%; }
+.puce.ran { background: var(--blue); border-color: var(--blue); }
+.puce.ok { background: var(--green); border-color: var(--green); }
+.puce.ko, .puce.err { background: var(--brick); border-color: var(--brick); }
+.puce.dirty { opacity: .6; border-style: dashed; }
+.etat-python { font-size: 13px; color: #cfd3e6; display: flex; align-items: center; gap: 6px; }
+.etat-python i { width: 9px; height: 9px; border-radius: 50%; background: var(--amber); display: inline-block; }
+.etat-python.pret i { background: #6fce97; }
+.etat-python.erreur i { background: #e08a83; }
+
+/* ---------- navigation entre chapitres (séances) ---------- */
+.chapitres-nav {
+  position: sticky; top: 53px; z-index: 19; background: #232d52; border-bottom: 1px solid #3a4470;
+  padding: 6px 14px; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: thin;
+}
+.onglet-chapitre {
+  --accent-onglet: var(--accent);
+  flex: none; font: 650 13px var(--font-head); cursor: pointer; white-space: nowrap;
+  border: 1px solid #3a4470; background: #1c2541; color: #cfd3e6; border-radius: 999px; padding: 6px 14px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.onglet-chapitre .oc-num {
+  display: inline-grid; place-items: center; width: 18px; height: 18px; border-radius: 50%;
+  background: #3a4470; color: #fff; font-size: 11px;
+}
+.onglet-chapitre:hover { background: #2c3763; }
+.onglet-chapitre.actif { background: var(--accent-onglet); border-color: var(--accent-onglet); color: #fff; }
+.onglet-chapitre.actif .oc-num { background: rgba(255,255,255,.28); }
+@media (max-width: 640px) { .chapitres-nav { top: 96px; } }
+
+/* ---------- boutons ---------- */
+.btn {
+  font: 650 14px var(--font-head); cursor: pointer; letter-spacing: -.005em;
+  border: 1px solid var(--line); background: var(--card); color: var(--ink-soft);
+  border-radius: 7px; padding: 9px 16px;
+  display: inline-flex; align-items: center; gap: 6px;
+}
+.btn:hover:not(:disabled) { background: var(--paper-dim); }
+.btn:active:not(:disabled) { background: var(--line); }
+.btn:disabled { opacity: .5; cursor: wait; }
+.btn.primaire { background: var(--brick); border-color: var(--brick); color: #fff; }
+.btn.primaire:hover:not(:disabled) { background: var(--brick-dark); }
+.btn.discret { border-color: transparent; background: transparent; font-weight: 500; text-decoration: underline; text-underline-offset: 3px; color: var(--blue); padding: 6px 4px; }
+.btn.discret:hover:not(:disabled) { background: var(--blue-dim); text-decoration: none; }
+.barre .btn { border-color: #3a4470; background: #232d52; color: #fff; }
+.barre .btn:hover:not(:disabled) { background: #2c3763; }
+.barre .btn.primaire { background: var(--brick); border-color: var(--brick); }
+.barre .btn.primaire:hover:not(:disabled) { background: var(--brick-dark); }
+
+/* ---------- mise en page ---------- */
+.page { max-width: 920px; margin: 0 auto; padding: 26px 16px 80px; }
+.cartouche {
+  background: var(--card); border: 1px solid var(--line); border-radius: 12px; overflow: hidden; margin-bottom: 26px;
+}
+.cartouche .bandeau {
+  background: var(--ink); color: #fff; display: flex; gap: 18px; align-items: center; padding: 22px 26px;
+}
+.cartouche .tuile { font-size: 40px; width: 72px; height: 72px; display: grid; place-items: center; background: rgba(255,255,255,.1); border-radius: 12px; flex: none; }
+.cartouche h1 { margin: 0; font: 700 1.9rem/1.2 var(--font-head); letter-spacing: -.02em; }
+.cartouche .sous-titre { margin: 5px 0 0; font-size: 1.02rem; color: #cfd3e6; }
+.cartouche .num { font: 700 11px var(--font-code); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); margin-bottom: 4px; opacity: .9; }
+.cartouche .contenu { padding: 22px 26px 10px; }
+.cartouche .objectifs { margin: 0 0 12px; padding-left: 1.2em; }
+.cartouche .objectifs li { margin: 3px 0; }
+.cartouche .duree { display: inline-block; background: var(--paper-dim); border: 1px solid var(--line); border-radius: 999px; padding: 2px 13px; font-size: .88rem; margin-bottom: 12px; color: var(--ink-soft); }
+@media (max-width: 560px) { .cartouche .tuile { width: 52px; height: 52px; font-size: 26px; } .cartouche h1 { font-size: 1.4rem; } }
+
+/* texte des énoncés */
+.enonce > * { max-width: 70ch; }
+.enonce > table, .enonce > pre, .enonce > .adm { max-width: none; }
+.enonce h2 { font: 700 1.2rem/1.3 var(--font-head); margin: 1.2em 0 .4em; letter-spacing: -.01em; }
+.enonce h3 { font: 650 1.02rem/1.3 var(--font-head); margin: 1em 0 .3em; }
+.enonce p { margin: .6em 0; }
+.enonce ul, .enonce ol { padding-left: 1.4em; }
+.enonce li { margin: .25em 0; }
+.enonce table { border-collapse: collapse; margin: .8em 0; width: auto; min-width: 60%; font-size: .95rem; }
+.enonce th, .enonce td { border-bottom: 1px solid var(--line); padding: 8px 12px; text-align: left; vertical-align: top; }
+.enonce th { background: var(--paper-dim); font-family: var(--font-head); font-weight: 650; }
+.enonce pre {
+  background: var(--paper-dim); border: 1px solid var(--line); border-left: 3px solid var(--blue);
+  border-radius: 8px; padding: 12px 16px; overflow-x: auto; font: 13px/1.6 var(--font-code); margin: .8em 0;
+}
+.enonce pre code { background: none; padding: 0; font-size: inherit; }
+.adm { border-radius: 8px; padding: 10px 16px; margin: 1em 0; border: 1px solid; border-left-width: 3px; max-width: 70ch; }
+.adm p { margin: .3em 0; }
+.adm .adm-titre { font: 650 .95rem var(--font-head); margin: 0 0 .15em; }
+.adm-astuce { background: var(--blue-dim); border-color: var(--blue); }
+.adm-attention { background: var(--brick-dim); border-color: var(--brick); }
+.adm-note { background: var(--green-dim); border-color: var(--green); }
+
+/* coloration syntaxique (extraits de code en lecture seule, fond clair) */
+.k { color: var(--amber); font-weight: 650; } .s { color: var(--green); } .c { color: var(--ink-soft); font-style: italic; } .n { color: var(--brick); } .b { color: #1f7a6c; } .f { color: var(--blue); }
+.enonce .k { color: #8a5f10; font-weight: 650; } .enonce .s { color: #226b46; } .enonce .c { color: var(--ink-soft); opacity: .8; font-style: italic; } .enonce .n { color: var(--brick-dark); } .enonce .b { color: #1f7a6c; } .enonce .f { color: var(--blue); }
+
+/* ---------- exercices ---------- */
+.exo {
+  background: var(--card); border: 1px solid var(--line); border-left: 3px solid var(--accent);
+  border-radius: 10px; margin: 24px 0; padding: 0 0 18px;
+}
+.exo.defi { border-left-style: double; border-left-width: 6px; }
+.exo-tete { display: flex; align-items: center; gap: 12px; padding: 16px 22px 6px; flex-wrap: wrap; }
+.exo-tete h2 { margin: 0; font: 700 1.2rem var(--font-head); letter-spacing: -.01em; }
+.exo-tete .etiquette { background: var(--accent); color: #fff; border-radius: 6px; padding: 2px 10px; font: 650 .82rem var(--font-head); white-space: nowrap; }
+.exo.defi .etiquette { background: var(--ink); }
+.exo-tete .statut { margin-left: auto; font: 650 .88rem var(--font-head); }
+.statut.ok { color: var(--green); } .statut.ko, .statut.err { color: var(--brick); } .statut.ran { color: var(--blue); } .statut.todo { color: var(--ink-soft); font-weight: 500; }
+.exo .enonce { padding: 0 22px; }
+.chaine-note { padding: 0 22px; font-size: .85rem; color: var(--ink-soft); margin: 6px 0 0; }
+.exo .zone-code { padding: 0 22px; margin-top: 12px; }
+
+/* éditeur */
+.editeur {
+  display: flex; background: var(--code-bg); border-radius: 8px; overflow: hidden; border: 1px solid #2f3a63;
+  font: 14px/22px var(--font-code); color: var(--code-fg);
+}
+.ed-gut { flex: none; width: 44px; padding: 12px 8px 12px 0; text-align: right; color: #5a6491; background: #19203c; overflow: hidden; user-select: none; }
+.ed-gut div { height: 22px; }
+.ed-gut div.err { background: var(--brick); color: #fff; font-weight: 700; }
+.ed-zone { position: relative; flex: 1; min-width: 0; }
+.ed-hl, .ed-ta {
+  position: absolute; inset: 0; margin: 0; padding: 12px; border: 0; width: 100%; height: 100%;
+  font: inherit; line-height: 22px; white-space: pre; tab-size: 4; letter-spacing: 0; word-spacing: 0;
+  overflow: auto; overscroll-behavior: contain;
+}
+.ed-hl { overflow: hidden; pointer-events: none; color: var(--code-fg); }
+.ed-ta { background: transparent; color: transparent; caret-color: #fff; resize: none; outline: none; }
+.ed-ta::selection { background: #2f3a63; color: transparent; }
+.editeur:focus-within { outline: 2.5px solid var(--brick); outline-offset: 1px; }
+/* jetons dans l'éditeur (fond sombre, mêmes teintes que l'éditeur CodeMirror de la plateforme ECE) */
+.ed-hl .k { color: #e0a63a; font-weight: 650; }
+.ed-hl .s { color: #a3d99b; }
+.ed-hl .c { color: #7d87ad; font-style: italic; }
+.ed-hl .n { color: #e39aa8; }
+.ed-hl .b { color: #8fd0c4; }
+.ed-hl .f { color: #9fc8e8; }
+
+.actions-ex { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; padding: 12px 22px 0; }
+.secours { font-size: .88rem; color: var(--ink-soft); display: flex; gap: 6px; align-items: flex-start; padding: 8px 22px 0; max-width: 70ch; }
+.secours input { margin-top: 4px; accent-color: var(--brick); }
+.raccourci { font-size: .8rem; color: var(--ink-soft); margin-left: auto; }
+
+/* sortie / résultats */
+.lcd {
+  margin: 14px 22px 0; background: var(--paper-dim); color: var(--ink);
+  border: 1px solid var(--line); border-radius: 8px;
+  font: 13px/1.55 var(--font-code); padding: 10px 14px; overflow-x: auto;
+}
+.lcd .titre-lcd { font: 650 11px var(--font-head); letter-spacing: .05em; text-transform: uppercase; opacity: .65; margin-bottom: 4px; }
+.lcd pre { margin: 0; white-space: pre-wrap; word-break: break-word; }
+.lcd .vide { opacity: .6; font-style: italic; font-family: var(--font-ui); }
+.erreur-box {
+  margin: 12px 22px 0; border: 1px solid var(--brick); border-left: 3px solid var(--brick); background: var(--brick-dim); color: var(--brick-dark); border-radius: 8px; padding: 8px 14px;
+}
+.erreur-box .src { font: 13px var(--font-code); background: #fff; border: 1px solid #eccac6; border-radius: 4px; padding: 3px 8px; margin-top: 6px; white-space: pre-wrap; }
+.avert-box { margin: 10px 22px 0; border: 1px solid var(--amber); border-left: 3px solid var(--amber); background: #fbf1de; color: #6b4e0f; border-radius: 8px; padding: 6px 14px; font-size: .9rem; }
+.tests { list-style: none; margin: 14px 22px 0; padding: 0; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; }
+.tests-resume { padding: 9px 14px; font: 650 .95rem var(--font-head); background: var(--paper-dim); border-bottom: 1px solid var(--line); }
+.tests-resume.ok { background: var(--green-dim); color: #205c3c; } .tests-resume.ko { background: var(--brick-dim); color: var(--brick-dark); }
+.tests li { padding: 6px 14px; border-top: 1px solid var(--line); display: flex; gap: 10px; font-size: .92rem; }
+.tests li:first-child { border-top: 0; }
+.tests li .mark { flex: none; width: 1.4em; }
+.tests li.ok .mark { color: var(--green); } .tests li.ko .mark { color: var(--brick); }
+.tests li .detail { color: var(--ink-soft); font: 13px var(--font-code); display: block; }
+
+/* corrigé (prof) */
+.prof-bloc { margin: 14px 22px 0; border: 1px solid var(--blue); border-left: 3px solid var(--blue); background: var(--blue-dim); border-radius: 8px; padding: 9px 14px; }
+.prof-bloc summary { cursor: pointer; font: 650 .95rem var(--font-head); color: var(--blue); }
+.prof-bloc pre { background: var(--code-bg); color: var(--code-fg); border-radius: 6px; padding: 10px 14px; overflow-x: auto; font: 13px/1.55 var(--font-code); }
+.prof-bloc .notes { font-size: .95rem; }
+.prof-banner { background: var(--blue-dim); border: 1px solid var(--blue); border-left: 3px solid var(--blue); color: #1d4a70; padding: 9px 14px; border-radius: 8px; margin: 0 0 20px; font-size: .95rem; }
+
+/* lien de passerelle vers une autre ressource */
+.lien-suite { margin: 30px 0; background: var(--paper); border: 1px solid var(--line); border-left: 3px solid var(--brick); border-radius: 10px; padding: 16px 20px; }
+.lien-suite p { margin: 4px 0 0; }
+.lien-suite strong { font-family: var(--font-head); }
+.lien-suite a { font-weight: 650; color: var(--brick); }
+
+/* ---------- visuels ---------- */
+.visuel { margin: 14px 22px 0; border: 1px solid var(--line); border-radius: 10px; background: var(--card); overflow: hidden; }
+.visuel .v-tete { background: var(--ink); color: #fff; padding: 7px 14px; display: flex; gap: 12px; align-items: center; flex-wrap: wrap; font-size: .9rem; }
+.visuel .v-tete strong { font: 650 1rem var(--font-head); }
+.visuel .v-info { margin-left: auto; font: 13px var(--font-code); color: #cfd3e6; }
+.visuel .v-corps { padding: 10px 12px; }
+.visuel canvas { width: 100%; height: auto; display: block; border-radius: 6px; }
+.visuel .v-ctrl { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; padding: 8px 12px 12px; font-size: .9rem; }
+.visuel .v-ctrl label { display: flex; align-items: center; gap: 6px; }
+.visuel select, .visuel input[type=number] { font: inherit; padding: 4px 7px; border: 1px solid var(--line); border-radius: 6px; background: #fff; }
+.visuel input[type=number] { width: 72px; }
+.visuel .msg { padding: 0 14px 10px; font-size: .92rem; }
+.visuel .msg.err { color: var(--brick); font-weight: 650; }
+.v-double { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+@media (max-width: 720px) { .v-double { grid-template-columns: 1fr; } }
+.v-double h4 { margin: 0 0 4px; font: 650 .95rem var(--font-head); }
+.v-double .stat { font: 13px var(--font-code); margin-top: 4px; min-height: 2.6em; color: var(--ink-soft); }
+.v-double .stat.err { color: var(--brick); font-family: var(--font-ui); font-weight: 650; }
+.snake-cadre { background: var(--paper-dim); padding: 10px; }
+.snake-score { font: 700 15px var(--font-code); }
+.dpad { display: grid; grid-template-columns: repeat(3, 42px); grid-template-rows: repeat(2, 38px); gap: 4px; }
+.dpad button { font-size: 17px; border: 1px solid var(--line); background: #fff; border-radius: 8px; cursor: pointer; }
+.dpad .haut { grid-column: 2; grid-row: 1; } .dpad .gauche { grid-column: 1; grid-row: 2; } .dpad .bas { grid-column: 2; grid-row: 2; } .dpad .droite { grid-column: 3; grid-row: 2; }
+
+/* ---------- divers ---------- */
+.toast {
+  position: fixed; bottom: 18px; left: 50%; transform: translateX(-50%); z-index: 50;
+  background: var(--ink); color: #fff; padding: 10px 18px; border-radius: 8px; box-shadow: 0 8px 24px rgba(28,37,65,.28);
+  max-width: min(92vw, 560px); font-size: .95rem;
+}
+.toast.ko { background: var(--brick); }
+.pied { margin-top: 40px; font-size: .85rem; color: var(--ink-soft); max-width: 70ch; }
+.bandeau-reseau { background: var(--brick-dim); border: 1px solid var(--brick); border-left: 3px solid var(--brick); color: var(--brick-dark); padding: 10px 16px; border-radius: 8px; margin-bottom: 18px; }
+.attente { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--ink-soft); border-top-color: transparent; border-radius: 50%; animation: tourne .8s linear infinite; vertical-align: -2px; }
+@keyframes tourne { to { transform: rotate(360deg); } }
+@media print { .barre, .actions-ex, .secours, .visuel { display: none; } }
+</style>
+</head>
+<body>
+<div class="barre">
+  <div class="marque"><span class="pastille">🗂️</span> TP2 — Piles et files</div>
+  <div class="identite">
+    <label>Nom <input type="text" class="ch-nom" placeholder="NOM"></label>
+    <label>Prénom <input type="text" class="ch-prenom" placeholder="Prénom"></label>
+    <span class="nom-fichier"></span>
+  </div>
+  <div class="puces"></div>
+  <div class="actions">
+    <span class="etat-python"><i></i><span>Python : chargement…</span></span>
+    <button class="btn btn-charger">📂 Charger</button>
+    <input type="file" class="input-fichier" accept=".py" style="display:none">
+    <button class="btn primaire btn-sauver">💾 Enregistrer</button>
+  </div>
+</div>
+<nav class="chapitres-nav"></nav>
+<div class="page">
+  <div class="bandeau-reseau-zone"></div>
+  <div class="chapitres"></div>
+  <p class="pied">TP2 — Piles et files · 5 séances, NSI Terminale</p>
+</div>
+<script>// Éditeur de code : textarea transparente par-dessus une couche de surlignage, gouttière avec numéros de ligne.
+(function () {
+  const MOTS_CLES = new Set("False None True and as assert async await break class continue def del elif else except finally for from global if import in is lambda nonlocal not or pass raise return try while with yield".split(" "));
+  const CONSTRUITS = new Set("abs all any bool dict enumerate float format int len list max min print range repr round set sorted str sum tuple type zip isinstance super object".split(" "));
+  const TOKEN_RE = /(#.*$)|("""[\s\S]*?"""|'''[\s\S]*?'''|"(?:[^"\\\n]|\\.)*"|'(?:[^'\\\n]|\\.)*')|(\b\d+(?:\.\d+)?\b)|(\b[A-Za-z_][A-Za-z0-9_]*\b)|(\()/gm;
+
+  function echapper(s) {
+    return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+
+  function colorer(code) {
+    let out = "";
+    let pos = 0;
+    let dernierNomIdx = -1;
+    let morceaux = [];
+    TOKEN_RE.lastIndex = 0;
+    let m;
+    while ((m = TOKEN_RE.exec(code))) {
+      morceaux.push(echapper(code.slice(pos, m.index)));
+      pos = TOKEN_RE.lastIndex;
+      if (m[1] !== undefined) {
+        morceaux.push('<span class="c">' + echapper(m[1]) + "</span>");
+        dernierNomIdx = -1;
+      } else if (m[2] !== undefined) {
+        morceaux.push('<span class="s">' + echapper(m[2]) + "</span>");
+        dernierNomIdx = -1;
+      } else if (m[3] !== undefined) {
+        morceaux.push('<span class="n">' + echapper(m[3]) + "</span>");
+        dernierNomIdx = -1;
+      } else if (m[4] !== undefined) {
+        const w = m[4];
+        if (MOTS_CLES.has(w)) {
+          morceaux.push('<span class="k">' + w + "</span>");
+          dernierNomIdx = -1;
+        } else if (CONSTRUITS.has(w)) {
+          morceaux.push('<span class="b">' + w + "</span>");
+          dernierNomIdx = -1;
+        } else {
+          morceaux.push(w);
+          dernierNomIdx = morceaux.length - 1;
+        }
+      } else if (m[5] !== undefined) {
+        if (dernierNomIdx >= 0) {
+          morceaux[dernierNomIdx] = '<span class="f">' + morceaux[dernierNomIdx] + "</span>";
+        }
+        morceaux.push("(");
+        dernierNomIdx = -1;
+      }
+    }
+    morceaux.push(echapper(code.slice(pos)));
+    return morceaux.join("");
+  }
+
+  function creerEditeur(conteneur, codeInitial, options) {
+    options = options || {};
+    conteneur.classList.add("editeur");
+    conteneur.innerHTML =
+      '<div class="ed-gut"></div><div class="ed-zone"><pre class="ed-hl"></pre>' +
+      '<textarea class="ed-ta" spellcheck="false" autocapitalize="off" autocomplete="off" wrap="off"></textarea></div>';
+    const gut = conteneur.querySelector(".ed-gut");
+    const hl = conteneur.querySelector(".ed-hl");
+    const ta = conteneur.querySelector(".ed-ta");
+    ta.value = codeInitial;
+
+    function majGouttiere() {
+      const n = ta.value.split("\n").length;
+      let html = "";
+      for (let i = 1; i <= n; i++) html += "<div>" + i + "</div>";
+      gut.innerHTML = html;
+    }
+    function majHighlight() {
+      let v = ta.value;
+      if (v.endsWith("\n")) v += " ";
+      hl.innerHTML = colorer(v);
+    }
+    function majTout() {
+      majGouttiere();
+      majHighlight();
+    }
+    function syncScroll() {
+      hl.scrollTop = ta.scrollTop;
+      hl.scrollLeft = ta.scrollLeft;
+      gut.scrollTop = ta.scrollTop;
+    }
+    ta.addEventListener("input", () => {
+      majTout();
+      effacerErreur();
+      if (options.onchange) options.onchange(ta.value);
+    });
+    ta.addEventListener("scroll", syncScroll);
+    ta.addEventListener("keydown", (e) => {
+      if (e.key === "Tab") {
+        e.preventDefault();
+        const s = ta.selectionStart,
+          f = ta.selectionEnd;
+        ta.value = ta.value.slice(0, s) + "    " + ta.value.slice(f);
+        ta.selectionStart = ta.selectionEnd = s + 4;
+        majTout();
+        if (options.onchange) options.onchange(ta.value);
+      } else if (e.key === "Enter") {
+        const s = ta.selectionStart;
+        const avant = ta.value.slice(0, s);
+        const ligne = avant.slice(avant.lastIndexOf("\n") + 1);
+        const indent = (ligne.match(/^\s*/) || [""])[0];
+        const plus = /:\s*$/.test(ligne) ? "    " : "";
+        if (indent || plus) {
+          e.preventDefault();
+          const ins = "\n" + indent + plus;
+          ta.value = ta.value.slice(0, s) + ins + ta.value.slice(ta.selectionEnd);
+          ta.selectionStart = ta.selectionEnd = s + ins.length;
+          majTout();
+          if (options.onchange) options.onchange(ta.value);
+        }
+      }
+    });
+
+    function marquerErreur(ligne) {
+      effacerErreur();
+      const d = gut.children[ligne - 1];
+      if (d) d.classList.add("err");
+    }
+    function effacerErreur() {
+      Array.from(gut.children).forEach((d) => d.classList.remove("err"));
+    }
+
+    majTout();
+    return {
+      getValue: () => ta.value,
+      setValue: (v) => {
+        ta.value = v;
+        majTout();
+      },
+      focus: () => ta.focus(),
+      marquerErreur,
+      effacerErreur,
+      el: ta,
+    };
+  }
+
+  window.creerEditeur = creerEditeur;
+  window._colorerPython = colorer;
+})();
+</script>
+<script>// Animations liées à certains exercices. Appelées par app.js via initVisuel(container, engine, ex).
+(function () {
+  const COULEURS_DISQUES = ["#b3453d", "#c98a1f", "#3f8f5f", "#2e6fab", "#8a332c", "#1f7a6c", "#3a4470", "#a3691a", "#205c3c", "#1d4a70"];
+  const FN_HANOI = { ex3: "hanoi", defiB: "hanoi_iteratif" };
+  const FN_SNAKE = { ex4: "avancer", defi: "avancer_tore" };
+
+  // ---------------------------------------------------------------- HANOÏ
+  function initHanoiVisuel(conteneur, engine, tpId, ex) {
+    const fn = FN_HANOI[ex.id] || "hanoi";
+    conteneur.innerHTML =
+      '<div class="v-tete"><strong>🗼 Animation</strong>' +
+      '<label>n = <input type="number" class="hn-n" min="1" max="8" value="4" style="width:52px"></label>' +
+      '<button class="btn discret hn-go">▶ Lancer</button>' +
+      '<span class="v-info hn-info"></span></div><div class="v-corps"><canvas class="hn-cv" width="640" height="260"></canvas></div>' +
+      '<div class="msg hn-msg"></div>';
+    const cv = conteneur.querySelector(".hn-cv");
+    const ctx = cv.getContext("2d");
+    const msg = conteneur.querySelector(".hn-msg");
+    const info = conteneur.querySelector(".hn-info");
+    let anim = null;
+
+    function dessiner(etats, n) {
+      const W = cv.width, H = cv.height;
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = "#efece2";
+      ctx.fillRect(0, 0, W, H);
+      const baseY = H - 30;
+      const pegX = [W * 0.2, W * 0.5, W * 0.8];
+      const maxW = W * 0.27;
+      ctx.fillStyle = "#7d87ad";
+      ctx.fillRect(20, baseY, W - 40, 8);
+      ["A", "B", "C"].forEach((nom, i) => {
+        ctx.fillStyle = "#1c2541";
+        ctx.fillRect(pegX[i] - 4, baseY - 150, 8, 150);
+        ctx.font = "13px monospace";
+        ctx.fillStyle = "#1c2541";
+        ctx.textAlign = "center";
+        ctx.fillText(nom, pegX[i], baseY + 24);
+        const pile = etats[nom] || [];
+        pile.forEach((d, k) => {
+          const w = 26 + (d / n) * maxW;
+          const h = 16;
+          const y = baseY - 8 - (k + 1) * (h + 3);
+          ctx.fillStyle = COULEURS_DISQUES[(d - 1) % COULEURS_DISQUES.length];
+          ctx.strokeStyle = "#1c2541";
+          ctx.lineWidth = 1.5;
+          ctx.beginPath();
+          ctx.roundRect(pegX[i] - w / 2, y, w, h, 4);
+          ctx.fill();
+          ctx.stroke();
+        });
+      });
+    }
+
+    async function lancer() {
+      if (anim) clearInterval(anim);
+      const n = Math.max(1, Math.min(8, parseInt(conteneur.querySelector(".hn-n").value) || 4));
+      msg.textContent = "";
+      msg.className = "msg hn-msg";
+      info.textContent = "calcul…";
+      const expr = "(" + fn + "(" + n + ", 0, 2, 1, init_tours(" + n + ")), _etat_hanoi())[-1]";
+      let res;
+      try {
+        res = await engine.call(tpId, ex.id, expr);
+      } catch (e) {
+        msg.textContent = "Erreur : " + e.message;
+        msg.className = "msg hn-msg err";
+        info.textContent = "";
+        return;
+      }
+      if (!res || res.pas_ns) {
+        msg.textContent = "Exécute d'abord ton code (bouton « Exécuter »).";
+        msg.className = "msg hn-msg err";
+        info.textContent = "";
+        return;
+      }
+      if (res.erreur) {
+        msg.textContent = res.erreur.type + " : " + res.erreur.msg;
+        msg.className = "msg hn-msg err";
+        info.textContent = "";
+        return;
+      }
+      const etat = res.val;
+      if (!etat || !etat.events) {
+        msg.textContent = "Pas d'information d'animation disponible.";
+        info.textContent = "";
+        return;
+      }
+      const etats = { A: [], B: [], C: [] };
+      for (let d = n; d >= 1; d--) etats.A.push(d);
+      dessiner(etats, n);
+      let i = 0;
+      const events = etat.events;
+      info.textContent = "0 / " + events.length + " coups";
+      const delai = Math.max(35, 700 - events.length * 4);
+      anim = setInterval(() => {
+        if (i >= events.length) {
+          clearInterval(anim);
+          info.textContent = events.length + " coups joués";
+          return;
+        }
+        const genre = events[i][0], peg = events[i][1], disque = events[i][2];
+        if (genre === "+") etats[peg].push(disque);
+        else etats[peg].pop();
+        dessiner(etats, n);
+        i++;
+        info.textContent = i + " / " + events.length + " coups";
+      }, delai);
+    }
+    conteneur.querySelector(".hn-go").addEventListener("click", lancer);
+    dessiner({ A: [4, 3, 2, 1], B: [], C: [] }, 4);
+  }
+
+  // ---------------------------------------------------------------- SNAKE
+  function initSnakeVisuel(conteneur, engine, tpId, ex) {
+    const fn = FN_SNAKE[ex.id] || "avancer";
+    conteneur.innerHTML =
+      '<div class="v-tete"><strong>🐍 Joue avec ta fonction</strong>' +
+      '<span class="v-info sk-score">score : 0</span></div>' +
+      '<div class="v-corps snake-cadre"><canvas class="sk-cv" width="400" height="400"></canvas></div>' +
+      '<div class="v-ctrl"><button class="btn primaire sk-go">▶ Nouvelle partie</button>' +
+      '<div class="dpad">' +
+      '<button class="haut" data-d="haut">▲</button><button class="gauche" data-d="gauche">◀</button>' +
+      '<button class="bas" data-d="bas">▼</button><button class="droite" data-d="droite">▶</button></div>' +
+      '<span class="raccourci">clique dans la grille puis utilise les flèches</span></div>' +
+      '<div class="msg sk-msg"></div>';
+    const cv = conteneur.querySelector(".sk-cv");
+    const ctx = cv.getContext("2d");
+    const scoreEl = conteneur.querySelector(".sk-score");
+    const msg = conteneur.querySelector(".sk-msg");
+    const L = 16, H = 16;
+    let boucle = null, dirCourante = "droite", enCours = false;
+
+    function dessiner(etat) {
+      const cs = cv.width / etat.l;
+      ctx.fillStyle = "#efece2";
+      ctx.fillRect(0, 0, cv.width, cv.height);
+      ctx.fillStyle = "#3f8f5f";
+      etat.corps.forEach(function (c) { ctx.fillRect(c[0] * cs + 1, c[1] * cs + 1, cs - 2, cs - 2); });
+      if (etat.corps.length) {
+        const t = etat.corps[etat.corps.length - 1];
+        ctx.fillStyle = "#1c2541";
+        ctx.fillRect(t[0] * cs + 1, t[1] * cs + 1, cs - 2, cs - 2);
+      }
+      if (etat.pomme) {
+        ctx.fillStyle = "#b3453d";
+        ctx.beginPath();
+        ctx.arc(etat.pomme[0] * cs + cs / 2, etat.pomme[1] * cs + cs / 2, cs * 0.38, 0, 7);
+        ctx.fill();
+      }
+      scoreEl.textContent = "score : " + etat.score;
+      if (etat.statut !== "ok") {
+        clearInterval(boucle);
+        enCours = false;
+        if (etat.statut === "mort") {
+          msg.textContent = "Perdu ! Score final : " + etat.score;
+          msg.className = "msg sk-msg err";
+        } else if (etat.statut === "erreur") {
+          msg.textContent = "Erreur : " + etat.message;
+          msg.className = "msg sk-msg err";
+        } else if (etat.statut === "gagne") {
+          msg.textContent = "Grille remplie, bravo !";
+          msg.className = "msg sk-msg";
+        }
+      }
+    }
+
+    async function tick() {
+      let res;
+      try {
+        res = await engine.call(tpId, ex.id, "_jeu_pas('" + dirCourante + "')");
+      } catch (e) {
+        clearInterval(boucle);
+        enCours = false;
+        msg.textContent = "Erreur : " + e.message;
+        msg.className = "msg sk-msg err";
+        return;
+      }
+      dessiner(res.val || res);
+    }
+
+    async function nouvellePartie() {
+      if (boucle) clearInterval(boucle);
+      msg.textContent = "";
+      dirCourante = "droite";
+      const graine = Math.floor(Math.random() * 100000);
+      const expr = "_jeu_nouveau(" + L + ", " + H + ", " + graine + ", '" + fn + "')";
+      let res;
+      try {
+        res = await engine.call(tpId, ex.id, expr);
+      } catch (e) {
+        msg.textContent = "Erreur : " + e.message;
+        msg.className = "msg sk-msg err";
+        return;
+      }
+      if (!res || res.pas_ns) {
+        msg.textContent = "Exécute d'abord ton code (bouton « Exécuter »).";
+        msg.className = "msg sk-msg err";
+        return;
+      }
+      dessiner(res.val || res);
+      enCours = true;
+      boucle = setInterval(tick, 160);
+    }
+
+    function tourner(d) {
+      if (!enCours) return;
+      dirCourante = d;
+    }
+    conteneur.querySelectorAll(".dpad button").forEach(function (b) { b.addEventListener("click", function () { tourner(b.dataset.d); }); });
+    cv.tabIndex = 0;
+    cv.addEventListener("keydown", function (e) {
+      const map = { ArrowUp: "haut", ArrowDown: "bas", ArrowLeft: "gauche", ArrowRight: "droite", z: "haut", s: "bas", q: "gauche", d: "droite" };
+      if (map[e.key]) {
+        e.preventDefault();
+        tourner(map[e.key]);
+      }
+    });
+    conteneur.querySelector(".sk-go").addEventListener("click", nouvellePartie);
+    ctx.fillStyle = "#efece2";
+    ctx.fillRect(0, 0, cv.width, cv.height);
+  }
+
+  // ---------------------------------------------------------------- LABYRINTHE
+  function initMazeVisuel(conteneur, engine, tpId, ex, algos) {
+    const double = algos.length > 1;
+    let panneaux = "";
+    const titres = { pile: "Pile (profondeur)", file: "File (largeur)" };
+    algos.forEach(function (a) {
+      panneaux +=
+        '<div><h4>' + titres[a] + '</h4><canvas class="mz-cv" data-a="' + a + '" width="360" height="360"></canvas>' +
+        '<div class="stat" data-a="' + a + '"></div></div>';
+    });
+    conteneur.innerHTML =
+      '<div class="v-tete"><strong>🧭 Parcours</strong>' +
+      '<label>taille <select class="mz-taille"><option value="15,11">petit</option><option value="21,15" selected>moyen</option><option value="31,21">grand</option></select></label>' +
+      '<label>boucles <select class="mz-boucles"><option value="0">aucune</option><option value="0.15">un peu</option><option value="0.3" selected>quelques-unes</option></select></label>' +
+      '<button class="btn primaire mz-go">▶ Nouveau labyrinthe</button></div>' +
+      '<div class="v-corps"><div class="' + (double ? "v-double" : "") + '">' + panneaux + "</div></div>" +
+      '<div class="msg mz-msg"></div>';
+    const msg = conteneur.querySelector(".mz-msg");
+    let anims = [];
+
+    function dessinerGrille(ctx, grille, cs) {
+      ctx.fillStyle = "#efece2";
+      ctx.fillRect(0, 0, grille[0].length * cs, grille.length * cs);
+      for (let y = 0; y < grille.length; y++) {
+        for (let x = 0; x < grille[y].length; x++) {
+          if (grille[y][x] === "#") {
+            ctx.fillStyle = "#1c2541";
+            ctx.fillRect(x * cs, y * cs, cs, cs);
+          }
+        }
+      }
+    }
+
+    async function lancer() {
+      anims.forEach(function (a) { clearInterval(a); });
+      anims = [];
+      msg.textContent = "";
+      const taille = conteneur.querySelector(".mz-taille").value.split(",").map(Number);
+      const largeur = taille[0], hauteur = taille[1];
+      const boucles = parseFloat(conteneur.querySelector(".mz-boucles").value);
+      const graine = Math.floor(Math.random() * 100000);
+      const algosJs = "[" + algos.map(function (a) { return "'" + a + "'"; }).join(",") + "]";
+      const expr = "_lab_compare(" + algosJs + ", " + largeur + ", " + hauteur + ", " + graine + ", " + boucles + ", True)";
+      let res;
+      try {
+        res = await engine.call(tpId, ex.id, expr);
+      } catch (e) {
+        msg.textContent = "Erreur : " + e.message;
+        msg.className = "msg mz-msg err";
+        return;
+      }
+      if (!res || res.pas_ns) {
+        msg.textContent = "Exécute d'abord ton code (bouton « Exécuter »).";
+        msg.className = "msg mz-msg err";
+        return;
+      }
+      if (res.erreur) {
+        msg.textContent = res.erreur.type + " : " + res.erreur.msg;
+        msg.className = "msg mz-msg err";
+        return;
+      }
+      const data = res.val;
+      const grille = data.grille;
+      const cs = Math.floor(360 / Math.max(grille.length, grille[0].length));
+      algos.forEach(function (a) {
+        const cv = conteneur.querySelector('.mz-cv[data-a="' + a + '"]');
+        const statEl = conteneur.querySelector('.stat[data-a="' + a + '"]');
+        cv.width = grille[0].length * cs;
+        cv.height = grille.length * cs;
+        const ctx = cv.getContext("2d");
+        dessinerGrille(ctx, grille, cs);
+        const r = data.res[a];
+        if (!r) return;
+        if (r.erreur) {
+          statEl.textContent = r.erreur;
+          statEl.className = "stat err";
+          return;
+        }
+        const visites = r.visites;
+        let i = 0;
+        const delai = Math.max(6, Math.floor(900 / visites.length));
+        const anim = setInterval(function () {
+          if (i >= visites.length) {
+            clearInterval(anim);
+            if (r.chemin && r.chemin.length) {
+              ctx.strokeStyle = "#b3453d";
+              ctx.lineWidth = Math.max(2, cs * 0.3);
+              ctx.beginPath();
+              r.chemin.forEach(function (c, k) {
+                const cx = c[0] * cs + cs / 2, cy = c[1] * cs + cs / 2;
+                if (k === 0) ctx.moveTo(cx, cy);
+                else ctx.lineTo(cx, cy);
+              });
+              ctx.stroke();
+              statEl.textContent = visites.length + " cases explorées · chemin de " + (r.chemin.length - 1) + " pas";
+            } else {
+              statEl.textContent = visites.length + " cases explorées · arrivée non atteinte";
+            }
+            statEl.className = "stat";
+            return;
+          }
+          const c = visites[i];
+          ctx.fillStyle = "#9fc8e8";
+          ctx.fillRect(c[0] * cs + 1, c[1] * cs + 1, cs - 2, cs - 2);
+          i++;
+        }, delai);
+        anims.push(anim);
+      });
+      const d = data.depart, a2 = data.arrivee;
+      algos.forEach(function (a) {
+        const cv = conteneur.querySelector('.mz-cv[data-a="' + a + '"]');
+        const ctx = cv.getContext("2d");
+        ctx.fillStyle = "#3f8f5f";
+        ctx.fillRect(d[0] * cs + 3, d[1] * cs + 3, cs - 6, cs - 6);
+        ctx.fillStyle = "#c98a1f";
+        ctx.fillRect(a2[0] * cs + 3, a2[1] * cs + 3, cs - 6, cs - 6);
+      });
+    }
+    conteneur.querySelector(".mz-go").addEventListener("click", lancer);
+  }
+
+  window.initVisuel = function (conteneur, engine, tpId, ex) {
+    if (ex.visuel === "hanoi") initHanoiVisuel(conteneur, engine, tpId, ex);
+    else if (ex.visuel === "snake") initSnakeVisuel(conteneur, engine, tpId, ex);
+    else if (ex.visuel === "maze_pile") initMazeVisuel(conteneur, engine, tpId, ex, ["pile"]);
+    else if (ex.visuel === "maze_both") initMazeVisuel(conteneur, engine, tpId, ex, ["pile", "file"]);
+  };
+})();
+</script>
+<script>
+const TP_LIST = [{"id": "tp1", "num": 1, "slug": "hanoi", "titre": "Les tours de Hanoï", "titre_court": "Tours de Hanoï", "sous_titre": "Piles : interface, récursivité, animation", "duree": "1 h 30 – 2 h", "emoji": "🗼", "accent": "#2e6fab", "objectifs": ["Manipuler une pile uniquement par son interface (`empiler`, `depiler`, `sommet`, `est_vide`).", "Modéliser un problème avec plusieurs piles et respecter des contraintes de coups.", "Écrire un algorithme récursif et le relier à la pile d'appels.", "Implémenter une pile (défi) et dérécursiver un algorithme avec une pile explicite (défi)."], "intro_html": "<h2>Rappel : la pile (LIFO)</h2>\n<p>Une <strong>pile</strong> est une structure de données dans laquelle on ne peut agir que sur le <strong>sommet</strong> : le dernier élément arrivé est le premier à sortir (*Last In, First Out*). Pense à une pile d&#x27;assiettes.</p>\n<table><thead><tr><th>Opération</th><th>Effet</th></tr></thead><tbody><tr><td><code>p = Pile()</code></td><td>crée une pile vide</td></tr><tr><td><code>p.est_vide()</code></td><td>renvoie <code>True</code> si la pile est vide</td></tr><tr><td><code>p.empiler(x)</code></td><td>pose <code>x</code> au sommet</td></tr><tr><td><code>p.depiler()</code></td><td>retire le sommet <strong>et le renvoie</strong> (erreur si la pile est vide)</td></tr><tr><td><code>p.sommet()</code></td><td>renvoie le sommet <strong>sans le retirer</strong></td></tr><tr><td><code>p.taille()</code></td><td>nombre d&#x27;éléments</td></tr></tbody></table>\n<div class=\"adm adm-astuce\"><p class=\"adm-titre\">Interface et implémentation</p><p>Dans ce TP, la classe <code>Pile</code> est <strong>déjà écrite</strong> : tu l&#x27;utilises sans savoir comment elle est codée. C&#x27;est tout l&#x27;intérêt d&#x27;une *interface*. Tu écriras ta propre version dans le défi A.</p></div>\n<p>Trois outils te sont fournis pour le jeu : <code>init_tours(n)</code> crée les trois tours <code>A</code>, <code>B</code>, <code>C</code> avec <code>n</code> disques sur <code>A</code> ; <code>contenu(p)</code> renvoie le contenu d&#x27;une pile <strong>pour l&#x27;afficher</strong> (du bas vers le sommet) ; <code>nb_coups_effectues()</code> compte les disques déplacés.</p>", "prelude": "\n_journal = []\n_ops = [0]\n_init = [None]\n_MAX_JOURNAL = 60000\n\n\nclass Pile:\n    \"\"\"Pile (LIFO). Interface : est_vide, empiler, depiler, sommet, taille.\"\"\"\n\n    def __init__(self, nom=\"\"):\n        self._elts = []\n        self.nom = nom\n\n    def est_vide(self):\n        return len(self._elts) == 0\n\n    def empiler(self, x):\n        _ops[0] += 1\n        self._elts.append(x)\n        if self.nom and len(_journal) < _MAX_JOURNAL:\n            _journal.append((\"+\", self.nom, x))\n\n    def depiler(self):\n        if len(self._elts) == 0:\n            raise IndexError(\"depiler : la pile est vide\")\n        _ops[0] += 1\n        x = self._elts.pop()\n        if self.nom and len(_journal) < _MAX_JOURNAL:\n            _journal.append((\"-\", self.nom, x))\n        return x\n\n    def sommet(self):\n        if len(self._elts) == 0:\n            raise IndexError(\"sommet : la pile est vide\")\n        return self._elts[-1]\n\n    def taille(self):\n        return len(self._elts)\n\n    def __repr__(self):\n        if not self._elts:\n            return \"Pile(vide)\"\n        return \"Pile(\" + \", \".join(repr(x) for x in self._elts) + \" <- sommet)\"\n\n\ndef init_tours(n):\n    \"\"\"Renvoie la liste [A, B, C] de trois piles ; les n disques (n en bas, 1 au sommet) sont sur A.\"\"\"\n    tours = [Pile(\"A\"), Pile(\"B\"), Pile(\"C\")]\n    for d in range(n, 0, -1):\n        tours[0].empiler(d)\n    _journal.clear()\n    _init[0] = n\n    return tours\n\n\ndef contenu(pile):\n    \"\"\"Contenu d'une pile sous forme de liste (bas -> sommet). Pour l'affichage et les tests uniquement.\"\"\"\n    return list(pile._elts)\n\n\ndef nb_coups_effectues():\n    \"\"\"Nombre de disques déplacés depuis le dernier init_tours.\"\"\"\n    return len(_journal) // 2\n\n\ndef _etat_hanoi():\n    if _init[0] is None:\n        return None\n    return {\"n\": _init[0], \"events\": [list(e) for e in _journal]}\n", "exercices": [{"id": "ex1", "kind": "exercice", "titre": "Prendre la pile en main", "abbr": "E1", "enonce_html": "<p><strong>Partie A – Prédire.</strong> Avant d&#x27;exécuter, écris sur ton brouillon ce que le programme affiche. Puis vérifie.</p>\n<p><strong>Partie B – Écrire.</strong> Complète les deux fonctions ci-dessous <strong>en utilisant une <code>Pile</code></strong> (pas de <code>[::-1]</code>, pas de <code>reverse()</code>, pas de <code>pop()</code> de liste).</p>\n<ul><li><code>inverser(liste)</code> renvoie une <strong>nouvelle</strong> liste avec les éléments dans l&#x27;ordre inverse.</li><li><code>est_palindrome(mot)</code> renvoie <code>True</code> si <code>mot</code> se lit de la même façon dans les deux sens.</li></ul>\n<div class=\"adm adm-astuce\"><p class=\"adm-titre\">Idée</p><p>Empile tous les éléments : à la sortie, ils reviennent dans l&#x27;ordre inverse.</p></div>", "starter": "# --- Partie A : prédire, puis exécuter pour vérifier ---\np = Pile()\np.empiler(4)\np.empiler(7)\np.empiler(1)\nprint(p.depiler())\nprint(p.sommet())\np.empiler(9)\nprint(p.depiler(), p.depiler())\nprint(p.est_vide())\n# Ma prévision : ...\n\n\n# --- Partie B : à compléter ---\ndef inverser(liste):\n    \"\"\"Renvoie une nouvelle liste : les éléments de liste dans l'ordre inverse.\"\"\"\n    pass\n\n\ndef est_palindrome(mot):\n    \"\"\"Renvoie True si mot est un palindrome (ex. 'radar'), False sinon.\"\"\"\n    pass\n", "tests": "\negal(\"inverser([1, 2, 3]) == [3, 2, 1]\", lambda: inverser([1, 2, 3]), [3, 2, 1])\negal(\"inverser([]) == []\", lambda: inverser([]), [])\negal(\"inverser(['a', 'b']) == ['b', 'a']\", lambda: inverser(['a', 'b']), ['b', 'a'])\n_l = [5, 6, 7]\ninverser(_l)\nvrai(\"inverser ne modifie pas la liste d'origine\", lambda: _l == [5, 6, 7])\ndef _usage(f, arg):\n    _ops[0] = 0\n    f(arg)\n    return _ops[0]\nvrai(\"inverser utilise bien une Pile (empiler/depiler)\", lambda: _usage(inverser, [1, 2, 3]) >= 6,\n     \"Aucune opération de pile détectée : utilise Pile()\")\negal(\"est_palindrome('radar')\", lambda: est_palindrome(\"radar\"), True)\negal(\"est_palindrome('kayak')\", lambda: est_palindrome(\"kayak\"), True)\negal(\"est_palindrome('python')\", lambda: est_palindrome(\"python\"), False)\negal(\"est_palindrome('abca')\", lambda: est_palindrome(\"abca\"), False)\negal(\"est_palindrome('') (mot vide)\", lambda: est_palindrome(\"\"), True)\n", "aide_code": null, "visuel": null}, {"id": "ex2", "kind": "exercice", "titre": "Déplacer un disque", "abbr": "E2", "enonce_html": "<p>Trois tours <code>A</code>, <code>B</code>, <code>C</code> (indices <code>0</code>, <code>1</code>, <code>2</code> dans la liste <code>tours</code>). Un disque porte un nombre : plus il est grand, plus le disque est large. <strong>Règle : on ne pose jamais un disque sur un disque plus petit.</strong></p>\n<p>Écris <code>deplacer(tours, i, j)</code> qui déplace le disque du sommet de <code>tours[i]</code> vers <code>tours[j]</code> <strong>si le coup est légal</strong> :</p>\n<ul><li>elle renvoie <code>True</code> si le déplacement a été effectué ;</li><li>elle renvoie <code>False</code> <strong>sans rien modifier</strong> si le coup est interdit (tour de départ vide, disque posé sur un plus petit, ou <code>i == j</code>).</li></ul>\n<div class=\"adm adm-attention\"><p class=\"adm-titre\">Attention</p><p>Vérifie que le coup est légal <strong>avant</strong> de dépiler : un disque dépilé puis rejeté est un disque perdu.</p></div>\n<p>Le programme de test en bas du code te permet d&#x27;essayer à la main.</p>", "starter": "def deplacer(tours, i, j):\n    \"\"\"Déplace le disque du sommet de tours[i] vers tours[j] si c'est légal.\n    Renvoie True si le déplacement a eu lieu, False sinon (rien n'est modifié).\"\"\"\n    pass\n\n\n# Essais\ntours = init_tours(3)\nprint(contenu(tours[0]), contenu(tours[1]), contenu(tours[2]))\nprint(deplacer(tours, 0, 1))   # légal ?\nprint(deplacer(tours, 0, 1))   # légal ?\nprint(contenu(tours[0]), contenu(tours[1]), contenu(tours[2]))\n", "tests": "\ndef _etat(t):\n    return [contenu(t[0]), contenu(t[1]), contenu(t[2])]\n_t = init_tours(3)\negal(\"1er coup légal : deplacer(tours, 0, 1) renvoie True\", lambda: deplacer(_t, 0, 1), True)\negal(\"le disque 1 est passé sur B\", lambda: _etat(_t), [[3, 2], [1], []])\negal(\"disque 2 sur disque 1 : renvoie False\", lambda: deplacer(_t, 0, 1), False)\negal(\"... et rien n'a bougé\", lambda: _etat(_t), [[3, 2], [1], []])\negal(\"départ vide : deplacer(tours, 2, 0) renvoie False\", lambda: deplacer(_t, 2, 0), False)\negal(\"disque 1 sur disque 2 : renvoie True\", lambda: deplacer(_t, 1, 0), True)\negal(\"... état final\", lambda: _etat(_t), [[3, 2, 1], [], []])\negal(\"i == j : renvoie False et rien ne bouge\", lambda: (deplacer(_t, 0, 0), _etat(_t)), (False, [[3, 2, 1], [], []]))\n", "aide_code": null, "visuel": null}, {"id": "ex3", "kind": "exercice", "titre": "La récursivité entre en scène", "abbr": "E3", "enonce_html": "<p>Ta fonction <code>deplacer</code> de l&#x27;exercice 2 est disponible ici automatiquement.</p>\n<p><strong>Idée récursive.</strong> Pour déplacer <code>n</code> disques de la tour <code>source</code> vers la tour <code>cible</code> en s&#x27;aidant de la tour <code>aux</code> :</p>\n<ol><li>déplacer <code>n - 1</code> disques de <code>source</code> vers <code>aux</code> (en s&#x27;aidant de <code>cible</code>) ;</li><li>déplacer le plus grand disque de <code>source</code> vers <code>cible</code> ;</li><li>déplacer <code>n - 1</code> disques de <code>aux</code> vers <code>cible</code> (en s&#x27;aidant de <code>source</code>).</li></ol>\n<p>Écris <code>hanoi(n, source, cible, aux, tours)</code>. Quel est le <strong>cas de base</strong> ?</p>\n<p>Quand ton programme fonctionne, <strong>l&#x27;animation</strong> se lance toute seule sous le code. Change la valeur de <code>n</code> et observe.</p>\n<div class=\"adm adm-astuce\"><p class=\"adm-titre\">La pile d&#x27;appels</p><p>À chaque appel récursif, Python empile un « cadre » dans la <strong>pile d&#x27;appels</strong>. C&#x27;est encore une pile : celle du langage lui-même !</p></div>", "starter": "def hanoi(n, source, cible, aux, tours):\n    \"\"\"Déplace n disques de tours[source] vers tours[cible] en s'aidant de tours[aux].\"\"\"\n    pass\n\n\nn = 3\ntours = init_tours(n)\nhanoi(n, 0, 2, 1, tours)\nprint(\"Tour C :\", contenu(tours[2]))     # doit afficher [3, 2, 1]\nprint(\"Coups joués :\", nb_coups_effectues())\n", "tests": "\ndef _jouer(n):\n    t = init_tours(n)\n    hanoi(n, 0, 2, 1, t)\n    return [contenu(t[0]), contenu(t[1]), contenu(t[2])], nb_coups_effectues()\nfor _n in range(0, 6):\n    egal(\"n = %d : tous les disques sont sur la tour C, dans le bon ordre\" % _n,\n         lambda _n=_n: _jouer(_n)[0], [[], [], list(range(_n, 0, -1))])\nfor _n in (1, 2, 3, 4, 5):\n    egal(\"n = %d : %d coups exactement\" % (_n, 2 ** _n - 1), lambda _n=_n: _jouer(_n)[1], 2 ** _n - 1)\n", "aide_code": "def deplacer(tours, i, j):\n    \"\"\"Déplace le disque du sommet de tours[i] vers tours[j] si c'est légal.\n    Renvoie True si le déplacement a eu lieu, False sinon (rien n'est modifié).\"\"\"\n    if i == j or tours[i].est_vide():\n        return False\n    disque = tours[i].sommet()\n    if not tours[j].est_vide() and tours[j].sommet() < disque:\n        return False\n    tours[j].empiler(tours[i].depiler())\n    return True", "visuel": "hanoi"}, {"id": "ex4", "kind": "exercice", "titre": "Combien de coups ?", "abbr": "E4", "enonce_html": "<p>Sans jouer la partie, on peut <strong>compter</strong> les coups. Soit <code>T(n)</code> le nombre minimal de coups pour <code>n</code> disques.</p>\n<ol><li>Justifie, avec l&#x27;idée récursive de l&#x27;exercice 3, que <code>T(n) = 2 × T(n − 1) + 1</code> et donne <code>T(0)</code>.</li><li>Écris <strong>récursivement</strong> <code>nb_coups(n)</code>.</li><li>Exécute le programme : complète le tableau et <strong>conjecture</strong> une formule pour <code>T(n)</code>.</li><li>Un moine déplace un disque par seconde. Combien d&#x27;années lui faut-il pour <code>n = 64</code> disques ? (Utilise <code>print</code> avec <code>nb_coups(64)</code>.)</li></ol>\n<div class=\"adm adm-astuce\"><p class=\"adm-titre\">Pour aller plus loin</p><p>Prouve ta conjecture par récurrence. Tu peux aussi comparer avec <code>nb_coups_effectues()</code> de l&#x27;exercice précédent.</p></div>", "starter": "def nb_coups(n):\n    \"\"\"Nombre minimal de coups pour déplacer n disques (sans les jouer).\"\"\"\n    pass\n\n\nfor n in range(0, 11):\n    print(n, nb_coups(n))\n\n# Question 4 : le moine\n# print(...)\n", "tests": "\negal(\"nb_coups(0) == 0\", lambda: nb_coups(0), 0)\negal(\"nb_coups(1) == 1\", lambda: nb_coups(1), 1)\negal(\"nb_coups(2) == 3\", lambda: nb_coups(2), 3)\negal(\"nb_coups(3) == 7\", lambda: nb_coups(3), 7)\negal(\"nb_coups(10) == 1023\", lambda: nb_coups(10), 1023)\negal(\"nb_coups(20) == 1048575\", lambda: nb_coups(20), 1048575)\n", "aide_code": null, "visuel": null}, {"id": "defiA", "kind": "defi", "titre": "Défi A – Écrire sa propre classe Pile", "abbr": "DA", "enonce_html": "<p>Jusqu&#x27;ici, la classe <code>Pile</code> t&#x27;était fournie. Écris la tienne, <strong>avec une liste Python</strong> comme stockage.</p>\n<p>Contraintes :</p>\n<ul><li><code>Pile()</code> crée une pile vide ; <strong>deux piles ne doivent pas partager la même liste</strong> ;</li><li><code>depiler()</code> et <code>sommet()</code> lèvent <code>IndexError</code> sur une pile vide ;</li><li><code>taille()</code> renvoie le nombre d&#x27;éléments.</li></ul>\n<p>Ta classe doit passer tous les tests. Ensuite, réponds à l&#x27;oral : quel est le coût de <code>empiler</code> et <code>depiler</code> ? Pourquoi choisir la <strong>fin</strong> de la liste comme sommet ?</p>", "starter": "class Pile:\n    def __init__(self):\n        pass\n\n    def est_vide(self):\n        pass\n\n    def empiler(self, x):\n        pass\n\n    def depiler(self):\n        pass\n\n    def sommet(self):\n        pass\n\n    def taille(self):\n        pass\n", "tests": "\np = Pile()\negal(\"une pile neuve est vide\", lambda: p.est_vide(), True)\negal(\"sa taille est 0\", lambda: p.taille(), 0)\np.empiler(1); p.empiler(2); p.empiler(3)\negal(\"après 3 empiler : pas vide\", lambda: p.est_vide(), False)\negal(\"taille 3\", lambda: p.taille(), 3)\negal(\"sommet() renvoie 3 (dernier empilé)\", lambda: p.sommet(), 3)\negal(\"sommet() ne retire rien : taille 3\", lambda: p.taille(), 3)\negal(\"depiler() renvoie 3\", lambda: p.depiler(), 3)\negal(\"depiler() renvoie 2\", lambda: p.depiler(), 2)\negal(\"depiler() renvoie 1\", lambda: p.depiler(), 1)\negal(\"la pile est de nouveau vide\", lambda: p.est_vide(), True)\nleve(\"depiler() sur pile vide lève IndexError\", lambda: p.depiler(), IndexError)\nleve(\"sommet() sur pile vide lève IndexError\", lambda: p.sommet(), IndexError)\n_a, _b = Pile(), Pile()\n_a.empiler(\"x\")\negal(\"deux piles sont indépendantes\", lambda: _b.est_vide(), True)\n", "aide_code": null, "visuel": null}, {"id": "defiB", "kind": "defi", "titre": "Défi B – Hanoï sans récursivité", "abbr": "DB", "enonce_html": "<p>Toute fonction récursive peut être écrite avec une <strong>pile explicite</strong> qui remplace la pile d&#x27;appels.</p>\n<p>Écris <code>hanoi_iteratif(n, source, cible, aux, tours)</code> <strong>sans aucun appel récursif</strong>. Tu utiliseras une <code>Pile</code> de <strong>tâches</strong> : chaque tâche est un tuple <code>(k, s, c, a)</code> qui signifie « déplacer <code>k</code> disques de <code>s</code> vers <code>c</code> en s&#x27;aidant de <code>a</code> ».</p>\n<p>Principe :</p>\n<ol><li>on empile la tâche <code>(n, source, cible, aux)</code> ;</li><li>tant que la pile n&#x27;est pas vide : on dépile une tâche ;\n   - si <code>k == 0</code>, rien à faire ; si <code>k == 1</code>, on déplace un disque avec <code>deplacer</code> ;\n   - sinon on <strong>remplace</strong> la tâche par trois tâches plus petites.</li></ol>\n<div class=\"adm adm-attention\"><p class=\"adm-titre\">Attention à l&#x27;ordre</p><p>La pile est LIFO : la tâche qui doit être exécutée <strong>en premier</strong> doit être empilée <strong>en dernier</strong>.</p></div>", "starter": "def hanoi_iteratif(n, source, cible, aux, tours):\n    \"\"\"Même résultat que hanoi, sans récursivité (pile de tâches).\"\"\"\n    pass\n\n\nn = 4\ntours = init_tours(n)\nhanoi_iteratif(n, 0, 2, 1, tours)\nprint(contenu(tours[2]), nb_coups_effectues())\n", "tests": "\ndef _jouer(n):\n    t = init_tours(n)\n    hanoi_iteratif(n, 0, 2, 1, t)\n    return [contenu(t[0]), contenu(t[1]), contenu(t[2])], nb_coups_effectues()\nfor _n in (1, 2, 3, 4, 5, 6):\n    egal(\"n = %d : disques bien rangés sur C\" % _n, lambda _n=_n: _jouer(_n)[0], [[], [], list(range(_n, 0, -1))])\n    egal(\"n = %d : %d coups\" % (_n, 2 ** _n - 1), lambda _n=_n: _jouer(_n)[1], 2 ** _n - 1)\nvrai(\"la fonction ne s'appelle pas elle-même (pas de récursivité)\",\n     lambda: \"hanoi_iteratif\" not in hanoi_iteratif.__code__.co_names,\n     \"Ton code contient encore un appel récursif à hanoi_iteratif\")\nvrai(\"une Pile de tâches est bien utilisée\", lambda: (_ops.__setitem__(0, 0), hanoi_iteratif(3, 0, 2, 1, init_tours(3)), _ops[0] > 17)[2],\n     \"Utilise une Pile pour stocker les tâches\")\n", "aide_code": "def deplacer(tours, i, j):\n    \"\"\"Déplace le disque du sommet de tours[i] vers tours[j] si c'est légal.\n    Renvoie True si le déplacement a eu lieu, False sinon (rien n'est modifié).\"\"\"\n    if i == j or tours[i].est_vide():\n        return False\n    disque = tours[i].sommet()\n    if not tours[j].est_vide() and tours[j].sommet() < disque:\n        return False\n    tours[j].empiler(tours[i].depiler())\n    return True", "visuel": "hanoi"}], "lien_suite": {"titre": "🖨️ Pour aller plus loin", "texte": "Passe à l'atelier maker : conçois et imprime en 3D ta propre tour de Hanoï (ressource NSI Maker)", "href": "../nsi-maker/index.html#defi"}}, {"id": "tp2", "num": 2, "slug": "parentheses", "titre": "Le bon parenthésage", "titre_court": "Parenthésage", "sous_titre": "Piles : vérifier `()`, `[]`, `{}` et les balises HTML", "duree": "1 h", "emoji": "🧩", "accent": "#3f8f5f", "objectifs": ["Comprendre pourquoi un simple compteur ne suffit plus dès que l'on a plusieurs types de parenthèses.", "Utiliser une pile pour vérifier l'imbrication correcte de délimiteurs.", "Localiser une erreur (position) et traiter des cas limites (chaîne vide, fermante en trop, ouvrante oubliée).", "Réinvestir la pile pour les balises HTML et l'évaluation d'une expression en notation polonaise inverse."], "intro_html": "<h2>Le problème</h2>\n<p>Ton éditeur de code souligne en rouge une parenthèse oubliée ; le navigateur affiche mal une page dont une balise n&#x27;est pas fermée… Dans tous les cas, un programme vérifie que les délimiteurs sont <strong>bien parenthésés</strong> : chaque ouvrante est fermée par la fermante <strong>du même type</strong>, dans le bon ordre.</p>\n<table><thead><tr><th>Chaîne</th><th>Bien parenthésée ?</th></tr></thead><tbody><tr><td><code>&quot;(a + b) * [c - {d}]&quot;</code></td><td>oui</td></tr><tr><td><code>&quot;(]&quot;</code></td><td>non : mauvais type</td></tr><tr><td><code>&quot;([)]&quot;</code></td><td>non : mauvais <strong>ordre</strong> (les paires se chevauchent)</td></tr><tr><td><code>&quot;((&quot;</code></td><td>non : ouvrantes jamais fermées</td></tr><tr><td><code>&quot;))(&quot;</code></td><td>non : fermantes trop tôt</td></tr><tr><td><code>&quot;&quot;</code></td><td>oui (rien à vérifier)</td></tr></tbody></table>\n<p>La classe <code>Pile</code> est fournie (mêmes méthodes qu&#x27;au TP1 : <code>est_vide</code>, <code>empiler</code>, <code>depiler</code>, <code>sommet</code>, <code>taille</code>).</p>", "prelude": "\nimport re\n\n_ops = [0]\n\n\nclass Pile:\n    \"\"\"Pile (LIFO). Interface : est_vide, empiler, depiler, sommet, taille.\"\"\"\n\n    def __init__(self):\n        self._elts = []\n\n    def est_vide(self):\n        return len(self._elts) == 0\n\n    def empiler(self, x):\n        _ops[0] += 1\n        self._elts.append(x)\n\n    def depiler(self):\n        if len(self._elts) == 0:\n            raise IndexError(\"depiler : la pile est vide\")\n        _ops[0] += 1\n        return self._elts.pop()\n\n    def sommet(self):\n        if len(self._elts) == 0:\n            raise IndexError(\"sommet : la pile est vide\")\n        return self._elts[-1]\n\n    def taille(self):\n        return len(self._elts)\n\n    def __repr__(self):\n        if not self._elts:\n            return \"Pile(vide)\"\n        return \"Pile(\" + \", \".join(repr(x) for x in self._elts) + \" <- sommet)\"\n\n\n_AUTOFERMANTES = (\"br\", \"img\", \"hr\", \"meta\", \"link\", \"input\")\n\n\ndef extraire_balises(texte):\n    \"\"\"Liste des balises HTML de texte, dans l'ordre : (\"ouvrante\", nom) ou (\"fermante\", nom).\n    Les balises auto-fermantes (<br>, <img ...>, <hr/>...) sont ignorées.\"\"\"\n    res = []\n    for m in re.finditer(r\"<\\s*(/?)\\s*([a-zA-Z][a-zA-Z0-9]*)[^>]*?(/?)\\s*>\", texte):\n        ferm, nom, auto = m.group(1), m.group(2).lower(), m.group(3)\n        if auto or nom in _AUTOFERMANTES:\n            continue\n        res.append((\"fermante\" if ferm else \"ouvrante\", nom))\n    return res\n", "exercices": [{"id": "ex1", "kind": "exercice", "titre": "Un compteur suffit… pour un seul type", "abbr": "E1", "enonce_html": "<p>On commence simple : la chaîne ne contient que des parenthèses <strong>rondes</strong> <code>(</code> et <code>)</code> (et éventuellement d&#x27;autres caractères à ignorer).</p>\n<p>Idée : un <strong>compteur</strong> <code>c</code> qui augmente à chaque <code>(</code> et diminue à chaque <code>)</code>.<br>La chaîne est bien parenthésée si le compteur <strong>ne devient jamais négatif</strong> et <strong>vaut 0 à la fin</strong>.</p>\n<p>Écris <code>parentheses_equilibrees(chaine)</code>.</p>\n<div class=\"adm adm-astuce\"><p class=\"adm-titre\">Pour réfléchir</p><p>Exécute <code>parentheses_equilibrees(&quot;([)]&quot;)</code> <strong>en adaptant</strong> ton idée aux crochets (un compteur par type). Que renvoie-t-elle ? Pourquoi ce n&#x27;est pas satisfaisant ? Note ta réponse en commentaire : c&#x27;est la raison d&#x27;être de l&#x27;exercice suivant.</p></div>", "starter": "def parentheses_equilibrees(chaine):\n    \"\"\"True si les parenthèses rondes de chaine sont bien équilibrées, False sinon.\"\"\"\n    pass\n\n\nprint(parentheses_equilibrees(\"(()())\"))\nprint(parentheses_equilibrees(\"())(\"))\n\n# Ma réponse à la question « pour réfléchir » :\n# ...\n", "tests": "\n_cas = [(\"\", True), (\"()\", True), (\"(())\", True), (\"()()\", True), (\"(()())\", True), (\"a(b)c\", True),\n        (\"(()\", False), (\"())\", False), (\")(\", False), (\"((a)\", False), (\"))((\", False), (\"(\", False)]\nfor _s, _att in _cas:\n    egal(\"parentheses_equilibrees(%r)\" % _s, lambda _s=_s: parentheses_equilibrees(_s), _att)\n", "aide_code": null, "visuel": null}, {"id": "ex2", "kind": "exercice", "titre": "Avec une pile : `()`, `[]`, `{}`", "abbr": "E2", "enonce_html": "<p>Écris <code>est_bien_parenthese(chaine)</code> qui gère les trois types de délimiteurs. Les autres caractères sont ignorés.</p>\n<p><strong>Algorithme</strong> (à comprendre avant de coder) :</p>\n<ol><li>on parcourt la chaîne caractère par caractère, avec une pile initialement vide ;</li><li><strong>ouvrante</strong> → on l&#x27;empile ;</li><li><strong>fermante</strong> → si la pile est vide, ou si le sommet n&#x27;est pas l&#x27;ouvrante correspondante : <code>False</code> ; sinon on dépile ;</li><li>à la fin, la chaîne est correcte <strong>si et seulement si</strong> la pile est vide.</li></ol>\n<p>Le dictionnaire <code>PAIRES</code> donne, pour chaque fermante, l&#x27;ouvrante attendue.</p>\n<p><strong>Avant de coder</strong>, recopie et complète sur ton brouillon la trace de <code>&quot;([)]&quot;</code> :</p>\n<table><thead><tr><th>caractère</th><th>action</th><th>pile après</th></tr></thead><tbody><tr><td><code>(</code></td><td>empiler</td><td><code>(</code></td></tr><tr><td><code>[</code></td><td>...</td><td>...</td></tr><tr><td><code>)</code></td><td>...</td><td>...</td></tr></tbody></table>", "starter": "OUVRANTES = \"([{\"\nFERMANTES = \")]}\"\nPAIRES = {\")\": \"(\", \"]\": \"[\", \"}\": \"{\"}\n\n\ndef est_bien_parenthese(chaine):\n    \"\"\"True si chaine est bien parenthésée (types et ordre corrects), False sinon.\"\"\"\n    pass\n\n\nfor essai in [\"{[()]}\", \"([)]\", \"\", \")(\", \"a(b[c]d)e\"]:\n    print(repr(essai), est_bien_parenthese(essai))\n", "tests": "\n_cas = [(\"\", True), (\"()\", True), (\"()[]{}\", True), (\"{[()]}\", True), (\"a(b[c]{d}e)f\", True), (\"([{}])\", True),\n        (\"([)]\", False), (\"(]\", False), (\"(()\", False), (\"())\", False), (\")(\", False), (\"]\", False),\n        (\"{[}\", False), (\"((]]\", False), (\"[(])\", False), (\"(((\", False)]\nfor _s, _att in _cas:\n    egal(\"est_bien_parenthese(%r)\" % _s, lambda _s=_s: est_bien_parenthese(_s), _att)\ndef _usage(s):\n    _ops[0] = 0\n    est_bien_parenthese(s)\n    return _ops[0]\nvrai(\"la fonction utilise bien une Pile\", lambda: _usage(\"([{}])\") >= 6, \"Aucune opération de pile : utilise Pile()\")\n", "aide_code": null, "visuel": null}, {"id": "ex3", "kind": "exercice", "titre": "Où est l'erreur ?", "abbr": "E3", "enonce_html": "<p>Dire « c&#x27;est faux » ne suffit pas : un éditeur doit <strong>montrer où</strong>. Écris <code>premiere_erreur(chaine)</code> qui renvoie :</p>\n<ul><li><code>-1</code> si la chaîne est bien parenthésée ;</li><li>sinon l&#x27;<strong>indice</strong> (position dans la chaîne, en commençant à 0) du caractère fautif :</li></ul>\n<p>Exemples : <code>premiere_erreur(&quot;(]&quot;)</code> → <code>1</code> ; <code>premiere_erreur(&quot;(()&quot;)</code> → <code>0</code> ; <code>premiere_erreur(&quot;())&quot;)</code> → <code>2</code>.</p>\n<div class=\"adm adm-astuce\"><p class=\"adm-titre\">Astuce</p><p>Il faut empiler plus que le caractère : empile un <strong>tuple</strong> <code>(caractère, indice)</code>.</p></div>\n<p>Les constantes <code>OUVRANTES</code>, <code>FERMANTES</code>, <code>PAIRES</code> de l&#x27;exercice 2 sont disponibles.</p>", "starter": "def premiere_erreur(chaine):\n    \"\"\"-1 si chaine est bien parenthésée, sinon l'indice du caractère fautif.\"\"\"\n    pass\n\n\nprint(premiere_erreur(\"print(len([1, 2, 3])\"))\nprint(premiere_erreur(\"x = (1 + 2]\"))\n", "tests": "\n_cas = [(\"\", -1), (\"([]{})\", -1), (\"(]\", 1), (\")(\", 0), (\"())\", 2), (\"(()\", 0), (\"((\", 1), (\"a[b(c]d)\", 5),\n        (\"{[()]\", 0), (\"print(len([1, 2, 3])\", 5), (\"x = (1 + 2]\", 10), (\"]\", 0), (\"abc\", -1)]\nfor _s, _att in _cas:\n    egal(\"premiere_erreur(%r) == %d\" % (_s, _att), lambda _s=_s: premiere_erreur(_s), _att)\n", "aide_code": "OUVRANTES = \"([{\"\n\nFERMANTES = \")]}\"\n\nPAIRES = {\")\": \"(\", \"]\": \"[\", \"}\": \"{\"}", "visuel": null}, {"id": "ex4", "kind": "exercice", "titre": "Les balises HTML", "abbr": "E4", "enonce_html": "<p>Une page HTML est correcte si ses balises sont bien <strong>imbriquées</strong> : <code>&lt;b&gt;&lt;i&gt;texte&lt;/i&gt;&lt;/b&gt;</code> est correct, <code>&lt;b&gt;&lt;i&gt;texte&lt;/b&gt;&lt;/i&gt;</code> ne l&#x27;est pas.</p>\n<p>La fonction <code>extraire_balises(texte)</code> est fournie. Elle renvoie la liste des balises dans l&#x27;ordre, sous la forme <code>(&quot;ouvrante&quot;, nom)</code> ou <code>(&quot;fermante&quot;, nom)</code>, en ignorant les balises auto-fermantes (<code>&lt;br&gt;</code>, <code>&lt;img ...&gt;</code>).</p>\n<p>Écris <code>est_html_correct(texte)</code>. C&#x27;est le <strong>même algorithme</strong> que l&#x27;exercice 2, mais on empile des <strong>noms de balises</strong>.</p>", "starter": "print(extraire_balises(\"<p>Bonjour <b>toi</b><br></p>\"))\n\n\ndef est_html_correct(texte):\n    \"\"\"True si les balises de texte sont bien imbriquées, False sinon.\"\"\"\n    pass\n\n\nprint(est_html_correct(\"<ul><li>a</li><li>b</li></ul>\"))\nprint(est_html_correct(\"<div><p>x</div></p>\"))\n", "tests": "\n_cas = [(\"\", True), (\"<p>Bonjour <b>toi</b></p>\", True), (\"<b><i>x</i></b>\", True), (\"<b><i>x</b></i>\", False),\n        (\"<p>un<br>deux</p>\", True), (\"<div><p>x</div>\", False), (\"</p>\", False), (\"<p>\", False),\n        (\"<ul><li>a</li><li>b</li></ul>\", True), (\"<img src='a.png'>\", True), (\"<a href='x'><b>lien</b></a>\", True),\n        (\"<div><p>x</div></p>\", False)]\nfor _s, _att in _cas:\n    egal(\"est_html_correct(%r)\" % _s, lambda _s=_s: est_html_correct(_s), _att)\n", "aide_code": null, "visuel": null}, {"id": "defi", "kind": "defi", "titre": "Défi – La notation polonaise inverse", "abbr": "D", "enonce_html": "<p>En <strong>notation polonaise inverse</strong> (NPI, ou postfixée), l&#x27;opérateur suit ses opérandes et <strong>on n&#x27;a plus besoin de parenthèses</strong> : <code>3 4 + 2 *</code> vaut <code>(3 + 4) × 2 = 14</code>. Les vieilles calculatrices HP fonctionnent ainsi.</p>\n<p>Écris <code>evaluer_npi(expression)</code> : les éléments de <code>expression</code> sont séparés par des espaces ; les nombres sont des <strong>entiers</strong> ; les opérateurs sont <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>.</p>\n<p>Algorithme :</p>\n<ul><li><strong>nombre</strong> → on l&#x27;empile ;</li><li><strong>opérateur</strong> → on dépile <code>b</code>, puis on dépile <code>a</code>, on calcule <code>a opérateur b</code> et on <strong>empile</strong> le résultat ;</li><li>à la fin, il reste un seul élément : le résultat.</li></ul>\n<div class=\"adm adm-attention\"><p class=\"adm-titre\">Attention à l&#x27;ordre</p><p>Le <strong>premier</strong> élément dépilé est l&#x27;opérande de <strong>droite</strong> : <code>7 2 -</code> vaut <code>5</code>, pas <code>-5</code>.</p></div>\n<p><strong>Pour les plus rapides :</strong> écris la conversion d&#x27;une expression infixe (avec parenthèses) en NPI (algorithme *shunting-yard* de Dijkstra) — deux piles ou une pile et une liste de sortie.</p>", "starter": "def evaluer_npi(expression):\n    \"\"\"Évalue une expression en notation polonaise inverse, ex. '3 4 + 2 *' -> 14.\"\"\"\n    pass\n\n\nprint(evaluer_npi(\"3 4 + 2 *\"))\n", "tests": "\n_cas = [(\"3 4 +\", 7), (\"3 4 + 2 *\", 14), (\"7 2 -\", 5), (\"2 7 -\", -5), (\"10 2 /\", 5), (\"5 1 2 + 4 * + 3 -\", 14),\n        (\"2 3 4 * +\", 14), (\"42\", 42), (\"100 5 / 2 /\", 10)]\nfor _s, _att in _cas:\n    egal(\"evaluer_npi(%r) == %r\" % (_s, _att), lambda _s=_s: evaluer_npi(_s), _att)\n", "aide_code": null, "visuel": null}]}, {"id": "tp3", "num": 3, "slug": "bataille", "titre": "La bataille", "titre_court": "La bataille", "sous_titre": "Files : jeu de cartes, terminaison, statistiques", "duree": "1 h 30 – 2 h", "emoji": "🃏", "accent": "#b3453d", "objectifs": ["Implémenter une file (liste Python) et la manipuler par son interface (`enfiler`, `defiler`, `est_vide`).", "Modéliser un jeu avec deux files et écrire une simulation complète.", "Découvrir qu'une boucle `while` peut ne jamais se terminer : notion de **terminaison** et de variant.", "Défis : file avec deux piles ; réutilisation d'une pile dans le jeu « 6 qui prend »."], "intro_html": "<h2>Rappel : la file (FIFO)</h2>\n<p>Une <strong>file</strong> est une structure de données où l&#x27;on <strong>ajoute à un bout</strong> (la queue) et où l&#x27;on <strong>retire à l&#x27;autre</strong> (la tête) : premier arrivé, premier sorti (*First In, First Out*). Comme la file d&#x27;attente d&#x27;une caisse.</p>\n<table><thead><tr><th>Opération</th><th>Effet</th></tr></thead><tbody><tr><td><code>f = File()</code></td><td>crée une file vide</td></tr><tr><td><code>f.est_vide()</code></td><td>renvoie <code>True</code> si la file est vide</td></tr><tr><td><code>f.enfiler(x)</code></td><td>ajoute <code>x</code> à la queue</td></tr><tr><td><code>f.defiler()</code></td><td>retire l&#x27;élément de <strong>tête</strong> et le renvoie (erreur si vide)</td></tr><tr><td><code>f.taille()</code></td><td>nombre d&#x27;éléments</td></tr></tbody></table>\n<h2>Les règles de la bataille (version du TP)</h2>\n<ul><li>Un jeu de 52 cartes est mélangé puis distribué <strong>une carte sur deux</strong> à chaque joueur : chaque joueur a une <strong>file</strong> de 26 cartes.</li><li>À chaque <strong>tour</strong>, les deux joueurs défilent leur carte du dessus. La plus forte gagne (2 &lt; 3 &lt; … &lt; 10 &lt; Valet &lt; Dame &lt; Roi &lt; As).</li><li>Le gagnant <strong>enfile</strong> les cartes gagnées à la queue de sa file : pour chaque <strong>paire</strong> de cartes jouées (une de chaque joueur), il enfile <strong>d&#x27;abord sa propre carte, puis celle de son adversaire</strong>. Les paires sont enfilées dans l&#x27;ordre où elles ont été jouées.</li><li><strong>Égalité (« bataille »)</strong> : les deux cartes vont dans un <strong>pot</strong> ; chaque joueur défile aussitôt une nouvelle carte, et ainsi de suite jusqu&#x27;à ce que l&#x27;une l&#x27;emporte ; le vainqueur enfile <strong>tout le pot</strong> selon la règle ci-dessus. Si, après une égalité, un joueur n&#x27;a plus de carte, il perd le pot (J1 est vérifié en premier).</li><li>La partie s&#x27;arrête quand un joueur n&#x27;a plus de carte.</li></ul>\n<p>Une carte est un tuple <code>(valeur, couleur)</code> : <code>(14, &quot;♠&quot;)</code> est l&#x27;As de pique. Les valeurs vont de 2 à 14 (11 = Valet, 12 = Dame, 13 = Roi, 14 = As).</p>\n<p>Sont fournis : <code>creer_paquet()</code>, <code>melanger(paquet, graine)</code> (mélange <strong>reproductible</strong> : la même <code>graine</code> donne toujours le même mélange), <code>nom_carte(carte)</code>, <code>fabrique(liste)</code> (crée une file contenant les éléments de la liste) et <code>contenu_file(f)</code> (la liste des éléments d&#x27;une file, sans la vider).</p>", "prelude": "\nimport random\n\n_ops = [0]\nVALEURS = list(range(2, 15))\nCOULEURS = [\"♠\", \"♥\", \"♦\", \"♣\"]\n_NOMS = {11: \"V\", 12: \"D\", 13: \"R\", 14: \"As\"}\n\n\ndef creer_paquet():\n    \"\"\"Les 52 cartes, dans l'ordre : chaque carte est (valeur, couleur).\"\"\"\n    return [(v, c) for c in COULEURS for v in VALEURS]\n\n\ndef melanger(paquet, graine):\n    \"\"\"Renvoie une NOUVELLE liste mélangée. Même graine -> même mélange.\"\"\"\n    p = list(paquet)\n    random.Random(graine).shuffle(p)\n    return p\n\n\ndef nom_carte(carte):\n    \"\"\"Ex. (14, '♠') -> 'As♠', (10, '♥') -> '10♥'.\"\"\"\n    v, c = carte\n    return str(_NOMS.get(v, v)) + c\n\n\nclass Pile:\n    \"\"\"Pile (LIFO). Interface : est_vide, empiler, depiler, sommet, taille.\"\"\"\n\n    def __init__(self):\n        self._elts = []\n\n    def est_vide(self):\n        return len(self._elts) == 0\n\n    def empiler(self, x):\n        _ops[0] += 1\n        self._elts.append(x)\n\n    def depiler(self):\n        if len(self._elts) == 0:\n            raise IndexError(\"depiler : la pile est vide\")\n        _ops[0] += 1\n        return self._elts.pop()\n\n    def sommet(self):\n        if len(self._elts) == 0:\n            raise IndexError(\"sommet : la pile est vide\")\n        return self._elts[-1]\n\n    def taille(self):\n        return len(self._elts)\n\n    def __repr__(self):\n        return \"Pile(\" + \", \".join(repr(x) for x in self._elts) + \" <- sommet)\" if self._elts else \"Pile(vide)\"\n\n\nclass File:\n    \"\"\"File (FIFO). Interface : est_vide, enfiler, defiler, taille.\"\"\"\n\n    def __init__(self):\n        self._elts = []\n\n    def est_vide(self):\n        return len(self._elts) == 0\n\n    def enfiler(self, x):\n        self._elts.append(x)\n\n    def defiler(self):\n        if len(self._elts) == 0:\n            raise IndexError(\"defiler : la file est vide\")\n        return self._elts.pop(0)\n\n    def taille(self):\n        return len(self._elts)\n\n    def __repr__(self):\n        return \"File(tête -> \" + \", \".join(repr(x) for x in self._elts) + \")\" if self._elts else \"File(vide)\"\n\n\ndef fabrique(elements):\n    \"\"\"Renvoie une file contenant les éléments de la liste (le premier de la liste en tête).\"\"\"\n    f = File()\n    for x in elements:\n        f.enfiler(x)\n    return f\n\n\ndef contenu_file(f):\n    \"\"\"Liste des éléments de f (tête -> queue), sans modifier f. N'utilise que l'interface de la file.\"\"\"\n    res = []\n    for _ in range(f.taille()):\n        x = f.defiler()\n        res.append(x)\n        f.enfiler(x)\n    return res\n\n\ndef tetes(carte):\n    \"\"\"Nombre de têtes de bœuf d'une carte (jeu « 6 qui prend »).\"\"\"\n    if carte == 55:\n        return 7\n    if carte % 11 == 0:\n        return 5\n    if carte % 10 == 0:\n        return 3\n    if carte % 5 == 0:\n        return 2\n    return 1\n", "exercices": [{"id": "ex1", "kind": "exercice", "titre": "Écrire une file, avec des fonctions", "abbr": "E1", "enonce_html": "<p>Une classe <code>File</code> est fournie plus loin dans ce TP, mais pour ce premier exercice <strong>tu écris ta propre file</strong>, sans classe : avec des fonctions, exactement comme dans ton cours (<code>pileVide</code>, <code>empiler</code>, <code>depiler</code>...). Tu n&#x27;as pas encore vu la programmation orientée objet (<code>class</code>, <code>self</code>) — tu n&#x27;en as pas besoin ici.</p>\n<p>Une file, c&#x27;est une <strong>liste Python</strong> : la <strong>tête</strong> de la file est le <strong>premier</strong> élément de la liste (indice 0), la <strong>queue</strong> est la fin.</p>\n<p>Écris cinq fonctions :</p>\n<ul><li><code>fileVide()</code> renvoie une <strong>nouvelle</strong> liste vide (deux appels ne doivent pas renvoyer la même liste) ;</li><li><code>estVide(F)</code> renvoie <code>True</code> si <code>F</code> est vide ;</li><li><code>enfiler(F, x)</code> ajoute <code>x</code> à la queue de <code>F</code> (ne renvoie rien) ;</li><li><code>defiler(F)</code> retire et renvoie l&#x27;élément de <strong>tête</strong> ; elle lève <code>IndexError</code> si <code>F</code> est vide ;</li><li><code>taille(F)</code> renvoie le nombre d&#x27;éléments de <code>F</code>.</li></ul>\n<div class=\"adm adm-astuce\"><p class=\"adm-titre\">Réflexion</p><p><code>liste.pop(0)</code> doit décaler tous les éléments restants. Est-ce grave pour 26 cartes ? Et pour un million d&#x27;éléments ? (Tu verras dans le défi A une autre solution, avec deux piles.)</p></div>", "starter": "def fileVide():\n    \"\"\"Renvoie une nouvelle file vide.\"\"\"\n    pass\n\n\ndef estVide(F):\n    \"\"\"True si F est vide.\"\"\"\n    pass\n\n\ndef enfiler(F, x):\n    \"\"\"Ajoute x à la queue de F.\"\"\"\n    pass\n\n\ndef defiler(F):\n    \"\"\"Retire et renvoie l'élément de tête de F. Lève IndexError si F est vide.\"\"\"\n    pass\n\n\ndef taille(F):\n    \"\"\"Nombre d'éléments de F.\"\"\"\n    pass\n\n\nF = fileVide()\nenfiler(F, \"a\")\nenfiler(F, \"b\")\nenfiler(F, \"c\")\nprint(defiler(F))\nprint(taille(F))\n", "tests": "\nF = fileVide()\negal(\"une file neuve est vide\", lambda: estVide(F), True)\negal(\"taille 0\", lambda: taille(F), 0)\nenfiler(F, 1); enfiler(F, 2); enfiler(F, 3)\negal(\"après 3 enfiler : pas vide\", lambda: estVide(F), False)\negal(\"taille 3\", lambda: taille(F), 3)\negal(\"defiler(F) renvoie 1 (premier arrivé)\", lambda: defiler(F), 1)\negal(\"taille 2\", lambda: taille(F), 2)\nenfiler(F, 4)\negal(\"defiler(F) renvoie 2\", lambda: defiler(F), 2)\negal(\"defiler(F) renvoie 3\", lambda: defiler(F), 3)\negal(\"defiler(F) renvoie 4\", lambda: defiler(F), 4)\negal(\"la file est vide\", lambda: estVide(F), True)\nleve(\"defiler(F) sur file vide lève IndexError\", lambda: defiler(F), IndexError)\n_a, _b = fileVide(), fileVide()\nenfiler(_a, \"x\")\negal(\"deux files sont indépendantes\", lambda: estVide(_b), True)\negal(\"fonctionne avec fabrique/contenu_file (mêmes conventions)\", lambda: (lambda F: [defiler(F) for _ in range(taille(F))])(\n    (lambda F: (enfiler(F, 7), enfiler(F, 8), enfiler(F, 9), F)[-1])(fileVide())), [7, 8, 9])\n", "aide_code": null, "visuel": null}, {"id": "ex2", "kind": "exercice", "titre": "Distribuer les cartes", "abbr": "E2", "enonce_html": "<p>Écris <code>distribuer(paquet)</code> qui reçoit une liste de cartes (déjà mélangée) et renvoie <strong>deux files</strong> <code>(f1, f2)</code> : la carte d&#x27;indice pair va à <code>f1</code>, la carte d&#x27;indice impair à <code>f2</code>. Chaque file doit contenir les cartes <strong>dans l&#x27;ordre du paquet</strong> (la première du paquet est en tête de <code>f1</code>).</p>\n<p>Une classe <code>File</code> est fournie pour la suite du TP (mêmes méthodes qu&#x27;à l&#x27;exercice 1, avec <code>.enfiler(x)</code>, <code>.defiler()</code>, <code>.est_vide()</code>, <code>.taille()</code>) : tu peux l&#x27;utiliser sans la connaître en détail, un peu comme tu utilises déjà <code>liste.append(x)</code>.</p>", "starter": "def distribuer(paquet):\n    \"\"\"Renvoie (f1, f2) : cartes d'indice pair dans f1, d'indice impair dans f2 (ordre conservé).\"\"\"\n    pass\n\n\npaquet = melanger(creer_paquet(), 42)\nf1, f2 = distribuer(paquet)\nprint(\"Cartes de J1 :\", [nom_carte(c) for c in contenu_file(f1)])\nprint(\"Taille J1 / J2 :\", f1.taille(), f2.taille())\n", "tests": "\n_p = melanger(creer_paquet(), 1)\n_f1, _f2 = distribuer(_p)\negal(\"J1 a 26 cartes\", lambda: _f1.taille(), 26)\negal(\"J2 a 26 cartes\", lambda: _f2.taille(), 26)\negal(\"J1 reçoit les cartes d'indice pair, dans l'ordre\", lambda: contenu_file(_f1), _p[0::2])\negal(\"J2 reçoit les cartes d'indice impair, dans l'ordre\", lambda: contenu_file(_f2), _p[1::2])\negal(\"avec 4 cartes : 2 + 2\", lambda: [x.taille() for x in distribuer([(2, \"♠\"), (3, \"♠\"), (4, \"♠\"), (5, \"♠\")])], [2, 2])\negal(\"paquet vide : deux files vides\", lambda: [x.est_vide() for x in distribuer([])], [True, True])\n", "aide_code": null, "visuel": null}, {"id": "ex3", "kind": "exercice", "titre": "Jouer un tour", "abbr": "E3", "enonce_html": "<p>Écris <code>un_tour(f1, f2)</code> qui joue <strong>un tour complet</strong> (bataille comprise, voir les règles plus haut) et renvoie <code>1</code> si J1 remporte le tour, <code>2</code> sinon. On suppose que <strong>les deux files ne sont pas vides</strong> quand la fonction est appelée.</p>\n<p>Plan conseillé :</p>\n<ol><li>un <code>pot</code> (liste) qui contient les cartes jouées ;</li><li>une boucle : chaque joueur défile une carte, on les ajoute au pot, on compare les valeurs ;</li><li>en cas d&#x27;égalité, on rejoue — sauf si un joueur n&#x27;a plus de cartes ;</li><li>le gagnant enfile tout le pot : pour chaque paire <code>(carte de J1, carte de J2)</code> du pot, <strong>sa carte d&#x27;abord</strong>, puis celle de l&#x27;adversaire.</li></ol>\n<p>Tu peux t&#x27;aider de <code>fabrique([...])</code> et <code>contenu_file(f)</code> pour tester à la main.</p>", "starter": "def un_tour(f1, f2):\n    \"\"\"Joue un tour (avec bataille éventuelle). Renvoie 1 si J1 gagne le tour, 2 sinon.\"\"\"\n    pass\n\n\n# Essai : J1 a 10♠ puis 2♥ ; J2 a 5♦ puis 9♣\nf1 = fabrique([(10, \"♠\"), (2, \"♥\")])\nf2 = fabrique([(5, \"♦\"), (9, \"♣\")])\nprint(un_tour(f1, f2))\nprint([nom_carte(c) for c in contenu_file(f1)])\nprint([nom_carte(c) for c in contenu_file(f2)])\n", "tests": "\n_a, _b = fabrique([(10, \"♠\"), (2, \"♥\")]), fabrique([(5, \"♦\"), (9, \"♣\")])\negal(\"tour simple : J1 gagne (10 > 5) -> renvoie 1\", lambda: un_tour(_a, _b), 1)\negal(\"... J1 enfile 10♠ puis 5♦ à la queue\", lambda: contenu_file(_a), [(2, \"♥\"), (10, \"♠\"), (5, \"♦\")])\negal(\"... J2 garde 9♣\", lambda: contenu_file(_b), [(9, \"♣\")])\n\n_a, _b = fabrique([(3, \"♠\"), (8, \"♠\")]), fabrique([(9, \"♥\"), (2, \"♣\")])\negal(\"J2 gagne (9 > 3) -> renvoie 2\", lambda: un_tour(_a, _b), 2)\negal(\"... J2 enfile d'abord SA carte (9♥) puis celle de J1 (3♠)\", lambda: contenu_file(_b), [(2, \"♣\"), (9, \"♥\"), (3, \"♠\")])\negal(\"... J1 garde 8♠\", lambda: contenu_file(_a), [(8, \"♠\")])\n\n_a = fabrique([(7, \"♠\"), (12, \"♥\"), (2, \"♣\")])\n_b = fabrique([(7, \"♦\"), (4, \"♠\"), (9, \"♥\")])\negal(\"bataille : J1 gagne au 2e affrontement (12 > 4) -> renvoie 1\", lambda: un_tour(_a, _b), 1)\negal(\"... J1 récupère tout le pot (sa carte d'abord dans chaque paire)\",\n     lambda: contenu_file(_a), [(2, \"♣\"), (7, \"♠\"), (7, \"♦\"), (12, \"♥\"), (4, \"♠\")])\negal(\"... J2 garde 9♥\", lambda: contenu_file(_b), [(9, \"♥\")])\n\n_a = fabrique([(7, \"♠\"), (5, \"♥\")])\n_b = fabrique([(7, \"♦\")])\negal(\"bataille : J2 n'a plus de carte -> J1 gagne le pot (renvoie 1)\", lambda: un_tour(_a, _b), 1)\negal(\"... J1 : 5♥ puis le pot\", lambda: contenu_file(_a), [(5, \"♥\"), (7, \"♠\"), (7, \"♦\")])\negal(\"... J2 n'a plus rien\", lambda: _b.est_vide(), True)\n\n_a = fabrique([(7, \"♠\")])\n_b = fabrique([(7, \"♦\"), (5, \"♥\")])\negal(\"bataille : J1 n'a plus de carte -> J2 gagne le pot (renvoie 2)\", lambda: un_tour(_a, _b), 2)\negal(\"... J2 : 5♥ puis le pot (sa carte 7♦ d'abord)\", lambda: contenu_file(_b), [(5, \"♥\"), (7, \"♦\"), (7, \"♠\")])\n\n_a = fabrique([(5, \"♠\"), (5, \"♥\"), (5, \"♦\"), (2, \"♠\")])\n_b = fabrique([(5, \"♣\"), (5, \"♠\"), (5, \"♥\"), (9, \"♠\")])\negal(\"double bataille : J2 gagne au 4e affrontement -> renvoie 2\", lambda: un_tour(_a, _b), 2)\negal(\"... J2 récupère les 8 cartes du pot, sa carte d'abord dans chaque paire\", lambda: contenu_file(_b),\n     [(5, \"♣\"), (5, \"♠\"), (5, \"♠\"), (5, \"♥\"), (5, \"♥\"), (5, \"♦\"), (9, \"♠\"), (2, \"♠\")])\negal(\"... et J1 n'a plus rien\", lambda: _a.est_vide(), True)\n", "aide_code": null, "visuel": null}, {"id": "ex4", "kind": "exercice", "titre": "Une partie complète", "abbr": "E4", "enonce_html": "<p>Écris <code>partie(graine, max_tours=1000)</code> qui :</p>\n<ol><li>crée un paquet, le <strong>mélange</strong> avec la <code>graine</code>, le <strong>distribue</strong> ;</li><li>joue des tours <strong>tant qu&#x27;aucun joueur n&#x27;a perdu</strong>, <strong>et</strong> tant que le nombre de tours est inférieur à <code>max_tours</code> ;</li><li>renvoie le couple <code>(gagnant, nb_tours)</code> où <code>gagnant</code> vaut <code>1</code>, <code>2</code>, ou <code>0</code> si la limite de tours a été atteinte sans vainqueur.</li></ol>\n<p>Ta fonction fait appel à <code>distribuer</code> et <code>un_tour</code> que tu as écrites aux exercices précédents.</p>\n<div class=\"adm adm-attention\"><p class=\"adm-titre\">Pourquoi <code>max_tours</code> ?</p><p>Rien ne garantit qu&#x27;une partie se termine : certaines sont très longues et, en théorie, une partie pourrait tourner en boucle (les mêmes cartes qui circulent). Sans ce garde-fou, ta boucle <code>while</code> pourrait ne jamais s&#x27;arrêter. On dit que la <strong>terminaison</strong> n&#x27;est pas garantie : on impose donc un nombre maximal de tours.</p></div>\n<p>Compare tes résultats pour les graines <code>0</code>, <code>1</code>, <code>2</code>… avec ceux de tes voisins : ils doivent être identiques.</p>", "starter": "def partie(graine, max_tours=1000):\n    \"\"\"Joue une partie. Renvoie (gagnant, nb_tours) avec gagnant = 1, 2 ou 0 (limite atteinte).\"\"\"\n    pass\n\n\nfor graine in range(5):\n    print(graine, partie(graine))\n", "tests": "\negal(\"partie(0)\", lambda: partie(0), (1, 189))\negal(\"partie(1)\", lambda: partie(1), (2, 313))\negal(\"partie(2)\", lambda: partie(2), (2, 799))\negal(\"partie(3)\", lambda: partie(3), (1, 478))\negal(\"partie(4)\", lambda: partie(4), (2, 121))\negal(\"partie(0, 10) : limite de 10 tours atteinte -> (0, 10)\", lambda: partie(0, 10), (0, 10))\nvrai(\"le gagnant est 0, 1 ou 2\", lambda: partie(7)[0] in (0, 1, 2))\n", "aide_code": "def distribuer(paquet):\n    \"\"\"Renvoie (f1, f2) : cartes d'indice pair dans f1, d'indice impair dans f2 (ordre conservé).\"\"\"\n    f1 = File()\n    f2 = File()\n    for i, carte in enumerate(paquet):\n        if i % 2 == 0:\n            f1.enfiler(carte)\n        else:\n            f2.enfiler(carte)\n    return f1, f2\n\ndef un_tour(f1, f2):\n    \"\"\"Joue un tour (avec bataille éventuelle). Renvoie 1 si J1 gagne le tour, 2 sinon.\"\"\"\n    pot = []\n    while True:\n        c1 = f1.defiler()\n        c2 = f2.defiler()\n        pot.append(c1)\n        pot.append(c2)\n        if c1[0] > c2[0]:\n            gagnant = 1\n            break\n        if c2[0] > c1[0]:\n            gagnant = 2\n            break\n        # égalité : bataille\n        if f1.est_vide():\n            gagnant = 2\n            break\n        if f2.est_vide():\n            gagnant = 1\n            break\n    fg = f1 if gagnant == 1 else f2\n    for k in range(0, len(pot), 2):\n        carte1, carte2 = pot[k], pot[k + 1]\n        if gagnant == 1:\n            fg.enfiler(carte1)\n            fg.enfiler(carte2)\n        else:\n            fg.enfiler(carte2)\n            fg.enfiler(carte1)\n    return gagnant", "visuel": null}, {"id": "ex5", "kind": "exercice", "titre": "Statistiques sur beaucoup de parties", "abbr": "E5", "enonce_html": "<p>Écris <code>statistiques(nb_parties)</code> qui joue les parties de graines <code>0, 1, …, nb_parties - 1</code> (avec <code>max_tours</code> par défaut) et renvoie le quadruplet <code>(victoires_J1, victoires_J2, non_terminees, moyenne_tours)</code> où <code>moyenne_tours</code> est le nombre moyen de tours <strong>des parties terminées</strong>.</p>\n<p>Lance-la avec <code>nb_parties = 200</code> puis réponds en commentaire :</p>\n<ol><li>Le premier joueur est-il avantagé ?</li><li>Combien de parties ne sont pas terminées au bout de 1000 tours ?</li><li>Modifie la valeur par défaut de <code>max_tours</code> : 300, puis 5000. Que deviennent les parties « non terminées » ? Étaient-elles infinies, ou seulement longues ?</li><li>Le nombre de configurations possibles des cartes est fini et le jeu est <strong>déterministe</strong>. Que peux-tu dire d&#x27;une partie qui ne se termine pas ?</li></ol>", "starter": "def statistiques(nb_parties):\n    \"\"\"Renvoie (victoires_J1, victoires_J2, non_terminees, moyenne_tours des parties terminées).\"\"\"\n    pass\n\n\nprint(statistiques(200))\n\n# Mes réponses :\n# 1) ...\n# 2) ...\n# 3) ...\n# 4) ...\n", "tests": "\negal(\"statistiques(30)[:3] (victoires J1, J2, parties non terminées)\", lambda: statistiques(30)[:3], (14, 15, 1))\negal(\"statistiques(30)[3] arrondi à l'unité (tours moyens)\", lambda: round(statistiques(30)[3]), 281)\negal(\"statistiques(0) : aucune partie\", lambda: statistiques(0)[:3], (0, 0, 0))\n", "aide_code": "def distribuer(paquet):\n    \"\"\"Renvoie (f1, f2) : cartes d'indice pair dans f1, d'indice impair dans f2 (ordre conservé).\"\"\"\n    f1 = File()\n    f2 = File()\n    for i, carte in enumerate(paquet):\n        if i % 2 == 0:\n            f1.enfiler(carte)\n        else:\n            f2.enfiler(carte)\n    return f1, f2\n\ndef un_tour(f1, f2):\n    \"\"\"Joue un tour (avec bataille éventuelle). Renvoie 1 si J1 gagne le tour, 2 sinon.\"\"\"\n    pot = []\n    while True:\n        c1 = f1.defiler()\n        c2 = f2.defiler()\n        pot.append(c1)\n        pot.append(c2)\n        if c1[0] > c2[0]:\n            gagnant = 1\n            break\n        if c2[0] > c1[0]:\n            gagnant = 2\n            break\n        # égalité : bataille\n        if f1.est_vide():\n            gagnant = 2\n            break\n        if f2.est_vide():\n            gagnant = 1\n            break\n    fg = f1 if gagnant == 1 else f2\n    for k in range(0, len(pot), 2):\n        carte1, carte2 = pot[k], pot[k + 1]\n        if gagnant == 1:\n            fg.enfiler(carte1)\n            fg.enfiler(carte2)\n        else:\n            fg.enfiler(carte2)\n            fg.enfiler(carte1)\n    return gagnant\n\ndef partie(graine, max_tours=1000):\n    \"\"\"Joue une partie. Renvoie (gagnant, nb_tours) avec gagnant = 1, 2 ou 0 (limite atteinte).\"\"\"\n    paquet = melanger(creer_paquet(), graine)\n    f1, f2 = distribuer(paquet)\n    nb_tours = 0\n    while not f1.est_vide() and not f2.est_vide() and nb_tours < max_tours:\n        un_tour(f1, f2)\n        nb_tours += 1\n    if f1.est_vide():\n        return (2, nb_tours)\n    if f2.est_vide():\n        return (1, nb_tours)\n    return (0, nb_tours)", "visuel": null}, {"id": "defiA", "kind": "defi", "titre": "Défi A – Une file avec deux piles", "abbr": "DA", "enonce_html": "<p>Une file peut être réalisée avec <strong>deux piles</strong> seulement (la classe <code>Pile</code> est fournie).</p>\n<ul><li>On <strong>enfile</strong> en empilant sur la pile <code>entree</code>.</li><li>On <strong>défile</strong> en dépilant la pile <code>sortie</code>. Si <code>sortie</code> est vide, on <strong>transvase d&#x27;abord</strong> tous les éléments de <code>entree</code> dans <code>sortie</code> (l&#x27;ordre est alors inversé : le premier arrivé se retrouve au sommet).</li></ul>\n<p>Écris la classe <code>FileDeuxPiles</code> avec les mêmes méthodes que <code>File</code> : <code>est_vide</code>, <code>enfiler</code>, <code>defiler</code> (<code>IndexError</code> si vide), <code>taille</code>.</p>\n<p><strong>Question</strong> : chaque élément est empilé au plus 2 fois et dépilé au plus 2 fois avant de sortir. Que peux-tu en déduire sur le <strong>coût moyen</strong> (amorti) d&#x27;un <code>enfiler</code> puis d&#x27;un <code>defiler</code> ? Compare avec <code>pop(0)</code>.</p>", "starter": "class FileDeuxPiles:\n    def __init__(self):\n        self.entree = Pile()\n        self.sortie = Pile()\n\n    def est_vide(self):\n        pass\n\n    def enfiler(self, x):\n        pass\n\n    def defiler(self):\n        pass\n\n    def taille(self):\n        pass\n", "tests": "\n_f = FileDeuxPiles()\negal(\"file neuve : vide, taille 0\", lambda: (_f.est_vide(), _f.taille()), (True, 0))\n_f.enfiler(1); _f.enfiler(2); _f.enfiler(3)\negal(\"après 3 enfiler : taille 3\", lambda: _f.taille(), 3)\negal(\"defiler() -> 1 (premier arrivé)\", lambda: _f.defiler(), 1)\n_f.enfiler(4)\negal(\"defiler() -> 2\", lambda: _f.defiler(), 2)\negal(\"defiler() -> 3\", lambda: _f.defiler(), 3)\negal(\"defiler() -> 4\", lambda: _f.defiler(), 4)\negal(\"file vide à nouveau\", lambda: _f.est_vide(), True)\nleve(\"defiler() sur file vide lève IndexError\", lambda: _f.defiler(), IndexError)\ndef _melange():\n    f = FileDeuxPiles()\n    ref = []\n    sortie = []\n    for i in range(40):\n        f.enfiler(i); ref.append(i)\n        if i % 3 == 2:\n            sortie.append((f.defiler(), ref.pop(0)))\n    return all(a == b for a, b in sortie) and f.taille() == len(ref)\nvrai(\"enfiler/defiler entrelacés se comportent comme une file\", _melange)\ndef _usage():\n    _ops[0] = 0\n    g = FileDeuxPiles(); g.enfiler(1); g.defiler()\n    return _ops[0] > 0\nvrai(\"ta file utilise bien des Pile\", _usage, \"Utilise la classe Pile pour stocker les éléments\")\n", "aide_code": null, "visuel": null}, {"id": "defiB", "kind": "defi", "titre": "Défi B – « 6 qui prend » : les rangées sont des piles", "abbr": "DB", "enonce_html": "<p>Dans <strong>6 qui prend</strong>, quatre <strong>rangées</strong> de cartes (numérotées de 1 à 104) sont posées sur la table. Chaque rangée se comporte comme une <strong>pile</strong> : on ne regarde que sa <strong>dernière</strong> carte (le sommet), et quand la 6ᵉ carte arrive, le joueur <strong>ramasse les 5 cartes</strong>.</p>\n<p>Chaque carte vaut des <strong>têtes de bœuf</strong> (fonction <code>tetes(carte)</code> fournie : 1, 2, 3, 5 ou 7). On veut en ramasser le moins possible !</p>\n<p>Écris <code>placer(rangees, carte)</code> où <code>rangees</code> est une liste de 4 <code>Pile</code>. Règles (version simplifiée) :</p>\n<ol><li>La carte est posée sur la rangée dont le <strong>sommet est le plus grand parmi ceux qui sont inférieurs</strong> à la carte.</li><li>Si <strong>aucun</strong> sommet n&#x27;est inférieur (carte plus petite que tous), le joueur ramasse la <strong>rangée n°0</strong> et la carte devient la première carte de cette rangée (règle simplifiée).</li><li>Si la rangée choisie contient <strong>déjà 5 cartes</strong>, le joueur ramasse ces 5 cartes et la carte devient l&#x27;unique carte de la rangée.</li><li>La fonction renvoie le <strong>total de têtes de bœuf ramassées</strong> (0 si rien n&#x27;est ramassé).</li></ol>\n<p>Chaque rangée contient toujours au moins une carte.</p>", "starter": "def placer(rangees, carte):\n    \"\"\"Place carte dans une des 4 rangées (piles). Renvoie le nombre de têtes de bœuf ramassées.\"\"\"\n    pass\n\n\nrangees = [Pile() for _ in range(4)]\nfor i, c in enumerate([10, 20, 30, 40]):\n    rangees[i].empiler(c)\nprint(placer(rangees, 25), rangees)\n", "tests": "\ndef _r(*lignes):\n    rg = []\n    for l in lignes:\n        p = Pile()\n        for c in l:\n            p.empiler(c)\n        rg.append(p)\n    return rg\ndef _c(rg):\n    return [list(p._elts) for p in rg]\n_rg = _r([10], [20], [30], [40])\negal(\"25 se pose sur la rangée du 20 (plus grand sommet inférieur) : 0 tête\", lambda: placer(_rg, 25), 0)\negal(\"... rangée 1 = [20, 25]\", lambda: _c(_rg), [[10], [20, 25], [30], [40]])\negal(\"55 se pose sur la rangée du 40\", lambda: (placer(_rg, 55), _c(_rg)[3]), (0, [40, 55]))\n_rg = _r([22, 25, 30, 31, 34], [50], [60], [70])\negal(\"35 sur une rangée pleine : on ramasse 22(5)+25(2)+30(3)+31(1)+34(1) = 12 têtes\", lambda: placer(_rg, 35), 12)\negal(\"... la carte 35 devient seule dans la rangée\", lambda: _c(_rg), [[35], [50], [60], [70]])\n_rg = _r([10], [20], [30], [40])\negal(\"carte 5 trop petite : on ramasse la rangée n°0 = [10] -> 3 têtes\", lambda: placer(_rg, 5), 3)\negal(\"... la rangée 0 devient [5]\", lambda: _c(_rg), [[5], [20], [30], [40]])\n_rg = _r([55, 56], [20], [90], [40])\negal(\"carte 57 : sommet 56 le plus grand < 57 (rangée 0), pas pleine : 0 tête\", lambda: placer(_rg, 57), 0)\n_rg = _r([3, 6, 8, 12, 14], [1], [2], [4])\negal(\"14 -> 15 sur rangée pleine (5 cartes) : ramasse 3,6,8,12,14 = 5 têtes\", lambda: placer(_rg, 15), 5)\n", "aide_code": null, "visuel": null}]}, {"id": "tp4", "num": 4, "slug": "snake", "titre": "Snake", "titre_court": "Snake", "sous_titre": "Files : le corps du serpent est une file", "duree": "1 h 30", "emoji": "🐍", "accent": "#c98a1f", "objectifs": ["Reconnaître une file dans un problème réel : la tête du serpent est **enfilée**, la queue est **défilée**.", "Manipuler une file **uniquement par son interface** : parcourir sans perdre les éléments (`contient`).", "Écrire la fonction centrale d'un jeu et la tester unitairement.", "Jouer avec sa propre fonction : le jeu tourne dans le navigateur."], "intro_html": "<h2>Le corps du serpent est une file</h2>\n<p>Chaque case du corps est représentée par un couple <code>(x, y)</code> : <code>x</code> est la colonne (0 à gauche), <code>y</code> la ligne (0 <strong>en haut</strong>, elle augmente vers le bas).</p>\n<p>À chaque déplacement du serpent :</p>\n<ul><li>la <strong>nouvelle tête</strong> est <strong>enfilée</strong> (elle arrive à la queue de la file) ;</li><li>la <strong>queue</strong> du serpent est <strong>défilée</strong> (elle sort par la tête de la file), <strong>sauf</strong> si le serpent vient de manger une pomme : il grandit d&#x27;une case.</li></ul>\n<p>C&#x27;est exactement le comportement d&#x27;une <strong>file</strong> (FIFO) : la case la plus ancienne est la première à sortir.</p>\n<pre><code>corps = <span class=\"f\">File</span> : [(<span class=\"n\">1</span>,<span class=\"n\">1</span>), (<span class=\"n\">2</span>,<span class=\"n\">1</span>), (<span class=\"n\">3</span>,<span class=\"n\">1</span>)]      ← ordre : queue du serpent → tête du serpent\n                 queue          tête\navancer vers la droite : on <span class=\"f\">enfile</span> (<span class=\"n\">4</span>,<span class=\"n\">1</span>) et <span class=\"f\">on</span> défile (<span class=\"n\">1</span>,<span class=\"n\">1</span>)\ncorps = <span class=\"f\">File</span> : [(<span class=\"n\">2</span>,<span class=\"n\">1</span>), (<span class=\"n\">3</span>,<span class=\"n\">1</span>), (<span class=\"n\">4</span>,<span class=\"n\">1</span>)]</code></pre>\n<p>La classe <code>File</code> est fournie (<code>est_vide</code>, <code>enfiler</code>, <code>defiler</code>, <code>taille</code>) ainsi que <code>fabrique(liste)</code> (crée une file à partir d&#x27;une liste, le 1ᵉʳ élément en tête) et <code>contenu_file(f)</code> (liste des éléments, <strong>sans vider</strong> la file : pour afficher ou tester).</p>\n<div class=\"adm adm-attention\"><p class=\"adm-titre\">Règle du jeu</p><p>Le serpent <strong>meurt</strong> s&#x27;il sort de la grille ou s&#x27;il rentre dans une case de son propre corps (<strong>queue comprise</strong>, pour simplifier).</p></div>", "prelude": "\nimport random\n\n_ops = [0]\n_DIRECTIONS = {\"haut\": (0, -1), \"bas\": (0, 1), \"gauche\": (-1, 0), \"droite\": (1, 0)}\n_OPPOSE = {\"haut\": \"bas\", \"bas\": \"haut\", \"gauche\": \"droite\", \"droite\": \"gauche\"}\n\n\nclass File:\n    \"\"\"File (FIFO). Interface : est_vide, enfiler, defiler, taille.\"\"\"\n\n    def __init__(self):\n        self._elts = []\n\n    def est_vide(self):\n        return len(self._elts) == 0\n\n    def enfiler(self, x):\n        self._elts.append(x)\n\n    def defiler(self):\n        if len(self._elts) == 0:\n            raise IndexError(\"defiler : la file est vide\")\n        return self._elts.pop(0)\n\n    def taille(self):\n        return len(self._elts)\n\n    def __repr__(self):\n        return \"File(tête -> \" + \", \".join(repr(x) for x in self._elts) + \")\" if self._elts else \"File(vide)\"\n\n\ndef fabrique(elements):\n    \"\"\"Renvoie une file contenant les éléments de la liste (le premier de la liste en tête).\"\"\"\n    f = File()\n    for x in elements:\n        f.enfiler(x)\n    return f\n\n\ndef contenu_file(f):\n    \"\"\"Liste des éléments de f (tête -> queue), sans modifier f. N'utilise que l'interface de la file.\"\"\"\n    res = []\n    for _ in range(f.taille()):\n        x = f.defiler()\n        res.append(x)\n        f.enfiler(x)\n    return res\n\n\nclass _Jeu:\n    \"\"\"Moteur du jeu : appelle la fonction de l'élève à chaque pas.\"\"\"\n\n    def __init__(self, largeur, hauteur, graine, fonction):\n        self.l = largeur\n        self.h = hauteur\n        self.rng = random.Random(graine)\n        self.fonction = fonction\n        self.corps = File()\n        cx, cy = largeur // 2, hauteur // 2\n        for k in range(3):\n            self.corps.enfiler((cx - 2 + k, cy))\n        self.tete = (cx, cy)\n        self.direction = \"droite\"\n        self.score = 0\n        self.statut = \"ok\"\n        self.message = \"\"\n        self.pomme = None\n        self._nouvelle_pomme()\n\n    def _nouvelle_pomme(self):\n        occ = set(self.corps._elts)\n        libres = [(x, y) for y in range(self.h) for x in range(self.l) if (x, y) not in occ]\n        if libres:\n            self.pomme = self.rng.choice(libres)\n        else:\n            self.pomme = None\n            self.statut = \"gagne\"\n\n    def etat(self):\n        return {\"corps\": [list(c) for c in self.corps._elts], \"tete\": list(self.tete),\n                \"pomme\": list(self.pomme) if self.pomme else None, \"score\": self.score,\n                \"statut\": self.statut, \"message\": self.message, \"l\": self.l, \"h\": self.h,\n                \"direction\": self.direction}\n\n    def _erreur(self, msg):\n        self.statut = \"erreur\"\n        self.message = msg\n        return self.etat()\n\n    def pas(self, direction):\n        if self.statut in (\"mort\", \"gagne\", \"erreur\"):\n            return self.etat()\n        if direction in _DIRECTIONS and direction != _OPPOSE[self.direction]:\n            self.direction = direction\n        f = globals().get(self.fonction)\n        if f is None:\n            return self._erreur(\"La fonction %s n'est pas définie : exécute d'abord ton code (bouton Exécuter).\" % self.fonction)\n        try:\n            r = f(self.corps, self.tete, self.direction, self.pomme, self.l, self.h)\n        except Exception as e:\n            return self._erreur(\"%s dans %s : %s\" % (type(e).__name__, self.fonction, e))\n        try:\n            nouvelle, statut = r\n            nouvelle = (int(nouvelle[0]), int(nouvelle[1]))\n        except Exception:\n            return self._erreur(\"%s doit renvoyer (nouvelle_tete, statut), par exemple ((4, 2), 'ok').\" % self.fonction)\n        if statut == \"mort\":\n            self.statut = \"mort\"\n        elif statut == \"pomme\":\n            self.tete = nouvelle\n            self.score += 1\n            self._nouvelle_pomme()\n        elif statut == \"ok\":\n            self.tete = nouvelle\n        else:\n            return self._erreur(\"Statut inconnu : %r (attendu 'ok', 'pomme' ou 'mort').\" % (statut,))\n        return self.etat()\n\n\n_jeux = {}\n\n\ndef _jeu_nouveau(largeur, hauteur, graine, fonction):\n    _jeux[\"courant\"] = _Jeu(largeur, hauteur, graine, fonction)\n    return _jeux[\"courant\"].etat()\n\n\ndef _jeu_pas(direction):\n    return _jeux[\"courant\"].pas(direction)\n", "exercices": [{"id": "ex1", "kind": "exercice", "titre": "Échauffement : la file en main", "abbr": "E1", "enonce_html": "<p><strong>Partie A – Prédire.</strong> Note sur ton brouillon ce qu&#x27;affiche le programme, puis exécute pour vérifier.</p>\n<p><strong>Partie B – Écrire.</strong> <code>rotation(f, k)</code> fait passer les <code>k</code> premiers éléments (ceux de la <strong>tête</strong>) à la <strong>queue</strong> de la file, en conservant leur ordre. Par exemple, pour <code>[1, 2, 3, 4, 5]</code> et <code>k = 2</code>, la file devient <code>[3, 4, 5, 1, 2]</code>.</p>\n<p>Tu n&#x27;utilises que <code>defiler</code>, <code>enfiler</code>, <code>est_vide</code> et <code>taille</code> — pas d&#x27;accès direct à la liste qui est à l&#x27;intérieur de la file.</p>\n<div class=\"adm adm-astuce\"><p class=\"adm-titre\">Pourquoi ?</p><p>Faire tourner une file, c&#x27;est tout ce qu&#x27;il faudra pour <strong>regarder</strong> dans une file sans perdre son contenu. Tu en auras besoin à l&#x27;exercice suivant.</p></div>", "starter": "# --- Partie A : prédire, puis exécuter pour vérifier ---\nf = File()\nfor x in [3, 1, 4, 1, 5]:\n    f.enfiler(x)\nprint(f.defiler(), f.defiler())\nf.enfiler(9)\nprint(f.taille())\nprint(contenu_file(f))\n# Ma prévision : ...\n\n\n# --- Partie B : à compléter ---\ndef rotation(f, k):\n    \"\"\"Fait passer les k premiers éléments de f à la queue, dans le même ordre.\"\"\"\n    pass\n\n\ng = fabrique([1, 2, 3, 4, 5])\nrotation(g, 2)\nprint(contenu_file(g))     # doit afficher [3, 4, 5, 1, 2]\n", "tests": "\n_f = fabrique([1, 2, 3, 4, 5]); rotation(_f, 2)\negal(\"rotation([1,2,3,4,5], 2) -> [3,4,5,1,2]\", lambda: contenu_file(_f), [3, 4, 5, 1, 2])\n_f = fabrique([1, 2, 3, 4, 5]); rotation(_f, 0)\negal(\"rotation(..., 0) ne change rien\", lambda: contenu_file(_f), [1, 2, 3, 4, 5])\n_f = fabrique([1, 2, 3, 4, 5]); rotation(_f, 5)\negal(\"rotation(..., 5) : tour complet, même file\", lambda: contenu_file(_f), [1, 2, 3, 4, 5])\n_f = fabrique([\"a\", \"b\", \"c\"]); rotation(_f, 1)\negal(\"rotation(['a','b','c'], 1) -> ['b','c','a']\", lambda: contenu_file(_f), [\"b\", \"c\", \"a\"])\n_f = fabrique([]); rotation(_f, 0)\negal(\"file vide, k = 0 : reste vide\", lambda: _f.est_vide(), True)\n", "aide_code": null, "visuel": null}, {"id": "ex2", "kind": "exercice", "titre": "La case est-elle occupée ?", "abbr": "E2", "enonce_html": "<p>Pour savoir si le serpent se mord la queue, il faut savoir si une case est <strong>dans</strong> la file <code>corps</code>. Mais une file ne se parcourt pas comme une liste : on ne peut que <strong>défiler</strong>.</p>\n<p>Écris <code>contient(f, x)</code> qui renvoie <code>True</code> si <code>x</code> est dans la file <code>f</code>, <code>False</code> sinon, <strong>en laissant la file exactement comme elle était</strong> (mêmes éléments, <strong>même ordre</strong>).</p>\n<p>Méthode : défiler chaque élément <strong>une fois</strong>, le comparer à <code>x</code>, puis le <strong>remettre</strong> à la queue.</p>\n<div class=\"adm adm-attention\"><p class=\"adm-titre\">Piège</p><p>Si tu t&#x27;arrêtes dès que tu as trouvé <code>x</code>, la file n&#x27;est plus dans son état initial : les éléments déjà défilés ont changé de place. Il faut faire <strong>le tour complet</strong> (<code>f.taille()</code> défilages/enfilages).</p></div>\n<div class=\"adm adm-astuce\"><p class=\"adm-titre\">Réflexion</p><p>Combien d&#x27;opérations faut-il, pour une file de <code>n</code> éléments ? Que penses-tu de cette solution pour un serpent de 500 cases ?</p></div>", "starter": "def contient(f, x):\n    \"\"\"True si x est dans la file f. f doit être laissée dans le même état.\"\"\"\n    pass\n\n\nf = fabrique([(1, 1), (2, 1), (3, 1)])\nprint(contient(f, (2, 1)), contient(f, (9, 9)))\nprint(contenu_file(f))     # doit être inchangée\n", "tests": "\n_f = fabrique([1, 2, 3])\negal(\"contient(f, 2) -> True\", lambda: contient(_f, 2), True)\negal(\"... f est inchangée\", lambda: contenu_file(_f), [1, 2, 3])\negal(\"contient(f, 1) (le premier) -> True\", lambda: contient(_f, 1), True)\negal(\"... f est inchangée (même ordre !)\", lambda: contenu_file(_f), [1, 2, 3])\negal(\"contient(f, 3) (le dernier) -> True\", lambda: contient(_f, 3), True)\negal(\"contient(f, 9) -> False\", lambda: contient(_f, 9), False)\negal(\"... f est inchangée\", lambda: contenu_file(_f), [1, 2, 3])\negal(\"file vide -> False\", lambda: contient(fabrique([]), 1), False)\n_g = fabrique([(1, 1), (2, 1), (2, 2)])\negal(\"fonctionne avec des couples (x, y)\", lambda: (contient(_g, (2, 2)), contient(_g, (2, 3))), (True, False))\negal(\"... et la file est intacte\", lambda: contenu_file(_g), [(1, 1), (2, 1), (2, 2)])\n", "aide_code": null, "visuel": null}, {"id": "ex3", "kind": "exercice", "titre": "Où va la tête ?", "abbr": "E3", "enonce_html": "<p>Écris <code>nouvelle_tete(tete, direction)</code> : à partir de la case <code>tete = (x, y)</code> de la tête et d&#x27;une <code>direction</code> (<code>&quot;haut&quot;</code>, <code>&quot;bas&quot;</code>, <code>&quot;gauche&quot;</code> ou <code>&quot;droite&quot;</code>), renvoie le couple <code>(x, y)</code> de la case <strong>où arrivera la tête</strong>.</p>\n<p>Rappel : <code>y</code> <strong>augmente vers le bas</strong>. Ainsi <code>nouvelle_tete((5, 5), &quot;haut&quot;)</code> renvoie <code>(5, 4)</code>.</p>\n<p>Cette fonction <strong>ne vérifie rien</strong> (ni mur, ni corps) : elle calcule seulement la case suivante.</p>", "starter": "def nouvelle_tete(tete, direction):\n    \"\"\"Renvoie la case (x, y) où arrive la tête après un pas dans la direction donnée.\"\"\"\n    pass\n\n\nfor d in [\"haut\", \"bas\", \"gauche\", \"droite\"]:\n    print(d, nouvelle_tete((5, 5), d))\n", "tests": "\negal(\"haut : (5, 5) -> (5, 4)\", lambda: nouvelle_tete((5, 5), \"haut\"), (5, 4))\negal(\"bas : (5, 5) -> (5, 6)\", lambda: nouvelle_tete((5, 5), \"bas\"), (5, 6))\negal(\"gauche : (5, 5) -> (4, 5)\", lambda: nouvelle_tete((5, 5), \"gauche\"), (4, 5))\negal(\"droite : (5, 5) -> (6, 5)\", lambda: nouvelle_tete((5, 5), \"droite\"), (6, 5))\negal(\"haut depuis (0, 0) -> (0, -1) (pas de vérification ici)\", lambda: nouvelle_tete((0, 0), \"haut\"), (0, -1))\negal(\"droite depuis (12, 3) -> (13, 3)\", lambda: nouvelle_tete((12, 3), \"droite\"), (13, 3))\n", "aide_code": null, "visuel": null}, {"id": "ex4", "kind": "exercice", "titre": "Faire avancer le serpent", "abbr": "E4", "enonce_html": "<p>Voici la fonction centrale du jeu. Écris <code>avancer(corps, tete, direction, pomme, largeur, hauteur)</code> :</p>\n<ul><li><code>corps</code> : la <strong>file</strong> des cases du serpent (de la queue à la tête) ; <code>tete</code> : la case de la tête ; <code>pomme</code> : la case de la pomme ; la grille a <code>largeur</code> colonnes et <code>hauteur</code> lignes.</li><li>Calcule la nouvelle case de la tête avec <code>nouvelle_tete</code>.</li><li>Si elle sort de la grille (<code>x</code> de <code>0</code> à <code>largeur - 1</code>, <code>y</code> de <code>0</code> à <code>hauteur - 1</code>) <strong>ou</strong> si elle est dans <code>corps</code> (utilise <code>contient</code>) : renvoie <code>(tete, &quot;mort&quot;)</code> <strong>sans modifier</strong> <code>corps</code>.</li><li>Sinon <strong>enfile</strong> la nouvelle tête. Si c&#x27;est la case de la pomme, renvoie <code>(nouvelle_tete, &quot;pomme&quot;)</code> (le serpent grandit : on ne défile rien). Sinon <strong>défile</strong> la queue et renvoie <code>(nouvelle_tete, &quot;ok&quot;)</code>.</li></ul>\n<p>Les fonctions <code>contient</code> (exercice 2) et <code>nouvelle_tete</code> (exercice 3) sont disponibles automatiquement.</p>\n<p><strong>Quand tes tests passent, joue !</strong> La zone de jeu, sous le code, utilise <strong>ta</strong> fonction <code>avancer</code>. Flèches du clavier (ou Z Q S D) pour tourner.</p>", "starter": "def avancer(corps, tete, direction, pomme, largeur, hauteur):\n    \"\"\"Fait avancer le serpent d'une case.\n    Renvoie (nouvelle_tete, statut) avec statut \"ok\", \"pomme\" ou \"mort\".\n    Modifie la file corps (sauf en cas de mort).\"\"\"\n    pass\n\n\n# Essai à la main\ncorps = fabrique([(1, 1), (2, 1), (3, 1)])\nprint(avancer(corps, (3, 1), \"droite\", (9, 9), 10, 10))\nprint(contenu_file(corps))\n", "tests": "\ndef _essai(cases, direction, pomme=(9, 9), l=10, h=10):\n    f = fabrique(cases)\n    r = avancer(f, cases[-1], direction, pomme, l, h)\n    return r, contenu_file(f)\negal(\"droite, case libre : ((4,1), 'ok') et la queue avance\", lambda: _essai([(1, 1), (2, 1), (3, 1)], \"droite\"),\n     (((4, 1), \"ok\"), [(2, 1), (3, 1), (4, 1)]))\negal(\"bas, case libre\", lambda: _essai([(1, 1), (1, 2), (1, 3)], \"bas\"), (((1, 4), \"ok\"), [(1, 2), (1, 3), (1, 4)]))\negal(\"gauche, case libre\", lambda: _essai([(5, 5), (4, 5), (3, 5)], \"gauche\"), (((2, 5), \"ok\"), [(4, 5), (3, 5), (2, 5)]))\negal(\"haut, case libre\", lambda: _essai([(5, 7), (6, 7), (6, 6)], \"haut\"), (((6, 5), \"ok\"), [(6, 7), (6, 6), (6, 5)]))\negal(\"pomme mangée : ((4,1), 'pomme') et le serpent grandit\", lambda: _essai([(1, 1), (2, 1), (3, 1)], \"droite\", pomme=(4, 1)),\n     (((4, 1), \"pomme\"), [(1, 1), (2, 1), (3, 1), (4, 1)]))\negal(\"mur à droite : mort, corps inchangé\", lambda: _essai([(7, 1), (8, 1), (9, 1)], \"droite\"),\n     (((9, 1), \"mort\"), [(7, 1), (8, 1), (9, 1)]))\negal(\"mur en haut : mort, corps inchangé\", lambda: _essai([(2, 2), (2, 1), (2, 0)], \"haut\"),\n     (((2, 0), \"mort\"), [(2, 2), (2, 1), (2, 0)]))\negal(\"mur à gauche : mort\", lambda: _essai([(2, 3), (1, 3), (0, 3)], \"gauche\")[0], ((0, 3), \"mort\"))\negal(\"mur en bas : mort\", lambda: _essai([(3, 7), (3, 8), (3, 9)], \"bas\")[0], ((3, 9), \"mort\"))\negal(\"le serpent se mord : mort, corps inchangé\",\n     lambda: _essai([(1, 1), (2, 1), (3, 1), (3, 2), (2, 2)], \"haut\"),\n     (((2, 2), \"mort\"), [(1, 1), (2, 1), (3, 1), (3, 2), (2, 2)]))\negal(\"la queue compte comme du corps : mort\", lambda: _essai([(1, 1), (2, 1), (2, 2), (1, 2)], \"haut\")[0], ((1, 2), \"mort\"))\negal(\"grille 3 x 3 : la case (2, 2) est encore dans la grille\",\n     lambda: _essai([(0, 2), (1, 2)], \"droite\", pomme=(0, 0), l=3, h=3)[0], ((2, 2), \"ok\"))\n", "aide_code": "def contient(f, x):\n    \"\"\"True si x est dans la file f. f doit être laissée dans le même état.\"\"\"\n    trouve = False\n    for _ in range(f.taille()):\n        element = f.defiler()\n        if element == x:\n            trouve = True\n        f.enfiler(element)\n    return trouve\n\ndef nouvelle_tete(tete, direction):\n    \"\"\"Renvoie la case (x, y) où arrive la tête après un pas dans la direction donnée.\"\"\"\n    x, y = tete\n    if direction == \"haut\":\n        return (x, y - 1)\n    if direction == \"bas\":\n        return (x, y + 1)\n    if direction == \"gauche\":\n        return (x - 1, y)\n    return (x + 1, y)", "visuel": "snake"}, {"id": "defi", "kind": "defi", "titre": "Défi – Le serpent traverse les murs", "abbr": "D", "enonce_html": "<p>Variante « tore » : quand la tête sort d&#x27;un côté de la grille, elle <strong>réapparaît du côté opposé</strong>. Il n&#x27;y a plus de mur, mais le serpent meurt toujours s&#x27;il se mord.</p>\n<p>Écris <code>avancer_tore(corps, tete, direction, pomme, largeur, hauteur)</code> : mêmes paramètres, mêmes résultats que <code>avancer</code>. Indice : l&#x27;opérateur <code>%</code>.</p>\n<p>Ensuite, dans la zone de jeu, choisis la fonction <code>avancer_tore</code> et joue.</p>", "starter": "def avancer_tore(corps, tete, direction, pomme, largeur, hauteur):\n    \"\"\"Comme avancer, mais la grille est un tore : plus de murs.\"\"\"\n    pass\n", "tests": "\ndef _essai(cases, direction, pomme=(9, 9), l=10, h=10):\n    f = fabrique(cases)\n    r = avancer_tore(f, cases[-1], direction, pomme, l, h)\n    return r, contenu_file(f)\negal(\"droite au bord : réapparaît en (0, 3)\", lambda: _essai([(7, 3), (8, 3), (9, 3)], \"droite\"),\n     (((0, 3), \"ok\"), [(8, 3), (9, 3), (0, 3)]))\negal(\"gauche au bord : réapparaît en (9, 3)\", lambda: _essai([(2, 3), (1, 3), (0, 3)], \"gauche\")[0], ((9, 3), \"ok\"))\negal(\"haut au bord : réapparaît en (2, 9)\", lambda: _essai([(2, 2), (2, 1), (2, 0)], \"haut\")[0], ((2, 9), \"ok\"))\negal(\"bas au bord : réapparaît en (3, 0)\", lambda: _essai([(3, 7), (3, 8), (3, 9)], \"bas\")[0], ((3, 0), \"ok\"))\negal(\"pomme de l'autre côté : ((0, 3), 'pomme')\", lambda: _essai([(7, 3), (8, 3), (9, 3)], \"droite\", pomme=(0, 3))[0], ((0, 3), \"pomme\"))\negal(\"le serpent se mord : mort\",\n     lambda: _essai([(1, 1), (2, 1), (3, 1), (3, 2), (2, 2)], \"haut\"),\n     (((2, 2), \"mort\"), [(1, 1), (2, 1), (3, 1), (3, 2), (2, 2)]))\n", "aide_code": "def contient(f, x):\n    \"\"\"True si x est dans la file f. f doit être laissée dans le même état.\"\"\"\n    trouve = False\n    for _ in range(f.taille()):\n        element = f.defiler()\n        if element == x:\n            trouve = True\n        f.enfiler(element)\n    return trouve\n\ndef nouvelle_tete(tete, direction):\n    \"\"\"Renvoie la case (x, y) où arrive la tête après un pas dans la direction donnée.\"\"\"\n    x, y = tete\n    if direction == \"haut\":\n        return (x, y - 1)\n    if direction == \"bas\":\n        return (x, y + 1)\n    if direction == \"gauche\":\n        return (x - 1, y)\n    return (x + 1, y)", "visuel": "snake"}]}, {"id": "tp5", "num": 5, "slug": "labyrinthe", "titre": "Le labyrinthe : pile ou file ?", "titre_court": "Labyrinthe", "sous_titre": "Parcours en profondeur (pile) et en largeur (file)", "duree": "2 h", "emoji": "🧭", "accent": "#3a4470", "objectifs": ["Parcourir une grille avec un **parcours générique** où seule la structure change : pile ou file.", "Utiliser un dictionnaire pour mémoriser les cases vues et leur case « parente ».", "Reconstruire un chemin, comparer parcours en profondeur (DFS) et en largeur (BFS).", "Faire le lien avec les graphes (chapitre suivant) : une grille est un graphe."], "intro_html": "<h2>Sortir du labyrinthe</h2>\n<p>Un labyrinthe est une <strong>grille</strong> de caractères : <code>#</code> est un mur, un espace est une case libre, <code>S</code> est le départ et <code>E</code> l&#x27;arrivée.</p>\n<pre><code><span class=\"c\">#####\n#S  #      grille[y][x]  → le caractère de la colonne x, ligne y\n# # #      la case S est (1, 1) et E est (3, 3)\n#  E#\n#####</span></code></pre>\n<p>Une <strong>case</strong> est un couple <code>(x, y)</code> : <code>x</code> est la colonne, <code>y</code> la ligne (0 en haut). On accède à un caractère par <code>grille[y][x]</code>. On se déplace en <strong>haut, bas, gauche, droite</strong> (pas en diagonale).</p>\n<h2>Un seul algorithme, deux structures</h2>\n<p>On garde une structure de <strong>cases à explorer</strong>. À chaque étape, on en retire une, on ajoute ses voisins non encore vus. <strong>Seul le choix de la structure change tout :</strong></p>\n<table><thead><tr><th>Structure</th><th>On explore…</th><th>Parcours</th></tr></thead><tbody><tr><td><strong>Pile</strong> (LIFO)</td><td>toujours la case <strong>la plus récemment découverte</strong> : on fonce tout droit, puis on revient en arrière</td><td>en <strong>profondeur</strong> (DFS)</td></tr><tr><td><strong>File</strong> (FIFO)</td><td>les cases dans l&#x27;ordre de découverte : <strong>couche par couche</strong> autour du départ</td><td>en <strong>largeur</strong> (BFS)</td></tr></tbody></table>\n<p>Pseudo-code commun :</p>\n<pre><code>structure ← vide ; on y met depart\nparents ← {depart : <span class=\"k\">None</span>}         <span class=\"c\"># dictionnaire : case -&gt; case d&#x27;où l&#x27;on vient (sert aussi à savoir si une case est déjà vue)\nvisites ← liste vide\ntant que la structure n&#x27;est pas vide :\n    c ← on retire une case\n    on l&#x27;ajoute à visites\n    si c est l&#x27;arrivée : on s&#x27;arrête\n    pour chaque voisin v de c :\n        si v n&#x27;est pas dans parents :\n            parents[v] ← c ; on met v dans la structure</span></code></pre>\n<p>La fonction <code>creer_labyrinthe(largeur, hauteur, graine, boucles)</code> (fournie) génère un labyrinthe <strong>reproductible</strong> (même <code>graine</code>, même labyrinthe) ; <code>trouver(grille, &quot;S&quot;)</code> renvoie la case du départ (idem avec <code>&quot;E&quot;</code>).</p>", "prelude": "\nimport random\n\n_ops = [0]\n\n\nclass Pile:\n    \"\"\"Pile (LIFO). Interface : est_vide, empiler, depiler, sommet, taille.\"\"\"\n\n    def __init__(self):\n        self._elts = []\n\n    def est_vide(self):\n        return len(self._elts) == 0\n\n    def empiler(self, x):\n        _ops[0] += 1\n        self._elts.append(x)\n\n    def depiler(self):\n        if len(self._elts) == 0:\n            raise IndexError(\"depiler : la pile est vide\")\n        _ops[0] += 1\n        return self._elts.pop()\n\n    def sommet(self):\n        if len(self._elts) == 0:\n            raise IndexError(\"sommet : la pile est vide\")\n        return self._elts[-1]\n\n    def taille(self):\n        return len(self._elts)\n\n    def __repr__(self):\n        return \"Pile(\" + \", \".join(repr(x) for x in self._elts) + \" <- sommet)\" if self._elts else \"Pile(vide)\"\n\n\nclass File:\n    \"\"\"File (FIFO). Interface : est_vide, enfiler, defiler, taille.\"\"\"\n\n    def __init__(self):\n        self._elts = []\n\n    def est_vide(self):\n        return len(self._elts) == 0\n\n    def enfiler(self, x):\n        _ops[0] += 1\n        self._elts.append(x)\n\n    def defiler(self):\n        if len(self._elts) == 0:\n            raise IndexError(\"defiler : la file est vide\")\n        _ops[0] += 1\n        return self._elts.pop(0)\n\n    def taille(self):\n        return len(self._elts)\n\n    def __repr__(self):\n        return \"File(tête -> \" + \", \".join(repr(x) for x in self._elts) + \")\" if self._elts else \"File(vide)\"\n\n\ndef creer_labyrinthe(largeur, hauteur, graine=0, boucles=0.0):\n    \"\"\"Grille (liste de chaînes) : '#' mur, ' ' libre, 'S' départ, 'E' arrivée.\n    largeur et hauteur sont arrondies à l'impair supérieur. boucles (0 à 1) : proportion de murs\n    supprimés au hasard ; à 0 le labyrinthe est « parfait » (un seul chemin entre deux cases).\"\"\"\n    largeur |= 1\n    hauteur |= 1\n    rng = random.Random(graine)\n    g = [[\"#\"] * largeur for _ in range(hauteur)]\n    g[1][1] = \" \"\n    pile = [(1, 1)]\n    while pile:\n        x, y = pile[-1]\n        cand = []\n        for dx, dy in ((0, -2), (0, 2), (-2, 0), (2, 0)):\n            nx, ny = x + dx, y + dy\n            if 0 < nx < largeur - 1 and 0 < ny < hauteur - 1 and g[ny][nx] == \"#\":\n                cand.append((nx, ny, dx, dy))\n        if cand:\n            nx, ny, dx, dy = rng.choice(cand)\n            g[y + dy // 2][x + dx // 2] = \" \"\n            g[ny][nx] = \" \"\n            pile.append((nx, ny))\n        else:\n            pile.pop()\n    murs = []\n    for y in range(1, hauteur - 1):\n        for x in range(1, largeur - 1):\n            if g[y][x] == \"#\" and (x + y) % 2 == 1:\n                if (g[y][x - 1] == \" \" and g[y][x + 1] == \" \") or (g[y - 1][x] == \" \" and g[y + 1][x] == \" \"):\n                    murs.append((x, y))\n    rng.shuffle(murs)\n    for (x, y) in murs[:int(len(murs) * boucles)]:\n        g[y][x] = \" \"\n    g[1][1] = \"S\"\n    g[hauteur - 2][largeur - 2] = \"E\"\n    return [\"\".join(ligne) for ligne in g]\n\n\ndef trouver(grille, symbole):\n    \"\"\"Case (x, y) du premier caractère `symbole` ('S' ou 'E') dans la grille.\"\"\"\n    for y, ligne in enumerate(grille):\n        x = ligne.find(symbole)\n        if x != -1:\n            return (x, y)\n    return None\n\n\ndef _lab_compare(algos, largeur, hauteur, graine, boucles, avec_chemin):\n    g = creer_labyrinthe(largeur, hauteur, graine, boucles)\n    d, a = trouver(g, \"S\"), trouver(g, \"E\")\n    out = {\"grille\": g, \"depart\": list(d), \"arrivee\": list(a), \"res\": {}}\n    for nom in algos:\n        fn = globals().get(\"parcours_pile\" if nom == \"pile\" else \"parcours_file\")\n        if fn is None:\n            out[\"res\"][nom] = {\"erreur\": \"La fonction %s n'est pas définie : exécute d'abord ton code.\"\n                                         % (\"parcours_pile\" if nom == \"pile\" else \"parcours_file\")}\n            continue\n        try:\n            visites, parents = fn(g, d, a)\n            r = {\"visites\": [list(c) for c in visites], \"chemin\": None}\n            if avec_chemin:\n                rc = globals().get(\"reconstruire_chemin\")\n                if rc is None:\n                    r[\"avert\"] = \"reconstruire_chemin n'est pas définie : le chemin n'est pas tracé.\"\n                else:\n                    r[\"chemin\"] = [list(c) for c in rc(parents, d, a)]\n            out[\"res\"][nom] = r\n        except Exception as e:\n            out[\"res\"][nom] = {\"erreur\": \"%s : %s\" % (type(e).__name__, e)}\n    return out\n", "exercices": [{"id": "ex1", "kind": "exercice", "titre": "Les voisins d'une case", "abbr": "E1", "enonce_html": "<p>Écris <code>voisins(grille, cellule)</code> qui renvoie la <strong>liste</strong> des cases <strong>accessibles</strong> à un pas de <code>cellule = (x, y)</code> : haut, bas, gauche, droite, en excluant les <strong>murs</strong> (<code>#</code>) et tout ce qui <strong>sort de la grille</strong>.</p>\n<p>L&#x27;ordre des voisins dans la liste n&#x27;a pas d&#x27;importance pour les tests, mais il influencera l&#x27;ordre d&#x27;exploration des parcours.</p>\n<p>Un peu de pratique : à la main, donne <code>voisins(G, (1, 1))</code> pour la petite grille <code>G</code> du programme, avant d&#x27;exécuter.</p>", "starter": "G = [\"#####\",\n     \"#S  #\",\n     \"# # #\",\n     \"#  E#\",\n     \"#####\"]\n\n\ndef voisins(grille, cellule):\n    \"\"\"Cases accessibles (ni mur, ni hors de la grille) à un pas de cellule = (x, y).\"\"\"\n    pass\n\n\nprint(voisins(G, (1, 1)))\nprint(voisins(G, (3, 2)))\n", "tests": "\n_G = [\"#####\", \"#S  #\", \"# # #\", \"#  E#\", \"#####\"]\negal(\"voisins(G, (1, 1)) : bas et droite\", lambda: sorted(voisins(_G, (1, 1))), [(1, 2), (2, 1)])\negal(\"voisins(G, (2, 1)) : gauche et droite (le bas est un mur)\", lambda: sorted(voisins(_G, (2, 1))), [(1, 1), (3, 1)])\negal(\"voisins(G, (3, 2)) : haut et bas\", lambda: sorted(voisins(_G, (3, 2))), [(3, 1), (3, 3)])\negal(\"voisins(G, (2, 3)) : gauche et droite (E)\", lambda: sorted(voisins(_G, (2, 3))), [(1, 3), (3, 3)])\negal(\"voisins(G, (3, 3)) : depuis E\", lambda: sorted(voisins(_G, (3, 3))), [(2, 3), (3, 2)])\negal(\"hors de la grille : coin en (0, 0)\", lambda: sorted(voisins([\"  \", \"  \"], (0, 0))), [(0, 1), (1, 0)])\negal(\"hors de la grille : coin en bas à droite\", lambda: sorted(voisins([\"  \", \"  \"], (1, 1))), [(0, 1), (1, 0)])\negal(\"cellule entourée de murs : liste vide\", lambda: voisins([\"###\", \"# #\", \"###\"], (1, 1)), [])\n", "aide_code": null, "visuel": null}, {"id": "ex2", "kind": "exercice", "titre": "Explorer avec une pile (profondeur)", "abbr": "E2", "enonce_html": "<p>Écris <code>parcours_pile(grille, depart, arrivee)</code> en suivant le pseudo-code de l&#x27;introduction, avec une <strong><code>Pile</code></strong>. La fonction renvoie le couple <code>(visites, parents)</code> :</p>\n<ul><li><code>visites</code> : la <strong>liste</strong> des cases explorées, <strong>dans l&#x27;ordre</strong> où on les a dépilées (la dernière est <code>arrivee</code> si elle a été atteinte) ;</li><li><code>parents</code> : le <strong>dictionnaire</strong> <code>case → case d&#x27;où l&#x27;on vient</code> (avec <code>parents[depart] = None</code>).</li></ul>\n<p>Le dictionnaire <code>parents</code> sert aussi de mémoire des cases <strong>déjà vues</strong> : une case est « vue » dès qu&#x27;elle y figure. Sans cette précaution, le programme tournerait en rond entre deux cases voisines !</p>\n<p>Ta fonction <code>voisins</code> de l&#x27;exercice 1 est disponible.</p>\n<p><strong>Sous le code</strong>, une animation montre l&#x27;ordre dans lequel ta pile explore le labyrinthe.</p>", "starter": "def parcours_pile(grille, depart, arrivee):\n    \"\"\"Parcours avec une pile. Renvoie (visites, parents).\"\"\"\n    pass\n\n\ng = creer_labyrinthe(15, 11, 3)\nd, a = trouver(g, \"S\"), trouver(g, \"E\")\nvisites, parents = parcours_pile(g, d, a)\nprint(len(visites), \"cases explorées\")\n", "tests": "\ndef _proprietes(parcours, g):\n    d, a = trouver(g, \"S\"), trouver(g, \"E\")\n    visites, parents = parcours(g, d, a)\n    return d, a, visites, parents\ndef _adjacentes(c1, c2):\n    return abs(c1[0] - c2[0]) + abs(c1[1] - c2[1]) == 1\ndef _parents_ok(g):\n    d, a, visites, parents = _proprietes(parcours_pile, g)\n    rang = {c: i for i, c in enumerate(visites)}\n    for c in visites:\n        if c == d:\n            continue\n        p = parents.get(c)\n        if p is None or not _adjacentes(p, c) or rang.get(p, 10 ** 9) >= rang[c]:\n            return False\n    return True\n_M = creer_labyrinthe(15, 11, 1, 0.2)\negal(\"la 1re case explorée est le départ\", lambda: _proprietes(parcours_pile, _M)[2][0], trouver(_M, \"S\"))\negal(\"la dernière case explorée est l'arrivée (on s'arrête dès qu'on l'atteint)\", lambda: _proprietes(parcours_pile, _M)[2][-1], trouver(_M, \"E\"))\nvrai(\"aucune case n'est explorée deux fois\", lambda: len(set(_proprietes(parcours_pile, _M)[2])) == len(_proprietes(parcours_pile, _M)[2]),\n     \"Une case apparaît plusieurs fois dans visites : marque les cases vues (dans parents)\")\nvrai(\"aucun mur n'est exploré\", lambda: all(_M[y][x] != \"#\" for (x, y) in _proprietes(parcours_pile, _M)[2]), \"Une case explorée est un mur\")\negal(\"parents[depart] vaut None\", lambda: _proprietes(parcours_pile, _M)[3][trouver(_M, \"S\")], None)\nvrai(\"chaque case explorée (sauf le départ) a un parent voisin, exploré avant elle\", lambda: _parents_ok(_M),\n     \"Le parent d'une case doit être une case voisine déjà explorée\")\n_M2 = creer_labyrinthe(21, 15, 4, 0.3)\nvrai(\"idem sur un autre labyrinthe (avec boucles)\", lambda: _parents_ok(_M2))\n_G2 = [\"#####\", \"#S#E#\", \"#####\"]\negal(\"arrivée inaccessible : on explore seulement le départ et on s'arrête\", lambda: parcours_pile(_G2, (1, 1), (3, 1))[0], [(1, 1)])\n_G3 = [\"#######\", \"#S   E#\", \"#######\"]\negal(\"couloir : ordre d'exploration\", lambda: parcours_pile(_G3, (1, 1), (5, 1))[0], [(1, 1), (2, 1), (3, 1), (4, 1), (5, 1)])\nvrai(\"la fonction utilise bien une Pile\", lambda: (_ops.__setitem__(0, 0), parcours_pile(_G3, (1, 1), (5, 1)), _ops[0] >= 10)[2],\n     \"Utilise Pile() : empiler / depiler\")\n", "aide_code": "def voisins(grille, cellule):\n    \"\"\"Cases accessibles (ni mur, ni hors de la grille) à un pas de cellule = (x, y).\"\"\"\n    x, y = cellule\n    res = []\n    for dx, dy in ((0, -1), (0, 1), (-1, 0), (1, 0)):\n        nx, ny = x + dx, y + dy\n        if 0 <= ny < len(grille) and 0 <= nx < len(grille[ny]) and grille[ny][nx] != \"#\":\n            res.append((nx, ny))\n    return res", "visuel": "maze_pile"}, {"id": "ex3", "kind": "exercice", "titre": "Reconstituer le chemin", "abbr": "E3", "enonce_html": "<p><code>visites</code> liste toutes les cases explorées, pas le <strong>chemin</strong> du départ à l&#x27;arrivée. Le dictionnaire <code>parents</code> permet de le retrouver : on part de l&#x27;arrivée, on remonte de parent en parent jusqu&#x27;au départ.</p>\n<p>Écris <code>reconstruire_chemin(parents, depart, arrivee)</code> qui renvoie la <strong>liste des cases du chemin, du départ à l&#x27;arrivée</strong> (départ et arrivée inclus). Si <code>arrivee</code> n&#x27;a pas été atteinte (elle n&#x27;est pas dans <code>parents</code>), renvoie la liste vide <code>[]</code>.</p>\n<div class=\"adm adm-astuce\"><p class=\"adm-titre\">Idée</p><p>En remontant, on rencontre les cases dans l&#x27;ordre <strong>inverse</strong> du chemin. Retourne la liste à la fin — ou bien empile les cases puis dépile-les : une pile inverse l&#x27;ordre !</p></div>", "starter": "def reconstruire_chemin(parents, depart, arrivee):\n    \"\"\"Liste des cases du chemin de depart à arrivee ; [] si arrivee n'a pas été atteinte.\"\"\"\n    pass\n\n\nparents = {(1, 1): None, (2, 1): (1, 1), (3, 1): (2, 1), (3, 2): (3, 1)}\nprint(reconstruire_chemin(parents, (1, 1), (3, 2)))\n", "tests": "\n_P = {(1, 1): None, (2, 1): (1, 1), (3, 1): (2, 1), (3, 2): (3, 1), (1, 2): (1, 1)}\negal(\"chemin de (1,1) à (3,2)\", lambda: reconstruire_chemin(_P, (1, 1), (3, 2)), [(1, 1), (2, 1), (3, 1), (3, 2)])\negal(\"chemin de (1,1) à (1,2)\", lambda: reconstruire_chemin(_P, (1, 1), (1, 2)), [(1, 1), (1, 2)])\negal(\"arrivée = départ : liste d'une seule case\", lambda: reconstruire_chemin(_P, (1, 1), (1, 1)), [(1, 1)])\negal(\"arrivée absente de parents : []\", lambda: reconstruire_chemin(_P, (1, 1), (9, 9)), [])\negal(\"le dictionnaire n'est pas modifié\", lambda: (reconstruire_chemin(_P, (1, 1), (3, 2)), len(_P))[1], 5)\n", "aide_code": null, "visuel": null}, {"id": "ex4", "kind": "exercice", "titre": "Explorer avec une file (largeur) et comparer", "abbr": "E4", "enonce_html": "<p>Écris <code>parcours_file(grille, depart, arrivee)</code> : <strong>exactement le même algorithme</strong> que <code>parcours_pile</code>, avec une <strong><code>File</code></strong> (<code>enfiler</code> / <code>defiler</code>) à la place de la pile. Mêmes résultats <code>(visites, parents)</code>.</p>\n<p>Ensuite, <strong>compare</strong> dans la zone de comparaison sous le code : les deux parcours sont animés côte à côte sur le même labyrinthe. Règle les paramètres (taille, graine, proportion de murs supprimés) et réponds en commentaire :</p>\n<ol><li>Lequel des deux explore le plus de cases ? Est-ce toujours le cas ?</li><li>Lequel trouve le <strong>chemin le plus court</strong> ? Sur un labyrinthe <strong>parfait</strong> (0 % de murs supprimés), que remarques-tu ? Et avec 30 % ?</li><li>Le parcours en largeur se propage « en cercles » autour du départ. Pourquoi ?</li><li>Quelle structure choisirais-tu pour trouver le plus court chemin ? Pour simplement savoir s&#x27;il existe un chemin ?</li></ol>\n<p>Tes fonctions <code>voisins</code>, <code>parcours_pile</code> et <code>reconstruire_chemin</code> sont disponibles automatiquement.</p>", "starter": "def parcours_file(grille, depart, arrivee):\n    \"\"\"Parcours avec une file. Renvoie (visites, parents).\"\"\"\n    pass\n\n\ng = creer_labyrinthe(21, 15, 3, 0.3)\nd, a = trouver(g, \"S\"), trouver(g, \"E\")\nfor nom, parcours in [(\"pile\", parcours_pile), (\"file\", parcours_file)]:\n    visites, parents = parcours(g, d, a)\n    chemin = reconstruire_chemin(parents, d, a)\n    print(nom, \":\", len(visites), \"cases explorées, chemin de\", len(chemin) - 1, \"pas\")\n\n# Mes réponses :\n# 1) ...\n# 2) ...\n# 3) ...\n# 4) ...\n", "tests": "\ndef _nb_pas(parents, d, a):\n    n, c = 0, a\n    while c != d:\n        c = parents[c]\n        n += 1\n    return n\ndef _res(g):\n    d, a = trouver(g, \"S\"), trouver(g, \"E\")\n    visites, parents = parcours_file(g, d, a)\n    return d, a, visites, parents\n_M = creer_labyrinthe(15, 11, 1, 0.2)\negal(\"la 1re case explorée est le départ\", lambda: _res(_M)[2][0], trouver(_M, \"S\"))\negal(\"la dernière case explorée est l'arrivée\", lambda: _res(_M)[2][-1], trouver(_M, \"E\"))\nvrai(\"aucune case n'est explorée deux fois\", lambda: len(set(_res(_M)[2])) == len(_res(_M)[2]),\n     \"Marque les cases vues (dans parents)\")\n_M2 = creer_labyrinthe(21, 15, 4, 0.25)\negal(\"le chemin obtenu est un plus court chemin (labyrinthe 21 x 15 avec boucles)\",\n     lambda: _nb_pas(_res(_M2)[3], _res(_M2)[0], _res(_M2)[1]),\n     46)\n_M3 = creer_labyrinthe(31, 21, 7, 0.35)\negal(\"idem sur un labyrinthe 31 x 21 avec beaucoup de boucles\",\n     lambda: _nb_pas(_res(_M3)[3], _res(_M3)[0], _res(_M3)[1]),\n     50)\n_G2 = [\"#####\", \"#S#E#\", \"#####\"]\negal(\"arrivée inaccessible : on explore seulement le départ\", lambda: parcours_file(_G2, (1, 1), (3, 1))[0], [(1, 1)])\n_G4 = [\"#####\", \"#S  #\", \"# # #\", \"#  E#\", \"#####\"]\negal(\"petite grille : le départ, puis ses deux voisins (exploration par couches)\",\n     lambda: (parcours_file(_G4, (1, 1), (3, 3))[0][0], sorted(parcours_file(_G4, (1, 1), (3, 3))[0][1:3])), ((1, 1), [(1, 2), (2, 1)]))\nvrai(\"la fonction utilise bien une File\", lambda: (_ops.__setitem__(0, 0), parcours_file(_G4, (1, 1), (3, 3)), _ops[0] >= 10)[2],\n     \"Utilise File() : enfiler / defiler\")\n", "aide_code": "def voisins(grille, cellule):\n    \"\"\"Cases accessibles (ni mur, ni hors de la grille) à un pas de cellule = (x, y).\"\"\"\n    x, y = cellule\n    res = []\n    for dx, dy in ((0, -1), (0, 1), (-1, 0), (1, 0)):\n        nx, ny = x + dx, y + dy\n        if 0 <= ny < len(grille) and 0 <= nx < len(grille[ny]) and grille[ny][nx] != \"#\":\n            res.append((nx, ny))\n    return res\n\ndef parcours_pile(grille, depart, arrivee):\n    \"\"\"Parcours avec une pile. Renvoie (visites, parents).\"\"\"\n    pile = Pile()\n    pile.empiler(depart)\n    parents = {depart: None}\n    visites = []\n    while not pile.est_vide():\n        c = pile.depiler()\n        visites.append(c)\n        if c == arrivee:\n            break\n        for v in voisins(grille, c):\n            if v not in parents:\n                parents[v] = c\n                pile.empiler(v)\n    return visites, parents\n\ndef reconstruire_chemin(parents, depart, arrivee):\n    \"\"\"Liste des cases du chemin de depart à arrivee ; [] si arrivee n'a pas été atteinte.\"\"\"\n    if arrivee not in parents:\n        return []\n    chemin = [arrivee]\n    c = arrivee\n    while c != depart:\n        c = parents[c]\n        chemin.append(c)\n    chemin.reverse()\n    return chemin", "visuel": "maze_both"}, {"id": "defi", "kind": "defi", "titre": "Défi – La carte des distances", "abbr": "D", "enonce_html": "<p>Écris <code>distances(grille, depart)</code> qui renvoie un <strong>dictionnaire</strong> associant à <strong>chaque case accessible</strong> depuis <code>depart</code> son nombre de pas minimal depuis <code>depart</code> (<code>distances[depart] = 0</code>).</p>\n<p>Il n&#x27;y a pas d&#x27;arrivée : on explore <strong>tout</strong> ce qui est atteignable. Utilise le parcours en largeur.</p>\n<p>Ensuite, affiche la grille en remplaçant chaque case libre par le <strong>dernier chiffre</strong> de sa distance : tu verras apparaître les « ondes » du parcours en largeur.</p>", "starter": "def distances(grille, depart):\n    \"\"\"Dictionnaire {case: nombre de pas minimal depuis depart} pour toutes les cases atteignables.\"\"\"\n    pass\n\n\ng = creer_labyrinthe(21, 11, 2, 0.3)\nd = distances(g, trouver(g, \"S\"))\n# Affichage : chaque case libre atteinte est remplacée par le dernier chiffre de sa distance.\n", "tests": "\n_G = [\"#####\", \"#S  #\", \"# # #\", \"#  E#\", \"#####\"]\negal(\"petite grille : toutes les distances\", lambda: distances(_G, (1, 1)),\n     {(1, 1): 0, (2, 1): 1, (1, 2): 1, (3, 1): 2, (1, 3): 2, (3, 2): 3, (2, 3): 3, (3, 3): 4})\negal(\"le départ est à distance 0\", lambda: distances(_G, (2, 3))[(2, 3)], 0)\n_M = creer_labyrinthe(21, 15, 4, 0.25)\negal(\"labyrinthe 21 x 15 : distance de l'arrivée (= plus court chemin)\", lambda: distances(_M, trouver(_M, \"S\"))[trouver(_M, \"E\")],\n     46)\negal(\"toutes les cases libres sont atteintes (labyrinthe connexe)\", lambda: len(distances(_M, trouver(_M, \"S\"))),\n     152)\negal(\"case isolée : seule elle-même\", lambda: distances([\"###\", \"#S#\", \"###\"], (1, 1)), {(1, 1): 0})\n", "aide_code": "def voisins(grille, cellule):\n    \"\"\"Cases accessibles (ni mur, ni hors de la grille) à un pas de cellule = (x, y).\"\"\"\n    x, y = cellule\n    res = []\n    for dx, dy in ((0, -1), (0, 1), (-1, 0), (1, 0)):\n        nx, ny = x + dx, y + dy\n        if 0 <= ny < len(grille) and 0 <= nx < len(grille[ny]) and grille[ny][nx] != \"#\":\n            res.append((nx, ny))\n    return res", "visuel": null}]}];
+const EST_PROF = false;
+const WORKER_SOURCE = "// Worker Pyodide (module worker : Pyodide r\u00e9cent l'exige, importScripts ne suffit plus).\n// https://cdn.jsdelivr.net/pyodide/v314.0.7/full/ et \"# -*- coding: utf-8 -*-\\n\\\"\\\"\\\"Moteur Python ex\\u00e9cut\\u00e9 dans Pyodide (worker) \\u2014 protocole JSON via handle().\\nAussi importable sous CPython pour valider les corrig\\u00e9s au moment du build.\\\"\\\"\\\"\\nimport sys, io, json, ast, traceback, builtins\\n\\n_MAXOUT = 30000\\n_NS = {}\\n\\n\\nclass _Capture(io.StringIO):\\n    def __init__(self):\\n        super().__init__()\\n        self.tronque = False\\n\\n    def write(self, s):\\n        if self.tell() >= _MAXOUT:\\n            self.tronque = True\\n            return len(s)\\n        return super().write(s)\\n\\n\\ndef _input_indisponible(*a, **k):\\n    raise RuntimeError(\\\"input() n'est pas disponible dans ces TP : passe les valeurs en param\\u00e8tres de tes fonctions.\\\")\\n\\n\\nbuiltins.input = _input_indisponible\\n\\n\\ndef _err(e, code, nom=\\\"<ton_code>\\\"):\\n    \\\"\\\"\\\"D\\u00e9crit une exception : ligne dans le code de l'\\u00e9l\\u00e8ve, message, fonction fautive.\\\"\\\"\\\"\\n    lignes = code.splitlines()\\n    info = {\\\"type\\\": type(e).__name__, \\\"msg\\\": str(e), \\\"ligne\\\": None, \\\"src\\\": \\\"\\\", \\\"ou\\\": None, \\\"fonction\\\": None}\\n    if isinstance(e, SyntaxError):\\n        if e.lineno:\\n            info[\\\"ligne\\\"] = e.lineno\\n            info[\\\"src\\\"] = (e.text or \\\"\\\").rstrip(\\\"\\\\n\\\")\\n        info[\\\"msg\\\"] = e.msg\\n        info[\\\"syntaxe\\\"] = True\\n        return info\\n    tb = traceback.extract_tb(e.__traceback__)\\n    if tb:\\n        dernier = tb[-1]\\n        if dernier.filename.startswith(\\\"<ex:\\\"):\\n            info[\\\"ou\\\"] = dernier.filename[4:-1]\\n            info[\\\"fonction\\\"] = dernier.name\\n            info[\\\"ligne_ou\\\"] = dernier.lineno\\n    cadres = [f for f in tb if f.filename == nom]\\n    if cadres:\\n        n = cadres[-1].lineno\\n        info[\\\"ligne\\\"] = n\\n        if 1 <= n <= len(lignes):\\n            info[\\\"src\\\"] = lignes[n - 1]\\n    return info\\n\\n\\ndef _definitions(code):\\n    \\\"\\\"\\\"Ne garde que les d\\u00e9finitions (def, class, import, constantes litt\\u00e9rales) d'un code.\\\"\\\"\\\"\\n    arbre = ast.parse(code, \\\"<chaine>\\\")\\n    gardes = []\\n    for noeud in arbre.body:\\n        if isinstance(noeud, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Import, ast.ImportFrom)):\\n            gardes.append(noeud)\\n        elif isinstance(noeud, ast.Assign):\\n            try:\\n                ast.literal_eval(noeud.value)\\n                gardes.append(noeud)\\n            except Exception:\\n                pass\\n    return ast.Module(body=gardes, type_ignores=[])\\n\\n\\ndef _nouveau_ns(prelude, chaine, aide):\\n    ns = {\\\"__name__\\\": \\\"__main__\\\", \\\"__builtins__\\\": builtins}\\n    exec(compile(prelude, \\\"<prelude>\\\", \\\"exec\\\"), ns)\\n    avert = []\\n    for ex_id, code in chaine:\\n        try:\\n            mod = _definitions(code)\\n            exec(compile(mod, \\\"<ex:%s>\\\" % ex_id, \\\"exec\\\"), ns)\\n        except SyntaxError:\\n            avert.append(\\\"Le code de l'exercice %s contient une erreur de syntaxe : il n'a pas \\u00e9t\\u00e9 charg\\u00e9.\\\" % ex_id)\\n        except Exception as e:\\n            avert.append(\\\"Le code de l'exercice %s n'a pas pu \\u00eatre charg\\u00e9 (%s).\\\" % (ex_id, type(e).__name__))\\n    if aide:\\n        exec(compile(aide, \\\"<aide>\\\", \\\"exec\\\"), ns)\\n    return ns, avert\\n\\n\\ndef _exec_capture(fonction):\\n    cap = _Capture()\\n    anciens = sys.stdout, sys.stderr\\n    sys.stdout = sys.stderr = cap\\n    try:\\n        return cap, fonction()\\n    finally:\\n        sys.stdout, sys.stderr = anciens\\n\\n\\ndef _run_tests(ns, tests_code):\\n    resultats = []\\n\\n    def _court(x):\\n        t = repr(x)\\n        return t if len(t) <= 140 else t[:137] + \\\"...\\\"\\n\\n    def egal(titre, f, attendu):\\n        try:\\n            obtenu = f()\\n        except Exception as e:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": False, \\\"detail\\\": \\\"Erreur : %s: %s\\\" % (type(e).__name__, e)})\\n            return\\n        if obtenu == attendu:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": True, \\\"detail\\\": \\\"\\\"})\\n        else:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": False,\\n                              \\\"detail\\\": \\\"attendu %s, obtenu %s\\\" % (_court(attendu), _court(obtenu))})\\n\\n    def vrai(titre, f, aide=\\\"\\\"):\\n        try:\\n            ok = bool(f())\\n            detail = \\\"\\\" if ok else aide\\n        except Exception as e:\\n            ok, detail = False, \\\"Erreur : %s: %s\\\" % (type(e).__name__, e)\\n        resultats.append({\\\"label\\\": titre, \\\"ok\\\": ok, \\\"detail\\\": detail})\\n\\n    def leve(titre, f, exception):\\n        try:\\n            f()\\n        except exception:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": True, \\\"detail\\\": \\\"\\\"})\\n            return\\n        except Exception as e:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": False, \\\"detail\\\": \\\"mauvaise exception : %s\\\" % type(e).__name__})\\n            return\\n        resultats.append({\\\"label\\\": titre, \\\"ok\\\": False, \\\"detail\\\": \\\"aucune exception lev\\u00e9e\\\"})\\n\\n    ns.update(egal=egal, vrai=vrai, leve=leve)\\n\\n    def go():\\n        try:\\n            exec(compile(tests_code, \\\"<tests>\\\", \\\"exec\\\"), ns)\\n        except Exception:\\n            e = sys.exc_info()[1]\\n            resultats.append({\\\"label\\\": \\\"Les tests s'arr\\u00eatent ici : une de tes fonctions a lev\\u00e9 une exception\\\", \\\"ok\\\": False,\\n                              \\\"detail\\\": \\\"%s: %s\\\" % (type(e).__name__, e)})\\n\\n    _exec_capture(go)\\n    return resultats\\n\\n\\ndef _cle(m):\\n    \\\"\\\"\\\"Cl\\u00e9 de cache namespace : (tp, ex) \\u2014 \\u00e9vite les collisions entre TP partageant des id d'exercice (ex1, ex2...).\\\"\\\"\\\"\\n    return \\\"%s::%s\\\" % (m.get(\\\"tp\\\", \\\"\\\"), m[\\\"ex\\\"])\\n\\n\\ndef _op_run(m):\\n    code = m[\\\"code\\\"]\\n    try:\\n        ns, avert = _nouveau_ns(m[\\\"prelude\\\"], m.get(\\\"chaine\\\", []), m.get(\\\"aide\\\"))\\n    except Exception:\\n        return {\\\"interne\\\": \\\"pr\\u00e9lude : \\\" + traceback.format_exc()[-400:]}\\n    _NS[_cle(m)] = ns\\n\\n    def go():\\n        try:\\n            exec(compile(code, \\\"<ton_code>\\\", \\\"exec\\\"), ns)\\n            return None\\n        except (Exception, SystemExit) as e:\\n            return _err(e, code)\\n\\n    cap, erreur = _exec_capture(go)\\n    res = {\\\"stdout\\\": cap.getvalue(), \\\"tronque\\\": cap.tronque, \\\"erreur\\\": erreur, \\\"tests\\\": None, \\\"avert\\\": avert}\\n    if m.get(\\\"tests\\\") is not None and not (erreur and erreur.get(\\\"syntaxe\\\")):\\n        res[\\\"tests\\\"] = _run_tests(ns, m[\\\"tests\\\"])\\n    return res\\n\\n\\ndef _op_call(m):\\n    ns = _NS.get(_cle(m))\\n    if ns is None:\\n        return {\\\"pas_ns\\\": True}\\n\\n    def go():\\n        try:\\n            return {\\\"val\\\": eval(compile(m[\\\"expr\\\"], \\\"<appel>\\\", \\\"eval\\\"), ns)}\\n        except (Exception, SystemExit) as e:\\n            return {\\\"erreur\\\": _err(e, m.get(\\\"code\\\", \\\"\\\"))}\\n\\n    cap, r = _exec_capture(go)\\n    r[\\\"stdout\\\"] = cap.getvalue()\\n    return r\\n\\n\\ndef _op_repl(m):\\n    ns = _NS.get(_cle(m))\\n    if ns is None:\\n        return {\\\"pas_ns\\\": True}\\n    ligne = m[\\\"ligne\\\"]\\n\\n    def go():\\n        try:\\n            try:\\n                obj = compile(ligne, \\\"<console>\\\", \\\"eval\\\")\\n                v = eval(obj, ns)\\n                if v is not None:\\n                    print(repr(v))\\n            except SyntaxError:\\n                exec(compile(ligne, \\\"<console>\\\", \\\"exec\\\"), ns)\\n            return None\\n        except (Exception, SystemExit) as e:\\n            return {\\\"type\\\": type(e).__name__, \\\"msg\\\": str(e) if not isinstance(e, SyntaxError) else e.msg}\\n\\n    cap, erreur = _exec_capture(go)\\n    return {\\\"stdout\\\": cap.getvalue(), \\\"erreur\\\": erreur}\\n\\n\\n_OPS = {\\\"run\\\": _op_run, \\\"call\\\": _op_call, \\\"repl\\\": _op_repl}\\n\\n\\ndef handle(s):\\n    m = json.loads(s)\\n    try:\\n        r = _OPS[m[\\\"op\\\"]](m)\\n    except Exception:\\n        r = {\\\"interne\\\": traceback.format_exc()[-600:]}\\n    return json.dumps(r, ensure_ascii=False, default=repr)\\n\" sont substitu\u00e9s par le g\u00e9n\u00e9rateur.\nimport { loadPyodide } from \"https://cdn.jsdelivr.net/pyodide/v314.0.7/full/pyodide.mjs\";\n\nlet pyodideReady = null;\nlet handle = null;\n\nasync function initPyodide() {\n  const pyodide = await loadPyodide({ indexURL: \"https://cdn.jsdelivr.net/pyodide/v314.0.7/full/\" });\n  pyodide.runPython(\"# -*- coding: utf-8 -*-\\n\\\"\\\"\\\"Moteur Python ex\\u00e9cut\\u00e9 dans Pyodide (worker) \\u2014 protocole JSON via handle().\\nAussi importable sous CPython pour valider les corrig\\u00e9s au moment du build.\\\"\\\"\\\"\\nimport sys, io, json, ast, traceback, builtins\\n\\n_MAXOUT = 30000\\n_NS = {}\\n\\n\\nclass _Capture(io.StringIO):\\n    def __init__(self):\\n        super().__init__()\\n        self.tronque = False\\n\\n    def write(self, s):\\n        if self.tell() >= _MAXOUT:\\n            self.tronque = True\\n            return len(s)\\n        return super().write(s)\\n\\n\\ndef _input_indisponible(*a, **k):\\n    raise RuntimeError(\\\"input() n'est pas disponible dans ces TP : passe les valeurs en param\\u00e8tres de tes fonctions.\\\")\\n\\n\\nbuiltins.input = _input_indisponible\\n\\n\\ndef _err(e, code, nom=\\\"<ton_code>\\\"):\\n    \\\"\\\"\\\"D\\u00e9crit une exception : ligne dans le code de l'\\u00e9l\\u00e8ve, message, fonction fautive.\\\"\\\"\\\"\\n    lignes = code.splitlines()\\n    info = {\\\"type\\\": type(e).__name__, \\\"msg\\\": str(e), \\\"ligne\\\": None, \\\"src\\\": \\\"\\\", \\\"ou\\\": None, \\\"fonction\\\": None}\\n    if isinstance(e, SyntaxError):\\n        if e.lineno:\\n            info[\\\"ligne\\\"] = e.lineno\\n            info[\\\"src\\\"] = (e.text or \\\"\\\").rstrip(\\\"\\\\n\\\")\\n        info[\\\"msg\\\"] = e.msg\\n        info[\\\"syntaxe\\\"] = True\\n        return info\\n    tb = traceback.extract_tb(e.__traceback__)\\n    if tb:\\n        dernier = tb[-1]\\n        if dernier.filename.startswith(\\\"<ex:\\\"):\\n            info[\\\"ou\\\"] = dernier.filename[4:-1]\\n            info[\\\"fonction\\\"] = dernier.name\\n            info[\\\"ligne_ou\\\"] = dernier.lineno\\n    cadres = [f for f in tb if f.filename == nom]\\n    if cadres:\\n        n = cadres[-1].lineno\\n        info[\\\"ligne\\\"] = n\\n        if 1 <= n <= len(lignes):\\n            info[\\\"src\\\"] = lignes[n - 1]\\n    return info\\n\\n\\ndef _definitions(code):\\n    \\\"\\\"\\\"Ne garde que les d\\u00e9finitions (def, class, import, constantes litt\\u00e9rales) d'un code.\\\"\\\"\\\"\\n    arbre = ast.parse(code, \\\"<chaine>\\\")\\n    gardes = []\\n    for noeud in arbre.body:\\n        if isinstance(noeud, (ast.FunctionDef, ast.AsyncFunctionDef, ast.ClassDef, ast.Import, ast.ImportFrom)):\\n            gardes.append(noeud)\\n        elif isinstance(noeud, ast.Assign):\\n            try:\\n                ast.literal_eval(noeud.value)\\n                gardes.append(noeud)\\n            except Exception:\\n                pass\\n    return ast.Module(body=gardes, type_ignores=[])\\n\\n\\ndef _nouveau_ns(prelude, chaine, aide):\\n    ns = {\\\"__name__\\\": \\\"__main__\\\", \\\"__builtins__\\\": builtins}\\n    exec(compile(prelude, \\\"<prelude>\\\", \\\"exec\\\"), ns)\\n    avert = []\\n    for ex_id, code in chaine:\\n        try:\\n            mod = _definitions(code)\\n            exec(compile(mod, \\\"<ex:%s>\\\" % ex_id, \\\"exec\\\"), ns)\\n        except SyntaxError:\\n            avert.append(\\\"Le code de l'exercice %s contient une erreur de syntaxe : il n'a pas \\u00e9t\\u00e9 charg\\u00e9.\\\" % ex_id)\\n        except Exception as e:\\n            avert.append(\\\"Le code de l'exercice %s n'a pas pu \\u00eatre charg\\u00e9 (%s).\\\" % (ex_id, type(e).__name__))\\n    if aide:\\n        exec(compile(aide, \\\"<aide>\\\", \\\"exec\\\"), ns)\\n    return ns, avert\\n\\n\\ndef _exec_capture(fonction):\\n    cap = _Capture()\\n    anciens = sys.stdout, sys.stderr\\n    sys.stdout = sys.stderr = cap\\n    try:\\n        return cap, fonction()\\n    finally:\\n        sys.stdout, sys.stderr = anciens\\n\\n\\ndef _run_tests(ns, tests_code):\\n    resultats = []\\n\\n    def _court(x):\\n        t = repr(x)\\n        return t if len(t) <= 140 else t[:137] + \\\"...\\\"\\n\\n    def egal(titre, f, attendu):\\n        try:\\n            obtenu = f()\\n        except Exception as e:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": False, \\\"detail\\\": \\\"Erreur : %s: %s\\\" % (type(e).__name__, e)})\\n            return\\n        if obtenu == attendu:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": True, \\\"detail\\\": \\\"\\\"})\\n        else:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": False,\\n                              \\\"detail\\\": \\\"attendu %s, obtenu %s\\\" % (_court(attendu), _court(obtenu))})\\n\\n    def vrai(titre, f, aide=\\\"\\\"):\\n        try:\\n            ok = bool(f())\\n            detail = \\\"\\\" if ok else aide\\n        except Exception as e:\\n            ok, detail = False, \\\"Erreur : %s: %s\\\" % (type(e).__name__, e)\\n        resultats.append({\\\"label\\\": titre, \\\"ok\\\": ok, \\\"detail\\\": detail})\\n\\n    def leve(titre, f, exception):\\n        try:\\n            f()\\n        except exception:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": True, \\\"detail\\\": \\\"\\\"})\\n            return\\n        except Exception as e:\\n            resultats.append({\\\"label\\\": titre, \\\"ok\\\": False, \\\"detail\\\": \\\"mauvaise exception : %s\\\" % type(e).__name__})\\n            return\\n        resultats.append({\\\"label\\\": titre, \\\"ok\\\": False, \\\"detail\\\": \\\"aucune exception lev\\u00e9e\\\"})\\n\\n    ns.update(egal=egal, vrai=vrai, leve=leve)\\n\\n    def go():\\n        try:\\n            exec(compile(tests_code, \\\"<tests>\\\", \\\"exec\\\"), ns)\\n        except Exception:\\n            e = sys.exc_info()[1]\\n            resultats.append({\\\"label\\\": \\\"Les tests s'arr\\u00eatent ici : une de tes fonctions a lev\\u00e9 une exception\\\", \\\"ok\\\": False,\\n                              \\\"detail\\\": \\\"%s: %s\\\" % (type(e).__name__, e)})\\n\\n    _exec_capture(go)\\n    return resultats\\n\\n\\ndef _cle(m):\\n    \\\"\\\"\\\"Cl\\u00e9 de cache namespace : (tp, ex) \\u2014 \\u00e9vite les collisions entre TP partageant des id d'exercice (ex1, ex2...).\\\"\\\"\\\"\\n    return \\\"%s::%s\\\" % (m.get(\\\"tp\\\", \\\"\\\"), m[\\\"ex\\\"])\\n\\n\\ndef _op_run(m):\\n    code = m[\\\"code\\\"]\\n    try:\\n        ns, avert = _nouveau_ns(m[\\\"prelude\\\"], m.get(\\\"chaine\\\", []), m.get(\\\"aide\\\"))\\n    except Exception:\\n        return {\\\"interne\\\": \\\"pr\\u00e9lude : \\\" + traceback.format_exc()[-400:]}\\n    _NS[_cle(m)] = ns\\n\\n    def go():\\n        try:\\n            exec(compile(code, \\\"<ton_code>\\\", \\\"exec\\\"), ns)\\n            return None\\n        except (Exception, SystemExit) as e:\\n            return _err(e, code)\\n\\n    cap, erreur = _exec_capture(go)\\n    res = {\\\"stdout\\\": cap.getvalue(), \\\"tronque\\\": cap.tronque, \\\"erreur\\\": erreur, \\\"tests\\\": None, \\\"avert\\\": avert}\\n    if m.get(\\\"tests\\\") is not None and not (erreur and erreur.get(\\\"syntaxe\\\")):\\n        res[\\\"tests\\\"] = _run_tests(ns, m[\\\"tests\\\"])\\n    return res\\n\\n\\ndef _op_call(m):\\n    ns = _NS.get(_cle(m))\\n    if ns is None:\\n        return {\\\"pas_ns\\\": True}\\n\\n    def go():\\n        try:\\n            return {\\\"val\\\": eval(compile(m[\\\"expr\\\"], \\\"<appel>\\\", \\\"eval\\\"), ns)}\\n        except (Exception, SystemExit) as e:\\n            return {\\\"erreur\\\": _err(e, m.get(\\\"code\\\", \\\"\\\"))}\\n\\n    cap, r = _exec_capture(go)\\n    r[\\\"stdout\\\"] = cap.getvalue()\\n    return r\\n\\n\\ndef _op_repl(m):\\n    ns = _NS.get(_cle(m))\\n    if ns is None:\\n        return {\\\"pas_ns\\\": True}\\n    ligne = m[\\\"ligne\\\"]\\n\\n    def go():\\n        try:\\n            try:\\n                obj = compile(ligne, \\\"<console>\\\", \\\"eval\\\")\\n                v = eval(obj, ns)\\n                if v is not None:\\n                    print(repr(v))\\n            except SyntaxError:\\n                exec(compile(ligne, \\\"<console>\\\", \\\"exec\\\"), ns)\\n            return None\\n        except (Exception, SystemExit) as e:\\n            return {\\\"type\\\": type(e).__name__, \\\"msg\\\": str(e) if not isinstance(e, SyntaxError) else e.msg}\\n\\n    cap, erreur = _exec_capture(go)\\n    return {\\\"stdout\\\": cap.getvalue(), \\\"erreur\\\": erreur}\\n\\n\\n_OPS = {\\\"run\\\": _op_run, \\\"call\\\": _op_call, \\\"repl\\\": _op_repl}\\n\\n\\ndef handle(s):\\n    m = json.loads(s)\\n    try:\\n        r = _OPS[m[\\\"op\\\"]](m)\\n    except Exception:\\n        r = {\\\"interne\\\": traceback.format_exc()[-600:]}\\n    return json.dumps(r, ensure_ascii=False, default=repr)\\n\");\n  handle = pyodide.globals.get(\"handle\");\n  return pyodide;\n}\npyodideReady = initPyodide();\n\nself.onmessage = async (ev) => {\n  const { id, op, payload } = ev.data;\n  try {\n    await pyodideReady;\n    if (op === \"__ping__\") {\n      self.postMessage({ id, result: { ok: true } });\n      return;\n    }\n    const req = Object.assign({ op }, payload);\n    const out = handle(JSON.stringify(req));\n    self.postMessage({ id, result: JSON.parse(out) });\n  } catch (e) {\n    self.postMessage({ id, fatal: String((e && e.message) || e) });\n  }\n};\n";
+</script>
+<script>// App principale — page groupée multi-chapitres. TP_LIST (liste de TP) et EST_PROF sont injectés par le générateur.
+(function () {
+  "use strict";
+
+  class Engine {
+    constructor(workerUrl) {
+      this.worker = new Worker(workerUrl, { type: "module" });
+      this.pending = new Map();
+      this.nextId = 1;
+      this.worker.onmessage = (ev) => {
+        const d = ev.data;
+        const p = this.pending.get(d.id);
+        if (!p) return;
+        this.pending.delete(d.id);
+        if (d.fatal) p.reject(new Error(d.fatal));
+        else p.resolve(d.result);
+      };
+      this.worker.onerror = (ev) => {
+        for (const [, p] of this.pending) p.reject(new Error("erreur worker : " + ev.message));
+        this.pending.clear();
+      };
+    }
+    request(op, payload) {
+      const id = this.nextId++;
+      return new Promise((resolve, reject) => {
+        this.pending.set(id, { resolve, reject });
+        this.worker.postMessage({ id, op, payload: payload || {} });
+      });
+    }
+    ping() { return this.request("__ping__", {}); }
+    run(tp, ex, code, chaine, tests, aide, prelude) {
+      return this.request("run", { tp, ex, code, chaine, tests, aide: aide || null, prelude });
+    }
+    call(tp, ex, expr) { return this.request("call", { tp, ex, expr, code: "" }); }
+  }
+
+  function el(tag, cls, html) {
+    const e = document.createElement(tag);
+    if (cls) e.className = cls;
+    if (html !== undefined) e.innerHTML = html;
+    return e;
+  }
+  function esc(s) {
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+  }
+  function sansAccents(s) {
+    return s.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+  }
+  function nettoyerNom(s) {
+    return sansAccents(s || "").replace(/[^A-Za-z0-9]+/g, "").trim();
+  }
+
+  const STORE_KEY = "tp-piles-files-v1";
+  function chargerStock() {
+    try { return JSON.parse(localStorage.getItem(STORE_KEY) || "{}"); } catch (e) { return {}; }
+  }
+  function sauverStock(obj) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(obj)); } catch (e) {}
+  }
+  function chargerIdentite() {
+    try { return JSON.parse(localStorage.getItem("tp-identite-v1") || "{}"); } catch (e) { return {}; }
+  }
+  function sauverIdentite(obj) {
+    try { localStorage.setItem("tp-identite-v1", JSON.stringify(obj)); } catch (e) {}
+  }
+  function chargerChapitreCourant() {
+    try { return localStorage.getItem("tp-piles-files-chapitre-v1") || ""; } catch (e) { return ""; }
+  }
+  function sauverChapitreCourant(tpId) {
+    try { localStorage.setItem("tp-piles-files-chapitre-v1", tpId); } catch (e) {}
+  }
+
+  function nomFichier(tp, nom, prenom) {
+    const N = nettoyerNom(nom).toUpperCase() || "NOM";
+    const P = nettoyerNom(prenom) || "Prenom";
+    const Pc = P.charAt(0).toUpperCase() + P.slice(1);
+    return N + "-" + Pc + "-TP" + tp.num + "-" + tp.slug + ".py";
+  }
+
+  function toast(texte, ko) {
+    const t = el("div", "toast" + (ko ? " ko" : ""), esc(texte));
+    document.body.appendChild(t);
+    setTimeout(() => t.remove(), 3200);
+  }
+
+  document.addEventListener("DOMContentLoaded", () => {
+    const stock = chargerStock();
+    const identite = chargerIdentite();
+    const etats = {}; // "tpId::exId" -> {editor, el, ex, tp}
+    let chapitreActif = null;
+
+    // ----- barre du haut -----
+    const barre = document.querySelector(".barre");
+    const champNom = barre.querySelector(".ch-nom");
+    const champPrenom = barre.querySelector(".ch-prenom");
+    const nomFichierEl = barre.querySelector(".nom-fichier");
+    const etatPy = barre.querySelector(".etat-python");
+    champNom.value = identite.nom || "";
+    champPrenom.value = identite.prenom || "";
+    function majNomFichier() {
+      const tp = TP_LIST.find((t) => t.id === chapitreActif);
+      if (tp) nomFichierEl.textContent = nomFichier(tp, champNom.value, champPrenom.value);
+    }
+    [champNom, champPrenom].forEach((c) =>
+      c.addEventListener("input", () => {
+        sauverIdentite({ nom: champNom.value, prenom: champPrenom.value });
+        majNomFichier();
+      })
+    );
+
+    // ----- worker (source intégrée : page 100% autonome) -----
+    const workerBlob = new Blob([WORKER_SOURCE], { type: "application/javascript" });
+    const workerUrl = URL.createObjectURL(workerBlob);
+    const engine = new Engine(workerUrl);
+    let pret = false;
+    engine
+      .ping()
+      .then(() => {
+        pret = true;
+        etatPy.classList.add("pret");
+        etatPy.querySelector("span").textContent = "Python prêt";
+        document.querySelectorAll(".btn-exec").forEach((b) => (b.disabled = false));
+      })
+      .catch((e) => {
+        etatPy.classList.add("erreur");
+        etatPy.querySelector("span").textContent = "Python indisponible";
+        document.querySelector(".bandeau-reseau-zone").innerHTML =
+          '<div class="bandeau-reseau">Le moteur Python n\'a pas pu se charger (réseau bloqué ou hors-ligne ?). ' +
+          "Détail : " + esc(e.message) + "</div>";
+      });
+
+    function chaineActuelle(tp, avantId) {
+      const res = [];
+      for (const ex of tp.exercices) {
+        if (ex.id === avantId) break;
+        if (ex.kind === "exercice") res.push([ex.id, etats[tp.id + "::" + ex.id].editor.getValue()]);
+      }
+      return res;
+    }
+
+    function rendreTests(zone, tests) {
+      zone.innerHTML = "";
+      if (!tests || !tests.length) return;
+      const ok = tests.every((t) => t.ok);
+      const resume = el("div", "tests-resume " + (ok ? "ok" : "ko"), (ok ? "✓ " : "✗ ") + tests.filter((t) => t.ok).length + " / " + tests.length + " tests réussis");
+      const liste = el("ul", "tests");
+      liste.appendChild(resume);
+      tests.forEach((t) => {
+        const li = el("li", t.ok ? "ok" : "ko");
+        li.innerHTML = '<span class="mark">' + (t.ok ? "✓" : "✗") + "</span><span>" + esc(t.label) + (t.detail ? '<span class="detail">' + esc(t.detail) + "</span>" : "") + "</span>";
+        liste.appendChild(li);
+      });
+      zone.appendChild(liste);
+    }
+
+    const puceEls = {}; // "tpId::exId" -> element
+    function majPuce(tp, ex, statut) {
+      const p = puceEls[tp.id + "::" + ex.id];
+      if (!p) return;
+      p.classList.remove("ok", "ko", "ran", "err");
+      if (statut) p.classList.add(statut);
+    }
+
+    async function executer(tp, ex) {
+      if (!pret) return;
+      const cle = tp.id + "::" + ex.id;
+      const st = etats[cle];
+      const zoneLcd = st.el.querySelector(".lcd pre");
+      const lcdVide = st.el.querySelector(".lcd .vide");
+      const erreurBox = st.el.querySelector(".erreur-box");
+      const avertBox = st.el.querySelector(".avert-box");
+      const testsZone = st.el.querySelector(".tests-zone");
+      const statutSpan = st.el.querySelector(".statut");
+      const boutons = st.el.querySelectorAll(".btn-exec");
+      boutons.forEach((b) => (b.disabled = true));
+      statutSpan.textContent = "exécution…";
+      statutSpan.className = "statut ran";
+      st.editor.effacerErreur();
+      erreurBox.style.display = "none";
+      avertBox.style.display = "none";
+      const code = st.editor.getValue();
+      const secoursBox = st.el.querySelector(".secours input");
+      const aide = secoursBox && secoursBox.checked ? ex.aide_code : null;
+      let res;
+      try {
+        res = await engine.run(tp.id, ex.id, code, chaineActuelle(tp, ex.id), ex.tests, aide, tp.prelude);
+      } catch (e) {
+        statutSpan.textContent = "erreur interne";
+        statutSpan.className = "statut err";
+        erreurBox.style.display = "block";
+        erreurBox.textContent = "Erreur interne du moteur : " + e.message;
+        boutons.forEach((b) => (b.disabled = false));
+        return;
+      }
+      boutons.forEach((b) => (b.disabled = false));
+      if (res.interne) {
+        statutSpan.textContent = "erreur";
+        statutSpan.className = "statut err";
+        erreurBox.style.display = "block";
+        erreurBox.textContent = "Impossible d'exécuter : " + res.interne;
+        majPuce(tp, ex, "err");
+        return;
+      }
+      if (res.avert && res.avert.length) {
+        avertBox.style.display = "block";
+        avertBox.textContent = res.avert.join(" ");
+      }
+      if (res.stdout) {
+        zoneLcd.textContent = res.stdout + (res.tronque ? "\n… (sortie tronquée)" : "");
+        lcdVide.style.display = "none";
+        zoneLcd.style.display = "block";
+      } else {
+        zoneLcd.style.display = "none";
+        lcdVide.style.display = "block";
+      }
+      if (res.erreur) {
+        erreurBox.style.display = "block";
+        let txt = res.erreur.type + " : " + res.erreur.msg;
+        erreurBox.innerHTML = esc(txt);
+        if (res.erreur.src) {
+          const pre = el("div", "src", esc(res.erreur.src));
+          erreurBox.appendChild(pre);
+        }
+        if (res.erreur.ligne) st.editor.marquerErreur(res.erreur.ligne);
+        statutSpan.textContent = "erreur";
+        statutSpan.className = "statut err";
+        majPuce(tp, ex, "err");
+        testsZone.innerHTML = "";
+      } else {
+        rendreTests(testsZone, res.tests);
+        const ok = res.tests && res.tests.every((t) => t.ok);
+        if (res.tests && res.tests.length) {
+          statutSpan.textContent = ok ? "réussi" : "à revoir";
+          statutSpan.className = "statut " + (ok ? "ok" : "ko");
+          majPuce(tp, ex, ok ? "ok" : "ko");
+        } else {
+          statutSpan.textContent = "exécuté";
+          statutSpan.className = "statut ran";
+          majPuce(tp, ex, "ran");
+        }
+      }
+      stock[cle] = code;
+      sauverStock(stock);
+    }
+
+    // ----- construction des chapitres -----
+    const racine = document.querySelector(".chapitres");
+    const nav = document.querySelector(".chapitres-nav");
+    const pucesBarre = barre.querySelector(".puces");
+
+    TP_LIST.forEach((tp) => {
+      // onglet de navigation
+      const onglet = el("button", "onglet-chapitre", '<span class="oc-num">' + tp.num + "</span> " + esc(tp.emoji) + " " + esc(tp.titre_court || tp.titre));
+      onglet.dataset.tp = tp.id;
+      onglet.style.setProperty("--accent-onglet", tp.accent);
+      onglet.addEventListener("click", () => activerChapitre(tp.id));
+      nav.appendChild(onglet);
+
+      // contenu du chapitre
+      const chap = el("div", "chapitre");
+      chap.dataset.tp = tp.id;
+      chap.hidden = true;
+      chap.style.setProperty("--accent", tp.accent);
+
+      const objectifs = tp.objectifs.map((o) => "<li>" + esc(o) + "</li>").join("");
+      const cartouche = el("div", "cartouche");
+      cartouche.innerHTML =
+        '<div class="bandeau"><div class="tuile">' + esc(tp.emoji) + '</div><div>' +
+        '<div class="num">TP2 — Séance ' + tp.num + '</div><h1>' + esc(tp.titre) + '</h1>' +
+        '<p class="sous-titre">' + esc(tp.sous_titre) + "</p></div></div>" +
+        '<div class="contenu"><span class="duree">⏱ ' + esc(tp.duree) + '</span><ul class="objectifs">' + objectifs + '</ul>' +
+        '<div class="enonce">' + tp.intro_html + "</div></div>";
+      chap.appendChild(cartouche);
+
+      if (tp.prof_extra_html) {
+        chap.appendChild(el("div", "prof-banner", "Mode professeur : corrigés, notes pédagogiques et variante DST visibles pour cette séance."));
+      }
+
+      const listeEx = el("div", "exercices");
+      tp.exercices.forEach((ex) => {
+        const bloc = el("section", "exo" + (ex.kind === "defi" ? " defi" : ""));
+        bloc.id = tp.id + "-" + ex.id;
+        const tete = el("div", "exo-tete");
+        tete.innerHTML =
+          '<span class="etiquette">' + (ex.kind === "defi" ? "Défi" : "Exercice") + "</span>" +
+          "<h2>" + esc(ex.titre) + '</h2><span class="statut todo">à faire</span>';
+        bloc.appendChild(tete);
+        bloc.appendChild(el("div", "enonce", ex.enonce_html));
+
+        const editeurWrap = el("div", "zone-code");
+        const editeurDiv = el("div");
+        editeurWrap.appendChild(editeurDiv);
+        bloc.appendChild(editeurWrap);
+
+        const actions = el("div", "actions-ex");
+        const btnExec = el("button", "btn primaire btn-exec", "▶ Exécuter");
+        btnExec.disabled = true;
+        const btnReset = el("button", "btn discret", "↺ Réinitialiser l'énoncé");
+        actions.appendChild(btnExec);
+        actions.appendChild(btnReset);
+        if (EST_PROF && ex.solution) {
+          const btnCorr = el("button", "btn discret", "👁 Charger le corrigé");
+          btnCorr.addEventListener("click", () => editeur.setValue(ex.solution));
+          actions.appendChild(btnCorr);
+        }
+        actions.appendChild(el("span", "raccourci", "Ctrl+Entrée pour exécuter"));
+        bloc.appendChild(actions);
+
+        if (ex.aide_code) {
+          const secours = el("label", "secours");
+          secours.innerHTML = '<input type="checkbox"> 🆘 Utiliser une version fournie pour les fonctions précédentes dont j\'ai besoin ici (si je suis bloqué)';
+          bloc.appendChild(secours);
+        }
+
+        const lcd = el("div", "lcd");
+        lcd.innerHTML = '<div class="titre-lcd">Sortie du programme</div><pre style="display:none"></pre><span class="vide">(rien affiché pour l\'instant)</span>';
+        bloc.appendChild(lcd);
+        const erreurBox = el("div", "erreur-box");
+        erreurBox.style.display = "none";
+        bloc.appendChild(erreurBox);
+        const avertBox = el("div", "avert-box");
+        avertBox.style.display = "none";
+        bloc.appendChild(avertBox);
+        bloc.appendChild(el("div", "tests-zone"));
+
+        if (ex.visuel) {
+          const visuelDiv = el("div", "visuel");
+          bloc.appendChild(visuelDiv);
+          setTimeout(() => window.initVisuel(visuelDiv, engine, tp.id, ex), 0);
+        }
+
+        if (EST_PROF && ex.notes_prof) {
+          const profBloc = el("details", "prof-bloc");
+          profBloc.innerHTML =
+            "<summary>Notes pour le professeur</summary>" +
+            '<div class="notes">' + ex.notes_html + "</div>" +
+            "<p><strong>Corrigé :</strong></p><pre><code>" + ex.solution_html + "</code></pre>";
+          bloc.appendChild(profBloc);
+        }
+
+        listeEx.appendChild(bloc);
+
+        const cle = tp.id + "::" + ex.id;
+        const codeInitial = stock[cle] !== undefined ? stock[cle] : ex.starter;
+        const editeur = window.creerEditeur(editeurDiv, codeInitial);
+        editeurDiv.addEventListener("keydown", (e) => {
+          if ((e.ctrlKey || e.metaKey) && e.key === "Enter") {
+            e.preventDefault();
+            executer(tp, ex);
+          }
+        });
+        btnExec.addEventListener("click", () => executer(tp, ex));
+        btnReset.addEventListener("click", () => {
+          if (confirm("Revenir au code de départ de cet exercice ? Ton code actuel sera perdu.")) {
+            editeur.setValue(ex.starter);
+            delete stock[cle];
+            sauverStock(stock);
+          }
+        });
+
+        etats[cle] = { editor: editeur, el: bloc, ex, tp };
+      });
+      chap.appendChild(listeEx);
+
+      if (tp.prof_extra_html) {
+        const bloc = el("div", "cartouche");
+        bloc.innerHTML = '<div class="contenu">' + tp.prof_extra_html + "</div>";
+        chap.appendChild(bloc);
+      }
+
+      if (tp.lien_suite) {
+        chap.appendChild(el("div", "lien-suite",
+          "<p><strong>" + esc(tp.lien_suite.titre) + '</strong></p><p><a href="' + tp.lien_suite.href + '">' + esc(tp.lien_suite.texte) + " →</a></p>"));
+      }
+
+      racine.appendChild(chap);
+    });
+
+    function activerChapitre(tpId) {
+      const tp = TP_LIST.find((t) => t.id === tpId);
+      if (!tp) return;
+      chapitreActif = tpId;
+      document.documentElement.style.setProperty("--accent", tp.accent);
+      document.querySelectorAll(".chapitre").forEach((c) => (c.hidden = c.dataset.tp !== tpId));
+      document.querySelectorAll(".onglet-chapitre").forEach((o) => o.classList.toggle("actif", o.dataset.tp === tpId));
+      // puces : exercices du chapitre actif
+      pucesBarre.innerHTML = "";
+      tp.exercices.forEach((ex) => {
+        const a = el("a", "puce" + (ex.kind === "defi" ? " defi" : ""), esc(ex.abbr));
+        a.href = "#" + tp.id + "-" + ex.id;
+        a.title = ex.titre;
+        const cle = tp.id + "::" + ex.id;
+        puceEls[cle] = a;
+        pucesBarre.appendChild(a);
+      });
+      majNomFichier();
+      sauverChapitreCourant(tpId);
+      window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
+    }
+
+    const depart = (location.hash || "").replace("#", "");
+    const depTp = TP_LIST.find((t) => t.id === depart || depart.startsWith(t.id + "-"));
+    const memoire = chargerChapitreCourant();
+    const initial = (depTp && depTp.id) || (TP_LIST.find((t) => t.id === memoire) && memoire) || TP_LIST[0].id;
+    activerChapitre(initial);
+    if (depart && depart.includes("-")) {
+      setTimeout(() => {
+        const cible = document.getElementById(depart);
+        if (cible) cible.scrollIntoView({ block: "start" });
+      }, 50);
+    }
+
+    // ----- sauvegarde / chargement (portent sur le chapitre actif) -----
+    const btnSauver = document.querySelector(".btn-sauver");
+    const btnCharger = document.querySelector(".btn-charger");
+    const inputFichier = document.querySelector(".input-fichier");
+
+    btnSauver.addEventListener("click", () => {
+      const tp = TP_LIST.find((t) => t.id === chapitreActif);
+      const nom = champNom.value.trim(), prenom = champPrenom.value.trim();
+      if (!nom || !prenom) {
+        toast("Indique ton nom et ton prénom en haut de la page avant d'enregistrer.", true);
+        (nom ? champPrenom : champNom).focus();
+        return;
+      }
+      let contenu = "# TP2 — Piles et files — Séance " + tp.num + " : " + tp.titre + "\n# " + nom.toUpperCase() + " " + prenom + "\n\n";
+      tp.exercices.forEach((ex) => {
+        contenu += "# ===== [" + ex.id + "] " + ex.titre + " =====\n" + etats[tp.id + "::" + ex.id].editor.getValue().replace(/\s+$/, "") + "\n\n";
+      });
+      const nomF = nomFichier(tp, nom, prenom);
+      const blob = new Blob([contenu], { type: "text/x-python" });
+      const a = document.createElement("a");
+      a.href = URL.createObjectURL(blob);
+      a.download = nomF;
+      a.click();
+      setTimeout(() => URL.revokeObjectURL(a.href), 4000);
+      toast("Fichier enregistré : " + nomF);
+    });
+
+    btnCharger.addEventListener("click", () => inputFichier.click());
+    inputFichier.addEventListener("change", () => {
+      const f = inputFichier.files[0];
+      if (!f) return;
+      const tp = TP_LIST.find((t) => t.id === chapitreActif);
+      const reader = new FileReader();
+      reader.onload = () => {
+        const texte = String(reader.result);
+        const re = /#\s*=====\s*\[([a-zA-Z0-9]+)\][^\n]*=====\n([\s\S]*?)(?=\n#\s*=====\s*\[|$)/g;
+        let m, trouve = 0;
+        while ((m = re.exec(texte))) {
+          const id = m[1];
+          const cle = tp.id + "::" + id;
+          if (etats[cle]) {
+            etats[cle].editor.setValue(m[2].replace(/\s+$/, ""));
+            trouve++;
+          }
+        }
+        const mNom = texte.match(/^#.*?\n#\s*([A-ZÀ-Ý' -]+)\s+(\S+)/);
+        if (mNom) {
+          champNom.value = mNom[1].trim();
+          champPrenom.value = mNom[2].trim();
+          sauverIdentite({ nom: champNom.value, prenom: champPrenom.value });
+          majNomFichier();
+        }
+        toast(trouve ? trouve + " exercice(s) rechargé(s) depuis " + f.name + " (séance " + tp.num + ")" : "Aucun exercice de cette séance reconnu dans ce fichier. Ouvre d'abord la bonne séance.", !trouve);
+      };
+      reader.readAsText(f, "utf-8");
+      inputFichier.value = "";
+    });
+  });
+})();
+</script>
+</body>
+</html>
