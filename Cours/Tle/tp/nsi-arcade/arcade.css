@@ -1,0 +1,88 @@
+/* Scoped additions to the shared Terminale theme. No external fonts or assets. */
+.arcade{--level:#0969da}
+.arcade :focus-visible{outline:3px solid #8250df;outline-offset:4px}
+.arcade .arcade-nav{height:auto;min-height:60px;flex-wrap:wrap;padding:12px 24px;gap:12px}
+.arcade .arcade-nav .nav-links{flex-wrap:wrap;display:flex;position:static;background:none;border:none;padding:0}
+.arcade .arcade-nav a{font-size:.85rem}
+.arcade .hero{padding:3.5rem 1rem 2rem}
+.arcade .hero h1{font-size:clamp(2rem,5vw,3.3rem)}
+.arcade .hero-label{margin-bottom:1rem}
+.arcade .route{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:1rem 0;font-family:var(--font-mono);font-size:.85rem}
+.arcade .route a{padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg)}
+.arcade .chapters-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:1.5rem}
+.arcade .chapter-card{padding:1.15rem}
+.arcade .chapter-card-title{font-size:1rem}
+.arcade .chapter-card-icon{font-size:2rem}
+.arcade .level-number{font-family:var(--font-mono);font-size:.75rem;color:var(--text2);letter-spacing:.08em}
+.arcade .locked{padding:12px 16px;border:1px dashed var(--border);border-radius:8px;color:var(--text2);font-size:.9rem}
+.arcade .level{border-top:2px solid var(--level);padding-top:2rem;margin-top:3rem;scroll-margin-top:100px}
+.arcade .level-heading{display:flex;gap:1rem;align-items:center;flex-wrap:wrap}
+.arcade .level-heading h2{margin:0;font-family:var(--font-mono);font-size:clamp(1.2rem,3vw,1.8rem)}
+.arcade .level-heading .chapter-badge{margin-left:auto}
+.arcade .lead{max-width:75ch;color:var(--text2);margin-top:1rem}
+.arcade .demo{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem;margin:1rem 0 2rem}
+.arcade .demo h3{margin-top:0}
+.arcade .demo-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+.arcade .demo-layout>*{min-width:0}
+.arcade p code{overflow-wrap:anywhere}
+.arcade .controls{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:1rem 0}
+.arcade button,.arcade select,.arcade .download{font:inherit;font-size:.86rem;padding:9px 13px;min-height:42px;border:1px solid var(--border);border-radius:6px;background:var(--bg);color:var(--text);cursor:pointer}
+.arcade button:hover,.arcade .download:hover{border-color:var(--accent);background:#eaf3ff}
+.arcade button.primary{background:var(--accent);color:white;border-color:var(--accent)}
+.arcade button:disabled{opacity:.48;cursor:not-allowed}
+.arcade button[aria-pressed="true"]{border:2px solid var(--purple);background:#f1eaff}
+.arcade .status{min-height:3.5em;font-size:.9rem;font-weight:600;margin:.75rem 0}
+.arcade .python-state{display:block;white-space:pre-wrap;overflow-wrap:anywhere;background:#101c30;color:#d8e8ff;border-radius:8px;padding:1rem;font: .86rem/1.7 var(--font-mono);margin:1rem 0}
+.arcade .legend{display:flex;flex-wrap:wrap;gap:8px;font-size:.78rem;margin-top:.75rem}
+.arcade .legend span{border-radius:4px;padding:3px 7px;border:1px solid #b5c1d0}
+.arcade .board{display:grid;gap:3px;aspect-ratio:1;max-width:420px;width:100%;background:#dae2eb;padding:5px;border-radius:10px;grid-template-columns:repeat(10,1fr)}
+.arcade .cell{display:flex;align-items:center;justify-content:center;min-width:0;border-radius:3px;background:white;font:.72rem var(--font-mono);color:#24334a}
+.arcade .cell.snake{background:#b7ddcd}
+.arcade .cell.head,.arcade .legend .head{background:#155e50;color:white}
+.arcade .cell.removed,.arcade .legend .removed{background:#fff2df;border:2px dashed #9a6700}
+.arcade .cell.apple{background:#ffe3e0}
+.arcade .cell.wall{background:#24334a}
+.arcade .cell.visited,.arcade .legend .visited{background:#cbdcf0}
+.arcade .cell.frontier,.arcade .legend .frontier{background:#f9d882}
+.arcade .cell.path{background:#b6dfc6}
+.arcade .cell.current,.arcade .legend .current{background:#5d38a2;color:white}
+.arcade .cell.exit,.arcade .legend .exit{outline:2px solid #167346;outline-offset:-2px;font-weight:bold}
+.arcade .maze{grid-template-columns:repeat(11,1fr);aspect-ratio:11/7;max-width:550px}
+.arcade .queue{display:flex;gap:5px;overflow-x:auto;padding:10px 2px;min-height:66px}
+.arcade .card{background:white;border:1px solid var(--border);border-radius:5px;min-width:38px;padding:9px 4px;text-align:center;font:.85rem var(--font-mono)}
+.arcade .card:first-child{border:2px solid var(--accent)}
+.arcade .red-card{color:#b41d2d}
+.arcade .queue-label{font:.8rem var(--font-mono)}
+.arcade .towers{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.arcade .tower{height:230px;display:flex;flex-direction:column;justify-content:flex-end;align-items:center;gap:5px;position:relative;background:linear-gradient(90deg,transparent calc(50% - 3px),#b4becd calc(50% - 3px),#b4becd calc(50% + 3px),transparent calc(50% + 3px))!important;padding:10px 4px 30px}
+.arcade .tower::after{content:attr(data-label);position:absolute;bottom:0;left:0;right:0;background:var(--bg3);font-weight:bold}
+.arcade .disk{display:block;border-radius:5px;height:25px;line-height:25px;color:white;font-weight:bold;z-index:1}
+.arcade .missions{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:1.5rem;align-items:start}
+.arcade .mission{padding:1rem 0;border-bottom:1px solid var(--border)}
+.arcade .mission h3{margin:0 0 .6rem;font-size:1.05rem}
+.arcade .mission p{font-size:.94rem}
+.arcade .mission label{display:flex;align-items:center;gap:10px;font-size:.83rem;color:var(--text2)}
+.arcade input[type="checkbox"]{width:19px;height:19px;accent-color:var(--accent)}
+.arcade .hint-output{font-size:.9rem;border-left:3px solid var(--purple);padding:.7rem 1rem;margin-top:.6rem;background:#f3effa}
+.arcade .hint-output p:last-child{margin-bottom:0}
+.arcade details{margin:1rem 0;border:1px solid var(--border);border-radius:8px;padding:1rem}
+.arcade summary{cursor:pointer;font-weight:600}
+.arcade details p{margin:1rem 0 0}
+.arcade .code-panel{min-width:0}
+.arcade .code-panel pre{max-height:530px;margin-top:.5rem}
+.arcade .code-panel pre code{font-size:.8rem}
+.arcade .code-actions{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.arcade .token-comment{color:#58715d;font-style:italic}
+.arcade .token-keyword{color:#8250df;font-weight:bold}
+.arcade .token-string{color:#095c38}
+.arcade .token-number{color:#0550ae}
+.arcade .callout{display:block;font-size:.92rem}
+.arcade .callout strong{display:block;margin-bottom:5px}
+.arcade .callout p:last-child{margin-bottom:0}
+.arcade progress{width:200px;max-width:100%;accent-color:var(--accent);height:12px}
+.arcade .progress-summary{display:flex;align-items:center;flex-wrap:wrap;gap:12px;font-size:.85rem;margin-bottom:1rem}
+.arcade .skip{position:absolute;left:0;top:-100px;background:white;padding:1rem;z-index:200}
+.arcade .skip:focus{top:0}
+@media(max-width:950px){.arcade .chapters-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.arcade .missions{grid-template-columns:1fr}}
+@media(max-width:640px){.arcade .arcade-nav{position:static;padding:12px}.arcade .arcade-nav .nav-links{width:100%}.arcade .container{padding:1.5rem 1rem}.arcade .demo-layout{grid-template-columns:1fr}.arcade .demo{padding:.8rem}.arcade .chapters-grid{gap:.7rem}.arcade .chapter-card{padding:.8rem}.arcade .chapter-card-title{font-size:.83rem;overflow-wrap:anywhere}.arcade .tower{height:200px}.arcade .towers{gap:6px}.arcade .level-heading .chapter-badge{margin-left:0}.arcade .level{scroll-margin-top:15px}.arcade .hero{padding-top:2rem}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.arcade *{transition:none!important}}

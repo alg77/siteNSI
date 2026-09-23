@@ -1,0 +1,607 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>NSI Arcade — Piles &amp; Files · Terminale</title>
+  <meta name="description" content="Quatre TP Python progressifs : Bataille, Snake, Hanoï et labyrinthe. Manipuler, raisonner, coder et tester les piles et les files.">
+  <link rel="stylesheet" href="../../css/style.css">
+  <link rel="stylesheet" href="arcade.css">
+  <script src="engine.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body class="arcade">
+<a class="skip" href="#parcours">Aller au parcours</a>
+<nav class="arcade-nav" aria-label="Navigation principale">
+  <a class="nav-brand" href="../../index.html">← NSI <span>Terminale</span></a>
+  <div class="nav-links"><a href="#parcours">Les niveaux</a><a href="#bataille">Bataille</a><a href="#snake">Snake</a><a href="#hanoi">Hanoï</a><a href="#escape">Labyrinthe</a></div>
+  <span class="nav-badge">TERMINALE · PYTHON</span>
+</nav>
+<header class="hero">
+  <div class="hero-grid" aria-hidden="true"></div>
+  <div class="hero-content">
+    <div class="hero-label">INSERT COIN ? NON, ÉCRIS DU CODE.</div>
+    <h1>NSI Arcade<br><span>Piles &amp; Files</span></h1>
+    <p>Quatre jeux, deux structures, une nouvelle façon de résoudre des problèmes.</p>
+    <div class="route" aria-label="Démarche pédagogique"><span>Observer</span> → <span>Comprendre</span> → <span>Choisir</span> → <span>Coder</span> → <span>Tester</span></div>
+  </div>
+</header>
+<main class="container" id="parcours">
+  <div class="progress-summary"><strong id="progress-text">0 mission validée</strong><progress id="progress" value="0" max="19" aria-label="Missions validées"></progress><span id="storage-note">Progression conservée sur ce navigateur uniquement.</span><button id="clear-progress" type="button">Effacer mes coches</button></div>
+  <div class="chapters-grid">
+    <a class="chapter-card" href="#bataille" style="--card-color:#0969da"><span class="level-number">NIVEAU 01 · ★☆☆</span><span class="chapter-card-icon">🃏</span><span class="chapter-card-title">BATAILLE.PY</span><span class="chapter-card-desc">La première carte jouée… revient à la fin.</span><span class="chapter-tag">FILE / FIFO</span></a>
+    <a class="chapter-card" href="#snake" style="--card-color:#167346"><span class="level-number">NIVEAU 02 · ★★☆</span><span class="chapter-card-icon">🐍</span><span class="chapter-card-title">SNAKE.PY</span><span class="chapter-card-desc">Observe le corps. À toi de trouver le modèle.</span><span class="chapter-tag">FILE / FIFO</span></a>
+    <a class="chapter-card" href="#hanoi" style="--card-color:#8250df"><span class="level-number">NIVEAU 03 · ★★☆</span><span class="chapter-card-icon">🗼</span><span class="chapter-card-title">HANOI.PY</span><span class="chapter-card-desc">Déplace des disques, puis pense récursivement.</span><span class="chapter-tag">PILE / LIFO + récursivité</span></a>
+    <a class="chapter-card" href="#escape" style="--card-color:#9a6700"><span class="level-number">BOSS FINAL · ★★★</span><span class="chapter-card-icon">🧩</span><span class="chapter-card-title">ESCAPE_NSI.PY</span><span class="chapter-card-desc">Deux façons d'explorer. Une sortie à trouver.</span><span class="chapter-tag">PILE + FILE / DFS + BFS</span></a>
+  </div>
+  <div class="locked">🔒 <strong>Défi Bac — Parenthésage</strong> · Réservé à un futur entraînement ou DST.</div>
+  <div class="callout callout-info"><strong>🤔 Avant de coder</strong><p>Observe la démo, fais une prédiction sur papier, puis écris ton algorithme avant d'ouvrir un indice. Les démonstrations sont des modèles à expliquer : ton programme Python reste à construire dans ton IDE. Coche une mission seulement lorsque tu sais justifier et tester ton code.</p></div>
+  <noscript><p>Active JavaScript pour utiliser les démonstrations et les indices. Les consignes et les fichiers Python restent accessibles.</p></noscript>
+
+  <section class="level" id="bataille" style="--level:#0969da" aria-labelledby="bataille-title">
+    <div class="level-heading"><h2 id="bataille-title">01 / 🃏 BATAILLE.PY</h2><span class="chapter-badge badge-blue">FILE · FIFO · ★☆☆</span></div>
+    <p class="lead">Alice et Bob jouent la première carte de leur paquet. Le gagnant ajoute les cartes jouées à la fin du sien. Comment conserver cet ordre ?</p>
+    <div class="demo">
+      <h3>Deux paquets, deux files</h3>
+      <p>Début à gauche → fin à droite. Les 8 prochaines cartes sont visibles ; les compteurs portent sur les files entières.</p>
+      <div class="demo-layout"><div><div class="queue-label" id="alice-count"></div><div class="queue" id="alice-queue" aria-label="File d'Alice"></div><div class="queue-label" id="bob-count"></div><div class="queue" id="bob-queue" aria-label="File de Bob"></div></div><div><div class="python-state" id="battle-played"></div><p id="battle-status" class="status" role="status"></p><p id="battle-pot"></p></div></div>
+      <div class="controls"><button id="battle-step" class="primary">Jouer un tour</button><button id="battle-play">▶ Partie automatique</button><button id="battle-pause" disabled>Pause</button><button id="battle-reset">Mélanger / recommencer</button><button id="battle-tie">Observer une égalité</button></div>
+      <details><summary>Règle de bataille utilisée</summary><p>Une égalité laisse les cartes au centre. Chaque joueur pose une carte cachée, puis compare la suivante au prochain tour. On répète si nécessaire. Pour poursuivre, il faut donc au moins deux cartes chacun. Si un joueur ne peut pas continuer, celui qui conserve le plus de cartes gagne l'enjeu et la partie ; à égalité d'effectif, le résultat est nul. Le gagnant reçoit l'enjeu dans l'ordre où les cartes ont été déposées : Alice puis Bob à chaque dépôt.</p></details>
+      <p>La démo s'arrête après 1 000 comparaisons si nécessaire : certaines parties peuvent être très longues ou cycliques.</p>
+    </div>
+    <div class="missions"><div>
+      <article class="mission"><h3>Mission 1 — Créer le paquet</h3><p>Représente une carte par <code>(valeur, couleur)</code>, avec 2 à 14 pour la valeur, et quatre couleurs. Construis 52 cartes, mélange-les puis distribue deux files de 26 cartes. Vérifie qu'aucune carte n'est perdue ou dupliquée.</p><div data-hints="b1"></div><label><input type="checkbox" data-mission="b1">Je sais créer et distribuer le paquet.</label></article>
+      <article class="mission"><h3>Mission 2 — Programmer une file</h3><p>Complète <code>enfiler</code>, <code>defiler</code> et <code>est_vide</code>. Le début de liste contient la prochaine carte à jouer. Teste une file vide, une file d'un élément et plusieurs ajouts/retraits successifs.</p><div data-hints="b2"></div><label><input type="checkbox" data-mission="b2">Mes trois fonctions préservent l'ordre FIFO.</label></article>
+      <article class="mission"><h3>Mission 3 — Jouer un tour</h3><p>Retire une carte de chaque file, compare leurs valeurs et ajoute l'enjeu chez le gagnant. Affiche le numéro du tour, les deux cartes, le gagnant du pli et les tailles des files. Vérifie que <code>len(alice) + len(bob) + len(enjeu) == 52</code>.</p><div data-hints="b3"></div><label><input type="checkbox" data-mission="b3">Un tour sans égalité fonctionne.</label></article>
+      <article class="mission"><h3>Mission 4 — La bataille</h3><p>Applique la règle de la démo. L'enjeu doit survivre d'un tour au suivant. Fabrique un petit paquet de test qui force deux égalités consécutives, puis un cas où il manque des cartes.</p><div data-hints="b4"></div><label><input type="checkbox" data-mission="b4">J'ai testé les égalités et les fins de partie.</label></article>
+      <article class="mission"><h3>Mission 5 — Partie automatique</h3><p>Répète les tours jusqu'à ce qu'une file soit vide ou qu'un résultat terminal soit annoncé. Compte les tours et ajoute une limite de sécurité : une interruption n'est pas une victoire.</p><div data-hints="b5"></div><label><input type="checkbox" data-mission="b5">Ma boucle s'arrête correctement.</label></article>
+      <details><summary>🧠 À retenir — après tes essais</summary><p>Une file suit l'ordre FIFO : First In, First Out. Le premier arrivé est le premier sorti. Avec une liste Python, retirer à l'indice 0 décale les éléments : coût linéaire. L'interface abstraite d'une file n'impose pas cette implémentation ; <code>collections.deque</code> permet des opérations aux extrémités en temps constant.</p></details>
+      <div class="callout callout-purple"><strong>🏆 Bonus</strong><p>Lance 100 parties. Calcule la moyenne des tours des parties terminées, repère la plus longue et compte séparément les parties interrompues. Compare plusieurs mélanges.</p></div>
+    </div><aside class="code-panel" data-source="bataille"><h3>Ton atelier Python</h3><p>Bibliothèque standard seulement. Les fonctions essentielles restent à compléter.</p><div class="code-actions"><button type="button" data-copy>Copier le fichier complet</button><a class="download" href="python/bataille.py" download="bataille.py">↓ Télécharger bataille.py</a></div>
+<pre><code>&quot;&quot;&quot;NSI Arcade — Bataille. Python 3, bibliothèque standard uniquement.
+Lancer dans son IDE. Compléter les TODO mission par mission.
+Convention : début de liste = prochain élément à sortir.
+&quot;&quot;&quot;
+from random import shuffle
+
+
+def creer_paquet():
+    # Mission 1. Carte = (valeur, couleur) ; valeurs de 2 à 14 (As).
+    # TODO : à compléter — construire les 52 tuples.
+    raise NotImplementedError(&quot;Mission 1 : créer le paquet&quot;)
+
+
+def distribuer(paquet):
+    # TODO : à compléter — mélanger puis renvoyer deux listes de 26 cartes.
+    raise NotImplementedError(&quot;Mission 1 : distribuer&quot;)
+
+
+def enfiler(file, element):
+    # TODO : à compléter — ajouter sans changer l&#x27;ordre des autres cartes.
+    raise NotImplementedError(&quot;Mission 2 : enfiler&quot;)
+
+
+def defiler(file):
+    # TODO : à compléter — retirer ET renvoyer la prochaine carte.
+    # Lever ValueError si la file est vide.
+    raise NotImplementedError(&quot;Mission 2 : défiler&quot;)
+
+
+def est_vide(file):
+    # TODO : à compléter
+    raise NotImplementedError(&quot;Mission 2 : tester le vide&quot;)
+
+
+def nom_carte(carte):
+    valeur, couleur = carte
+    noms = {11: &quot;Valet&quot;, 12: &quot;Dame&quot;, 13: &quot;Roi&quot;, 14: &quot;As&quot;}
+    return f&quot;{noms.get(valeur, valeur)} {couleur}&quot;
+
+
+def jouer_tour(alice, bob, enjeu):
+    &quot;&quot;&quot;Modifie les trois listes. Renvoie &#x27;Alice&#x27;, &#x27;Bob&#x27;, &#x27;nul&#x27; ou None.
+    Un tour = une comparaison de deux cartes visibles.
+    Enjeu conserve les cartes des égalités successives.
+    &quot;&quot;&quot;
+    # Mission 3 : défiler une carte chacun, comparer les valeurs,
+    # afficher les cartes, puis enfiler l&#x27;enjeu chez le gagnant.
+    # Mission 4 : égalité -&gt; une carte cachée chacun, puis prochain tour.
+    # S&#x27;il manque des cartes pour continuer : le joueur qui en a le plus
+    # gagne l&#x27;enjeu et la partie ; même nombre -&gt; match nul.
+    # TODO : à compléter
+    raise NotImplementedError(&quot;Missions 3 et 4 : jouer un tour&quot;)
+
+
+def partie(limite=10000):
+    alice, bob = distribuer(creer_paquet())
+    enjeu = []
+    tours = 0
+    # Mission 5 : répéter les tours tant que les deux files sont non vides,
+    # qu&#x27;aucun résultat terminal n&#x27;est annoncé et que tours &lt; limite.
+    # Afficher le compteur et les tailles des files à chaque tour.
+    # À la limite : annoncer &#x27;partie interrompue&#x27;, jamais un faux gagnant.
+    # TODO : à compléter
+    raise NotImplementedError(&quot;Mission 5 : boucle de partie&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    try:
+        partie()
+    except NotImplementedError as erreur:
+        print(erreur)
+        print(&quot;Complète cette mission puis relance le programme.&quot;)
+</code></pre><textarea hidden aria-label="Code Python complet à copier" spellcheck="false">&quot;&quot;&quot;NSI Arcade — Bataille. Python 3, bibliothèque standard uniquement.
+Lancer dans son IDE. Compléter les TODO mission par mission.
+Convention : début de liste = prochain élément à sortir.
+&quot;&quot;&quot;
+from random import shuffle
+
+
+def creer_paquet():
+    # Mission 1. Carte = (valeur, couleur) ; valeurs de 2 à 14 (As).
+    # TODO : à compléter — construire les 52 tuples.
+    raise NotImplementedError(&quot;Mission 1 : créer le paquet&quot;)
+
+
+def distribuer(paquet):
+    # TODO : à compléter — mélanger puis renvoyer deux listes de 26 cartes.
+    raise NotImplementedError(&quot;Mission 1 : distribuer&quot;)
+
+
+def enfiler(file, element):
+    # TODO : à compléter — ajouter sans changer l&#x27;ordre des autres cartes.
+    raise NotImplementedError(&quot;Mission 2 : enfiler&quot;)
+
+
+def defiler(file):
+    # TODO : à compléter — retirer ET renvoyer la prochaine carte.
+    # Lever ValueError si la file est vide.
+    raise NotImplementedError(&quot;Mission 2 : défiler&quot;)
+
+
+def est_vide(file):
+    # TODO : à compléter
+    raise NotImplementedError(&quot;Mission 2 : tester le vide&quot;)
+
+
+def nom_carte(carte):
+    valeur, couleur = carte
+    noms = {11: &quot;Valet&quot;, 12: &quot;Dame&quot;, 13: &quot;Roi&quot;, 14: &quot;As&quot;}
+    return f&quot;{noms.get(valeur, valeur)} {couleur}&quot;
+
+
+def jouer_tour(alice, bob, enjeu):
+    &quot;&quot;&quot;Modifie les trois listes. Renvoie &#x27;Alice&#x27;, &#x27;Bob&#x27;, &#x27;nul&#x27; ou None.
+    Un tour = une comparaison de deux cartes visibles.
+    Enjeu conserve les cartes des égalités successives.
+    &quot;&quot;&quot;
+    # Mission 3 : défiler une carte chacun, comparer les valeurs,
+    # afficher les cartes, puis enfiler l&#x27;enjeu chez le gagnant.
+    # Mission 4 : égalité -&gt; une carte cachée chacun, puis prochain tour.
+    # S&#x27;il manque des cartes pour continuer : le joueur qui en a le plus
+    # gagne l&#x27;enjeu et la partie ; même nombre -&gt; match nul.
+    # TODO : à compléter
+    raise NotImplementedError(&quot;Missions 3 et 4 : jouer un tour&quot;)
+
+
+def partie(limite=10000):
+    alice, bob = distribuer(creer_paquet())
+    enjeu = []
+    tours = 0
+    # Mission 5 : répéter les tours tant que les deux files sont non vides,
+    # qu&#x27;aucun résultat terminal n&#x27;est annoncé et que tours &lt; limite.
+    # Afficher le compteur et les tailles des files à chaque tour.
+    # À la limite : annoncer &#x27;partie interrompue&#x27;, jamais un faux gagnant.
+    # TODO : à compléter
+    raise NotImplementedError(&quot;Mission 5 : boucle de partie&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    try:
+        partie()
+    except NotImplementedError as erreur:
+        print(erreur)
+        print(&quot;Complète cette mission puis relance le programme.&quot;)
+</textarea></aside></div>
+  </section>
+
+  <section class="level" id="snake" style="--level:#167346" aria-labelledby="snake-title">
+    <div class="level-heading"><h2 id="snake-title">02 / 🐍 SNAKE.PY</h2><span class="chapter-badge badge-green">OBSERVER → MODÉLISER · ★★☆</span></div>
+    <p class="lead">Observe ce qui arrive aux différentes cases du serpent lorsqu'il avance. Quelle structure de données étudiée pourrait modéliser ce comportement ? Justifie ta réponse avant de coder.</p>
+    <div class="demo">
+      <h3>Une tête arrive. Que devient la queue ?</h3>
+      <div class="demo-layout"><div><div id="snake-board" class="board" role="img" aria-label="Grille du Snake"></div><div class="legend"><span class="head">T = nouvelle tête</span><span class="removed">× = queue retirée</span><span>🍎 = pomme</span></div></div><div><p>Coordonnées <code>(ligne, colonne)</code>, de 0 à 9. La liste est affichée dans l'ordre queue → tête.</p><div class="python-state" id="snake-state"></div><p id="snake-status" class="status" role="status"></p><div class="controls"><button id="snake-step" class="primary">Un déplacement →</button><button id="snake-play">▶ Lecture</button><button id="snake-pause" disabled>Pause</button><button id="snake-apple">Scénario « pomme mangée »</button><button id="snake-reset">Recommencer</button></div><p>Le scénario pomme repart de la même position et place une pomme juste devant la tête : prédis la liste, puis avance d'un pas. La démo va vers la droite jusqu'au mur ; le squelette Python permet de tourner.</p></div></div>
+    </div>
+    <div class="missions"><div>
+      <article class="mission"><h3>Mission 1 — Trouver la représentation</h3><p>Pars de <code>[(5, 3), (5, 4), (5, 5), (5, 6)]</code>. Écris la liste attendue après deux déplacements à droite, puis après un déplacement avec une pomme. Identifie l'élément le plus ancien.</p><div data-hints="s1"></div><label><input type="checkbox" data-mission="s1">J'explique le lien entre la liste et le corps.</label></article>
+      <article class="mission"><h3>Mission 2 — Calculer la nouvelle tête</h3><p>Écris <code>nouvelle_tete(serpent, direction)</code>. La direction est un tuple : haut <code>(-1, 0)</code>, droite <code>(0, 1)</code>, bas <code>(1, 0)</code>, gauche <code>(0, -1)</code>. Teste les quatre directions sans modifier le serpent.</p><div data-hints="s2"></div><label><input type="checkbox" data-mission="s2">Le calcul des coordonnées fonctionne.</label></article>
+      <article class="mission"><h3>Mission 3 — Avancer et grandir</h3><p>Complète <code>deplacer(serpent, tete, grandit)</code>. Sans pomme, la longueur doit rester constante. Avec une pomme, elle augmente de un. Distingue bien calculer une tête et modifier le corps.</p><div data-hints="s3"></div><label><input type="checkbox" data-mission="s3">Déplacement et croissance passent mes tests.</label></article>
+      <article class="mission"><h3>Mission 4 — Placer une pomme</h3><p>Construis les coordonnées libres, puis choisis-en une au hasard. Une pomme ne doit jamais apparaître sur le serpent. Que renvoyer si toutes les cases sont occupées ? Le contrat prévoit <code>None</code>.</p><div data-hints="s4"></div><label><input type="checkbox" data-mission="s4">Mes pommes apparaissent sur des cases libres.</label></article>
+      <article class="mission"><h3>Mission 5 — Détecter les collisions</h3><p>Écris <code>collision(serpent, tete, grandit)</code>. Teste les quatre murs, un contact avec le corps et le déplacement vers la case de la queue lorsque celle-ci va disparaître. Ensuite seulement, lance le jeu complet.</p><div data-hints="s5"></div><label><input type="checkbox" data-mission="s5">Mes collisions couvrent les cas limites.</label></article>
+      <div class="callout callout-warning"><strong>⚠️ Attention</strong><p>Teste la collision avant de modifier le corps. Sans croissance, la queue libère sa case : elle ne constitue donc plus un obstacle au prochain état.</p></div>
+      <details><summary>🧠 À retenir — quelle structure as-tu reconnue ?</summary><p>Les cases du corps suivent l'ordre FIFO : une nouvelle position entre côté tête, la plus ancienne sort côté queue. Le corps se modélise donc par une file. Manger suspend un retrait, ce qui augmente sa longueur. Les tests de collision demandent aussi de consulter les positions du corps.</p></details>
+      <div class="callout callout-purple"><strong>🏆 Bonus</strong><p>Ajoute un score, une vitesse progressive, des obstacles ou la téléportation sur les bords. Puis un meilleur score local, ou un mode deux joueurs. Définis les règles avant de modifier le programme.</p></div>
+    </div><aside class="code-panel" data-source="snake"><h3>Le graphisme est déjà prêt</h3><p>Télécharge le fichier complet et ouvre-le dans ton IDE Python. L'interface utilise <code>tkinter</code>, généralement fourni avec Python sur les postes du lycée. Pas de paquet à installer via pip. Si Tkinter manque sur un poste, les fonctions restent testables dans un fichier séparé.</p><p>L'interface s'ouvre avant que les TODO soient complétés ; elle indique la prochaine fonction à écrire au démarrage. L'aperçu ci-dessous montre uniquement l'algorithmique.</p><div class="code-actions"><button type="button" data-copy>Copier le fichier complet</button><a class="download" href="python/snake.py" download="snake.py">↓ Télécharger snake.py</a></div>
+<pre><code>&quot;&quot;&quot;NSI Arcade — Snake. Python 3 + tkinter (habituellement fourni avec Python).
+Exécuter localement : python snake.py. Aucune installation pip nécessaire.
+Les coordonnées sont (ligne, colonne). Queue au début, tête à la fin.
+L&#x27;interface est fournie ; les fonctions algorithmiques restent à compléter.
+&quot;&quot;&quot;
+import random
+import tkinter as tk
+
+TAILLE = 12
+CASE = 30
+DELAI = 180
+
+
+def nouvelle_tete(serpent, direction):
+    # direction est un tuple (delta_ligne, delta_colonne).
+    # TODO : à compléter — renvoyer un tuple, sans modifier serpent.
+    raise NotImplementedError(&quot;Mission 2 : calculer la nouvelle tête&quot;)
+
+
+def deplacer(serpent, tete, grandit):
+    # TODO : à compléter — modifier serpent, conserver la queue si grandit.
+    raise NotImplementedError(&quot;Mission 3 : déplacement et croissance&quot;)
+
+
+def placer_pomme(serpent):
+    # TODO : à compléter — choisir une case libre avec random.choice.
+    # Renvoyer None si la grille est entièrement occupée.
+    raise NotImplementedError(&quot;Mission 4 : placer une pomme&quot;)
+
+
+def collision(serpent, tete, grandit):
+    # TODO : à compléter — booléen : mur ou corps du serpent ?
+    # Si le serpent ne grandit pas, sa queue va libérer sa case.
+    raise NotImplementedError(&quot;Mission 5 : détecter les collisions&quot;)
+
+
+</code></pre><textarea hidden aria-label="Code Python complet à copier" spellcheck="false">&quot;&quot;&quot;NSI Arcade — Snake. Python 3 + tkinter (habituellement fourni avec Python).
+Exécuter localement : python snake.py. Aucune installation pip nécessaire.
+Les coordonnées sont (ligne, colonne). Queue au début, tête à la fin.
+L&#x27;interface est fournie ; les fonctions algorithmiques restent à compléter.
+&quot;&quot;&quot;
+import random
+import tkinter as tk
+
+TAILLE = 12
+CASE = 30
+DELAI = 180
+
+
+def nouvelle_tete(serpent, direction):
+    # direction est un tuple (delta_ligne, delta_colonne).
+    # TODO : à compléter — renvoyer un tuple, sans modifier serpent.
+    raise NotImplementedError(&quot;Mission 2 : calculer la nouvelle tête&quot;)
+
+
+def deplacer(serpent, tete, grandit):
+    # TODO : à compléter — modifier serpent, conserver la queue si grandit.
+    raise NotImplementedError(&quot;Mission 3 : déplacement et croissance&quot;)
+
+
+def placer_pomme(serpent):
+    # TODO : à compléter — choisir une case libre avec random.choice.
+    # Renvoyer None si la grille est entièrement occupée.
+    raise NotImplementedError(&quot;Mission 4 : placer une pomme&quot;)
+
+
+def collision(serpent, tete, grandit):
+    # TODO : à compléter — booléen : mur ou corps du serpent ?
+    # Si le serpent ne grandit pas, sa queue va libérer sa case.
+    raise NotImplementedError(&quot;Mission 5 : détecter les collisions&quot;)
+
+
+# ---------- Interface fournie : aucune modification nécessaire ----------
+class Jeu:
+    def __init__(self, fenetre):
+        self.fenetre = fenetre
+        fenetre.title(&quot;NSI Arcade — Snake&quot;)
+        self.canvas = tk.Canvas(fenetre, width=TAILLE * CASE,
+                                height=TAILLE * CASE, bg=&quot;#edf3fa&quot;)
+        self.canvas.pack(padx=12, pady=12)
+        self.message = tk.StringVar()
+        tk.Label(fenetre, textvariable=self.message, wraplength=360).pack()
+        tk.Button(fenetre, text=&quot;Démarrer / reprendre&quot;, command=self.demarrer).pack()
+        tk.Button(fenetre, text=&quot;Pause&quot;, command=self.pause).pack()
+        tk.Button(fenetre, text=&quot;Recommencer&quot;, command=self.reinitialiser).pack()
+        for touche, direction in {&quot;Up&quot;: (-1, 0), &quot;Right&quot;: (0, 1),
+                                  &quot;Down&quot;: (1, 0), &quot;Left&quot;: (0, -1)}.items():
+            fenetre.bind(f&quot;&lt;{touche}&gt;&quot;, lambda e, d=direction: self.orienter(d))
+        self.tache = None
+        self.reinitialiser()
+
+    def pause(self):
+        if self.tache is not None:
+            self.fenetre.after_cancel(self.tache)
+            self.tache = None
+
+    def reinitialiser(self):
+        self.pause()
+        self.serpent = [(5, 3), (5, 4), (5, 5), (5, 6)]
+        self.direction = (0, 1)
+        self.prochaine_direction = self.direction
+        self.pomme = (5, 8)  # Première pomme fournie pour tester le mouvement.
+        self.termine = False
+        self.message.set(&quot;Flèches : direction. Complète les TODO puis démarre.&quot;)
+        self.dessiner()
+
+    def orienter(self, direction):
+        if direction != (-self.direction[0], -self.direction[1]):
+            self.prochaine_direction = direction
+
+    def demarrer(self):
+        if self.tache is None and not self.termine:
+            self.tick()
+
+    def tick(self):
+        self.tache = None
+        try:
+            self.direction = self.prochaine_direction
+            tete = nouvelle_tete(self.serpent, self.direction)
+            grandit = tete == self.pomme
+            if collision(self.serpent, tete, grandit):
+                self.termine = True
+                self.message.set(&quot;Collision ! Recommence pour tester un autre cas.&quot;)
+                return
+            deplacer(self.serpent, tete, grandit)
+            if grandit:
+                self.pomme = placer_pomme(self.serpent)
+            self.dessiner()
+            if self.pomme is None:
+                self.termine = True
+                self.message.set(&quot;Grille remplie !&quot;)
+                return
+            self.message.set(f&quot;Longueur : {len(self.serpent)} — flèches pour tourner&quot;)
+        except NotImplementedError as erreur:
+            self.message.set(str(erreur))
+            return
+        except Exception as erreur:
+            self.message.set(f&quot;À déboguer : {type(erreur).__name__} : {erreur}&quot;)
+            return
+        self.tache = self.fenetre.after(DELAI, self.tick)
+
+    def dessiner(self):
+        self.canvas.delete(&quot;all&quot;)
+        for i in range(TAILLE + 1):
+            self.canvas.create_line(i * CASE, 0, i * CASE, TAILLE * CASE, fill=&quot;#cdd8e5&quot;)
+            self.canvas.create_line(0, i * CASE, TAILLE * CASE, i * CASE, fill=&quot;#cdd8e5&quot;)
+        for index, (ligne, colonne) in enumerate(self.serpent):
+            couleur = &quot;#155e50&quot; if index == len(self.serpent) - 1 else &quot;#80bea5&quot;
+            self.canvas.create_rectangle(colonne * CASE + 2, ligne * CASE + 2,
+                                         (colonne + 1) * CASE - 2, (ligne + 1) * CASE - 2,
+                                         fill=couleur, outline=&quot;&quot;)
+        if self.pomme is not None:
+            ligne, colonne = self.pomme
+            self.canvas.create_oval(colonne * CASE + 5, ligne * CASE + 5,
+                                    (colonne + 1) * CASE - 5, (ligne + 1) * CASE - 5,
+                                    fill=&quot;#cf4444&quot;, outline=&quot;&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    racine = tk.Tk()
+    Jeu(racine)
+    racine.mainloop()
+</textarea></aside></div>
+  </section>
+
+  <section class="level" id="hanoi" style="--level:#8250df" aria-labelledby="hanoi-title">
+    <div class="level-heading"><h2 id="hanoi-title">03 / 🗼 HANOI.PY</h2><span class="chapter-badge badge-blue">PILE · LIFO + RÉCURSIVITÉ · ★★☆</span></div>
+    <p class="lead">Transfère tous les disques de A vers C. Un seul disque à la fois, et jamais un grand disque sur un plus petit.</p>
+    <div class="demo"><h3>À toi de jouer</h3><p>Clique sur une tour de départ, puis sur une tour d'arrivée. Au clavier : Tab pour choisir, Entrée ou Espace pour sélectionner.</p>
+      <div class="controls"><label for="hanoi-size">Disques</label><select id="hanoi-size"><option value="3">3 disques</option><option value="4">4 disques</option><option value="5">5 disques</option></select><button id="hanoi-reset">Recommencer</button><strong id="hanoi-count">0 déplacement</strong></div>
+      <div class="towers" id="hanoi-towers"><button class="tower" data-tower="0" data-label="A" aria-label="Tour A" aria-pressed="false"></button><button class="tower" data-tower="1" data-label="B" aria-label="Tour B" aria-pressed="false"></button><button class="tower" data-tower="2" data-label="C" aria-label="Tour C" aria-pressed="false"></button></div>
+      <p class="status" id="hanoi-status" role="status"></p><div class="python-state" id="hanoi-state"></div>
+    </div>
+    <div class="missions"><div>
+      <article class="mission"><h3>Mission 1 — Trois tours, trois piles</h3><p>Représente les tours par <code>A = [5, 4, 3, 2, 1]</code>, <code>B = []</code>, <code>C = []</code>. La fin de liste est le sommet. Quel disque est accessible ? Quel invariant doit vérifier chaque liste ?</p><div data-hints="h1"></div><label><input type="checkbox" data-mission="h1">Je repère le sommet et l'ordre des disques.</label></article>
+      <article class="mission"><h3>Mission 2 — Sécuriser un déplacement</h3><p>Complète <code>deplacer(depart, arrivee)</code>. Renvoie un booléen et refuse les déplacements interdits sans modifier les piles. Teste un départ vide, une arrivée vide, un grand disque sur un petit et la même tour choisie deux fois.</p><div data-hints="h2"></div><label><input type="checkbox" data-mission="h2">Ma fonction respecte toutes les règles.</label></article>
+      <article class="mission"><h3>Mission 3 — Résoudre à la main</h3><p>Résous le puzzle à trois disques et note tes déplacements. Combien en as-tu effectués ? Rejoue si nécessaire : peux-tu faire mieux ? Reproduis ta séquence avec des appels à <code>deplacer</code> en Python.</p><div data-hints="h3"></div><label><input type="checkbox" data-mission="h3">J'ai résolu et retracé le cas à trois disques.</label></article>
+      <article class="mission"><h3>Mission 4 — Penser récursivement</h3><p>Pour déplacer le plus grand disque, où doivent se trouver les autres ? Décompose le problème en déplacements de <code>n-1</code> disques, puis complète <code>hanoi(n, depart, intermediaire, arrivee)</code>. Quel est le cas de base ?</p><div data-hints="h4"></div><label><input type="checkbox" data-mission="h4">J'explique les appels récursifs et leur arrêt.</label></article>
+      <details><summary>🧠 À retenir — après la manipulation</summary><p>Une pile est LIFO : Last In, First Out. Seul son sommet est directement accessible. Les tours sont des piles de disques ; l'exécution récursive utilise aussi une pile d'appels, qui mémorise les appels suspendus avant d'y revenir.</p></details>
+      <div class="callout callout-purple"><strong>🏆 Bonus</strong><p>Relève le minimum pour 1, 2, 3, 4 disques. Explique la relation <code>M(n) = 2*M(n-1) + 1</code> avec <code>M(0) = 0</code>, puis conjecture une formule.</p><details><summary>Vérifier ma conjecture</summary><p>Le minimum est <code>2**n - 1</code>. Peux-tu justifier cette formule par récurrence ?</p></details></div>
+    </div><aside class="code-panel" data-source="hanoi"><h3>Ton atelier Python</h3><p>Commence avec trois disques. N'écris la récursion qu'après avoir sécurisé un déplacement.</p><div class="code-actions"><button type="button" data-copy>Copier le fichier complet</button><a class="download" href="python/hanoi.py" download="hanoi.py">↓ Télécharger hanoi.py</a></div>
+<pre><code>&quot;&quot;&quot;NSI Arcade — Hanoï. Fin de liste = sommet. Python 3.&quot;&quot;&quot;
+A = [5, 4, 3, 2, 1]
+B = []
+C = []
+
+
+def deplacer(depart, arrivee):
+    &quot;&quot;&quot;Déplace un seul disque. Renvoie True si réussi, False sinon.
+    Ne jamais modifier les piles lors d&#x27;un déplacement interdit.
+    &quot;&quot;&quot;
+    # TODO : à compléter — départ vide ? même tour ? ordre des disques ?
+    raise NotImplementedError(&quot;Mission 2 : déplacer un disque&quot;)
+
+
+def hanoi(n, depart, intermediaire, arrivee):
+    # TODO : à compléter — cas de base puis trois étapes récursives.
+    # Utiliser deplacer et observer les piles après chaque déplacement.
+    raise NotImplementedError(&quot;Mission 4 : stratégie récursive&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    # Commencer par trois disques avant le défi à cinq.
+    A = [3, 2, 1]
+    print(&quot;État initial :&quot;, A, B, C)
+    print(&quot;Mission 3 : appelle deplacer(A, C), etc. dans la console.&quot;)
+    # Décommenter après avoir complété la mission 4 :
+    # hanoi(3, A, B, C)
+    # print(&quot;État final :&quot;, A, B, C)
+</code></pre><textarea hidden aria-label="Code Python complet à copier" spellcheck="false">&quot;&quot;&quot;NSI Arcade — Hanoï. Fin de liste = sommet. Python 3.&quot;&quot;&quot;
+A = [5, 4, 3, 2, 1]
+B = []
+C = []
+
+
+def deplacer(depart, arrivee):
+    &quot;&quot;&quot;Déplace un seul disque. Renvoie True si réussi, False sinon.
+    Ne jamais modifier les piles lors d&#x27;un déplacement interdit.
+    &quot;&quot;&quot;
+    # TODO : à compléter — départ vide ? même tour ? ordre des disques ?
+    raise NotImplementedError(&quot;Mission 2 : déplacer un disque&quot;)
+
+
+def hanoi(n, depart, intermediaire, arrivee):
+    # TODO : à compléter — cas de base puis trois étapes récursives.
+    # Utiliser deplacer et observer les piles après chaque déplacement.
+    raise NotImplementedError(&quot;Mission 4 : stratégie récursive&quot;)
+
+
+if __name__ == &quot;__main__&quot;:
+    # Commencer par trois disques avant le défi à cinq.
+    A = [3, 2, 1]
+    print(&quot;État initial :&quot;, A, B, C)
+    print(&quot;Mission 3 : appelle deplacer(A, C), etc. dans la console.&quot;)
+    # Décommenter après avoir complété la mission 4 :
+    # hanoi(3, A, B, C)
+    # print(&quot;État final :&quot;, A, B, C)
+</textarea></aside></div>
+  </section>
+
+  <section class="level" id="escape" style="--level:#9a6700" aria-labelledby="escape-title">
+    <div class="level-heading"><h2 id="escape-title">04 / 🧩 ESCAPE_NSI.PY</h2><span class="chapter-badge badge-orange">BOSS FINAL · ★★★</span></div>
+    <p class="lead">Une matrice, une entrée, une sortie. Explore sans tourner en rond, puis compare deux stratégies avec exactement les mêmes voisins.</p>
+    <div class="demo"><h3>Le laboratoire d'exploration</h3>
+      <div class="controls"><label for="maze-mode">Structure</label><select id="maze-mode"><option value="dfs">Pile</option><option value="bfs">File</option></select><button id="maze-play" class="primary">▶ Lecture</button><button id="maze-pause" disabled>Pause</button><button id="maze-step">Étape suivante</button><button id="maze-reset">Recommencer</button></div>
+      <div class="demo-layout"><div><div class="board maze" id="maze-board" role="img" aria-label="Labyrinthe"></div><div class="legend"><span class="current">@ courante</span><span class="visited">· visitée</span><span class="frontier">? à explorer</span><span class="exit">E sortie</span><span>◆ chemin trouvé</span></div></div><div><p><code>#</code> mur · <code>.</code> passage · <code>S</code> départ · <code>E</code> sortie. Coordonnées : (ligne, colonne).</p><p>Voisins ajoutés dans l'ordre <strong>haut, gauche, bas, droite</strong>. Pour la pile, le sommet est à droite ; pour la file, le prochain retrait est à gauche.</p><div class="python-state" id="maze-frontier"></div><p class="status" id="maze-status" role="status"></p><p id="maze-comparison">Termine une exploration avec chaque structure pour comparer les résultats.</p></div></div>
+      <details><summary>Voir la matrice Python</summary><pre><code>###########
+#S..#.....#
+#.#.#.###.#
+#.#...#...#
+#.#####.#E#
+#.........#
+###########</code></pre></details>
+      <details><summary>Voir l'ordre des cases explorées</summary><div class="python-state" id="maze-order"></div></details>
+    </div>
+    <div class="missions"><div>
+      <article class="mission"><h3>Étape 1 — Comprendre les voisins</h3><p>Écris <code>voisins(case, labyrinthe)</code> : quatre directions, dans les bornes et sans mur. Départ et sortie sont accessibles. Teste un couloir, une intersection, une impasse et une case au bord.</p><div data-hints="e1"></div><label><input type="checkbox" data-mission="e1">Mes voisins sont accessibles et dans la matrice.</label></article>
+      <article class="mission"><h3>Étape 2 — Explorer avec une pile</h3><p>Place le départ dans la pile. Retire une case, visite-la, puis ajoute ses voisins encore inconnus. Marque une case dès son ajout pour éviter de l'ajouter plusieurs fois. Prédis trois étapes avant de lancer la démo.</p><div data-hints="e2"></div><details><summary>🧠 Mettre un nom sur l'exploration avec une pile</summary><p>C'est un parcours en profondeur, ou DFS (Depth-First Search). Le dernier voisin ajouté est exploré en premier ; on s'enfonce dans une branche avant de revenir aux autres cases en attente.</p></details><label><input type="checkbox" data-mission="e2">Mon exploration par pile trouve la sortie.</label></article>
+      <article class="mission"><h3>Étape 3 — Explorer avec une file</h3><p>Reprends le même algorithme, les mêmes voisins et le même marquage. Change uniquement la façon de retirer la prochaine case. Compare l'ordre obtenu avec celui de la pile.</p><div data-hints="e3"></div><details><summary>🧠 Mettre un nom sur l'exploration avec une file</summary><p>C'est un parcours en largeur, ou BFS (Breadth-First Search). On explore les cases par distance croissante depuis le départ, déplacement par déplacement.</p></details><label><input type="checkbox" data-mission="e3">Mon exploration par file fonctionne.</label></article>
+      <article class="mission"><h3>Étape 4 — Comparer et argumenter</h3><p>Les deux méthodes trouvent-elles la sortie ? Explorent-elles dans le même ordre ? Trouvent-elles nécessairement le même chemin ? Laquelle garantit un nombre minimal de déplacements dans ce labyrinthe non pondéré ? Appuie ta réponse sur la démo, puis sur une propriété de la structure.</p><div data-hints="e4"></div><label><input type="checkbox" data-mission="e4">Je sais expliquer la différence entre DFS et BFS.</label></article>
+      <article class="mission"><h3>Étape 5 — Reconstruire le chemin · avancé</h3><p>Mémorise le prédécesseur de chaque case au moment de sa découverte. Depuis la sortie, remonte ces liens jusqu'au départ et inverse le résultat. Teste aussi une sortie inaccessible.</p><div data-hints="e5"></div><label><input type="checkbox" data-mission="e5">Je distingue chemin trouvé et ordre de visite.</label></article>
+      <div class="callout callout-warning"><strong>⚠️ Attention</strong><p>La liste des cases visitées n'est pas forcément un chemin : deux visites consécutives peuvent être éloignées. Un chemin suit des cases voisines. Dans un graphe pondéré, BFS ne garantit pas un coût total minimal.</p></div>
+      <details><summary>🧠 Vers les graphes</summary><p>Chaque case accessible est un sommet. Deux cases voisines sont reliées par une arête. Un déplacement coûte toujours une unité ici. Si la sortie est accessible, les deux explorations la trouvent ; l'ordre des voisins influence leurs traces et peut départager plusieurs chemins de même longueur.</p></details>
+      <div class="callout callout-purple"><strong>🏆 Bonus</strong><p>Modifie la matrice, ajoute une impasse, rends la sortie inaccessible, puis compare les cases explorées. Programme une course DFS/BFS ou un générateur de labyrinthes.</p></div>
+    </div><aside class="code-panel" data-source="escape_nsi"><h3>Ton atelier Python</h3><p>L'affichage en console est fourni. Travaille d'abord sur les voisins, puis sur l'exploration ; ajoute les prédécesseurs en dernier.</p><div class="code-actions"><button type="button" data-copy>Copier le fichier complet</button><a class="download" href="python/escape_nsi.py" download="escape_nsi.py">↓ Télécharger escape_nsi.py</a></div>
+<pre><code>&quot;&quot;&quot;NSI Arcade — Escape. Python 3. Coordonnées = (ligne, colonne).&quot;&quot;&quot;
+LABYRINTHE = [
+    &quot;###########&quot;,
+    &quot;#S..#.....#&quot;,
+    &quot;#.#.#.###.#&quot;,
+    &quot;#.#...#...#&quot;,
+    &quot;#.#####.#E#&quot;,
+    &quot;#.........#&quot;,
+    &quot;###########&quot;,
+]
+DEPART = (1, 1)
+SORTIE = (4, 9)
+
+
+def voisins(case, labyrinthe):
+    # TODO : à compléter — haut, gauche, bas, droite (dans cet ordre).
+    # Vérifier les bornes AVANT de lire la matrice. Exclure les murs.
+    raise NotImplementedError(&quot;Étape 1 : voisins accessibles&quot;)
+
+
+def explorer(labyrinthe, depart, sortie, mode):
+    &quot;&quot;&quot;mode = &#x27;pile&#x27; ou &#x27;file&#x27;. Renvoie (ordre_exploration, predecesseurs).
+    Le dictionnaire des prédécesseurs est utile à l&#x27;étape 5 seulement.
+    &quot;&quot;&quot;
+    a_explorer = [depart]
+    decouvertes = {depart}
+    ordre = []
+    predecesseurs = {depart: None}
+    # TODO : à compléter — tant qu&#x27;il reste une case à explorer :
+    # - choisir et retirer une case selon mode ;
+    # - la noter dans ordre, arrêter si c&#x27;est la sortie ;
+    # - ajouter les voisins encore inconnus, les marquer dès l&#x27;ajout.
+    # Étape 5 : mémoriser qui a permis de découvrir chaque voisin.
+    raise NotImplementedError(&quot;Étapes 2 et 3 : explorer&quot;)
+
+
+def reconstruire(predecesseurs, sortie):
+    # TODO : à compléter — remonter vers le départ puis inverser.
+    # Si la sortie n&#x27;a pas été découverte, renvoyer une liste vide.
+    raise NotImplementedError(&quot;Étape 5 : reconstruire le chemin&quot;)
+
+
+def afficher(labyrinthe, cases=()):
+    for ligne, texte in enumerate(labyrinthe):
+        print(&quot;&quot;.join(&quot;*&quot; if (ligne, colonne) in cases and caractere == &quot;.&quot;
+                      else caractere for colonne, caractere in enumerate(texte)))
+
+
+if __name__ == &quot;__main__&quot;:
+    afficher(LABYRINTHE)
+    try:
+        ordre, parents = explorer(LABYRINTHE, DEPART, SORTIE, &quot;pile&quot;)
+        print(&quot;Ordre :&quot;, ordre)
+        afficher(LABYRINTHE, ordre)
+    except NotImplementedError as erreur:
+        print(erreur)
+</code></pre><textarea hidden aria-label="Code Python complet à copier" spellcheck="false">&quot;&quot;&quot;NSI Arcade — Escape. Python 3. Coordonnées = (ligne, colonne).&quot;&quot;&quot;
+LABYRINTHE = [
+    &quot;###########&quot;,
+    &quot;#S..#.....#&quot;,
+    &quot;#.#.#.###.#&quot;,
+    &quot;#.#...#...#&quot;,
+    &quot;#.#####.#E#&quot;,
+    &quot;#.........#&quot;,
+    &quot;###########&quot;,
+]
+DEPART = (1, 1)
+SORTIE = (4, 9)
+
+
+def voisins(case, labyrinthe):
+    # TODO : à compléter — haut, gauche, bas, droite (dans cet ordre).
+    # Vérifier les bornes AVANT de lire la matrice. Exclure les murs.
+    raise NotImplementedError(&quot;Étape 1 : voisins accessibles&quot;)
+
+
+def explorer(labyrinthe, depart, sortie, mode):
+    &quot;&quot;&quot;mode = &#x27;pile&#x27; ou &#x27;file&#x27;. Renvoie (ordre_exploration, predecesseurs).
+    Le dictionnaire des prédécesseurs est utile à l&#x27;étape 5 seulement.
+    &quot;&quot;&quot;
+    a_explorer = [depart]
+    decouvertes = {depart}
+    ordre = []
+    predecesseurs = {depart: None}
+    # TODO : à compléter — tant qu&#x27;il reste une case à explorer :
+    # - choisir et retirer une case selon mode ;
+    # - la noter dans ordre, arrêter si c&#x27;est la sortie ;
+    # - ajouter les voisins encore inconnus, les marquer dès l&#x27;ajout.
+    # Étape 5 : mémoriser qui a permis de découvrir chaque voisin.
+    raise NotImplementedError(&quot;Étapes 2 et 3 : explorer&quot;)
+
+
+def reconstruire(predecesseurs, sortie):
+    # TODO : à compléter — remonter vers le départ puis inverser.
+    # Si la sortie n&#x27;a pas été découverte, renvoyer une liste vide.
+    raise NotImplementedError(&quot;Étape 5 : reconstruire le chemin&quot;)
+
+
+def afficher(labyrinthe, cases=()):
+    for ligne, texte in enumerate(labyrinthe):
+        print(&quot;&quot;.join(&quot;*&quot; if (ligne, colonne) in cases and caractere == &quot;.&quot;
+                      else caractere for colonne, caractere in enumerate(texte)))
+
+
+if __name__ == &quot;__main__&quot;:
+    afficher(LABYRINTHE)
+    try:
+        ordre, parents = explorer(LABYRINTHE, DEPART, SORTIE, &quot;pile&quot;)
+        print(&quot;Ordre :&quot;, ordre)
+        afficher(LABYRINTHE, ordre)
+    except NotImplementedError as erreur:
+        print(erreur)
+</textarea></aside></div>
+  </section>
+</main>
+<footer><p>NSI Arcade · Terminale · Observer, raisonner, coder, tester.<br><a href="../../index.html">Retour aux ressources de Terminale</a> · <a href="../../chapitres/structures.html">Cours : structures de données</a> · <a href="../../chapitres/graphes.html">Cours : graphes</a></p><p>Pas de compte, pas de données personnelles. Démonstrations locales, sans API externe.</p></footer>
+</body>
+</html>
