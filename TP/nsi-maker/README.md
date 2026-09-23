@@ -23,3 +23,7 @@ Le dossier initial contenait uniquement un dépôt Git sans commit, sans remote 
 ## Vérification
 
 Voir `VERIFICATION.md`. `tests/interaction.cjs` est un contrôle navigateur avec Playwright (outil de développement uniquement). Exécution : `node tests/interaction.cjs` avec Playwright disponible dans `NODE_PATH` ou installé localement. Les captures de test ne sont pas nécessaires au fonctionnement.
+
+## Passerelle S01
+
+La version intégrée dans `siteNSI/TP/nsi-maker` ajoute `s01.js`, `s01.css` et trois PDF élèves dans `documents/`. Conserver ces ressources avec la page. Les renvois au chapitre Terminale et à NSI Arcade utilisent des chemins relatifs dans le site. Les corrigés ne sont pas publiés.

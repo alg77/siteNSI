@@ -4,39 +4,47 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>NSI Arcade — Piles &amp; Files · Terminale</title>
-  <meta name="description" content="Quatre TP Python progressifs : Bataille, Snake, Hanoï et labyrinthe. Manipuler, raisonner, coder et tester les piles et les files.">
+  <meta name="description" content="TP2 : cinq activités Python progressives — Bataille, PyLand, Snake, Hanoï et labyrinthe. Manipuler, raisonner, coder et tester les piles et les files.">
   <link rel="stylesheet" href="../../css/style.css">
-  <link rel="stylesheet" href="arcade.css">
+  <link rel="stylesheet" href="arcade.css"><link rel="stylesheet" href="../../css/structures-demo.css">
   <script src="engine.js" defer></script>
-  <script src="app.js" defer></script>
+  <script src="app.js" defer></script><script src="pyland-engine.js" defer></script><script src="pyland.js" defer></script>
 </head>
 <body class="arcade">
 <a class="skip" href="#parcours">Aller au parcours</a>
 <nav class="arcade-nav" aria-label="Navigation principale">
   <a class="nav-brand" href="../../index.html">← NSI <span>Terminale</span></a>
-  <div class="nav-links"><a href="#parcours">Les niveaux</a><a href="#bataille">Bataille</a><a href="#snake">Snake</a><a href="#hanoi">Hanoï</a><a href="#escape">Labyrinthe</a></div>
-  <span class="nav-badge">TERMINALE · PYTHON</span>
+  <div class="nav-links"><a href="#parcours">Les niveaux</a><a href="#bataille">Bataille</a><a href="#pyland">PyLand</a><a href="#snake">Snake</a><a href="#hanoi">Hanoï</a><a href="#escape">Labyrinthe</a></div>
+  <span class="nav-badge">TERMINALE · TP2 · PYTHON</span>
 </nav>
 <header class="hero">
   <div class="hero-grid" aria-hidden="true"></div>
   <div class="hero-content">
     <div class="hero-label">INSERT COIN ? NON, ÉCRIS DU CODE.</div>
     <h1>NSI Arcade<br><span>Piles &amp; Files</span></h1>
-    <p>Quatre jeux, deux structures, une nouvelle façon de résoudre des problèmes.</p>
+    <p>Cinq activités, deux structures, une nouvelle façon de résoudre des problèmes.</p>
     <div class="route" aria-label="Démarche pédagogique"><span>Observer</span> → <span>Comprendre</span> → <span>Choisir</span> → <span>Coder</span> → <span>Tester</span></div>
   </div>
 </header>
 <main class="container" id="parcours">
-  <div class="progress-summary"><strong id="progress-text">0 mission validée</strong><progress id="progress" value="0" max="19" aria-label="Missions validées"></progress><span id="storage-note">Progression conservée sur ce navigateur uniquement.</span><button id="clear-progress" type="button">Effacer mes coches</button></div>
+  <div class="progress-summary"><strong id="progress-text">0 mission validée</strong><progress id="progress" value="0" max="24" aria-label="Missions validées"></progress><span id="storage-note">Progression conservée sur ce navigateur uniquement.</span><button id="clear-progress" type="button">Effacer mes coches</button></div>
   <div class="chapters-grid">
     <a class="chapter-card" href="#bataille" style="--card-color:#0969da"><span class="level-number">NIVEAU 01 · ★☆☆</span><span class="chapter-card-icon">🃏</span><span class="chapter-card-title">BATAILLE.PY</span><span class="chapter-card-desc">La première carte jouée… revient à la fin.</span><span class="chapter-tag">FILE / FIFO</span></a>
-    <a class="chapter-card" href="#snake" style="--card-color:#167346"><span class="level-number">NIVEAU 02 · ★★☆</span><span class="chapter-card-icon">🐍</span><span class="chapter-card-title">SNAKE.PY</span><span class="chapter-card-desc">Observe le corps. À toi de trouver le modèle.</span><span class="chapter-tag">FILE / FIFO</span></a>
-    <a class="chapter-card" href="#hanoi" style="--card-color:#8250df"><span class="level-number">NIVEAU 03 · ★★☆</span><span class="chapter-card-icon">🗼</span><span class="chapter-card-title">HANOI.PY</span><span class="chapter-card-desc">Déplace des disques, puis pense récursivement.</span><span class="chapter-tag">PILE / LIFO + récursivité</span></a>
+    <a class="chapter-card" href="#pyland" style="--card-color:#b45416"><span class="level-number">NIVEAU 02 · ★★☆</span><span class="chapter-card-icon">🎢</span><span class="chapter-card-title">PYLAND.PY</span><span class="chapter-card-desc">Des visiteurs, une nacelle : mesure l’attente.</span><span class="chapter-tag">FILE / FIFO · Simulation</span></a>
+    <a class="chapter-card" href="#snake" style="--card-color:#167346"><span class="level-number">NIVEAU 03 · ★★☆</span><span class="chapter-card-icon">🐍</span><span class="chapter-card-title">SNAKE.PY</span><span class="chapter-card-desc">Observe le corps. À toi de trouver le modèle.</span><span class="chapter-tag">FILE / FIFO</span></a>
+    <a class="chapter-card" href="#hanoi" style="--card-color:#8250df"><span class="level-number">NIVEAU 04 · ★★☆</span><span class="chapter-card-icon">🗼</span><span class="chapter-card-title">HANOI.PY</span><span class="chapter-card-desc">Manipule des piles ; découvre ensuite la récursion.</span><span class="chapter-tag">PILE / LIFO + découverte guidée</span></a>
     <a class="chapter-card" href="#escape" style="--card-color:#9a6700"><span class="level-number">BOSS FINAL · ★★★</span><span class="chapter-card-icon">🧩</span><span class="chapter-card-title">ESCAPE_NSI.PY</span><span class="chapter-card-desc">Deux façons d'explorer. Une sortie à trouver.</span><span class="chapter-tag">PILE + FILE / DFS + BFS</span></a>
   </div>
-  <div class="locked">🔒 <strong>Défi Bac — Parenthésage</strong> · Réservé à un futur entraînement ou DST.</div>
   <div class="callout callout-info"><strong>🤔 Avant de coder</strong><p>Observe la démo, fais une prédiction sur papier, puis écris ton algorithme avant d'ouvrir un indice. Les démonstrations sont des modèles à expliquer : ton programme Python reste à construire dans ton IDE. Coche une mission seulement lorsque tu sais justifier et tester ton code.</p></div>
-  <noscript><p>Active JavaScript pour utiliser les démonstrations et les indices. Les consignes et les fichiers Python restent accessibles.</p></noscript>
+  <div class="callout callout-info"><strong>📚 Le cours pour t’aider</strong><p><a href="../../chapitres/structures2.html#piles">Piles et assiettes</a> · <a href="../../chapitres/structures2.html#files">Files d’attente</a>. Les petites ampoules ci-dessous donnent des explications à ouvrir seulement si nécessaire.</p></div><details class="sd-help" id="raise-aide"><summary>💡 Que fait raise ? Et NotImplementedError ?</summary><p><code>raise</code> <strong>déclenche une exception</strong> : Python interrompt l’exécution normale et cherche un bloc <code>except</code> capable de la traiter. Sans traitement, le programme s’arrête avec un message d’erreur. Ce n’est ni un affichage (<code>print</code>), ni une valeur renvoyée (<code>return</code>).</p><pre><code>def retirer(file):
+    if not file:
+        raise ValueError("La file est vide")
+    return file.pop(0)
+
+try:
+    retirer([])
+except ValueError as erreur:
+    print(erreur)  # affiche La file est vide</code></pre><p>Dans les squelettes, <code>raise NotImplementedError("Mission à compléter")</code> est un repère volontaire. Remplace cette ligne par ton algorithme lorsque tu programmes la fonction. Le message ne signifie pas que Python est mal installé.</p><p><code>ValueError</code> signale ici une opération refusée ; <code>IndexError</code> apparaît notamment avec un retrait invalide dans une liste. Respecte le contrat de chaque activité : dans PyLand, retirer d’une file vide renvoie <code>None</code>, tandis que la Bataille demande une exception.</p></details><noscript><p>Active JavaScript pour utiliser les démonstrations et les indices. Les consignes et les fichiers Python restent accessibles.</p></noscript>
 
   <section class="level" id="bataille" style="--level:#0969da" aria-labelledby="bataille-title">
     <div class="level-heading"><h2 id="bataille-title">01 / 🃏 BATAILLE.PY</h2><span class="chapter-badge badge-blue">FILE · FIFO · ★☆☆</span></div>
@@ -205,8 +213,183 @@ if __name__ == &quot;__main__&quot;:
 </textarea></aside></div>
   </section>
 
+  <section class="level" id="pyland" style="--level:#b45416" aria-labelledby="pyland-title">
+    <div class="level-heading"><h2 id="pyland-title">02 / 🎢 PYLAND.PY</h2><span class="chapter-badge badge-orange">FILE · FIFO · ★★☆</span></div>
+    <p class="lead">Bienvenue à PyLand Adventure Park ! La nacelle part toutes les deux minutes. À toi de gérer les visiteurs, puis de vérifier si une plus grande capacité réduit réellement leur attente.</p>
+    <div class="callout callout-info"><strong>TP2 · Chapitre S01 · Sans POO</strong><p>Après les files de cartes de la Bataille, une file de <em>dictionnaires</em>. Prérequis : listes, dictionnaires, fonctions, boucles. Aucun besoin d’écrire une classe. <a href="../../chapitres/structures2.html#files">Revoir les files dans le cours.</a></p></div>
+    <div class="demo">
+      <h3>Observe avant de programmer</h3><p>Choisis les réglages, prédis le prochain groupe, puis avance d’un tour. Pour comparer, recommence avec une autre capacité : les arrivées restent identiques.</p>
+      <div class="controls"><label for="park-capacity">Places par nacelle</label><select id="park-capacity"><option>1</option><option selected>2</option><option>4</option></select><label for="park-mascot">Bonus mascotte</label><select id="park-mascot"><option value="0">Sans mascotte</option><option value="2">Tous les 2 tours</option><option value="4">Tous les 4 tours</option></select></div>
+      <div class="demo-layout"><div><h4>🚶 Sortie à gauche → entrée à droite</h4><div id="park-queue" class="queue" aria-label="Visiteurs en attente"></div><p id="park-tail"></p></div><div><h4>🎢 Dernière nacelle revenue</h4><div id="park-riders" class="python-state"></div></div></div>
+      <div id="park-stats" class="python-state" aria-label="Statistiques du parc"></div><p id="park-status" class="status" role="status"></p>
+      <div class="controls"><button id="park-step" class="primary">Avancer d’un tour (+2 min)</button><button id="park-play">▶ Simulation automatique</button><button id="park-pause" disabled>Pause</button><button id="park-reset">Recommencer le même scénario</button></div>
+      <p>Les réglages sont figés après le premier tour. Limite pédagogique : 30 tours. Le navigateur simule en JavaScript ; ton programme Python est à construire dans ton IDE.</p>
+    </div>
+    <details open><summary>Le contrat de simulation : un ordre précis à respecter</summary><ol><li><strong>À t minutes, départ :</strong> retirer les plus anciens, au maximum la capacité. Une nacelle part même incomplète. File vide : aucun embarquement.</li><li><strong>Juste après le départ, arrivées à t :</strong> ajouter 3, 1, 5, 2, 4 visiteurs selon le tour, puis répéter cette séquence. Un nouvel arrivant ne prend donc pas la nacelle qui vient de partir.</li><li><strong>De t à t + 2 :</strong> tous ceux qui sont dans la file, nouveaux compris, perdent 5 points. Les passagers gagnent 10 points. La satisfaction reste entre 0 et 100.</li><li><strong>À t + 2, retour :</strong> enregistrer les passagers parmi les visiteurs sortis et avancer l’horloge. Si elle est activée, la mascotte donne ensuite 10 points aux personnes encore dans la file tous les X tours.</li></ol><p>Au début : V1 à V4 attendent depuis t = 0, avec une satisfaction de 75. Pour les suivants, <code>50 + (numero * 17) % 51</code> fournit une satisfaction initiale reproductible entre 50 et 100. Ces règles sont un <strong>modèle pédagogique choisi</strong>, pas une mesure réelle de satisfaction.</p><p><strong>Attente = heure de départ − heure d’arrivée.</strong> Les deux minutes dans l’attraction ne sont pas de l’attente. Les moyennes portent sur les <strong>20 premiers visiteurs sortis</strong>, pas ceux qui restent dans la file. Avant 20 sorties, elles sont provisoires.</p></details>
+    <div class="callout"><strong>🤔 Fais une prédiction</strong><p>Capacité 2, sans mascotte : qui embarque au premier tour ? Au deuxième ? Combien de minutes V5 aura-t-il attendu à son départ ? Écris ta trace avant d’appuyer sur le bouton.</p></div>
+    <div class="missions"><div>
+      <article class="mission"><h3>Mission 1 — Modéliser un visiteur</h3><p>Complète <code>creer_visiteur(nom, arrivee, satisfaction)</code>. Il renvoie un dictionnaire avec ces trois clés. Crée deux visiteurs indépendants : modifier l’un ne doit pas modifier l’autre.</p><div data-hints="p1"></div><label><input type="checkbox" data-mission="p1">Je représente et teste les visiteurs.</label></article>
+      <article class="mission"><h3>Mission 2 — Faire respecter FIFO</h3><p>Implémente <code>ajouter_visiteur</code> et <code>retirer_visiteur</code> avec une liste. Ajout en fin ; retrait et retour du plus ancien. Notre contrat : retirer d’une file vide renvoie <code>None</code>. Teste A, B, C : ils doivent sortir dans cet ordre.</p><div data-hints="p2"></div><label><input type="checkbox" data-mission="p2">Ma file respecte FIFO, même aux limites.</label></article>
+      <article class="mission"><h3>Mission 3 — Remplir une nacelle</h3><p>Complète <code>embarquer(file, capacite, heure)</code>. Renvoie la liste des passagers et ajoute à chacun la clé <code>attente</code>. Vérifie les cas 0, 1, 2 et 3 visiteurs pour une capacité de 2. Ne saute pas de visiteur et ne retire personne deux fois.</p><div data-hints="p3"></div><label><input type="checkbox" data-mission="p3">Je gère une nacelle vide, incomplète ou pleine.</label></article>
+      <article class="mission"><h3>Mission 4 — Faire évoluer la satisfaction</h3><p>Complète <code>mettre_a_jour(file, passagers)</code> : −5 pour la file, +10 pour les passagers. Teste les frontières : 3 devient 0 après l’attente et 95 devient 100 après l’attraction. Le déroulement des tours est déjà fourni dans <code>simuler</code>.</p><div data-hints="p4"></div><label><input type="checkbox" data-mission="p4">Mes mises à jour respectent les bornes et le bon groupe.</label></article>
+      <article class="mission"><h3>Mission 5 — Mesurer, puis comparer</h3><p>Complète <code>statistiques(sortis)</code> : renvoyer <code>(effectif, attente_moyenne, satisfaction_moyenne)</code> sur les 20 premiers sortis. Sans sortie : <code>(0, None, None)</code>. Compare ensuite 2 et 4 places sur 15 tours identiques, sans mascotte.</p><div data-hints="p5"></div><label><input type="checkbox" data-mission="p5">Je calcule les moyennes sur le bon échantillon et les interprète.</label></article>
+    </div><aside class="code-panel" data-source="pyland"><h3>Ton atelier Python</h3><p>Les fonctions essentielles restent à compléter. L’orchestration est fournie. Télécharge les deux fichiers dans le même dossier ; lance <code>test_pyland.py</code> après chaque mission. Un test échoue normalement tant que sa fonction est incomplète.</p><div class="code-actions"><button type="button" data-copy>Copier le fichier complet</button><a class="download" href="python/pyland.py" download="pyland.py">↓ Télécharger pyland.py</a></div><p><a href="python/test_pyland.py" download="test_pyland.py">↓ Télécharger les tests sans classes</a></p><pre><code>&quot;&quot;&quot;TP2 — NSI Arcade / PyLand. Python 3, sans classes ni bibliothèque externe.
+Compléter les cinq missions. Les tests sont fournis dans test_pyland.py.
+Une liste représente la file : sortie à gauche, entrée à droite.
+&quot;&quot;&quot;
+
+
+def creer_visiteur(nom, arrivee, satisfaction=75):
+    # Mission 1 : renvoyer un dictionnaire indépendant pour chaque visiteur.
+    # Clés : nom, arrivee (minutes), satisfaction (entre 0 et 100).
+    raise NotImplementedError(&quot;Mission 1 : dictionnaire visiteur&quot;)
+
+
+def ajouter_visiteur(file, visiteur):
+    # Mission 2 : ajouter à la fin, sans renvoyer de valeur.
+    raise NotImplementedError(&quot;Mission 2 : enfiler&quot;)
+
+
+def retirer_visiteur(file):
+    # Mission 2 : retirer ET renvoyer le plus ancien ; None si file vide.
+    raise NotImplementedError(&quot;Mission 2 : défiler&quot;)
+
+
+def embarquer(file, capacite, heure):
+    # Mission 3 : retirer au plus capacite visiteurs dans l&#x27;ordre FIFO.
+    # Capacite est un entier &gt;= 1 ; heure &gt;= toutes les heures d&#x27;arrivée.
+    # Pour chacun, ajouter attente = heure - arrivee.
+    # Renvoyer la liste des visiteurs embarqués (même vide).
+    raise NotImplementedError(&quot;Mission 3 : embarquer&quot;)
+
+
+def mettre_a_jour(file, passagers):
+    # Mission 4 : file perd 5 points ; passagers gagnent 10 points.
+    # Borner chaque satisfaction entre 0 et 100. Modifier les dictionnaires.
+    raise NotImplementedError(&quot;Mission 4 : satisfaction&quot;)
+
+
+def statistiques(sortis):
+    # Mission 5 : travailler seulement sur les 20 premiers sortis.
+    # Renvoyer (effectif, attente_moyenne, satisfaction_moyenne).
+    # Si personne n&#x27;est sorti : renvoyer (0, None, None).
+    raise NotImplementedError(&quot;Mission 5 : moyennes&quot;)
+
+
+def simuler(capacite=2, tours=15):
+    &quot;&quot;&quot;Orchestration fournie : compare 2 et 4 avec les mêmes arrivées.
+    Chaque tour : départ -&gt; arrivées -&gt; attente/attraction -&gt; retour.
+    L&#x27;attente exclut les 2 minutes dans l&#x27;attraction.
+    &quot;&quot;&quot;
+    file = [creer_visiteur(f&quot;V{i}&quot;, 0) for i in range(1, 5)]
+    sortis = []
+    heure = 0
+    prochain = 5
+    for tour in range(tours):
+        passagers = embarquer(file, capacite, heure)
+        for _ in range([3, 1, 5, 2, 4][tour % 5]):
+            visiteur = creer_visiteur(
+                f&quot;V{prochain}&quot;, heure, 50 + (prochain * 17) % 51
+            )
+            ajouter_visiteur(file, visiteur)
+            prochain += 1
+        mettre_a_jour(file, passagers)
+        heure += 2
+        sortis.extend(passagers)
+        print(f&quot;t={heure} min ; file={len(file)} ; sortis={len(sortis)}&quot;)
+        print(statistiques(sortis))
+    return file, sortis
+
+
+if __name__ == &quot;__main__&quot;:
+    try:
+        simuler()
+    except NotImplementedError as erreur:
+        print(erreur)
+        print(&quot;Complète cette mission puis relance. Lance aussi test_pyland.py.&quot;)
+</code></pre><textarea hidden aria-label="Code Python complet à copier" spellcheck="false">&quot;&quot;&quot;TP2 — NSI Arcade / PyLand. Python 3, sans classes ni bibliothèque externe.
+Compléter les cinq missions. Les tests sont fournis dans test_pyland.py.
+Une liste représente la file : sortie à gauche, entrée à droite.
+&quot;&quot;&quot;
+
+
+def creer_visiteur(nom, arrivee, satisfaction=75):
+    # Mission 1 : renvoyer un dictionnaire indépendant pour chaque visiteur.
+    # Clés : nom, arrivee (minutes), satisfaction (entre 0 et 100).
+    raise NotImplementedError(&quot;Mission 1 : dictionnaire visiteur&quot;)
+
+
+def ajouter_visiteur(file, visiteur):
+    # Mission 2 : ajouter à la fin, sans renvoyer de valeur.
+    raise NotImplementedError(&quot;Mission 2 : enfiler&quot;)
+
+
+def retirer_visiteur(file):
+    # Mission 2 : retirer ET renvoyer le plus ancien ; None si file vide.
+    raise NotImplementedError(&quot;Mission 2 : défiler&quot;)
+
+
+def embarquer(file, capacite, heure):
+    # Mission 3 : retirer au plus capacite visiteurs dans l&#x27;ordre FIFO.
+    # Capacite est un entier &gt;= 1 ; heure &gt;= toutes les heures d&#x27;arrivée.
+    # Pour chacun, ajouter attente = heure - arrivee.
+    # Renvoyer la liste des visiteurs embarqués (même vide).
+    raise NotImplementedError(&quot;Mission 3 : embarquer&quot;)
+
+
+def mettre_a_jour(file, passagers):
+    # Mission 4 : file perd 5 points ; passagers gagnent 10 points.
+    # Borner chaque satisfaction entre 0 et 100. Modifier les dictionnaires.
+    raise NotImplementedError(&quot;Mission 4 : satisfaction&quot;)
+
+
+def statistiques(sortis):
+    # Mission 5 : travailler seulement sur les 20 premiers sortis.
+    # Renvoyer (effectif, attente_moyenne, satisfaction_moyenne).
+    # Si personne n&#x27;est sorti : renvoyer (0, None, None).
+    raise NotImplementedError(&quot;Mission 5 : moyennes&quot;)
+
+
+def simuler(capacite=2, tours=15):
+    &quot;&quot;&quot;Orchestration fournie : compare 2 et 4 avec les mêmes arrivées.
+    Chaque tour : départ -&gt; arrivées -&gt; attente/attraction -&gt; retour.
+    L&#x27;attente exclut les 2 minutes dans l&#x27;attraction.
+    &quot;&quot;&quot;
+    file = [creer_visiteur(f&quot;V{i}&quot;, 0) for i in range(1, 5)]
+    sortis = []
+    heure = 0
+    prochain = 5
+    for tour in range(tours):
+        passagers = embarquer(file, capacite, heure)
+        for _ in range([3, 1, 5, 2, 4][tour % 5]):
+            visiteur = creer_visiteur(
+                f&quot;V{prochain}&quot;, heure, 50 + (prochain * 17) % 51
+            )
+            ajouter_visiteur(file, visiteur)
+            prochain += 1
+        mettre_a_jour(file, passagers)
+        heure += 2
+        sortis.extend(passagers)
+        print(f&quot;t={heure} min ; file={len(file)} ; sortis={len(sortis)}&quot;)
+        print(statistiques(sortis))
+    return file, sortis
+
+
+if __name__ == &quot;__main__&quot;:
+    try:
+        simuler()
+    except NotImplementedError as erreur:
+        print(erreur)
+        print(&quot;Complète cette mission puis relance. Lance aussi test_pyland.py.&quot;)
+</textarea></aside></div>
+    <div class="callout callout-success"><strong>🧪 Tests et trace attendue</strong><p>Au premier départ : V1 et V2, attente 0 minute. Au deuxième : V3 et V4, attente 2 minutes. V5 embarque à t = 4 : son attente vaut 4 minutes. Après le premier retour, V3 a 70 points et V1 en a 85. Reproduis ces résultats dans ton programme.</p></div>
+    <div class="demo"><h3>Ton compte rendu de simulation</h3><div style="overflow-x:auto"><table><tr><th>Capacité</th><th>Sorties totales</th><th>Taille finale de la file</th><th>Attente des 20 premiers</th><th>Satisfaction des 20 premiers</th></tr><tr><td>2 places</td><td>À mesurer</td><td>À mesurer</td><td>À mesurer</td><td>À mesurer</td></tr><tr><td>4 places</td><td>À mesurer</td><td>À mesurer</td><td>À mesurer</td><td>À mesurer</td></tr></table></div><p>Sur ce scénario, 15 personnes arrivent tous les 5 tours. Combien de places offre une capacité de 2 pendant ce temps ? Pourquoi la file risque-t-elle de s’allonger ? Une moyenne calculée seulement sur les sortants représente-t-elle tous les visiteurs ?</p></div>
+    <details><summary>🏆 Bonus — améliorer le modèle, sans classes</summary><ul><li><strong>Une autre implémentation :</strong> remplace la liste par <code>deque</code> et <code>pop(0)</code> par <code>popleft()</code>. Garde les mêmes contrats. Explique pourquoi retirer en tête d’une liste est en O(n), contrairement à <code>deque</code>.</li><li><strong>Mascotte :</strong> implémente le bonus +10 tous les X tours. À capacité 2, compare X = 1, 2, 4 sur les mêmes 15 tours. Parmi ces valeurs testées, trouve le plus grand intervalle donnant au moins 80 de satisfaction moyenne aux 20 premiers sortis, ou conclus qu’aucune ne convient. La mascotte peut améliorer la satisfaction modélisée, mais ne crée pas de places.</li><li><strong>Aléatoire reproductible :</strong> utilise <code>random.Random(42)</code>, des arrivées entre 1 et 5 et des satisfactions entre 50 et 100. Génère le scénario avant les deux essais pour conserver exactement les mêmes entrées. Ce sera un autre scénario que celui de la démo.</li><li><strong>Panne :</strong> interdis un départ tous les X tours. Les arrivées et l’attente continuent. Compare avec le scénario sans panne.</li><li><strong>Fast Pass :</strong> deux files FIFO et une politique explicite, par exemple au plus un prioritaire par départ si les deux files sont non vides. Le système n’est plus FIFO globalement. Vérifie qu’aucune file ne reste indéfiniment sans service.</li></ul></details>
+    <p><strong>À rendre :</strong> ton programme sans classes, les résultats des tests, la trace des trois premiers tours, le tableau des deux essais et une conclusion distinguant attente, satisfaction et personnes encore dans la file.</p>
+  </section>
+
   <section class="level" id="snake" style="--level:#167346" aria-labelledby="snake-title">
-    <div class="level-heading"><h2 id="snake-title">02 / 🐍 SNAKE.PY</h2><span class="chapter-badge badge-green">OBSERVER → MODÉLISER · ★★☆</span></div>
+    <div class="level-heading"><h2 id="snake-title">03 / 🐍 SNAKE.PY</h2><span class="chapter-badge badge-green">OBSERVER → MODÉLISER · ★★☆</span></div>
     <p class="lead">Observe ce qui arrive aux différentes cases du serpent lorsqu'il avance. Quelle structure de données étudiée pourrait modéliser ce comportement ? Justifie ta réponse avant de coder.</p>
     <div class="demo">
       <h3>Une tête arrive. Que devient la queue ?</h3>
@@ -388,7 +571,15 @@ if __name__ == &quot;__main__&quot;:
   </section>
 
   <section class="level" id="hanoi" style="--level:#8250df" aria-labelledby="hanoi-title">
-    <div class="level-heading"><h2 id="hanoi-title">03 / 🗼 HANOI.PY</h2><span class="chapter-badge badge-blue">PILE · LIFO + RÉCURSIVITÉ · ★★☆</span></div>
+    <div class="level-heading"><h2 id="hanoi-title">04 / 🗼 HANOI.PY</h2><span class="chapter-badge badge-blue">PILE · LIFO + RÉCURSIVITÉ · ★★☆</span></div><details class="sd-help" id="recursion-aide"><summary>💡 Découvrir la récursion — pas encore étudiée</summary><p>Une fonction est <strong>récursive</strong> lorsqu’elle s’appelle elle-même pour traiter un problème plus petit. Il faut un <strong>cas d’arrêt</strong> et s’en rapprocher à chaque appel.</p><pre><code>def compte_a_rebours(n):
+    # Précondition : n est un entier positif ou nul.
+    if n == 0:
+        print("Départ !")
+        return
+    print(n)
+    compte_a_rebours(n - 1)
+
+compte_a_rebours(3)  # affiche 3, 2, 1, puis Départ !</code></pre><p>Trace : appel avec 3 → 2 → 1 → 0 ; puis les appels se terminent dans l’ordre inverse. Les appels en attente forment une pile. Sans arrêt, ou sans diminution de n, les appels finissent par provoquer une erreur <code>RecursionError</code>.</p><p>Pour Hanoï, résoudre avec n disques se ramène à déplacer n−1 disques, déplacer le plus grand, puis déplacer à nouveau les n−1 petits. Commence par les déplacements manuels : la résolution récursive est un prolongement guidé, pas un prérequis.</p></details>
     <p class="lead">Transfère tous les disques de A vers C. Un seul disque à la fois, et jamais un grand disque sur un plus petit.</p>
     <div class="demo"><h3>À toi de jouer</h3><p>Clique sur une tour de départ, puis sur une tour d'arrivée. Au clavier : Tab pour choisir, Entrée ou Espace pour sélectionner.</p>
       <div class="controls"><label for="hanoi-size">Disques</label><select id="hanoi-size"><option value="3">3 disques</option><option value="4">4 disques</option><option value="5">5 disques</option></select><button id="hanoi-reset">Recommencer</button><strong id="hanoi-count">0 déplacement</strong></div>

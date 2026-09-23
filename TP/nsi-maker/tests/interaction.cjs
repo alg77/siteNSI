@@ -9,7 +9,7 @@ const { pathToFileURL } = require('node:url');
   const errors=[]; page.on('pageerror',e=>errors.push(e.message));
   const external=[];page.on('request',r=>{if(/^https?:/.test(r.url()))external.push(r.url());});
   await page.goto(pathToFileURL(path.resolve('index.html')).href);
-  assert.equal(await page.locator('main section').count(),18);
+  assert.equal(await page.locator('main section').count(),19);
   for(const link of await page.locator('nav a').all()){
     const hash=await link.getAttribute('href');await link.click();assert.equal(await page.locator(hash).count(),1);
   }

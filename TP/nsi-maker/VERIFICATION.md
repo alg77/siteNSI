@@ -30,3 +30,12 @@ Les liens sont accessibles depuis le pied de page du tutoriel. Les contenus ne s
 - OpenSCAD n’est pas disponible dans le PATH de cet environnement. Aucun rendu STL réel ni test dans Bambu Studio ou sur P1S n’a été exécuté. Les essais physiques de jeu restent à réaliser dans l’établissement.
 - Tests automatisés sur Chromium ; pas de matrice Safari/Firefox ni de lecteur d’écran réel.
 - Les vues JavaScript sont des simulations pédagogiques, sans moteur OpenSCAD ni exécution Python dans le navigateur.
+
+
+## Passerelle S01 — ajout
+
+Cours p. 4–7, activités 2–5 et 7–8, exercices 2–6 examinés, ainsi que les corrigés fournis. Pages du cours sur LIFO/FIFO et schémas de l’exercice 6 inspectés visuellement. Une convention explicite (sommet à droite, sortie de file à gauche) évite toute ambiguïté d’orientation.
+
+Ajouts : section S01, simulations Hanoï/FIFO/tri de crêpes, correspondance des interfaces, références précises et copies locales des trois PDF élèves. Les deux corrigés ne sont pas publiés. Liens aller-retour avec le chapitre et carte dans l’accueil Terminale, en préservant les modifications déjà présentes (NSI Arcade).
+
+Tests Playwright `tests/s01.cjs` réussis : coups légaux/interdits, pile vide, même tige, résolution complète en 31 coups, ordre FIFO, file vide, capacité visuelle, séquence du tri de crêpes de la fiche, remises à zéro et largeurs 320/390/768/1440 px. Le test général `tests/interaction.cjs` est adapté aux 19 sections.

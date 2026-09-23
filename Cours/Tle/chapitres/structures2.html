@@ -1,0 +1,994 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Structures de données — NSI Bac</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+<link rel="stylesheet" href="../css/structures-demo.css"><script src="../js/structures-demo.js" defer></script></head>
+<body>
+<nav>
+  <a href="../index.html" class="nav-brand">NSI<span>.bac</span></a>
+  <div class="nav-links">
+    <a href="../index.html">Accueil</a>
+    <a href="../quiz.html">QCM</a>
+    <a href="../methodes.html">Méthodes</a>
+    <a href="index.html">Chapitres</a>
+  </div>
+  <span class="nav-badge">Terminale — 2026</span>
+  <button class="burger">☰</button>
+</nav>
+
+<div class="chapter-layout">
+  <aside class="toc">
+    <h4>📋 Sommaire</h4>
+    <ul>
+      <li><a href="#intro">Introduction</a></li>
+      <li><a href="#rappels">Rappels (types, itérations)</a></li>
+      <li><a href="#listes">Listes & tableaux</a></li>
+      <li><a href="#tp2-link">TP2 — Mise en pratique</a></li><li><a href="#piles">Piles (LIFO)</a></li>
+      <li><a href="#files">Files (FIFO)</a></li>
+      <li><a href="#dictionnaires">Dictionnaires</a></li>
+      <li><a href="#chaines">Listes chaînées</a></li>
+      <li><a href="#pieges">Pièges du bac</a></li>
+      <li><a href="#activites">Activités</a></li>
+      <li><a href="#exercices">Exercices</a></li>
+      <li><a href="#synthese">Synthèse</a></li>
+      <li><a href="#qcm">QCM — sans classes</a></li><li><a href="#apres-poo">Partie 2 — Après la POO</a></li>
+    </ul>
+  </aside>
+  <main class="chapter-content">
+    <div class="chapter-header">
+      <div class="chapter-icon">🗂️</div>
+      <div>
+        <h1>S01 — Structures de données</h1>
+        <p style="color:var(--text2);margin:0">Listes, piles, files, dictionnaires et listes chaînées</p>
+        <div class="chapter-meta" style="margin-top:.75rem">
+          <span class="chapter-badge badge-blue">Structures</span>
+          <span class="chapter-badge badge-green">Python</span>
+          <span class="chapter-badge badge-orange">Complexité O(1) / O(n)</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- INTRO -->
+    <section id="intro">
+      <h2>🎯 Introduction</h2><div class="callout callout-info"><span class="callout-icon">🧭</span><div class="callout-body"><h4>Partie 1 — Premier chapitre de Terminale : sans classes</h4><p>Prérequis : variables, conditions, boucles, fonctions, listes, tuples et dictionnaires de Première. Tu peux suivre le cours, les activités, les exercices et le QCM sans avoir étudié la programmation orientée objet.</p><p>Utiliser <code>liste.append(x)</code> ou <code>F.popleft()</code>, c’est appeler une opération déjà fournie par Python. Cela ne demande pas de savoir écrire une classe. Les mots <code>class</code>, <code>self</code> et <code>__init__</code> sont réservés à la <a href="#apres-poo">partie 2, à lire plus tard</a>.</p></div></div>
+      <p>Les <strong>structures de données</strong> permettent d'organiser et de stocker les informations en mémoire. Le choix d'une structure adaptée est crucial pour l'efficacité d'un algorithme.</p>
+      <div class="must-know">
+        <h3>✅ Ce qu'il faut absolument savoir pour le bac</h3>
+        <ul>
+          <li>Spécifier une structure de données par son <strong>interface</strong> (la liste des opérations qu'elle propose)</li>
+          <li>Distinguer <strong>interface</strong> et <strong>implémentation</strong> : deux implémentations différentes peuvent respecter la même interface</li>
+          <li>Distinguer les structures par les opérations qui les caractérisent (LIFO, FIFO, accès par clé)</li>
+          <li>Choisir une structure de données adaptée à la situation à modéliser</li>
+          <li>Distinguer la recherche d'une valeur dans une liste et dans un dictionnaire</li>
+          <li>Implémenter une pile et une file avec une liste Python (et savoir pourquoi <code>deque</code> pour une file)</li>
+          <li>Ne pas confondre le type abstrait <em>liste</em> (au sens Lisp, <code>cons</code>/<code>car</code>/<code>cdr</code>) et les <em>listes Python</em>, qui sont en réalité des tableaux dynamiques — ce sont des « faux amis »</li>
+        </ul>
+      </div>
+    </section>
+
+    <section id="tp2-link"><h2>🎮 Cours ↔ TP2 — Piles et files</h2><p>Observe ici les opérations, puis programme-les dans NSI Arcade : Bataille et PyLand pour FIFO, Hanoï pour LIFO. Les aides sont facultatives et les premières missions ne demandent ni classes ni récursion.</p><a class="btn btn-primary" href="../tp/nsi-arcade/index.html">Ouvrir le TP2 — Piles et files →</a></section><section id="maker-s01-link">
+      <h2>🖨️ Du chapitre S01 à l’objet réel : NSI Maker</h2>
+      <p>Fabrique des disques en Python et OpenSCAD, puis utilise-les pour manipuler trois piles de Hanoï et le tri de crêpes de l’exercice 6. Une file FIFO interactive fait aussi le lien avec les activités sur les files.</p>
+      <a href="../../../TP/nsi-maker/index.html#s01" class="btn btn-primary">Explorer la passerelle piles &amp; files →</a>
+    </section>
+
+    <!-- RAPPELS -->
+    <section id="rappels">
+      <h2>🔁 Rappels</h2>
+      <p>Nous avons vu l'année dernière comment étaient codées les données au sein d'un ordinateur, et nous avons utilisé des types simples et composés de Python. De nombreux algorithmes « classiques » manipulent des structures de données plus complexes que de simples nombres.</p>
+      <h3>Les types simples</h3>
+      <p>Un objet de type simple ne stocke qu'une donnée.</p>
+      <div style="max-width:100%;overflow-x:auto"><table>
+        <tr><th>Type</th><th>Exemples</th></tr>
+        <tr><td>entier (<code>int</code>)</td><td><code>1</code>, <code>12</code>, <code>-4</code></td></tr>
+        <tr><td>nombre flottant (<code>float</code>)</td><td><code>1.1</code>, <code>12.0</code>, <code>-25E2</code></td></tr>
+        <tr><td>chaîne de caractères (<code>str</code>)</td><td><code>"Du texte"</code>, <code>'Un autre texte'</code></td></tr>
+        <tr><td>booléen (<code>bool</code>)</td><td><code>True</code>, <code>False</code></td></tr>
+      </table></div>
+      <h3>Les types construits</h3>
+      <p>Les types construits permettent de stocker des collections de données.</p>
+      <div style="max-width:100%;overflow-x:auto"><table>
+        <tr><th>Type</th><th>Exemple</th><th>Accès</th></tr>
+        <tr><td>tableau (<code>list</code>)</td><td><code>l = [1, 12, -4]</code></td><td><code>l[2]</code> → <code>-4</code> (par indice)</td></tr>
+        <tr><td>dictionnaire (<code>dict</code>)</td><td><code>d = {'nom': 'Gaston', 'age': 25}</code></td><td><code>d['age']</code> → <code>25</code> (par clef)</td></tr>
+      </table></div>
+      <h3>Méthodes d'itération</h3>
+      <p>On peut itérer sur une liste par les <strong>valeurs</strong> ou par les <strong>index</strong> ; sur un dictionnaire, par les <strong>clés</strong>, les <strong>valeurs</strong>, ou les deux à la fois.</p>
+      <pre><code><span class="cm"># Itération sur les valeurs d'une liste</span>
+<span class="kw">for</span> val <span class="kw">in</span> ma_liste:
+    <span class="kw">print</span>(val)
+
+<span class="cm"># Itération sur les index (on a aussi accès à la valeur)</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="fn">len</span>(ma_liste)):
+    val = ma_liste[i]
+    <span class="kw">print</span>(<span class="str">"indice:"</span>, i, <span class="str">"valeur:"</span>, val)
+
+<span class="cm"># Itération sur les clés d'un dictionnaire</span>
+<span class="kw">for</span> key <span class="kw">in</span> D:          <span class="cm"># équivalent à : for key in D.keys():</span>
+    <span class="kw">print</span>(key)
+
+<span class="cm"># Itération sur les valeurs</span>
+<span class="kw">for</span> value <span class="kw">in</span> D.<span class="fn">values</span>():
+    <span class="kw">print</span>(value)
+
+<span class="cm"># Itération sur les paires clé/valeur</span>
+<span class="kw">for</span> key, value <span class="kw">in</span> D.<span class="fn">items</span>():
+    <span class="kw">print</span>(key, <span class="str">'=>'</span>, value)</code></pre>
+    </section>
+
+    <!-- LISTES -->
+    <section id="listes">
+      <h2>📋 Listes et tableaux</h2>
+
+      <h3>Le type abstrait <em>liste</em> (au sens Lisp)</h3>
+      <p>Le langage Lisp (John McCarthy, 1958 — <em>Lisp</em> signifie <em>list processing</em>) a introduit la notion de liste comme <strong>type abstrait</strong> : une liste L se décompose en sa <strong>tête</strong> (<code>car</code>, le dernier élément ajouté) et sa <strong>queue</strong> (<code>cdr</code>, le reste de la liste). Cinq opérations suffisent à la spécifier :</p>
+      <div style="max-width:100%;overflow-x:auto"><table>
+        <tr><th>Opération</th><th>Rôle</th></tr>
+        <tr><td><code>vide()</code></td><td>renvoie une liste vide (souvent notée <em>nil</em>)</td></tr>
+        <tr><td><code>estVide(L)</code></td><td>teste si la liste L est vide</td></tr>
+        <tr><td><code>cons(x, L)</code></td><td>construit une nouvelle liste en ajoutant <code>x</code> en tête de L</td></tr>
+        <tr><td><code>car(L)</code></td><td>renvoie le dernier élément ajouté (la tête), sans modifier L</td></tr>
+        <tr><td><code>cdr(L)</code></td><td>renvoie une liste contenant tous les éléments de L sauf la tête</td></tr>
+      </table></div>
+      <p><strong>Exemple</strong> (les instructions s'enchaînent) :</p>
+      <pre><code>L = <span class="fn">vide</span>()                          <span class="cm"># L est vide</span>
+<span class="fn">estVide</span>(L)                            <span class="cm"># renvoie True</span>
+L1 = <span class="fn">cons</span>(<span class="num">12</span>, L)                     <span class="cm"># L1 contient 12</span>
+<span class="fn">estVide</span>(L1)                           <span class="cm"># renvoie False</span>
+L1 = <span class="fn">cons</span>(<span class="num">15</span>, L1)                    <span class="cm"># L1 contient 15 et 12</span>
+L1 = <span class="fn">cons</span>(<span class="num">1</span>, <span class="fn">cons</span>(<span class="num">11</span>, L1))            <span class="cm"># L1 contient 1, 11, 15 et 12 (on peut enchaîner les cons)</span>
+<span class="fn">car</span>(L1)                                <span class="cm"># renvoie 1 — L1 reste inchangée</span>
+L2 = <span class="fn">cdr</span>(L1)                           <span class="cm"># L2 contient 11, 15 et 12 — L1 reste inchangée</span></code></pre>
+      <p>On implémente facilement ce type abstrait en Python avec des <strong>tuples</strong> :</p>
+      <pre><code><span class="kw">def</span> <span class="fn">vide</span>(): <span class="kw">return</span> <span class="kw">None</span>
+<span class="kw">def</span> <span class="fn">estVide</span>(L): <span class="kw">return</span> L <span class="kw">is</span> <span class="kw">None</span>
+<span class="kw">def</span> <span class="fn">cons</span>(x, L): <span class="kw">return</span> (x, L)
+<span class="kw">def</span> <span class="fn">car</span>(L): <span class="kw">return</span> L[<span class="num">0</span>]
+<span class="kw">def</span> <span class="fn">cdr</span>(L): <span class="kw">return</span> L[<span class="num">1</span>]</code></pre>
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body"><h4>Faux amis</h4>
+        <p>Ce type abstrait <em>liste</em> n'a <strong>rien à voir</strong> avec les « listes Python » (<code>list</code>) manipulées ci-dessous : les listes Python sont en réalité des <strong>tableaux dynamiques</strong>. Même nom, deux notions différentes — à ne jamais confondre le jour du bac.</p></div>
+      </div>
+
+      <h3>En pratique : les listes Python (tableaux dynamiques)</h3>
+      <p>En Python, le type <code>list</code> est un <strong>tableau dynamique</strong> : les éléments sont stockés de façon contiguë en mémoire, et Python gère automatiquement le redimensionnement.</p>
+      <div style="max-width:100%;overflow-x:auto"><table>
+        <tr><th>Opération</th><th>Complexité</th><th>Exemple</th></tr>
+        <tr><td>Accès par indice</td><td>O(1)</td><td><code>tab[i]</code></td></tr>
+        <tr><td>Ajout en fin</td><td>O(1) amorti</td><td><code>tab.append(x)</code></td></tr>
+        <tr><td>Insertion en début</td><td>O(n)</td><td><code>tab.insert(0, x)</code></td></tr>
+        <tr><td>Suppression en fin</td><td>O(1)</td><td><code>tab.pop()</code></td></tr>
+        <tr><td>Recherche d'une valeur</td><td>O(n)</td><td><code>x in tab</code></td></tr>
+        <tr><td>Longueur</td><td>O(1)</td><td><code>len(tab)</code></td></tr>
+      </table></div>
+      <pre><code><span class="cm"># Création et opérations courantes</span>
+tab = [<span class="num">3</span>, <span class="num">1</span>, <span class="num">4</span>, <span class="num">1</span>, <span class="num">5</span>]
+tab.<span class="fn">append</span>(<span class="num">9</span>)         <span class="cm"># [3,1,4,1,5,9]</span>
+tab.<span class="fn">insert</span>(<span class="num">0</span>, <span class="num">0</span>)      <span class="cm"># [0,3,1,4,1,5,9] — O(n) !</span>
+tab.<span class="fn">pop</span>()             <span class="cm"># retire 9, O(1)</span>
+tab.<span class="fn">pop</span>(<span class="num">0</span>)            <span class="cm"># retire 0, O(n) !</span>
+
+<span class="cm"># Compréhension de liste</span>
+carres = [x**<span class="num">2</span> <span class="kw">for</span> x <span class="kw">in</span> <span class="fn">range</span>(<span class="num">5</span>)]  <span class="cm"># [0,1,4,9,16]</span>
+pairs  = [x <span class="kw">for</span> x <span class="kw">in</span> tab <span class="kw">if</span> x % <span class="num">2</span> == <span class="num">0</span>]</code></pre>
+    </section>
+
+    <!-- PILES -->
+    <section id="piles">
+      <h2>📚 Piles — LIFO</h2><div class="sd-demo" id="demo-pile"><h3>🍽️ Une pile d’assiettes</h3><p>Sommet en haut : on pose et on retire seulement l’assiette du dessus. Dans le code ci-dessous, le sommet est à droite.</p><div class="sd-items sd-pile" aria-label="Pile d’assiettes"></div><p class="sd-state"></p><div class="sd-controls"><button data-action="add">Empiler</button><button data-action="remove">Dépiler</button><button data-action="reset">Recommencer</button></div><p role="status">1, puis 2, puis 3 ont été ajoutés. Prédis le prochain retrait.</p><small>Limite visuelle : 6 éléments. Une structure vide ne permet pas de retrait.</small><details class="sd-help"><summary>💡 Pourquoi ce n’est pas le même ordre ?</summary><p>Le dernier élément ajouté occupe le sommet : 3 sort avant 2, puis 1. Empiler 4 puis dépiler rend donc 4.</p></details><a href="../tp/nsi-arcade/index.html#hanoi">Mettre en pratique dans le TP2 : Hanoï →</a></div>
+      <p>Une <strong>pile</strong> (stack) suit le principe <em>LIFO</em> : <strong>Last In, First Out</strong> (dernier entré, premier sorti). Comme une pile d'assiettes : la seule assiette directement accessible est la dernière posée.</p>
+      <p>L'<strong>interface</strong> d'une pile se résume à quatre opérations : <code>estVide(P)</code>, <code>push(P, val)</code> (empiler), <code>pop(P)</code> (dépiler — renvoie le sommet <strong>et</strong> le supprime) et <code>taille(P)</code>.</p>
+      <p><strong>Exemple</strong> — soit une pile P composée de 12, 14, 8, 7, 19 et 22 (le sommet est 22). Pour chaque ligne ci-dessous, on repart de la pile d'origine :</p>
+      <div style="max-width:100%;overflow-x:auto"><table>
+        <tr><th>Instruction</th><th>Effet</th></tr>
+        <tr><td><code>pop(P)</code></td><td>renvoie 22 ; P devient 12, 14, 8, 7, 19 (sommet : 19)</td></tr>
+        <tr><td><code>push(P, 42)</code></td><td>P devient 12, 14, 8, 7, 19, 22, 42 (sommet : 42)</td></tr>
+        <tr><td><code>pop(P)</code> × 6</td><td><code>estVide(P)</code> renvoie <code>True</code></td></tr>
+        <tr><td>après un <code>pop(P)</code></td><td><code>taille(P)</code> renvoie 5</td></tr>
+      </table></div>
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body"><h4>Cas d'usage réels</h4>
+        <p>Pile d’appels de fonctions (<a href="#recursion-aide">récursion : découverte facultative ci-dessous</a>), annulation dans un éditeur (Ctrl+Z), navigation web (bouton Retour), vérification des parenthèses.</p></div>
+      </div>
+      <pre><code><span class="cm"># Implémentation d'une pile avec une liste Python</span>
+pile = []
+
+<span class="cm"># Empiler (push)</span>
+pile.<span class="fn">append</span>(<span class="str">'A'</span>)   <span class="cm"># pile = ['A']</span>
+pile.<span class="fn">append</span>(<span class="str">'B'</span>)   <span class="cm"># pile = ['A','B']</span>
+pile.<span class="fn">append</span>(<span class="str">'C'</span>)   <span class="cm"># pile = ['A','B','C']</span>
+
+<span class="cm"># Dépiler (pop) — retire le DERNIER élément</span>
+sommet = pile.<span class="fn">pop</span>()   <span class="cm"># sommet = 'C', pile = ['A','B']</span>
+
+<span class="cm"># Consulter sans dépiler (peek)</span>
+<span class="kw">if</span> pile:              <span class="cm"># vérifier non-vide avant !</span>
+    sommet = pile[-<span class="num">1</span>]  <span class="cm"># 'B' sans modifier la pile</span>
+
+</code></pre>
+    <details class="sd-help" id="recursion-aide"><summary>💡 Découvrir la récursion — pas encore étudiée</summary><p>Une fonction est <strong>récursive</strong> lorsqu’elle s’appelle elle-même pour traiter un problème plus petit. Il faut un <strong>cas d’arrêt</strong> et s’en rapprocher à chaque appel.</p><pre><code>def compte_a_rebours(n):
+    # Précondition : n est un entier positif ou nul.
+    if n == 0:
+        print("Départ !")
+        return
+    print(n)
+    compte_a_rebours(n - 1)
+
+compte_a_rebours(3)  # affiche 3, 2, 1, puis Départ !</code></pre><p>Trace : appel avec 3 → 2 → 1 → 0 ; puis les appels se terminent dans l’ordre inverse. Les appels en attente forment une pile. Sans arrêt, ou sans diminution de n, les appels finissent par provoquer une erreur <code>RecursionError</code>.</p><p>Pour Hanoï, résoudre avec n disques se ramène à déplacer n−1 disques, déplacer le plus grand, puis déplacer à nouveau les n−1 petits. Commence par les déplacements manuels : la résolution récursive est un prolongement guidé, pas un prérequis.</p></details><h3>Définir l’interface avec des fonctions</h3><p>Dans les activités, <code>push(P, x)</code> correspond à <code>empiler(P, x)</code> et <code>pop(P)</code> à <code>depiler(P)</code>. Le sommet est à droite dans notre liste Python.</p><pre><code><span class="kw">def</span> pileVide():
+    <span class="kw">return</span> []
+
+<span class="kw">def</span> estVide(P):
+    <span class="kw">return</span> len(P) == <span class="num">0</span>
+
+<span class="kw">def</span> empiler(P, valeur):
+    P.append(valeur)
+
+<span class="kw">def</span> depiler(P):
+    <span class="cm"># Précondition : P n&#x27;est pas vide.</span>
+    <span class="kw">return</span> P.pop()
+
+<span class="kw">def</span> taille(P):
+    <span class="kw">return</span> len(P)
+
+P = pileVide()
+empiler(P, <span class="num">34</span>)
+empiler(P, <span class="num">76</span>)
+<span class="kw">if</span> <span class="kw">not</span> estVide(P):
+    a = depiler(P)  <span class="cm"># a = 76 ; P = [34]</span>
+</code></pre><p>Exécute chaque exemple dans son propre fichier : le nom <code>estVide</code> sera aussi utilisé pour les listes chaînées, avec une représentation différente.</p></section>
+
+    <!-- FILES -->
+    <section id="files">
+      <h2>🚌 Files — FIFO</h2><div class="sd-demo" id="demo-file"><h3>🎢 Une file devant une attraction</h3><p>Sortie à gauche ← visiteurs dans l’ordre d’arrivée ← entrée à droite. Le nouveau visiteur rejoint la fin.</p><div class="sd-items " aria-label="File de visiteurs"></div><p class="sd-state"></p><div class="sd-controls"><button data-action="add">Enfiler</button><button data-action="remove">Défiler</button><button data-action="reset">Recommencer</button></div><p role="status">1, puis 2, puis 3 ont été ajoutés. Prédis le prochain retrait.</p><small>Limite visuelle : 6 éléments. Une structure vide ne permet pas de retrait.</small><details class="sd-help"><summary>💡 Pourquoi ce n’est pas le même ordre ?</summary><p>L’ancienneté décide : 1 sort avant 2, puis 3. Enfiler 4 ne lui donne pas le droit de passer devant.</p></details><a href="../tp/nsi-arcade/index.html#pyland">Mettre en pratique dans le TP2 : PyLand →</a></div>
+      <p>Une <strong>file</strong> (queue) suit le principe <em>FIFO</em> : <strong>First In, First Out</strong> (premier entré, premier sorti). Comme une file d'attente : on ajoute à une extrémité (<code>enqueue</code>, enfiler) et on retire à l'autre (<code>dequeue</code>, défiler).</p>
+      <p>L'<strong>interface</strong> d'une file : <code>estVide(F)</code>, <code>enqueue(F, val)</code> (enfiler), <code>dequeue(F)</code> (défiler — renvoie l'élément le plus ancien <strong>et</strong> le supprime) et <code>taille(F)</code>.</p>
+      <p><strong>Exemple</strong> — soit une file F composée de 12, 14, 8, 7, 19 et 22, où 22 est le <strong>premier</strong> élément entré et 12 le <strong>dernier</strong>. Pour chaque ligne ci-dessous, on repart de la file d'origine :</p>
+      <div style="max-width:100%;overflow-x:auto"><table>
+        <tr><th>Instruction</th><th>Effet</th></tr>
+        <tr><td><code>enqueue(F, 42)</code></td><td>F devient 42, 12, 14, 8, 7, 19, 22 (le plus ancien reste 22, le plus récent devient 42)</td></tr>
+        <tr><td><code>dequeue(F)</code></td><td>F devient 12, 14, 8, 7, 19 (22 est retiré, le plus ancien devient 19)</td></tr>
+        <tr><td><code>dequeue(F)</code> × 6</td><td><code>estVide(F)</code> renvoie <code>True</code></td></tr>
+        <tr><td>après un <code>dequeue(F)</code></td><td><code>taille(F)</code> renvoie 5</td></tr>
+      </table></div>
+      <div class="callout callout-warning">
+        <span class="callout-icon">⚠️</span>
+        <div class="callout-body"><h4>Une file avec une liste : possible, mais moins efficace</h4>
+        <p>Une liste avec <code>append</code> et <code>pop(0)</code> respecte FIFO, mais retirer en tête coûte <strong>O(n)</strong>. <code>collections.deque</code> permet des ajouts à droite et des retraits à gauche en O(1).</p></div>
+      </div>
+      <pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+file = <span class="fn">deque</span>()          <span class="cm"># file vide</span>
+
+<span class="cm"># Enfiler (enqueue) — ajouter en queue</span>
+file.<span class="fn">append</span>(<span class="str">'A'</span>)         <span class="cm"># file = deque(['A'])</span>
+file.<span class="fn">append</span>(<span class="str">'B'</span>)         <span class="cm"># file = deque(['A','B'])</span>
+
+<span class="cm"># Défiler (dequeue) — retirer en tête — O(1) !</span>
+premier = file.<span class="fn">popleft</span>() <span class="cm"># premier = 'A'</span>
+
+</code></pre>
+    <h3>Définir l’interface avec des fonctions</h3><p>Dans cette représentation Python, la sortie (le plus ancien) est à gauche et l’entrée à droite. Le dessin précédent utilise l’orientation inverse : la règle FIFO reste la même.</p><pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">def</span> fileVide():
+    <span class="kw">return</span> deque()
+
+<span class="kw">def</span> estVide(F):
+    <span class="kw">return</span> len(F) == <span class="num">0</span>
+
+<span class="kw">def</span> enqueue(F, valeur):
+    F.append(valeur)
+
+<span class="kw">def</span> dequeue(F):
+    <span class="cm"># Précondition : F n&#x27;est pas vide.</span>
+    <span class="kw">return</span> F.popleft()
+
+<span class="kw">def</span> taille(F):
+    <span class="kw">return</span> len(F)
+
+F = fileVide()
+enqueue(F, <span class="num">67</span>)
+enqueue(F, <span class="num">34</span>)
+<span class="kw">if</span> <span class="kw">not</span> estVide(F):
+    a = dequeue(F)  <span class="cm"># a = 67 ; F contient encore 34</span>
+</code></pre><p>Exécute chaque exemple dans son propre fichier : le nom <code>estVide</code> sera aussi utilisé pour les listes chaînées, avec une représentation différente.</p></section>
+
+    <!-- DICTIONNAIRES -->
+    <section id="dictionnaires">
+      <h2>🗝️ Dictionnaires</h2>
+      <p>Un <strong>dictionnaire</strong> (table de hachage) associe des <strong>clés</strong> à des <strong>valeurs</strong>. Les clés doivent être hashables (immuables : str, int, tuple).</p>
+      <div style="max-width:100%;overflow-x:auto"><table>
+        <tr><th>Opération</th><th>Complexité</th><th>Exemple</th></tr>
+        <tr><td>Accès/Modification</td><td>O(1) moy.</td><td><code>d[cle]</code></td></tr>
+        <tr><td>Test d'appartenance</td><td>O(1) moy.</td><td><code>cle in d</code></td></tr>
+        <tr><td>Insertion</td><td>O(1) moy.</td><td><code>d[cle] = val</code></td></tr>
+        <tr><td>Suppression</td><td>O(1) moy.</td><td><code>del d[cle]</code></td></tr>
+        <tr><td>Parcours</td><td>O(n)</td><td><code>for k, v in d.items()</code></td></tr>
+      </table></div>
+      <pre><code><span class="cm"># Création</span>
+notes = {<span class="str">'Alice'</span>: <span class="num">18</span>, <span class="str">'Bob'</span>: <span class="num">14</span>, <span class="str">'Chloe'</span>: <span class="num">16</span>}
+
+<span class="cm"># Accès (KeyError si absent → utiliser get)</span>
+n = notes.<span class="fn">get</span>(<span class="str">'David'</span>, <span class="num">0</span>)   <span class="cm"># renvoie 0 par défaut</span>
+
+<span class="cm"># Test d'appartenance</span>
+<span class="kw">if</span> <span class="str">'Alice'</span> <span class="kw">in</span> notes:
+    <span class="kw">print</span>(notes[<span class="str">'Alice'</span>])      <span class="cm"># 18</span>
+
+<span class="cm"># Parcours</span>
+<span class="kw">for</span> nom, note <span class="kw">in</span> notes.<span class="fn">items</span>():
+    <span class="kw">print</span>(f<span class="str">"{nom} : {note}"</span>)
+
+<span class="cm"># Compréhension de dictionnaire</span>
+maj = {k.upper(): v <span class="kw">for</span> k, v <span class="kw">in</span> notes.<span class="fn">items</span>()}
+
+<span class="cm"># setdefault / defaultdict</span>
+<span class="kw">from</span> collections <span class="kw">import</span> defaultdict
+freq = <span class="fn">defaultdict</span>(<span class="fn">int</span>)
+<span class="kw">for</span> c <span class="kw">in</span> <span class="str">"bonjour"</span>: freq[c] += <span class="num">1</span></code></pre>
+      <div class="callout callout-success">
+        <span class="callout-icon">✅</span>
+        <div class="callout-body"><h4>Depuis Python 3.7</h4><p>Les dictionnaires <strong>préservent l'ordre d'insertion</strong>. C'est garanti par le langage.</p></div>
+      </div>
+    </section>
+
+    <!-- LISTES CHAÎNÉES -->
+    <section id="chaines">
+      <h2>🔗 Type abstrait et représentation concrète</h2>
+      <p>Les listes, les piles et les files vues plus haut sont des <strong>types abstraits</strong> : des « vues de l'esprit », indépendantes de tout support informatique. Les <strong>implémenter</strong>, c'est les traduire dans un langage compréhensible par un ordinateur — et il existe plusieurs façons concrètes de le faire, selon le langage.</p>
+      <p>Deux grandes familles de représentation :</p>
+      <ul>
+        <li><strong>Tableau</strong> : une suite <em>contiguë</em> de cases mémoire. Simple et rapide en accès direct, mais de <strong>taille fixe</strong> : insérer un élément suppose de recréer un tableau plus grand et d'y recopier les données.</li>
+        <li><strong>Tableau dynamique</strong> : un tableau dont la taille peut varier, ce qui facilite l'insertion. <strong>Les « listes Python » sont des tableaux dynamiques</strong> — pas le type abstrait <em>liste</em> vu plus haut (encore ces fameux faux amis).</li>
+        <li><strong>Liste chaînée</strong> : chaque élément (nœud) occupe deux cases mémoire, une pour la valeur et une pour l'adresse de l'élément suivant. Les éléments ne sont <strong>pas</strong> contigus en mémoire, mais l'insertion y est très simple : il suffit de rediriger quelques pointeurs.</li>
+      </ul>
+      <div style="max-width:100%;overflow-x:auto"><table>
+        <tr><th>Opération</th><th>Liste chaînée</th><th>Tableau Python</th></tr>
+        <tr><td>Accès par indice</td><td>O(n)</td><td>O(1)</td></tr>
+        <tr><td>Insertion en tête</td><td>O(1)</td><td>O(n)</td></tr>
+        <tr><td>Insertion en queue</td><td>O(1) si pointeur fin</td><td>O(1) amorti</td></tr>
+        <tr><td>Suppression en tête</td><td>O(1)</td><td>O(n)</td></tr>
+        <tr><td>Recherche</td><td>O(n)</td><td>O(n)</td></tr>
+      </table></div>
+      <h3>Une représentation avec des tuples, sans classes</h3><p>Comme dans l’activité 6, une cellule est un couple <code>(valeur, suite)</code> ; <code>None</code> termine la chaîne. <code>cons</code> crée une nouvelle cellule sans modifier la suite existante. Il faut une liste non vide pour appeler <code>car</code> ou <code>cdr</code>.</p><pre><code><span class="kw">def</span> vide():
+    <span class="kw">return</span> <span class="kw">None</span>
+
+<span class="kw">def</span> estVide(L):
+    <span class="kw">return</span> L <span class="kw">is</span> <span class="kw">None</span>
+
+<span class="kw">def</span> cons(x, L):
+    <span class="kw">return</span> (x, L)
+
+<span class="kw">def</span> car(L):
+    <span class="cm"># Précondition : L n&#x27;est pas vide.</span>
+    <span class="kw">return</span> L[<span class="num">0</span>]
+
+<span class="kw">def</span> cdr(L):
+    <span class="cm"># Précondition : L n&#x27;est pas vide.</span>
+    <span class="kw">return</span> L[<span class="num">1</span>]
+
+L = cons(<span class="num">12</span>, cons(<span class="num">5</span>, cons(<span class="num">32</span>, vide())))
+courant = L
+<span class="kw">while</span> <span class="kw">not</span> estVide(courant):
+    print(car(courant))  <span class="cm"># affiche 12, puis 5, puis 32</span>
+    courant = cdr(courant)
+</code></pre><p>Exemple : <code>(12, (5, (32, None)))</code>. Parcourir cette chaîne signifie suivre successivement les seconds éléments des couples. <a href="#apres-poo">Une autre implémentation, avec des classes, sera étudiée après la POO.</a></p>
+    </section>
+
+    <!-- PIÈGES -->
+    <section id="pieges">
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body">
+          <h4>⚠️ Pièges classiques au bac</h4>
+          <ul>
+            <li><code>pop()</code> sur une liste vide → <strong>IndexError</strong> ! Toujours tester <code>if pile:</code> avant.</li>
+            <li><code>list.insert(0, x)</code> est <strong>O(n)</strong>, pas O(1). Pour une file, utiliser <code>deque</code>.</li>
+            <li>Un dictionnaire avec doublon de clé : <code>{'a':1,'a':2}</code> → <code>{'a':2}</code>. La deuxième valeur écrase.</li>
+            <li>Les listes sont <strong>mutables</strong> : <code>b = a</code> ne copie pas ! Utiliser <code>b = a.copy()</code> ou <code>b = a[:]</code>.</li>
+            <li>L'accès dict par clé absente → <strong>KeyError</strong>. Toujours utiliser <code>d.get(cle)</code> ou <code>cle in d</code>.</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTIVITÉS -->
+    <section id="activites">
+      <h2>📝 Activités</h2>
+      <p>Neuf activités de prise en main, à faire dans l'ordre : elles s'appuient les unes sur les autres.</p>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-facile">Facile</span>
+          <span class="exercise-title">Activité 1 — Construire et décomposer une liste</span>
+        </div>
+        <div class="exercise-body">
+          <p>Soit la suite d'instructions suivantes (elles s'enchaînent) :</p>
+          <pre><code>L = <span class="fn">vide</span>()
+L = <span class="fn">cons</span>(<span class="num">12</span>, <span class="fn">cons</span>(<span class="num">5</span>, <span class="fn">cons</span>(<span class="num">32</span>, L)))
+a = <span class="fn">car</span>(L)
+L1 = <span class="fn">cdr</span>(L)
+L1 = <span class="fn">cons</span>(<span class="num">42</span>, <span class="fn">cons</span>(<span class="num">23</span>, L1))</code></pre>
+          <p>Donnez le contenu des listes <code>L</code> et <code>L1</code>, et la valeur de <code>a</code>.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <pre><code>L = <span class="fn">vide</span>()                                 <span class="cm"># L devient une liste vide</span>
+L = <span class="fn">cons</span>(<span class="num">12</span>, <span class="fn">cons</span>(<span class="num">5</span>, <span class="fn">cons</span>(<span class="num">32</span>, L)))       <span class="cm"># L devient [12, 5, 32]</span>
+a = <span class="fn">car</span>(L)                                <span class="cm"># a = 12, le premier élément de L</span>
+L1 = <span class="fn">cdr</span>(L)                               <span class="cm"># L1 devient [5, 32]</span>
+L1 = <span class="fn">cons</span>(<span class="num">42</span>, <span class="fn">cons</span>(<span class="num">23</span>, L1))               <span class="cm"># L1 devient [42, 23, 5, 32]</span></code></pre>
+              <p><strong>Contenu de L :</strong> [12, 5, 32] · <strong>Contenu de L1 :</strong> [42, 23, 5, 32] · <strong>Valeur de a :</strong> 12</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-facile">Facile</span>
+          <span class="exercise-title">Activité 2 — Dépiler</span>
+        </div>
+        <div class="exercise-body">
+          <p>Soit une pile P composée des éléments suivants : 15, 11, 32, 45 et 67 (le sommet de la pile est 67). Quel est l'effet de l'instruction <code>pop(P)</code> ?</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <p>L'élément au sommet (67) est retiré. La pile devient : <strong>[15, 11, 32, 45]</strong>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-intermediaire">Intermédiaire</span>
+          <span class="exercise-title">Activité 3 — Empiler, dépiler, taille</span>
+        </div>
+        <div class="exercise-body">
+          <p>Soit une pile P initialement vide. Soit les instructions suivantes :</p>
+          <pre><code><span class="fn">push</span>(P, <span class="num">34</span>)
+<span class="fn">push</span>(P, <span class="num">76</span>)
+<span class="fn">push</span>(P, <span class="num">43</span>)
+a = <span class="fn">pop</span>(P)
+<span class="fn">push</span>(P, <span class="num">42</span>)
+b = <span class="fn">taille</span>(P)</code></pre>
+          <p>Donnez le contenu de la pile P, la valeur de <code>a</code> et la valeur de <code>b</code>.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <pre><code><span class="fn">push</span>(P, <span class="num">34</span>)   <span class="cm"># P devient [34]</span>
+<span class="fn">push</span>(P, <span class="num">76</span>)   <span class="cm"># P devient [76, 34]</span>
+<span class="fn">push</span>(P, <span class="num">43</span>)   <span class="cm"># P devient [43, 76, 34]</span>
+a = <span class="fn">pop</span>(P)     <span class="cm"># a = 43, P devient [76, 34]</span>
+<span class="fn">push</span>(P, <span class="num">42</span>)   <span class="cm"># P devient [42, 76, 34]</span>
+b = <span class="fn">taille</span>(P)  <span class="cm"># b = 3</span></code></pre>
+              <p><strong>Contenu de P :</strong> [42, 76, 34] · <strong>a =</strong> 43 · <strong>b =</strong> 3</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-facile">Facile</span>
+          <span class="exercise-title">Activité 4 — Enfiler</span>
+        </div>
+        <div class="exercise-body">
+          <p>Soit une file F composée des éléments suivants : 1, 12, 24, 17, 21 et 72 (le premier élément entré est 72 ; le dernier entré est 1). Quel est l'effet de l'instruction <code>enqueue(F, 25)</code> ?</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <p>File F, du plus ancien au plus récent : [72, 21, 17, 24, 12, 1]. L'élément 25 est ajouté à la fin. La file devient : <strong>[72, 21, 17, 24, 12, 1, 25]</strong>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-intermediaire">Intermédiaire</span>
+          <span class="exercise-title">Activité 5 — Enfiler, défiler, taille</span>
+        </div>
+        <div class="exercise-body">
+          <p>Soit une file F initialement vide. Soit les instructions suivantes :</p>
+          <pre><code><span class="fn">enqueue</span>(F, <span class="num">67</span>)
+<span class="fn">enqueue</span>(F, <span class="num">34</span>)
+<span class="fn">enqueue</span>(F, <span class="num">78</span>)
+a = <span class="fn">dequeue</span>(F)
+<span class="fn">enqueue</span>(F, <span class="num">23</span>)
+b = <span class="fn">taille</span>(F)</code></pre>
+          <p>Donnez le contenu de la file F, la valeur de <code>a</code> et la valeur de <code>b</code>.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <pre><code><span class="fn">enqueue</span>(F, <span class="num">67</span>)  <span class="cm"># F devient [67]</span>
+<span class="fn">enqueue</span>(F, <span class="num">34</span>)  <span class="cm"># F devient [67, 34]</span>
+<span class="fn">enqueue</span>(F, <span class="num">78</span>)  <span class="cm"># F devient [67, 34, 78]</span>
+a = <span class="fn">dequeue</span>(F)   <span class="cm"># a = 67, F devient [34, 78]</span>
+<span class="fn">enqueue</span>(F, <span class="num">23</span>)  <span class="cm"># F devient [34, 78, 23]</span>
+b = <span class="fn">taille</span>(F)   <span class="cm"># b = 3</span></code></pre>
+              <p><strong>Contenu de F :</strong> [34, 78, 23] · <strong>a =</strong> 67 · <strong>b =</strong> 3</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-intermediaire">Intermédiaire</span>
+          <span class="exercise-title">Activité 6 — Implémenter le type abstrait liste</span>
+        </div>
+        <div class="exercise-body">
+          <p>Soit le programme Python suivant :</p>
+          <pre><code><span class="kw">def</span> <span class="fn">vide</span>(): <span class="kw">return</span> <span class="kw">None</span>
+<span class="kw">def</span> <span class="fn">estVide</span>(L): <span class="kw">return</span> L <span class="kw">is</span> <span class="kw">None</span>
+<span class="kw">def</span> <span class="fn">cons</span>(x, L): <span class="kw">return</span> (x, L)
+<span class="kw">def</span> <span class="fn">car</span>(L): <span class="kw">return</span> L[<span class="num">0</span>]
+<span class="kw">def</span> <span class="fn">cdr</span>(L): <span class="kw">return</span> L[<span class="num">1</span>]</code></pre>
+          <p>Quel est le but de ce programme ? Vérifiez à l'aide de ce programme que vos réponses à l'activité 1 étaient correctes.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <p>Le programme implémente le type abstrait <em>liste</em> vu en cours, avec des <strong>tuples</strong> Python : <code>vide()</code> renvoie une liste vide (<code>None</code>), <code>estVide(L)</code> teste si L est vide, <code>cons(x, L)</code> ajoute <code>x</code> en tête, <code>car(L)</code> renvoie la tête, <code>cdr(L)</code> renvoie le reste. En exécutant ce programme avec les instructions de l'activité 1, on retrouve bien <code>L = [12, 5, 32]</code>, <code>a = 12</code> et <code>L1 = [42, 23, 5, 32]</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-facile">Facile</span>
+          <span class="exercise-title">Activité 7 — Les piles en Python</span>
+        </div>
+        <div class="exercise-body">
+          <p>Python propose une implémentation des piles. Après avoir étudié <a href="https://docs.python.org/fr/3/tutorial/datastructures.html" target="_blank" rel="noopener">la documentation officielle</a> (partie 5.1.1), écrivez un programme vérifiant vos réponses à l'activité 3.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <pre><code>P = []
+P.<span class="fn">append</span>(<span class="num">34</span>)
+P.<span class="fn">append</span>(<span class="num">76</span>)
+P.<span class="fn">append</span>(<span class="num">43</span>)
+a = P.<span class="fn">pop</span>()   <span class="cm"># a = 43</span>
+P.<span class="fn">append</span>(<span class="num">42</span>)
+b = <span class="fn">len</span>(P)   <span class="cm"># b = 3</span></code></pre>
+              <p>Une pile Python, c'est simplement une <code>list</code> : <code>push</code> = <code>append</code>, <code>pop</code> = <code>pop</code>, <code>taille</code> = <code>len</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-facile">Facile</span>
+          <span class="exercise-title">Activité 8 — Les files en Python</span>
+        </div>
+        <div class="exercise-body">
+          <p>Python propose une implémentation des files. Après avoir étudié <a href="https://docs.python.org/fr/3/tutorial/datastructures.html" target="_blank" rel="noopener">la documentation officielle</a> (partie 5.1.2), écrivez un programme vérifiant vos réponses à l'activité 5.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+F = <span class="fn">deque</span>()
+F.<span class="fn">append</span>(<span class="num">67</span>)
+F.<span class="fn">append</span>(<span class="num">34</span>)
+F.<span class="fn">append</span>(<span class="num">78</span>)
+a = F.<span class="fn">popleft</span>()   <span class="cm"># a = 67</span>
+F.<span class="fn">append</span>(<span class="num">23</span>)
+b = <span class="fn">len</span>(F)       <span class="cm"># b = 3</span></code></pre>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-intermediaire">Intermédiaire</span>
+          <span class="exercise-title">Activité 9 — Compter sans len()</span>
+        </div>
+        <div class="exercise-body">
+          <p>Écrivez une fonction Python permettant de déterminer le nombre d'éléments d'une liste. Puis, sans utiliser <code>len()</code>, écrivez-la pour le type abstrait <em>liste</em>, pour une pile et pour une file — <strong>sans les modifier</strong>.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <pre><code><span class="cm"># Avec len() — le plus simple</span>
+<span class="kw">def</span> <span class="fn">taille</span>(L): <span class="kw">return</span> <span class="fn">len</span>(L)
+
+<span class="cm"># Sans len(), sur le type abstrait liste (cons/cdr)</span>
+<span class="kw">def</span> <span class="fn">taille</span>(L):
+    compteur = <span class="num">0</span>
+    <span class="kw">while</span> L <span class="kw">is not</span> <span class="kw">None</span>:
+        compteur += <span class="num">1</span>
+        L = <span class="fn">cdr</span>(L)   <span class="cm"># passe à l'élément suivant</span>
+    <span class="kw">return</span> compteur</code></pre>
+              <p>Pour une <strong>pile</strong> ou une <strong>file</strong>, il n'existe pas d'équivalent de <code>cdr</code> qui laisse la structure intacte : il faut la vider dans une structure temporaire pour compter, puis la restaurer.</p>
+              <pre><code><span class="kw">def</span> <span class="fn">taille_pile</span>(P):
+    compteur = <span class="num">0</span>
+    temporaire = []
+    <span class="kw">while</span> P:
+        compteur += <span class="num">1</span>
+        element = P.<span class="fn">pop</span>()
+        temporaire.<span class="fn">append</span>(element)
+    <span class="kw">while</span> temporaire:
+        P.<span class="fn">append</span>(temporaire.<span class="fn">pop</span>())   <span class="cm"># restaure l'ordre initial</span>
+    <span class="kw">return</span> compteur
+
+<span class="kw">def</span> <span class="fn">taille_file</span>(F):   <span class="cm"># F est une deque</span>
+    compteur = <span class="num">0</span>
+    temporaire = <span class="fn">deque</span>()
+    <span class="kw">while</span> F:
+        compteur += <span class="num">1</span>
+        element = F.<span class="fn">pop</span>()
+        temporaire.<span class="fn">append</span>(element)
+    <span class="kw">while</span> temporaire:
+        F.<span class="fn">append</span>(temporaire.<span class="fn">pop</span>())   <span class="cm"># restaure l'ordre initial</span>
+    <span class="kw">return</span> compteur</code></pre>
+              <p>Dans les deux cas : on vide entièrement la structure dans une structure temporaire en comptant au passage, puis on la restaure élément par élément — ce qui remet tout dans l'ordre d'origine, sans jamais utiliser <code>len()</code>.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- EXERCICES -->
+    <section id="exercices">
+      <h2>🏋️ Exercices</h2>
+      <p>Six exercices, du plus simple au sujet 0 du bac NSI (tri d'une pile de crêpes).</p>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-facile">Facile</span>
+          <span class="exercise-title">Exercice 1 — Construire et décomposer une liste</span>
+        </div>
+        <div class="exercise-body">
+          <pre><code>L = <span class="fn">vide</span>()
+L = <span class="fn">cons</span>(<span class="num">2</span>, <span class="fn">cons</span>(<span class="num">15</span>, <span class="fn">cons</span>(<span class="num">23</span>, L)))
+L1 = <span class="fn">cdr</span>(L)
+a = <span class="fn">car</span>(L1)
+L1 = <span class="fn">cons</span>(<span class="num">4</span>, <span class="fn">cons</span>(<span class="num">3</span>, L1))</code></pre>
+          <p>Donnez le contenu des listes L et L1, et la valeur de a.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <p>L est initialisé avec [2, 15, 23]. L1 = <code>cdr(L)</code> = [15, 23]. a = <code>car(L1)</code> = 15. Enfin, deux éléments sont ajoutés à L1, qui devient [4, 3, 15, 23].</p>
+              <p><strong>L :</strong> [2, 15, 23] · <strong>L1 :</strong> [4, 3, 15, 23] · <strong>a :</strong> 15</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-facile">Facile</span>
+          <span class="exercise-title">Exercice 2 — Une pile, cinq questions</span>
+        </div>
+        <div class="exercise-body">
+          <pre><code><span class="fn">push</span>(P, <span class="num">4</span>)
+<span class="fn">push</span>(P, <span class="num">7</span>)
+a = <span class="fn">pop</span>(P)
+b = <span class="fn">taille</span>(P)
+c = <span class="fn">pop</span>(P)
+<span class="fn">push</span>(P, <span class="num">3</span>)
+<span class="fn">push</span>(P, <span class="num">2</span>)
+d = <span class="fn">taille</span>(P)</code></pre>
+          <p>P est initialement vide. Donnez son contenu final et les valeurs de a, b, c, d.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <p>On empile 4 puis 7. <code>a = pop(P) = 7</code>, il reste [4]. <code>b = taille(P) = 1</code>. <code>c = pop(P) = 4</code>, la pile est vide. On empile 3 puis 2 : pile finale [3, 2], <code>d = taille(P) = 2</code>.</p>
+              <p><strong>P :</strong> [3, 2] · <strong>a :</strong> 7 · <strong>b :</strong> 1 · <strong>c :</strong> 4 · <strong>d :</strong> 2</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-intermediaire">Intermédiaire</span>
+          <span class="exercise-title">Exercice 3 — Une file, cinq questions</span>
+        </div>
+        <div class="exercise-body">
+          <pre><code><span class="fn">enqueue</span>(F, <span class="num">6</span>)
+<span class="fn">enqueue</span>(F, <span class="num">3</span>)
+a = <span class="fn">dequeue</span>(F)
+<span class="fn">enqueue</span>(F, <span class="num">9</span>)
+b = <span class="fn">taille</span>(F)
+<span class="fn">enqueue</span>(F, <span class="num">17</span>)
+c = <span class="fn">dequeue</span>(F)
+<span class="fn">enqueue</span>(F, <span class="num">2</span>)
+d = <span class="fn">taille</span>(F)</code></pre>
+          <p>F est initialement vide. Donnez son contenu final et les valeurs de a, b, c, d.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <p>On enfile 6 puis 3. <code>a = dequeue(F) = 6</code>, F devient [3]. On enfile 9 : F = [3, 9], <code>b = taille(F) = 2</code>. On enfile 17 : F = [3, 9, 17]. <code>c = dequeue(F) = 3</code>. On enfile 2 : F = [9, 17, 2], <code>d = taille(F) = 3</code>.</p>
+              <p><strong>F :</strong> [9, 17, 2] · <strong>a :</strong> 6 · <strong>b :</strong> 2 · <strong>c :</strong> 3 · <strong>d :</strong> 3</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-intermediaire">Intermédiaire</span>
+          <span class="exercise-title">Exercice 4 — Lire un programme (pile)</span>
+        </div>
+        <div class="exercise-body">
+          <pre><code>pile = []
+tab = [<span class="num">5</span>, <span class="num">8</span>, <span class="num">6</span>, <span class="num">1</span>, <span class="num">3</span>, <span class="num">7</span>]
+pile.<span class="fn">append</span>(<span class="num">5</span>)
+pile.<span class="fn">append</span>(<span class="num">10</span>)
+pile.<span class="fn">append</span>(<span class="num">8</span>)
+pile.<span class="fn">append</span>(<span class="num">15</span>)
+<span class="kw">for</span> i <span class="kw">in</span> tab:
+    <span class="kw">if</span> i > <span class="num">5</span>:
+        pile.<span class="fn">pop</span>()</code></pre>
+          <p>Donnez l'état de <code>pile</code> après l'exécution.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <p>Après les <code>append</code> : pile = [5, 10, 8, 15]. On parcourt <code>tab</code> : 5 → rien ; 8 &gt; 5 → on retire 15 (pile = [5, 10, 8]) ; 6 &gt; 5 → on retire 8 (pile = [5, 10]) ; 1 → rien ; 3 → rien ; 7 &gt; 5 → on retire 10 (pile = [5]).</p>
+              <p><strong>État final :</strong> [5]</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-intermediaire">Intermédiaire</span>
+          <span class="exercise-title">Exercice 5 — Lire un programme (file)</span>
+        </div>
+        <div class="exercise-body">
+          <pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+file = <span class="fn">deque</span>([])
+tab = [<span class="num">2</span>, <span class="num">78</span>, <span class="num">6</span>, <span class="num">89</span>, <span class="num">3</span>, <span class="num">17</span>]
+file.<span class="fn">append</span>(<span class="num">5</span>)
+file.<span class="fn">append</span>(<span class="num">10</span>)
+file.<span class="fn">append</span>(<span class="num">8</span>)
+file.<span class="fn">append</span>(<span class="num">15</span>)
+<span class="kw">for</span> i <span class="kw">in</span> tab:
+    <span class="kw">if</span> i > <span class="num">50</span>:
+        file.<span class="fn">popleft</span>()</code></pre>
+          <p>Donnez l'état de <code>file</code> après l'exécution.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <p>Après les <code>append</code> : file = [5, 10, 8, 15]. On parcourt <code>tab</code> : 2 → rien ; 78 &gt; 50 → on retire 5 (file = [10, 8, 15]) ; 6 → rien ; 89 &gt; 50 → on retire 10 (file = [8, 15]) ; 3, 17 → rien.</p>
+              <p><strong>État final :</strong> [8, 15]</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header">
+          <span class="exercise-level level-bac">Niveau bac</span>
+          <span class="exercise-title">Exercice 6 — Tri d'une pile de crêpes (sujet 0 du bac NSI)</span>
+        </div>
+        <div class="exercise-body">
+          <p>On dispose de 4 fonctions : <code>pileVide()</code>, <code>estVide(P)</code>, <code>empiler(P, val)</code>, <code>depiler(P)</code> (renvoie <strong>et</strong> retire le sommet).</p>
+          <p><strong>1)</strong> P contient 8, 5, 2, 4 (empilés par le haut, sommet = 4). Quel est le contenu de Q après :</p>
+          <pre><code>Q = <span class="fn">pileVide</span>()
+<span class="kw">while</span> <span class="kw">not</span> <span class="fn">estVide</span>(P):
+    <span class="fn">empiler</span>(Q, <span class="fn">depiler</span>(P))</code></pre>
+          <p><strong>2a)</strong> Complétez <code>hauteur_pile(P)</code>, qui renvoie le nombre d'éléments de P <strong>sans la modifier durablement</strong> :</p>
+          <pre><code><span class="kw">def</span> <span class="fn">hauteur_pile</span>(P):
+    Q = <span class="fn">pileVide</span>()
+    n = <span class="num">0</span>
+    <span class="kw">while</span> <span class="kw">not</span>(<span class="fn">estVide</span>(P)):
+        <span class="cm">???</span>
+        x = <span class="fn">depiler</span>(P)
+        <span class="fn">empiler</span>(Q, x)
+    <span class="kw">while</span> <span class="kw">not</span>(<span class="fn">estVide</span>(Q)):
+        <span class="cm">???</span>
+        <span class="fn">empiler</span>(P, x)
+    <span class="kw">return</span> <span class="cm">???</span></code></pre>
+          <p><strong>2b)</strong> Écrivez <code>max_pile(P, i)</code> : position (1 = sommet) de l'élément maximum parmi les <code>i</code> derniers empilés ; P retrouve son état d'origine.</p>
+          <p><strong>3)</strong> Écrivez <code>retourner(P, j)</code> : inverse l'ordre des <code>j</code> derniers éléments empilés (utiliser deux piles auxiliaires), ne renvoie rien.</p>
+          <p><strong>4)</strong> « Tri des crêpes » : on modélise une pile de crêpes par une pile d'entiers (le diamètre). On veut réordonner la pile de la plus grande (en bas) à la plus petite (en haut), en ne disposant que d'une « spatule » qui retourne toutes les crêpes au-dessus d'une position donnée. Écrivez <code>tri_crepes(P)</code> à l'aide des fonctions précédentes.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction">
+            <div class="correction-box">
+              <h5>✅ Correction</h5>
+              <p><strong>1)</strong> Q contient les mêmes éléments que P, dans l'ordre inverse : si P = [8, 5, 2, 4], alors <strong>Q = [4, 2, 5, 8]</strong>.</p>
+              <p><strong>2a)</strong></p>
+              <pre><code><span class="kw">def</span> <span class="fn">hauteur_pile</span>(P):
+    Q = <span class="fn">pileVide</span>()
+    n = <span class="num">0</span>
+    <span class="kw">while</span> <span class="kw">not</span>(<span class="fn">estVide</span>(P)):
+        n += <span class="num">1</span>                  <span class="cm"># incrémente le compteur</span>
+        x = <span class="fn">depiler</span>(P)
+        <span class="fn">empiler</span>(Q, x)
+    <span class="kw">while</span> <span class="kw">not</span>(<span class="fn">estVide</span>(Q)):
+        x = <span class="fn">depiler</span>(Q)              <span class="cm"># restaure P</span>
+        <span class="fn">empiler</span>(P, x)
+    <span class="kw">return</span> n</code></pre>
+              <p>On dépile P en comptant, en empilant chaque élément dans Q, puis on restaure P depuis Q.</p>
+              <p><strong>2b)</strong></p>
+              <pre><code><span class="kw">def</span> <span class="fn">max_pile</span>(P, i):
+    Q = <span class="fn">pileVide</span>()
+    max_value = <span class="kw">None</span>
+    position = <span class="num">1</span>
+    max_position = <span class="num">1</span>
+    <span class="kw">for</span> j <span class="kw">in</span> <span class="fn">range</span>(i):
+        x = <span class="fn">depiler</span>(P)
+        <span class="fn">empiler</span>(Q, x)
+        <span class="kw">if</span> max_value <span class="kw">is</span> <span class="kw">None</span> <span class="kw">or</span> x > max_value:
+            max_value = x
+            max_position = position
+        position += <span class="num">1</span>
+    <span class="kw">while</span> <span class="kw">not</span> <span class="fn">estVide</span>(Q):
+        <span class="fn">empiler</span>(P, <span class="fn">depiler</span>(Q))
+    <span class="kw">return</span> max_position</code></pre>
+              <p>On parcourt les <code>i</code> derniers éléments de P, on repère le maximum et sa position, puis on restaure P.</p>
+              <p><strong>3)</strong></p>
+              <pre><code><span class="kw">def</span> <span class="fn">retourner</span>(P, j):
+    Q = <span class="fn">pileVide</span>()
+    R = <span class="fn">pileVide</span>()
+    <span class="kw">for</span> _ <span class="kw">in</span> <span class="fn">range</span>(j):
+        <span class="fn">empiler</span>(Q, <span class="fn">depiler</span>(P))
+    <span class="kw">while</span> <span class="kw">not</span> <span class="fn">estVide</span>(Q):
+        <span class="fn">empiler</span>(R, <span class="fn">depiler</span>(Q))
+    <span class="kw">while</span> <span class="kw">not</span> <span class="fn">estVide</span>(R):
+        <span class="fn">empiler</span>(P, <span class="fn">depiler</span>(R))</code></pre>
+              <p>Deux piles auxiliaires suffisent : dépiler deux fois de suite (P→Q puis Q→R) inverse deux fois l'ordre, donc <code>P→Q→R→P</code>... en s'arrêtant à R on obtient l'ordre inversé une seule fois pour les <code>j</code> derniers éléments.</p>
+              <p><strong>4)</strong></p>
+              <pre><code><span class="kw">def</span> <span class="fn">tri_crepes</span>(P):
+    n = <span class="fn">hauteur_pile</span>(P)
+    <span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(n, <span class="num">1</span>, -<span class="num">1</span>):
+        max_pos = <span class="fn">max_pile</span>(P, i)
+        <span class="fn">retourner</span>(P, max_pos)   <span class="cm"># amène la plus grande crêpe restante au sommet</span>
+        <span class="fn">retourner</span>(P, i)          <span class="cm"># puis tout en bas des i premières</span></code></pre>
+              <p>À chaque tour, on cherche la plus grande crêpe parmi les <code>i</code> non encore triées, on la ramène au sommet (<code>retourner(P, max_pos)</code>), puis on la fait descendre tout en bas du paquet en cours de tri (<code>retourner(P, i)</code>) — exactement le principe de la « spatule ».</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SYNTHÈSE -->
+    <section class="synthese" id="synthese">
+      <h2>📌 Fiche synthèse</h2>
+      <div class="synthese-grid">
+        <div class="synthese-card">
+          <h4>LISTE (tableau)</h4>
+          <ul>
+            <li>Accès[i] → O(1)</li>
+            <li>append → O(1) amorti</li>
+            <li>insert(0,x) → O(n)</li>
+            <li>Recherche → O(n)</li>
+          </ul>
+        </div>
+        <div class="synthese-card">
+          <h4>PILE (LIFO)</h4>
+          <ul>
+            <li>push = append() → O(1)</li>
+            <li>pop() → O(1)</li>
+            <li>peek = tab[-1] → O(1)</li>
+            <li>Usage : récursion, Ctrl+Z</li>
+          </ul>
+        </div>
+        <div class="synthese-card">
+          <h4>FILE (FIFO)</h4>
+          <ul>
+            <li>enqueue = append() → O(1)</li>
+            <li>dequeue = popleft() → O(1)</li>
+            <li>Utiliser deque !</li>
+            <li>Usage : BFS, impression</li>
+          </ul>
+        </div>
+        <div class="synthese-card">
+          <h4>DICTIONNAIRE</h4>
+          <ul>
+            <li>Accès/Insert → O(1) moy.</li>
+            <li>Clé in dict → O(1)</li>
+            <li>Clés hashables</li>
+            <li>Ordre depuis Python 3.7</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- QCM -->
+        <section class="quiz-section" id="qcm">
+        <h2>🧠 QCM</h2>
+        <p style="color:var(--text2);margin-bottom:1rem">Choisissez le nombre de questions et le niveau, puis lancez.</p>
+        <div id="quiz-container-structures"></div>
+    </section>
+
+<section id="apres-poo"><h2>📦 Partie 2 — À lire après avoir étudié la POO</h2><p><strong>Cette partie n’est pas à travailler au début de l’année.</strong> Termine d’abord la partie sans classes. Reviens ici après le <a href="poo.html">chapitre sur la programmation orientée objet</a>, lorsque tu connais classe, instance, attribut, méthode, <code>self</code> et <code>__init__</code>.</p><details><summary>J’ai étudié la POO : ouvrir les implémentations avec classes</summary><p>Le contrat LIFO ou FIFO ne change pas. Une classe regroupe désormais la structure stockée dans un attribut et les opérations dans des méthodes.</p><div style="max-width:100%;overflow-x:auto"><table><tr><th>Partie 1 : fonctions</th><th>Après la POO : méthodes</th></tr><tr><td><code>P = pileVide()</code></td><td><code>P = Pile()</code></td></tr><tr><td><code>empiler(P, 34)</code></td><td><code>P.empiler(34)</code></td></tr><tr><td><code>depiler(P)</code></td><td><code>P.depiler()</code></td></tr></table></div><details class="sd-help" id="raise-aide"><summary>💡 Que fait raise ? Et NotImplementedError ?</summary><p><code>raise</code> <strong>déclenche une exception</strong> : Python interrompt l’exécution normale et cherche un bloc <code>except</code> capable de la traiter. Sans traitement, le programme s’arrête avec un message d’erreur. Ce n’est ni un affichage (<code>print</code>), ni une valeur renvoyée (<code>return</code>).</p><pre><code>def retirer(file):
+    if not file:
+        raise ValueError("La file est vide")
+    return file.pop(0)
+
+try:
+    retirer([])
+except ValueError as erreur:
+    print(erreur)  # affiche La file est vide</code></pre><p>Dans les squelettes, <code>raise NotImplementedError("Mission à compléter")</code> est un repère volontaire. Remplace cette ligne par ton algorithme lorsque tu programmes la fonction. Le message ne signifie pas que Python est mal installé.</p><p><code>ValueError</code> signale ici une opération refusée ; <code>IndexError</code> apparaît notamment avec un retrait invalide dans une liste. Respecte le contrat de chaque activité : dans PyLand, retirer d’une file vide renvoie <code>None</code>, tandis que la Bataille demande une exception.</p></details><h3>La classe Pile</h3><pre><code><span class="kw">class</span> <span class="fn">Pile</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self): self._data = []
+    <span class="kw">def</span> <span class="fn">est_vide</span>(self): <span class="kw">return</span> <span class="fn">len</span>(self._data) == <span class="num">0</span>
+    <span class="kw">def</span> <span class="fn">empiler</span>(self, x): self._data.<span class="fn">append</span>(x)
+    <span class="kw">def</span> <span class="fn">depiler</span>(self):
+        <span class="kw">if</span> self.<span class="fn">est_vide</span>(): <span class="kw">raise</span> <span class="fn">IndexError</span>(<span class="str">"pile vide"</span>)
+        <span class="kw">return</span> self._data.<span class="fn">pop</span>()
+    <span class="kw">def</span> <span class="fn">sommet</span>(self): <span class="kw">return</span> self._data[-<span class="num">1</span>]</code></pre><h3>La classe File</h3><pre><code><span class="kw">from</span> collections <span class="kw">import</span> deque
+
+<span class="kw">class</span> <span class="fn">File</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self): self._data = <span class="fn">deque</span>()
+    <span class="kw">def</span> <span class="fn">est_vide</span>(self): <span class="kw">return</span> <span class="fn">len</span>(self._data) == <span class="num">0</span>
+    <span class="kw">def</span> <span class="fn">enfiler</span>(self, x): self._data.<span class="fn">append</span>(x)
+    <span class="kw">def</span> <span class="fn">defiler</span>(self):
+        <span class="kw">if</span> self.<span class="fn">est_vide</span>(): <span class="kw">raise</span> <span class="fn">IndexError</span>(<span class="str">"file vide"</span>)
+        <span class="kw">return</span> self._data.<span class="fn">popleft</span>()</code></pre><h3>Des nœuds et une liste chaînée</h3><p>Les attributs <code>valeur</code> et <code>suivant</code> jouent ici les rôles des deux éléments du tuple de la partie 1.</p><pre><code><span class="kw">class</span> <span class="fn">Noeud</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self, valeur):
+        self.valeur = valeur
+        self.suivant = <span class="kw">None</span>
+
+<span class="kw">class</span> <span class="fn">ListeChainee</span>:
+    <span class="kw">def</span> <span class="fn">__init__</span>(self):
+        self.tete = <span class="kw">None</span>
+
+    <span class="kw">def</span> <span class="fn">inserer_tete</span>(self, val):         <span class="cm"># O(1)</span>
+        n = <span class="fn">Noeud</span>(val)
+        n.suivant = self.tete
+        self.tete = n
+
+    <span class="kw">def</span> <span class="fn">parcourir</span>(self):
+        courant = self.tete
+        <span class="kw">while</span> courant <span class="kw">is not None</span>:
+            <span class="kw">print</span>(courant.valeur)
+            courant = courant.suivant</code></pre><p>À vérifier : deux instances doivent garder des contenus indépendants ; empiler puis dépiler restitue la dernière valeur ; enfiler puis défiler respecte l’ordre d’arrivée. Les retraits sur une structure vide lèvent une erreur.</p></details></section>
+    <div style="text-align:center;margin:2rem 0;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
+      <a href="../index.html" class="btn btn-outline">← Tous les chapitres</a>
+      <a href="bases-de-donnees.html" class="btn btn-outline">Chapitre suivant : S02 — Bases de données →</a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  <p>NSI Terminale — <a href="../index.html">Accueil</a> · <a href="../quiz.html">QCM global</a></p>
+</footer>
+
+<script src="../js/questions.js"></script>
+<script src="../js/quiz.js"></script>
+<script src="../js/main.js"></script>
+
+<script>
+  document.querySelectorAll('.qnb-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.qnb-btn').forEach(b => b.classList.remove('active-qnb'));
+      btn.classList.add('active-qnb');
+    });
+  });
+  document.querySelectorAll('.qlvl-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.qlvl-btn').forEach(b => b.classList.remove('active-qlvl'));
+      btn.classList.add('active-qlvl');
+    });
+  });
+  initChapterQuiz('structures', 'quiz-container-structures', 5);
+</script>
+</body>
+</html>

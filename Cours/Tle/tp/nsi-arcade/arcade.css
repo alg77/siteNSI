@@ -9,7 +9,7 @@
 .arcade .hero-label{margin-bottom:1rem}
 .arcade .route{display:flex;flex-wrap:wrap;justify-content:center;gap:8px;margin:1rem 0;font-family:var(--font-mono);font-size:.85rem}
 .arcade .route a{padding:5px 10px;border:1px solid var(--border);border-radius:6px;background:var(--bg)}
-.arcade .chapters-grid{grid-template-columns:repeat(4,minmax(0,1fr));margin-bottom:1.5rem}
+.arcade .chapters-grid{grid-template-columns:repeat(5,minmax(0,1fr));margin-bottom:1.5rem}
 .arcade .chapter-card{padding:1.15rem}
 .arcade .chapter-card-title{font-size:1rem}
 .arcade .chapter-card-icon{font-size:2rem}
@@ -86,3 +86,6 @@
 @media(max-width:950px){.arcade .chapters-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.arcade .missions{grid-template-columns:1fr}}
 @media(max-width:640px){.arcade .arcade-nav{position:static;padding:12px}.arcade .arcade-nav .nav-links{width:100%}.arcade .container{padding:1.5rem 1rem}.arcade .demo-layout{grid-template-columns:1fr}.arcade .demo{padding:.8rem}.arcade .chapters-grid{gap:.7rem}.arcade .chapter-card{padding:.8rem}.arcade .chapter-card-title{font-size:.83rem;overflow-wrap:anywhere}.arcade .tower{height:200px}.arcade .towers{gap:6px}.arcade .level-heading .chapter-badge{margin-left:0}.arcade .level{scroll-margin-top:15px}.arcade .hero{padding-top:2rem}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}.arcade *{transition:none!important}}
+
+.arcade .park-person{display:inline-block;min-width:110px;padding:10px;border:1px solid var(--border);border-radius:8px;background:var(--bg)}
+.arcade .park-person small{display:block;color:var(--text2)}
