@@ -178,105 +178,76 @@ Une création de personnage en console. On ne combat pas encore dans le programm
 
 ## Partie 2 — Hasard, bibliothèques et premières fonctions
 
-### 1. Utiliser un module
+Priorité de cette séance : comprendre les fonctions et réussir le TP2. Prends le temps de tracer un appel et ses deux chemins vrai/faux. La version if / else est pleinement acceptée. Si tu termines, commence le parcours découverte du TP3.
 
-Un module regroupe des fonctions. import random permet d’utiliser celles du hasard. On écrit le nom du module, un point, puis le nom de la fonction.
+### 1. Une fonction : un petit programme que l’on peut appeler
+
+Une fonction est un bloc d’instructions auquel on donne un nom pour pouvoir le réutiliser. def signifie définir : Python mémorise ce bloc, mais ne l’exécute pas encore. saluer() appelle la fonction et exécute son corps. Après l’appel, le programme continue à la ligne suivante.
 
 ```python
-import random
-de = random.randint(1, 20)
-print(de)
+def saluer():
+    print("Bienvenue dans la forêt")
+
+print("Avant")
+saluer()
+print("Après")
 ```
 
 **À l’écran :**
 
 ```text
-Un entier entre 1 et 20, bornes incluses.
+Avant
+Bienvenue dans la forêt
+Après
 ```
 
-À surveiller : Ne nomme pas ton fichier random.py : il risquerait de masquer le module fourni avec Python.
+À surveiller : Les deux-points terminent la ligne def. Les quatre espaces placent print dans la fonction. Ici, saluer affiche un message ; elle ne fournit pas de résultat utile à réutiliser.
 
-### 2. Comprendre les bornes du hasard
+### 2. Recevoir des valeurs : paramètres et arguments
 
-random.random() donne un nombre supérieur ou égal à 0 et strictement inférieur à 1. random.randint(a, b) donne un entier entre a et b inclus. Le hasard est produit par un algorithme : il est pseudo-aléatoire.
-
-```python
-import random
-print(random.random())
-print(random.randint(0, 10))
-```
-
-**À l’écran :**
-
-```text
-Par exemple 0.37 puis 8. Le résultat peut changer.
-```
-
-À surveiller : int(random.random()*10) donne 0 à 9, pas 0 à 10. Une petite série de tirages n’a pas forcément les proportions prévues.
-
-### 3. Une fonction sans paramètre
-
-Une fonction peut ne recevoir aucune information. Les parenthèses restent obligatoires dans la définition et dans l’appel. Ici chaque appel effectue un nouveau tirage.
-
-```python
-import random
-def lancer_piece():
-    return random.choice(["pile", "face"])
-
-print(lancer_piece())
-```
-
-**À l’écran :**
-
-```text
-pile ou face
-```
-
-À surveiller : Écrire print(lancer_piece) affiche une représentation de la fonction. Il faut les parenthèses pour l’appeler.
-
-### 4. Paramètres et arguments
-
-Un paramètre est un nom utilisé dans la définition. Un argument est une valeur fournie pendant l’appel. Une même fonction devient réutilisable avec plusieurs arguments.
+Dans la définition, force et bonus sont les paramètres : des noms qui recevront des valeurs. Dans calculer_degats(8, 3), 8 et 3 sont les arguments. Pendant cet appel, force vaut 8 et bonus vaut 3. La fonction calcule 11 et le renvoie ; la variable degats reçoit ce résultat.
 
 ```python
 def calculer_degats(force, bonus):
-    return force + bonus
+    total = force + bonus
+    return total
 
-print(calculer_degats(8, 3))
-print(calculer_degats(12, 0))
+degats = calculer_degats(8, 3)
+print(degats)
 ```
 
 **À l’écran :**
 
 ```text
 11
-12
 ```
 
-À surveiller : L’ordre des arguments suit celui des paramètres. calculer_degats(8) provoque une erreur car il manque le bonus.
+À surveiller : On définit la fonction une fois, puis on peut l’appeler plusieurs fois. Les paramètres appartiennent à l’appel de la fonction ; utilise le résultat renvoyé pour récupérer le calcul.
 
-### 5. Fabriquer un dé réutilisable
+### 3. Renvoyer une valeur : suivre le trajet de return
 
-Une fonction peut utiliser un paramètre dans l’appel d’une fonction de bibliothèque. lancer_de(6) et lancer_de(20) exécutent le même algorithme avec des bornes différentes.
+return transmet une valeur au code qui a appelé la fonction et termine immédiatement cet appel. Lis dans cet ordre : ajouter_bonus(4) reçoit 4 ; resultat devient 7 ; return renvoie 7 ; points reçoit 7 ; print affiche 7. Renvoyer ne signifie pas afficher.
 
 ```python
-import random
-def lancer_de(nb_faces):
-    return random.randint(1, nb_faces)
+def ajouter_bonus(points):
+    resultat = points + 3
+    return resultat
 
-print(lancer_de(6))
-print(lancer_de(20))
+points = ajouter_bonus(4)
+print(points)
+print(points + 1)
 ```
 
 **À l’écran :**
 
 ```text
-Un entier de 1 à 6, puis un entier de 1 à 20.
+7
+8
 ```
 
-À surveiller : La fonction renvoie le tirage. Elle ne doit pas toujours utiliser 20 à la place du paramètre nb_faces.
+À surveiller : return s’écrit à l’intérieur d’une fonction. Il termine l’appel de cette fonction, pas tout le programme. Une instruction placée après un return exécuté dans le même bloc ne sera pas exécutée.
 
-### 6. Renvoyer avec return
+### 4. Renvoyer avec return
 
 return transmet un résultat au code qui a appelé la fonction et termine cet appel. print montre du texte à l’écran. Si tu veux réutiliser une valeur dans un calcul ou un test, il faut la renvoyer.
 
@@ -301,33 +272,221 @@ print(attaque + 1)
 
 À surveiller : Le premier 7 est seulement affiché. Le second 7 est d’abord renvoyé, stocké, puis réutilisé pour calculer 8.
 
-### 7. Une fonction peut renvoyer un booléen
+### 5. Un booléen : une valeur qui répond vrai ou faux
 
-Une comparaison produit True ou False. La fonction peut renvoyer directement cette comparaison, puis son résultat peut contrôler un if.
+Le type bool possède deux valeurs : True (vrai) et False (faux). Comme un bit possède deux états, on peut coder une information vrai/faux avec 1/0. Mais bool désigne ici une valeur logique ; la numération binaire sert à écrire des nombres avec les chiffres 0 et 1. Écris True et False avec une majuscule et sans guillemets.
 
 ```python
-def attaque_reussie(de, seuil):
-    return de >= seuil
+porte_ouverte = True
+print(porte_ouverte)
+print(type(porte_ouverte))
+print(type("True"))
+```
 
-if attaque_reussie(11, 11):
+**À l’écran :**
+
+```text
+True
+<class 'bool'>
+<class 'str'>
+```
+
+À surveiller : "True" est du texte, pas un booléen. On utilise True et False pour exprimer une réponse logique dans ce TP, plutôt que les nombres 1 et 0.
+
+### 6. Une comparaison fabrique un booléen
+
+Une comparaison est une expression dont le résultat vaut True ou False. > signifie strictement supérieur ; >= signifie supérieur ou égal ; == teste l’égalité. On peut stocker le résultat dans une variable avant de l’utiliser dans un if.
+
+```python
+de = 11
+seuil = 11
+reussite = de >= seuil
+print(reussite)
+print(de > seuil)
+if reussite:
     print("Touché !")
 ```
 
 **À l’écran :**
 
 ```text
+True
+False
 Touché !
 ```
 
-À surveiller : Choisis >= ou > selon la règle. Teste toujours juste avant, exactement sur, puis juste après le seuil.
+À surveiller : Le signe = stocke une valeur ; == compare deux valeurs. À la frontière 11, > et >= ne donnent pas la même réponse.
 
-### 8. Tester avant de remettre le hasard
+### 7. Renvoyer vrai ou faux avec if et else
+
+Commence par la version détaillée. La fonction pose la question « le dé atteint-il le seuil ? ». Si oui, elle renvoie True. Sinon, elle renvoie False. Chaque appel ne suit qu’un seul chemin et renvoie une seule valeur. Le premier appel ci-dessous suit else ; le second suit if.
+
+```python
+def attaque_reussie(de, seuil):
+    if de >= seuil:
+        return True
+    else:
+        return False
+
+print(attaque_reussie(10, 11))
+print(attaque_reussie(11, 11))
+```
+
+**À l’écran :**
+
+```text
+False
+True
+```
+
+À surveiller : if est indenté de quatre espaces dans def ; return est indenté de huit espaces dans if ou else. Renvoyer "True" serait renvoyer du texte. Sans le return False, le cas raté renverrait None, pas False.
+
+### 8. Utiliser la réponse de la fonction
+
+On distingue trois étapes : appeler la fonction, stocker sa réponse, puis décider quoi afficher. reussite contient un booléen. if reussite: lit « si la réponse est vraie ». Le print se trouve dans le programme qui appelle la fonction.
+
+```python
+def attaque_reussie(de, seuil):
+    if de >= seuil:
+        return True
+    else:
+        return False
+
+reussite = attaque_reussie(12, 11)
+print(reussite)
+if reussite:
+    print("Touché !")
+else:
+    print("Raté !")
+```
+
+**À l’écran :**
+
+```text
+True
+Touché !
+```
+
+À surveiller : La fonction décide si l’attaque réussit ; le programme utilise cette réponse. Remplace 12 par 10 et prédis les deux affichages avant de relancer.
+
+### 9. Pour aller plus loin : comprendre l’écriture courte
+
+La version avec if / else est une solution complète et acceptée. Quand tu la comprends, tu peux lire return a > b : Python calcule d’abord a > b, obtient True ou False, puis renvoie cette valeur. Les parenthèses dans return (a > b) sont facultatives. Il n’est pas nécessaire d’utiliser cette écriture courte dans ton rendu.
+
+```python
+def est_superieur(a, b):
+    if a > b:
+        return True
+    else:
+        return False
+
+def est_superieur_court(a, b):
+    return a > b
+
+print(est_superieur(5, 3))
+print(est_superieur_court(5, 3))
+print(est_superieur(3, 3))
+print(est_superieur_court(3, 3))
+```
+
+**À l’écran :**
+
+```text
+True
+True
+False
+False
+```
+
+À surveiller : Dans la mission, la règle est de >= seuil : le seuil lui-même réussit. Le raccourci ne change jamais la règle choisie.
+
+### 10. Utiliser un module
+
+Un module regroupe des fonctions. import random permet d’utiliser celles du hasard. On écrit le nom du module, un point, puis le nom de la fonction.
+
+```python
+import random
+de = random.randint(1, 20)
+print(de)
+```
+
+**À l’écran :**
+
+```text
+Un entier entre 1 et 20, bornes incluses.
+```
+
+À surveiller : Ne nomme pas ton fichier random.py : il risquerait de masquer le module fourni avec Python.
+
+### 11. Comprendre les bornes du hasard
+
+random.random() donne un nombre supérieur ou égal à 0 et strictement inférieur à 1. random.randint(a, b) donne un entier entre a et b inclus. Le hasard est produit par un algorithme : il est pseudo-aléatoire.
+
+```python
+import random
+print(random.random())
+print(random.randint(0, 10))
+```
+
+**À l’écran :**
+
+```text
+Par exemple 0.37 puis 8. Le résultat peut changer.
+```
+
+À surveiller : int(random.random()*10) donne 0 à 9, pas 0 à 10. Une petite série de tirages n’a pas forcément les proportions prévues.
+
+### 12. Une fonction sans paramètre
+
+Une fonction peut ne recevoir aucune information. Les parenthèses restent obligatoires dans la définition et dans l’appel. Ici chaque appel effectue un nouveau tirage.
+
+```python
+import random
+def lancer_piece():
+    return random.choice(["pile", "face"])
+
+print(lancer_piece())
+```
+
+**À l’écran :**
+
+```text
+pile ou face
+```
+
+À surveiller : Écrire print(lancer_piece) affiche une représentation de la fonction. Il faut les parenthèses pour l’appeler.
+
+### 13. Fabriquer un dé réutilisable
+
+Une fonction peut utiliser un paramètre dans l’appel d’une fonction de bibliothèque. lancer_de(6) et lancer_de(20) exécutent le même algorithme avec des bornes différentes.
+
+```python
+import random
+def lancer_de(nb_faces):
+    return random.randint(1, nb_faces)
+
+print(lancer_de(6))
+print(lancer_de(20))
+```
+
+**À l’écran :**
+
+```text
+Un entier de 1 à 6, puis un entier de 1 à 20.
+```
+
+À surveiller : La fonction renvoie le tirage. Elle ne doit pas toujours utiliser 20 à la place du paramètre nb_faces.
+
+### 14. Tester avant de remettre le hasard
 
 Pour vérifier une règle, commence avec des valeurs choisies. Vérifie les frontières, puis remets le tirage aléatoire. Un petit nombre de tirages n’a pas forcément les proportions théoriques.
 
 ```python
 def attaque_reussie(de, seuil):
-    return de >= seuil
+    if de >= seuil:
+        return True
+    else:
+        return False
 
 print(attaque_reussie(10, 11))
 print(attaque_reussie(11, 11))
@@ -344,7 +503,7 @@ True
 
 À surveiller : Un test aléatoire peut réussir par hasard malgré une erreur. Les valeurs fixes rendent le test reproductible.
 
-### 9. Faire entrer une valeur dans une fonction
+### 15. Faire entrer une valeur dans une fonction
 
 input lit toujours du texte. Convertis la saisie, puis donne la valeur obtenue comme argument de la fonction. Tu peux changer la réponse ci-dessous avant chaque exécution.
 
@@ -380,7 +539,17 @@ Importe random et lance un dé à 6 faces. Affiche son résultat.
 
 Objectif : Toujours un entier de 1 à 6.
 
-Indice : La borne supérieure de randint est incluse.
+**Indice 1** — Il faut obtenir un nombre, puis l’afficher.
+
+**Indice 2** — Importe random. randint reçoit deux bornes incluses.
+
+**Indice 3** — Complète les bornes et la variable affichée.
+
+```python
+import random
+de = random.randint(___, ___)
+print(___)
+```
 
 #### Échauffement B · trois points de courage
 
@@ -396,7 +565,19 @@ print(ajouter_bonus(4))
 
 Objectif : 7
 
-Indice : Remplace pass par return suivi du calcul.
+**Indice 1** — La fonction doit donner un résultat au programme qui l’appelle.
+
+**Indice 2** — Calcule points + 3, puis renvoie ce résultat avec return.
+
+**Indice 3** — Complète le calcul et le nom de la valeur renvoyée.
+
+```python
+def ajouter_bonus(points):
+    resultat = ___ + ___
+    return ___
+
+print(ajouter_bonus(4))
+```
 
 #### Entraînement C · un dé à plusieurs faces
 
@@ -416,7 +597,17 @@ print(lancer_de(20))
 
 Objectif : Trois entiers : 1–6, puis 1–10, puis 1–20.
 
-Indice : Utilise random.randint(1, nb_faces), puis return.
+**Indice 1** — Le nombre de faces dépend de l’appel.
+
+**Indice 2** — Le tirage va de 1 à nb_faces, inclus. Récupère-le dans une variable.
+
+**Indice 3** — Complète sans remplacer nb_faces par un nombre fixe.
+
+```python
+def lancer_de(nb_faces):
+    tirage = random.randint(1, ___)
+    return ___
+```
 
 #### Entraînement D · print ou return ?
 
@@ -432,7 +623,48 @@ print(resultat + 1)
 
 Objectif : 10
 
-Indice : La fonction doit renvoyer 9 au lieu de seulement l’afficher.
+**Indice 1** — Le 9 apparaît à l’écran, mais resultat ne reçoit pas 9.
+
+**Indice 2** — Sans return, la fonction renvoie None. Il faut transmettre force + 2 à l’appelant.
+
+**Indice 3** — Remplace le mot manquant : ce n’est pas print.
+
+```python
+def bonus(force):
+    ___ force + 2
+```
+
+#### Entraînement E · répondre vrai ou faux
+
+Complète peut_entrer(niveau) : elle renvoie True si niveau est supérieur ou égal à 3, False sinon. Utilise if / else. Teste 2, 3 et 4.
+
+```python
+def peut_entrer(niveau):
+    # TODO : tester le niveau et renvoyer un booléen
+    pass
+
+print(peut_entrer(2))
+print(peut_entrer(3))
+print(peut_entrer(4))
+```
+
+Objectif : False
+True
+True
+
+**Indice 1** — Pose une question : le niveau atteint-il 3 ?
+
+**Indice 2** — Si oui, renvoie True ; sinon, renvoie False. Le cas égal à 3 est accepté.
+
+**Indice 3** — Complète les trois trous, puis explique le chemin suivi pour 2 et pour 3.
+
+```python
+def peut_entrer(niveau):
+    if niveau ___ 3:
+        return ___
+    else:
+        return ___
+```
 
 ### Mission
 
@@ -440,17 +672,105 @@ Une surprise aléatoire, trois fonctions réutilisables et une petite rencontre 
 
 1. Importe random au début de Mon travail.
 
+**Indice 1** — Le hasard se trouve dans un module Python.
+
+**Indice 2** — Le nom du module est random.
+
+**Indice 3** — Place cette ligne avant tes fonctions.
+
+```python
+import random
+```
+
 2. Tire chance avec random.random(). Affiche « Attaque surprise » si chance < 0.5, sinon « Aucun ennemi ».
+
+**Indice 1** — Deux messages possibles : sépare les cas avec if / else.
+
+**Indice 2** — random.random() produit le tirage. La frontière 0.5 appartient au cas Aucun ennemi.
+
+**Indice 3** — Complète les trous.
+
+```python
+chance = random.random()
+if chance ___ 0.5:
+    print("Attaque surprise")
+else:
+    print(___)
+```
 
 3. Écris lancer_de(nb_faces), qui renvoie un entier entre 1 et nb_faces. Appelle-la avec 6 puis 20.
 
-4. Écris attaque_reussie(de, seuil), qui renvoie le booléen de >= seuil. Affiche ses résultats pour (10, 11), (11, 11) et (12, 11).
+**Indice 1** — Le nombre de faces dépend de l’appel.
+
+**Indice 2** — Le tirage va de 1 à nb_faces, inclus. Récupère-le dans une variable.
+
+**Indice 3** — Complète sans remplacer nb_faces par un nombre fixe.
+
+```python
+def lancer_de(nb_faces):
+    tirage = random.randint(1, ___)
+    return ___
+```
+
+4. Écris attaque_reussie(de, seuil) avec if / else : renvoie True si de >= seuil, False sinon. Affiche ses résultats pour (10, 11), (11, 11) et (12, 11). L’écriture courte n’est pas demandée.
+
+**Indice 1** — Écris sur papier : 10 échoue, 11 réussit, 12 réussit pour un seuil de 11.
+
+**Indice 2** — Teste de >= seuil. Dans chaque branche, renvoie un booléen sans guillemets.
+
+**Indice 3** — Complète sans utiliser print dans la fonction.
+
+```python
+def attaque_reussie(de, seuil):
+    if ___ >= ___:
+        return ___
+    else:
+        return ___
+
+print(attaque_reussie(10, 11))
+print(attaque_reussie(11, 11))
+print(attaque_reussie(12, 11))
+```
 
 5. Écris calculer_degats(force, bonus), qui renvoie la somme de ses deux paramètres. Vérifie calculer_degats(8, 3).
 
+**Indice 1** — Les dégâts sont une somme, pas un tirage.
+
+**Indice 2** — Additionne les deux paramètres, puis renvoie la valeur.
+
+**Indice 3** — Stocker le calcul avant return est autorisé.
+
+```python
+def calculer_degats(force, bonus):
+    total = ___ + ___
+    return ___
+```
+
 6. Assemble les fonctions : lance un dé à 20 faces, teste une réussite au seuil 11 et affiche les dégâts calculés seulement si l’attaque réussit.
 
+**Indice 1** — Appelle tes fonctions dans l’ordre : tirer, décider, puis calculer les dégâts si l’attaque réussit.
+
+**Indice 2** — Stocke le dé dans de et la réponse booléenne dans reussite. Un if utilise ensuite reussite.
+
+**Indice 3** — Les fonctions doivent déjà être définies au-dessus.
+
+```python
+de = lancer_de(___)
+reussite = attaque_reussie(de, ___)
+if reussite:
+    degats = calculer_degats(8, 3)
+    print("Dégâts :", ___)
+else:
+    print("Raté !")
+```
+
 7. Ajoute trois commentaires expliquant définition/appel, paramètre/argument et print/return. Exporte le .py.
+
+**Indice 1** — Explique une ligne de ton propre programme pour chaque différence.
+
+**Indice 2** — def définit ; nom(...) appelle. Le paramètre reçoit l’argument. print affiche ; return renvoie.
+
+**Indice 3** — Ajoute les commentaires avec #, puis télécharge ton fichier. Signale les indices utilisés.
 
 ### Tests
 
@@ -468,6 +788,8 @@ Une surprise aléatoire, trois fonctions réutilisables et une petite rencontre 
 - Tests de frontières et explications : 1 point(s)
 
 ## Partie 3 — Explorer avec une boucle for
+
+Pour les plus rapides, aujourd’hui : lis les notions 1 et 2, réalise la quête A « trois portes », puis la quête C « trois attaques ». Tu peux t’arrêter après ces deux réussites et sauvegarder. Le compteur et l’exploration complète seront travaillés ensuite.
 
 ### 1. L’indentation change le sens
 
@@ -612,7 +934,17 @@ Porte 2
 Porte 3
 Fin
 
-Indice : range(1, 4) ; Fin reste sans indentation.
+**Indice 1** — Il faut trois passages dans la boucle et un affichage après la boucle.
+
+**Indice 2** — range(1, 4) donne 1, 2, 3. Fin n’appartient pas au bloc répété.
+
+**Indice 3** — Complète les bornes et garde les indentations.
+
+```python
+for numero in range(___, ___):
+    print("Porte", numero)
+print("Fin")
+```
 
 #### Échauffement B · une bourse qui se remplit
 
@@ -628,7 +960,49 @@ print(pieces)
 
 Objectif : 8
 
-Indice : Augmente pieces dans le bloc ; ne remets pas pieces à 0 à chaque tour.
+**Indice 1** — La bourse conserve ce qu’elle avait au tour précédent.
+
+**Indice 2** — Ajoute 2 à pieces dans la boucle. Ne remets pas pieces à zéro.
+
+**Indice 3** — Complète la mise à jour.
+
+```python
+pieces = 0
+for tour in range(4):
+    pieces = ___ + ___
+print(pieces)
+```
+
+#### Découverte C · trois attaques sans hasard
+
+La fonction du TP2 est fournie. Complète seulement la boucle pour tester les dés 10, 11 et 12 au seuil 11. À chaque tour, stocke la réponse dans reussite puis affiche le dé et la réponse. Pas de compteur demandé.
+
+```python
+def attaque_reussie(de, seuil):
+    if de >= seuil:
+        return True
+    else:
+        return False
+
+for de in range(10, 13):
+    # TODO : appeler la fonction, puis afficher
+    pass
+```
+
+Objectif : 10 False
+11 True
+12 True
+
+**Indice 1** — La boucle fournit déjà la valeur du dé.
+
+**Indice 2** — Appelle attaque_reussie avec de et 11, puis stocke sa réponse.
+
+**Indice 3** — Complète seulement ces lignes indentées dans la boucle.
+
+```python
+    reussite = attaque_reussie(___, ___)
+    print(de, ___)
+```
 
 ### Mission
 
@@ -636,15 +1010,80 @@ L’exercice d’indentation suivi d’une exploration de dix rencontres, avec u
 
 1. Recopie l’exemple sur les potions dans Mon travail. Déplace seulement l’indentation de la ligne « Entrer dans la grotte » pour qu’elle soit exécutée uniquement lorsqu’on boit une potion.
 
+**Indice 1** — Observe à quel bloc appartient l’affichage.
+
+**Indice 2** — L’entrée dans la grotte doit appartenir au bloc où l’on boit.
+
+**Indice 3** — Place cette ligne au même niveau d’indentation que l’affichage Boire. Teste avec et sans potion.
+
 2. Définis choisir_ennemi(x). Elle renvoie gobelin si x < 0.5, araignee si x < 0.8 après le premier test, troll sinon. Utilise if / elif / else.
+
+**Indice 1** — Cette fonction renvoie un nom, donc une chaîne de caractères.
+
+**Indice 2** — Teste x < 0.5, puis elif x < 0.8, puis else. Chaque branche utilise return.
+
+**Indice 3** — Complète les noms en conservant les guillemets.
+
+```python
+def choisir_ennemi(x):
+    if x < 0.5:
+        return "___"
+    elif x < 0.8:
+        return "___"
+    else:
+        return "___"
+```
 
 3. Initialise nombre_gobelins à 0 avant la boucle des rencontres.
 
+**Indice 1** — Avant toute rencontre, aucun gobelin n’a été croisé.
+
+**Indice 2** — Initialise une seule fois, avant for.
+
+**Indice 3** — Cette ligne reste en dehors de la boucle.
+
+```python
+nombre_gobelins = 0
+```
+
 4. Écris une boucle de 1 à 10 inclus. À chaque tour, tire x avec random.random(), appelle choisir_ennemi(x), puis affiche le numéro et le nom de l’ennemi.
+
+**Indice 1** — Le nouveau tirage doit avoir lieu à chaque rencontre.
+
+**Indice 2** — range(1, 11) donne dix numéros ; appelle ensuite choisir_ennemi(x).
+
+**Indice 3** — Complète les appels.
+
+```python
+for numero in range(1, 11):
+    x = random.random()
+    ennemi = choisir_ennemi(___)
+    print(numero, ___)
+```
 
 5. Si l’ennemi vaut gobelin, augmente le compteur. Après la boucle, affiche le nombre de gobelins une seule fois.
 
+**Indice 1** — On augmente le compteur seulement si le nom est gobelin.
+
+**Indice 2** — Le if est dans la boucle ; le bilan est après la boucle.
+
+**Indice 3** — Ajoute le test dans for et complète la mise à jour.
+
+```python
+    if ennemi == "gobelin":
+        nombre_gobelins = ___ + 1
+
+# Après la boucle, sans indentation :
+print(nombre_gobelins)
+```
+
 6. Teste les frontières de la fonction, puis remplace temporairement le tirage par 0.2 : tu dois compter 10 gobelins. Remets le hasard et exporte.
+
+**Indice 1** — Les valeurs aux frontières révèlent les erreurs de comparaison.
+
+**Indice 2** — Teste 0.49, 0.5, 0.79 et 0.8 avant de remettre le hasard.
+
+**Indice 3** — Attendus : gobelin, araignee, araignee, troll. Avec x = 0.2 dans la boucle, le bilan doit être 10 gobelins.
 
 ### Tests
 

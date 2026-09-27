@@ -24,3 +24,11 @@ Pas de Tkinter, de pip automatique ni de paquets scientifiques ajoutés. Bibliot
 Le code n’est pas envoyé à un serveur d’exécution. Il dispose cependant des capacités normales de Pyodide dans le navigateur ; il ne s’agit pas d’un bac à sable pour distribuer du code tiers hostile. Les tests supposent du code élève ordinaire. L’environnement est détruit à chaque lancement pour éviter les effets persistants entre essais.
 
 Les tests ignorent le bloc principal `if __name__ == "__main__"` mais exécutent les autres instructions globales : placer les essais personnels dans ce bloc pour éviter qu’ils interfèrent avec les tests fournis.
+
+## Introduction progressive (TP2)
+
+L’atelier sans paramètre ouvre maintenant `debut01`. `intro.js` ajoute dix étapes indépendantes : lire une liste, suivre puis compléter un parcours, renvoyer une valeur, ajouter un élément, construire une liste, dépiler, défiler, comparer LIFO/FIFO et embarquer trois visiteurs. Les trois étapes d’observation n’ont pas de bouton de test ; les sept autres disposent d’un test ciblé et d’essais supplémentaires, soit 14 vérifications. Les deux indices sont facultatifs et l’affichage attendu est replié pour encourager la prédiction.
+
+Chaque étape a son brouillon, son import/export Python et les fonctions fournies dont elle a besoin. Aucun prérequis POO ni récursivité. Pour cette introduction, un retrait à vide renvoie None ; le contrat différent de la Bataille est signalé à la fin. Les anciens liens explicites vers les jeux conservent leur destination.
+
+Conseil de séance : reprendre les étapes 1–6 ensemble si nécessaire, puis 7–10. Les jeux complets sont des prolongements à choisir avec le professeur.
