@@ -2,7 +2,7 @@
 
 Construis un mini RPG textuel en six étapes. Pour chaque étape : lis le cours, prédis l’exemple, expérimente, puis écris ta solution dans l’atelier à rendre. Conserve les six versions pour montrer ta progression.
 
-À rendre : un seul fichier NOM_Prenom_mini_rpg.py exporté depuis le navigateur. Il contient six parties indépendantes sélectionnées au lancement par un menu fourni. Ne modifie pas les marqueurs de partie. Dans chaque partie, écris deux tests en commentaires (entrées, résultat attendu, résultat observé). En tête du fichier, indique les aides utilisées et une correction que tu sais expliquer. Sauvegarde à chaque séance ; une sauvegarde du navigateur ne remplace pas le fichier téléchargé.
+À rendre : un seul fichier NOM_Prenom_mini_rpg.py exporté depuis le navigateur. Il contient six parties indépendantes sélectionnées au lancement par un menu fourni. Ne modifie pas les marqueurs de partie. Pour le TP2, écris 19 appels de test avec print et vérifie les trois scénarios de la scène. Pour les autres parties, écris au moins deux tests commentés (entrées, attendu, observé). En tête du fichier, indique les aides utilisées et une correction que tu sais expliquer. Sauvegarde à chaque séance ; une sauvegarde du navigateur ne remplace pas le fichier téléchargé.
 
 Télécharge ton fichier .py en fin de séance. Le bouton de téléchargement ouvre une fenêtre avec un lien explicite et une copie du code en secours. Le bouton Reprendre un fichier .py permet de continuer à la séance suivante.
 
@@ -178,7 +178,7 @@ Une création de personnage en console. On ne combat pas encore dans le programm
 
 ## Partie 2 — Hasard, bibliothèques et premières fonctions
 
-Priorité de cette séance : comprendre les fonctions et réussir le TP2. Prends le temps de tracer un appel et ses deux chemins vrai/faux. La version if / else est pleinement acceptée. Si tu termines, commence le parcours découverte du TP3.
+TP2 · séance de 2 h. Repères indicatifs : 15 min de cours ciblé, 10 min d’échauffement, 55 min pour définir et tester les fonctions, 25 min pour la scène, 15 min de vérification et de sauvegarde. Les six fonctions et leurs tests font partie du rendu. Écris toi-même chaque ligne def, ses paramètres, les deux-points et son corps. Les indices 3 sont réservés aux deux premières étapes de mission et aux deux premiers échauffements. Si tout est terminé et expliqué, commence le TP3.
 
 ### 1. Une fonction : un petit programme que l’on peut appeler
 
@@ -525,6 +525,102 @@ Avec 6 : un entier entre 1 et 6.
 
 À surveiller : La valeur saisie doit être un entier positif. Dans cet exercice, on ne traite pas encore une saisie non numérique.
 
+### 16. Tester une fonction avec print
+
+Un test consiste à choisir des entrées, prévoir le résultat à partir de la consigne, exécuter le programme, puis comparer le résultat obtenu au résultat attendu. Calcule l’attendu avant de lancer le code : il ne doit pas être recopié depuis la sortie de ta fonction. Ici, on vérifie une fonction indépendante du RPG. Chaque print précise l’appel, l’attendu et l’obtenu.
+
+```python
+def prix_places(nombre, tarif):
+    return nombre * tarif
+
+# Cas ordinaire : 3 places à 4 euros coûtent 12 euros.
+print("prix_places(3, 4) | attendu : 12 | obtenu :", prix_places(3, 4))
+# Cas particulier : aucune place ne coûte rien.
+print("prix_places(0, 4) | attendu : 0 | obtenu :", prix_places(0, 4))
+```
+
+**À l’écran :**
+
+```text
+prix_places(3, 4) | attendu : 12 | obtenu : 12
+prix_places(0, 4) | attendu : 0 | obtenu : 0
+```
+
+À surveiller : Ces print ne décident pas automatiquement si le test réussit : c’est à toi de comparer. Un résultat None peut signaler un return oublié. Une erreur Python est aussi un résultat à analyser.
+
+### 17. Choisir des cas qui peuvent révéler une erreur
+
+Un cas ordinaire vérifie une situation courante. Un test de frontière vérifie l’endroit où la règle change : juste avant, exactement à la limite, juste après. Pour un accès autorisé à partir de 12 ans, on teste 11, 12 et 13. Le cas 12 distingue >= de >. Teste aussi chaque branche : une réponse True et une réponse False. Pour une fonction paramétrable, change le paramètre : cela révèle une valeur écrite en dur.
+
+```python
+def acces_autorise(age):
+    if age >= 12:
+        return True
+    else:
+        return False
+
+print("11 ans | attendu : False | obtenu :", acces_autorise(11))
+print("12 ans | attendu : True | obtenu :", acces_autorise(12))
+print("13 ans | attendu : True | obtenu :", acces_autorise(13))
+```
+
+**À l’écran :**
+
+```text
+11 ans | attendu : False | obtenu : False
+12 ans | attendu : True | obtenu : True
+13 ans | attendu : True | obtenu : True
+```
+
+À surveiller : Un test a une raison d’être. Trois valeurs toutes éloignées de la limite peuvent laisser passer une erreur. Quelques tests réussis ne prouvent pas que le programme est correct pour toutes les entrées.
+
+### 18. Tester une règle et tester le hasard
+
+Pour une fonction déterministe, les mêmes entrées donnent le même résultat : tu peux prévoir une valeur précise. Pour un dé, tu ne peux généralement pas prévoir le nombre tiré ; tu vérifies plutôt qu’il s’agit d’un entier entre les bornes autorisées. Stocke un seul tirage et vérifie cette même valeur. Tester un dé à une face donne un cas particulier dont le résultat est certain : 1.
+
+```python
+import random
+
+tirage = random.randint(1, 6)
+print("Dé 6 faces | attendu : entier de 1 à 6 | obtenu :", tirage)
+print("Type attendu : int | obtenu :", type(tirage))
+print("Bornes attendues : True | obtenu :", 1 <= tirage <= 6)
+```
+
+**À l’écran :**
+
+```text
+Le nombre varie de 1 à 6.
+Le type est <class 'int'>.
+Le contrôle des bornes affiche True.
+```
+
+À surveiller : 1 <= tirage <= 6 signifie que tirage est au moins 1 et au plus 6. Un tirage correct ne suffit pas à valider toute une fonction aléatoire. Vérifie aussi le code, change le nombre de faces et relance. Ne demande pas au hasard de produire un résultat fixé.
+
+### 19. Passer des tests de fonctions au test du programme
+
+Teste d’abord chaque fonction seule, puis leur assemblage. Une fonction peut être correcte alors que le programme oublie de récupérer son résultat. Ici, le premier appel renvoie bien 12, mais stock reste 9. Le second appel affecte le résultat à stock. Pour le RPG, pense à réaffecter les PV renvoyés par les fonctions.
+
+```python
+def ajouter_stock(stock, livraison):
+    return stock + livraison
+
+stock = 9
+ajouter_stock(stock, 3)
+print("Sans récupération :", stock)
+stock = ajouter_stock(stock, 3)
+print("Avec récupération :", stock)
+```
+
+**À l’écran :**
+
+```text
+Sans récupération : 9
+Avec récupération : 12
+```
+
+À surveiller : Si attendu et obtenu diffèrent, garde une trace du test, recherche l’erreur, corrige puis relance. Pour tester une scène avec un dé, remplace temporairement le hasard par une valeur choisie, puis restaure le tirage après vérification.
+
 ### Petites quêtes
 
 #### Échauffement A · le dé miniature
@@ -553,14 +649,10 @@ print(___)
 
 #### Échauffement B · trois points de courage
 
-Écris une fonction ajouter_bonus(points) qui renvoie points + 3. Appelle-la avec 4 et affiche le résultat.
+Écris une fonction ajouter_bonus(points) qui renvoie points + 3. Ajoute toi-même sa définition au-dessus de l’appel proposé. Remplace les ... par 4 pour appeler la fonction et afficher le résultat. Les ... indiquent ici du code à compléter, pas une valeur à conserver.
 
 ```python
-def ajouter_bonus(points):
-    # TODO : renvoyer le résultat
-    pass
-
-print(ajouter_bonus(4))
+print(ajouter_bonus(...))
 ```
 
 Objectif : 7
@@ -576,23 +668,17 @@ def ajouter_bonus(points):
     resultat = ___ + ___
     return ___
 
-print(ajouter_bonus(4))
+print(ajouter_bonus(...))
 ```
 
 #### Entraînement C · un dé à plusieurs faces
 
-Complète lancer_de(nb_faces), puis appelle-la avec 6, 10 et 20. Chaque résultat doit respecter sa borne.
+Écris entièrement lancer_de(nb_faces), avec l’import nécessaire, au-dessus des appels proposés. Appelle-la avec 6, 10 puis 20. Pour le premier appel, complète l’argument ; pour les deux suivants, écris toi-même le nom de la fonction, les parenthèses et l’argument à l’intérieur de print. Chaque résultat doit respecter sa borne.
 
 ```python
-import random
-
-def lancer_de(nb_faces):
-    # TODO : utiliser nb_faces
-    pass
-
-print(lancer_de(6))
-print(lancer_de(10))
-print(lancer_de(20))
+print(lancer_de(...))
+print(...)
+print(...)
 ```
 
 Objectif : Trois entiers : 1–6, puis 1–10, puis 1–20.
@@ -601,51 +687,29 @@ Objectif : Trois entiers : 1–6, puis 1–10, puis 1–20.
 
 **Indice 2** — Le tirage va de 1 à nb_faces, inclus. Récupère-le dans une variable.
 
-**Indice 3** — Complète sans remplacer nb_faces par un nombre fixe.
-
-```python
-def lancer_de(nb_faces):
-    tirage = random.randint(1, ___)
-    return ___
-```
-
 #### Entraînement D · print ou return ?
 
-Corrige bonus : le programme doit pouvoir calculer et afficher 10. Ne modifie pas la dernière ligne.
+Écris entièrement une fonction bonus(force) qui renvoie force + 2. Appelle-la avec 7 et stocke sa réponse dans resultat, puis complète print pour afficher resultat augmenté de 1. Tu dois obtenir 10. Explique pourquoi afficher le calcul dans la fonction avec print ne permettrait pas de réutiliser sa réponse.
 
 ```python
-def bonus(force):
-    print(force + 2)
-
-resultat = bonus(7)
-print(resultat + 1)
+resultat = ...
+print(...)
 ```
 
 Objectif : 10
 
-**Indice 1** — Le 9 apparaît à l’écran, mais resultat ne reçoit pas 9.
+**Indice 1** — Définis la fonction avant son appel. La valeur renvoyée sera stockée dans resultat.
 
-**Indice 2** — Sans return, la fonction renvoie None. Il faut transmettre force + 2 à l’appelant.
-
-**Indice 3** — Remplace le mot manquant : ce n’est pas print.
-
-```python
-def bonus(force):
-    ___ force + 2
-```
+**Indice 2** — return transmet le calcul à l’appelant ; print seul ne le fait pas. Après l’appel, ajoute 1 à la valeur reçue avant de l’afficher.
 
 #### Entraînement E · répondre vrai ou faux
 
-Complète peut_entrer(niveau) : elle renvoie True si niveau est supérieur ou égal à 3, False sinon. Utilise if / else. Teste 2, 3 et 4.
+Écris entièrement peut_entrer(niveau) : elle renvoie True si niveau est supérieur ou égal à 3, False sinon. Utilise if / else. Cette fois, écris seul la définition et les trois lignes de test avec print pour 2, 3 et 4 : aucun appel n’est prérempli.
 
 ```python
-def peut_entrer(niveau):
-    # TODO : tester le niveau et renvoyer un booléen
-    pass
+# Définis la fonction avec son paramètre.
 
-print(peut_entrer(2))
-print(peut_entrer(3))
-print(peut_entrer(4))
+# Écris les tests : avant la limite, sur la limite, après la limite.
 ```
 
 Objectif : False
@@ -656,41 +720,20 @@ True
 
 **Indice 2** — Si oui, renvoie True ; sinon, renvoie False. Le cas égal à 3 est accepté.
 
-**Indice 3** — Complète les trois trous, puis explique le chemin suivi pour 2 et pour 3.
-
-```python
-def peut_entrer(niveau):
-    if niveau ___ 3:
-        return ___
-    else:
-        return ___
-```
-
 ### Mission
 
-Une surprise aléatoire, trois fonctions réutilisables et une petite rencontre qui assemble leurs résultats. Tkinter reste facultatif.
+Un programme personnel comprenant une surprise aléatoire, six fonctions entièrement définies par toi, au moins 19 appels de test affichés avec print, et une scène d’un tour qui réutilise les fonctions. Aucun def n’est prérempli dans Mon travail. Les tests précisent les entrées, l’attendu et l’obtenu ; explique le choix de deux tests. Pas de boucle ni de liste nécessaire. On suppose les entrées valides : nombres entiers positifs ou nuls, PV entre 0 et 100, dé avec au moins une face. La gestion des saisies invalides n’est pas demandée. Le cours reste consultable ; la version if / else avec return True et return False est pleinement acceptée.
 
-1. Importe random au début de Mon travail.
+1. Surprise (5 min). Importe random et tire chance. Affiche « Attaque surprise » si chance < 0.5, sinon « Aucun ennemi ». Vérifie temporairement avec 0.49 puis 0.5 et note les messages attendus ; rétablis le hasard.
 
-**Indice 1** — Le hasard se trouve dans un module Python.
+**Indice 1** — Il y a deux messages possibles. Sépare les cas avec if / else.
 
-**Indice 2** — Le nom du module est random.
+**Indice 2** — random.random() produit le tirage. La valeur 0.5 appartient au cas Aucun ennemi.
 
-**Indice 3** — Place cette ligne avant tes fonctions.
+**Indice 3** — Complète les trous, puis vérifie les deux cas.
 
 ```python
 import random
-```
-
-2. Tire chance avec random.random(). Affiche « Attaque surprise » si chance < 0.5, sinon « Aucun ennemi ».
-
-**Indice 1** — Deux messages possibles : sépare les cas avec if / else.
-
-**Indice 2** — random.random() produit le tirage. La frontière 0.5 appartient au cas Aucun ennemi.
-
-**Indice 3** — Complète les trous.
-
-```python
 chance = random.random()
 if chance ___ 0.5:
     print("Attaque surprise")
@@ -698,94 +741,86 @@ else:
     print(___)
 ```
 
-3. Écris lancer_de(nb_faces), qui renvoie un entier entre 1 et nb_faces. Appelle-la avec 6 puis 20.
+2. Ton premier dé (10 min). Écris entièrement la fonction lancer_de(nb_faces), qui renvoie un entier aléatoire entre 1 et nb_faces inclus. Écris trois appels de test avec print : 1 face, 6 faces et 20 faces. Pour 1 face, prévois la valeur exacte ; pour 6 et 20, indique l’intervalle attendu. Observe le type du résultat et relance pour vérifier les bornes.
 
-**Indice 1** — Le nombre de faces dépend de l’appel.
+**Indice 1** — Le nombre de faces dépend de l’argument de chaque appel.
 
-**Indice 2** — Le tirage va de 1 à nb_faces, inclus. Récupère-le dans une variable.
+**Indice 2** — Définis une fonction à un paramètre. Le tirage va de 1 à nb_faces inclus ; la fonction doit le renvoyer.
 
-**Indice 3** — Complète sans remplacer nb_faces par un nombre fixe.
+**Indice 3** — Retrouve le mot qui définit une fonction et celui qui renvoie sa valeur.
 
 ```python
-def lancer_de(nb_faces):
+___ lancer_de(nb_faces):
     tirage = random.randint(1, ___)
-    return ___
+    ___ tirage
 ```
 
-4. Écris attaque_reussie(de, seuil) avec if / else : renvoie True si de >= seuil, False sinon. Affiche ses résultats pour (10, 11), (11, 11) et (12, 11). L’écriture courte n’est pas demandée.
+3. Décider si l’attaque réussit. Définis attaque_reussie(de, seuil) : elle renvoie True si le dé atteint ou dépasse le seuil, False sinon. Écris quatre tests avec print : (10, 11), (11, 11), (12, 11), puis (7, 7). Prévois les quatre résultats. Explique pourquoi le dernier appel vérifie que la fonction utilise réellement le paramètre seuil.
 
-**Indice 1** — Écris sur papier : 10 échoue, 11 réussit, 12 réussit pour un seuil de 11.
+**Indice 1** — Deux chemins doivent renvoyer une valeur logique.
 
-**Indice 2** — Teste de >= seuil. Dans chaque branche, renvoie un booléen sans guillemets.
+**Indice 2** — Le seuil lui-même réussit. Utilise le paramètre reçu, pas le nombre 11 écrit dans la fonction. Teste les deux branches.
 
-**Indice 3** — Complète sans utiliser print dans la fonction.
+4. Calculer les dégâts. Définis calculer_degats(force, bonus), qui renvoie la somme de force et bonus. Écris deux tests : (8, 3) et (8, 0). Calcule l’attendu avant l’exécution et indique ce que vérifie le bonus nul.
 
-```python
-def attaque_reussie(de, seuil):
-    if ___ >= ___:
-        return ___
-    else:
-        return ___
+**Indice 1** — Le résultat est un nombre réutilisable.
 
-print(attaque_reussie(10, 11))
-print(attaque_reussie(11, 11))
-print(attaque_reussie(12, 11))
-```
+**Indice 2** — Additionne les paramètres et renvoie la somme. L’affichage appartient aux tests, en dehors de la fonction.
 
-5. Écris calculer_degats(force, bonus), qui renvoie la somme de ses deux paramètres. Vérifie calculer_degats(8, 3).
+5. Retirer des PV sans passer sous zéro. Définis appliquer_degats(pv, degats), qui renvoie les PV restants. Si les dégâts dépassent les PV, le résultat doit être 0. Utilise un calcul puis une condition. Écris trois tests : (30, 8), (8, 8), (5, 8). Pour chacun, explique s’il reste des PV, si le coup tombe exactement à zéro ou s’il dépasse les PV disponibles.
 
-**Indice 1** — Les dégâts sont une somme, pas un tirage.
+**Indice 1** — Calcule d’abord les PV théoriques après le coup.
 
-**Indice 2** — Additionne les deux paramètres, puis renvoie la valeur.
+**Indice 2** — Si le calcul donne un nombre négatif, renvoie zéro ; sinon, renvoie le résultat. Réfléchis au cas exactement égal à zéro.
 
-**Indice 3** — Stocker le calcul avant return est autorisé.
+6. Soigner sans dépasser 100 PV. Définis soigner(pv, soin), qui renvoie les nouveaux PV, plafonnés à 100. Utilise un calcul puis une condition. Écris trois tests : (60, 20), (80, 20), (95, 20). Prévois l’attendu pour un soin ordinaire, un soin qui atteint exactement le plafond et un soin qui le dépasse.
 
-```python
-def calculer_degats(force, bonus):
-    total = ___ + ___
-    return ___
-```
+**Indice 1** — Calcule d’abord les PV après ajout du soin.
 
-6. Assemble les fonctions : lance un dé à 20 faces, teste une réussite au seuil 11 et affiche les dégâts calculés seulement si l’attaque réussit.
+**Indice 2** — Compare ce résultat au plafond. Prévois le retour pour le cas qui dépasse 100 et pour celui qui ne le dépasse pas.
 
-**Indice 1** — Appelle tes fonctions dans l’ordre : tirer, décider, puis calculer les dégâts si l’attaque réussit.
+7. Savoir si un personnage vit. Définis est_vivant(pv), qui renvoie un booléen : True si les PV sont strictement positifs, False à zéro. Écris deux tests : 1 PV et 0 PV. Vérifie aussi avec type que le résultat est bien un booléen, et non une chaîne de caractères.
 
-**Indice 2** — Stocke le dé dans de et la réponse booléenne dans reussite. Un if utilise ensuite reussite.
+**Indice 1** — La question est : reste-t-il au moins un PV ?
 
-**Indice 3** — Les fonctions doivent déjà être définies au-dessus.
+**Indice 2** — Renvoie un booléen dans chaque branche. Zéro n’est pas vivant. Les booléens s’écrivent sans guillemets.
 
-```python
-de = lancer_de(___)
-reussite = attaque_reussie(de, ___)
-if reussite:
-    degats = calculer_degats(8, 3)
-    print("Dégâts :", ___)
-else:
-    print("Raté !")
-```
+8. Compléter ton carnet de tests. Tu as maintenant 17 appels de test aux six fonctions. Ajoute deux appels supplémentaires de ton choix, différents de ceux demandés, avec print. Pour chacun, écris en commentaire ce qu’il cherche à vérifier. Tous les tests doivent afficher un libellé, les entrées, l’attendu prévu à l’avance et l’obtenu calculé par la fonction. Au moins deux commentaires doivent consigner la comparaison attendu/observé et ta conclusion. Un test ne consiste pas à afficher uniquement une réponse écrite à la main.
 
-7. Ajoute trois commentaires expliquant définition/appel, paramètre/argument et print/return. Exporte le .py.
+**Indice 1** — Choisis des entrées qui révéleraient une erreur encore possible.
 
-**Indice 1** — Explique une ligne de ton propre programme pour chaque différence.
+**Indice 2** — Un soin nul, aucun dégât ou un autre seuil sont des pistes. Calcule l’attendu à la main, puis affiche la vraie réponse de la fonction à côté.
 
-**Indice 2** — def définit ; nom(...) appelle. Le paramètre reçoit l’argument. print affiche ; return renvoie.
+9. Assembler une scène d’un tour (25 min). Le héros commence à 70 PV, le monstre à 12 PV. Lance un dé à 20 faces et utilise attaque_reussie au seuil 11. En cas de réussite, calcule les dégâts avec force 8 et bonus 3, puis mets à jour les PV du monstre avec appliquer_degats ; sinon, affiche « Raté ». Le héros boit ensuite une potion de 20 PV avec soigner. Si est_vivant indique que le monstre vit encore, celui-ci inflige 7 dégâts au héros avec appliquer_degats ; sinon, affiche « Victoire » et ne fais pas riposter le monstre. Affiche le dé et les PV finaux des deux personnages. Réutilise les six fonctions, sans réécrire leurs calculs dans la scène. Pour vérifier l’assemblage, fais trois essais temporaires : dé 10 avec monstre à 12 PV ; dé 11 avec monstre à 12 PV ; dé 11 avec monstre à 11 PV. Calcule puis note les PV finaux attendus et observés pour chaque essai. Rétablis enfin le hasard et les PV initiaux.
 
-**Indice 3** — Ajoute les commentaires avec #, puis télécharge ton fichier. Signale les indices utilisés.
+**Indice 1** — Distingue l’ordre des actions : attaque du héros, potion, puis éventuelle riposte.
+
+**Indice 2** — Chaque mise à jour doit récupérer la valeur renvoyée. Teste la vie du monstre après les dégâts. Le troisième scénario doit emprunter le chemin sans riposte.
+
+10. Vérifier et rendre (15 min). Organise le code en trois zones commentées : définitions, tests avec print, scène. Les tests doivent être écrits après les définitions et avant la scène ; ils ne doivent pas modifier ses PV initiaux. Ajoute un exemple commenté de définition/appel, paramètre/argument et print/return. Explique une erreur corrigée grâce à un test, ou une erreur que ton test pourrait détecter si aucun échec n’a été rencontré. Signale tes aides, lance le programme complet puis exporte le fichier. Le TP3 commence seulement une fois ce rendu terminé.
+
+**Indice 1** — Relance tout le programme, pas seulement le dernier morceau écrit.
+
+**Indice 2** — Vérifie tes six définitions et tes 19 appels de test. La scène doit repartir de ses propres PV initiaux. Télécharge ensuite ton travail.
 
 ### Tests
 
-- chance = 0.49 → surprise ; chance = 0.5 → aucun ennemi.
-- lancer_de(6) reste entre 1 et 6 ; lancer_de(20) reste entre 1 et 20.
-- attaque_reussie(10, 11) → False ; attaque_reussie(11, 11) → True.
-- calculer_degats(8, 3) → 11 ; le résultat est réutilisable.
+- lancer_de : trois appels avec 1, 6 et 20 faces ; attendu exact pour 1, type entier et bornes pour les autres. Un seul tirage est stocké pour chaque test.
+- attaque_reussie : quatre appels (10, 11), (11, 11), (12, 11), (7, 7) ; tester les deux branches, la frontière et un autre seuil.
+- calculer_degats : deux appels (8, 3), (8, 0) ; cas ordinaire et bonus nul.
+- appliquer_degats : trois appels (30, 8), (8, 8), (5, 8) ; dégâts ordinaires, PV exactement à zéro, dégâts dépassant les PV.
+- soigner : trois appels (60, 20), (80, 20), (95, 20) ; en dessous du plafond, exactement dessus, au-delà.
+- est_vivant : deux appels, 1 et 0 ; True et False de type bool.
+- Ajoute deux appels personnels commentés : 19 appels de test au total. Chaque test affiche entrées, attendu et obtenu avec print. Prévois les attendus avant d’exécuter.
+- Teste aussi la scène : dé 10 / monstre 12 PV ; dé 11 / monstre 12 PV ; dé 11 / monstre 11 PV. Note les PV finaux attendus et observés ; aucune riposte après la victoire. Restaure les valeurs initiales et le hasard.
 
 ### Barème sur 5
 
-- Surprise et seuil 0.5 corrects : 1 point(s)
-- lancer_de paramétrable et bornes correctes : 1 point(s)
-- Fonctions avec paramètres et return : 1 point(s)
-- Assemblage des fonctions dans la rencontre : 1 point(s)
-- Tests de frontières et explications : 1 point(s)
+- Six définitions personnelles, paramètres et return corrects : 1.5 point(s)
+- Règles des fonctions : seuil, plancher zéro, plafond et booléens : 1 point(s)
+- 19 appels de test lisibles, frontières et deux choix justifiés : 1.5 point(s)
+- Scène utilisant les six fonctions et ses trois essais commentés : 0.75 point(s)
+- Explications, organisation et sauvegarde du rendu : 0.25 point(s)
 
 ## Partie 3 — Explorer avec une boucle for
 
@@ -997,13 +1032,6 @@ Objectif : 10 False
 
 **Indice 2** — Appelle attaque_reussie avec de et 11, puis stocke sa réponse.
 
-**Indice 3** — Complète seulement ces lignes indentées dans la boucle.
-
-```python
-    reussite = attaque_reussie(___, ___)
-    print(de, ___)
-```
-
 ### Mission
 
 L’exercice d’indentation suivi d’une exploration de dix rencontres, avec un bilan final.
@@ -1040,26 +1068,11 @@ def choisir_ennemi(x):
 
 **Indice 2** — Initialise une seule fois, avant for.
 
-**Indice 3** — Cette ligne reste en dehors de la boucle.
-
-```python
-nombre_gobelins = 0
-```
-
 4. Écris une boucle de 1 à 10 inclus. À chaque tour, tire x avec random.random(), appelle choisir_ennemi(x), puis affiche le numéro et le nom de l’ennemi.
 
 **Indice 1** — Le nouveau tirage doit avoir lieu à chaque rencontre.
 
 **Indice 2** — range(1, 11) donne dix numéros ; appelle ensuite choisir_ennemi(x).
-
-**Indice 3** — Complète les appels.
-
-```python
-for numero in range(1, 11):
-    x = random.random()
-    ennemi = choisir_ennemi(___)
-    print(numero, ___)
-```
 
 5. Si l’ennemi vaut gobelin, augmente le compteur. Après la boucle, affiche le nombre de gobelins une seule fois.
 
@@ -1067,23 +1080,11 @@ for numero in range(1, 11):
 
 **Indice 2** — Le if est dans la boucle ; le bilan est après la boucle.
 
-**Indice 3** — Ajoute le test dans for et complète la mise à jour.
-
-```python
-    if ennemi == "gobelin":
-        nombre_gobelins = ___ + 1
-
-# Après la boucle, sans indentation :
-print(nombre_gobelins)
-```
-
 6. Teste les frontières de la fonction, puis remplace temporairement le tirage par 0.2 : tu dois compter 10 gobelins. Remets le hasard et exporte.
 
 **Indice 1** — Les valeurs aux frontières révèlent les erreurs de comparaison.
 
 **Indice 2** — Teste 0.49, 0.5, 0.79 et 0.8 avant de remettre le hasard.
-
-**Indice 3** — Attendus : gobelin, araignee, araignee, troll. Avec x = 0.2 dans la boucle, le bilan doit être 10 gobelins.
 
 ### Tests
 

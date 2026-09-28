@@ -20,16 +20,26 @@ if choix_partie == "1":
 # === DEBUT PARTIE 2 ===
 if choix_partie == "2":
     pass  # garde le fichier exécutable tant que la partie est vide
-    # PARTIE 2 — Hasard et fonctions
-    import random
+    # PARTIE 2 — Fonctions, tests et scène
+    # Écris toi-même les imports et toutes les définitions (def).
+    # Le cours est consultable ; aucun corps de fonction n’est fourni ici.
     
-    def attaque_reussie(de):
-        # TODO : remplacer pass par le résultat à renvoyer.
-        pass
+    # 1. DÉFINITIONS : six fonctions, avec leurs paramètres et return
     
-    # TODO : surprise, tests fixes, puis lancer de dé.
-    # TEST 1 : entrées / attendu / observé
-    # TEST 2 : entrées / attendu / observé
+    
+    # 2. TESTS AVEC PRINT : 17 appels demandés + 2 appels personnels
+    # Afficher pour chacun : entrées, attendu prévu, obtenu calculé.
+    # Justifier les deux tests personnels ; commenter les observations.
+    
+    
+    # 3. SCÈNE : surprise, puis un tour avec attaque, potion et riposte
+    # Tester les trois scénarios imposés et noter attendu / observé.
+    
+    
+    # EXPLICATIONS : définition/appel, paramètre/argument, print/return
+    # Erreur corrigée ou erreur que ton test pourrait détecter :
+    # Aides utilisées :
+    
 # === FIN PARTIE 2 ===
 
 # === DEBUT PARTIE 3 ===

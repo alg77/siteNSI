@@ -2,7 +2,7 @@
   "version": "2.0",
   "niveau": "Première NSI",
   "intro": "Construis un mini RPG textuel en six étapes. Pour chaque étape : lis le cours, prédis l’exemple, expérimente, puis écris ta solution dans l’atelier à rendre. Conserve les six versions pour montrer ta progression.",
-  "delivery": "À rendre : un seul fichier NOM_Prenom_mini_rpg.py exporté depuis le navigateur. Il contient six parties indépendantes sélectionnées au lancement par un menu fourni. Ne modifie pas les marqueurs de partie. Dans chaque partie, écris deux tests en commentaires (entrées, résultat attendu, résultat observé). En tête du fichier, indique les aides utilisées et une correction que tu sais expliquer. Sauvegarde à chaque séance ; une sauvegarde du navigateur ne remplace pas le fichier téléchargé.",
+  "delivery": "À rendre : un seul fichier NOM_Prenom_mini_rpg.py exporté depuis le navigateur. Il contient six parties indépendantes sélectionnées au lancement par un menu fourni. Ne modifie pas les marqueurs de partie. Dans chaque partie, suis les tests demandés et commente les résultats. Pour le TP2, écris 19 appels de test avec print et vérifie les trois scénarios de la scène ; pour les autres parties, conserve au moins deux tests commentés (entrées, attendu, observé). En tête du fichier, indique les aides utilisées et une correction que tu sais expliquer. Sauvegarde à chaque séance ; une sauvegarde du navigateur ne remplace pas le fichier téléchargé.",
   "policy": "Tu dois pouvoir expliquer et modifier chaque ligne que tu rends. Signale les aides consultées (cours, camarade, site, IA) et ce que tu as repris ou adapté. Pendant l’oral, travaille sans aide extérieure. Un code court compris vaut mieux qu’une fonction complexe que tu ne peux pas expliquer. Les conditions d’autorisation des aides sont précisées par ton professeur.",
   "parts": [
     {
@@ -51,55 +51,64 @@
     {
       "id": 2,
       "title": "Hasard, bibliothèques et premières fonctions",
-      "goal": "Créer puis réutiliser plusieurs fonctions dans une rencontre aléatoire.",
+      "goal": "Définir six fonctions, concevoir leurs tests et les assembler dans une scène de RPG.",
       "course": [
         "random est un module de la bibliothèque standard. Avec import random, on appelle random.random() ou random.randint(a, b). Éviter import * : le nom du module permet de retrouver l’origine de chaque fonction.",
         "random.random() renvoie un nombre dans [0 ; 1[ : 0 est possible, 1 est exclu. random.randint(1, 20) renvoie un entier de 1 à 20 inclus. int(random.random()*10) produit 0 à 9. Le hasard est pseudo-aléatoire : un algorithme produit une suite qui semble aléatoire.",
         "def nom(parametre): définit une fonction ; son corps ne s’exécute qu’à l’appel nom(valeur). Une fonction peut avoir zéro, un ou plusieurs paramètres. Les arguments sont les valeurs données lors de l’appel.",
         "return renvoie un résultat et termine l’appel. print affiche ; il ne remplace pas return. Une valeur renvoyée peut être stockée, comparée ou transmise à une autre fonction.",
         "Pour vérifier un seuil, choisir des valeurs fixes avant de remettre le tirage aléatoire. Un petit nombre de tirages n’a pas nécessairement les proportions théoriques.",
-        "Un booléen (type bool) vaut True ou False. Pour renvoyer une comparaison, commence par if / else avec return True et return False. La forme courte est facultative."
+        "Un booléen (type bool) vaut True ou False. Pour renvoyer une comparaison, commence par if / else avec return True et return False. La forme courte est facultative.",
+        "Tester : prévoir les résultats à partir des règles, choisir des cas ordinaires et des frontières, afficher attendu/obtenu avec print, comparer puis corriger. Tester séparément les fonctions puis leur assemblage."
       ],
       "example": "import random\n\ndef lancer_de(nb_faces):\n    tirage = random.randint(1, nb_faces)\n    return tirage\n\ndef attaque_reussie(de, seuil):\n    if de >= seuil:\n        return True\n    else:\n        return False\n\nprint(attaque_reussie(10, 11))\nprint(attaque_reussie(11, 11))\nde = lancer_de(20)\nreussite = attaque_reussie(de, 11)\nprint(\"Dé :\", de)\nprint(\"Attaque réussie :\", reussite)",
       "tasks": [
-        "Écrire une surprise : tirer chance avec random.random() ; afficher Attaque surprise si chance < 0.5, sinon Aucun ennemi.",
-        "Définir lancer_de(nb_faces), qui renvoie un entier entre 1 et nb_faces. L’appeler avec 6 puis 20.",
-        "Écris attaque_reussie(de, seuil) avec if / else : renvoie True si de >= seuil, False sinon. Affiche ses résultats pour (10, 11), (11, 11) et (12, 11). L’écriture courte n’est pas demandée.",
-        "Définir calculer_degats(force, bonus), qui renvoie la somme des deux paramètres. Utiliser son résultat dans un affichage de rencontre.",
-        "Assembler les fonctions : lancer un dé à 20 faces, tester la réussite avec un seuil de 11, puis afficher les dégâts seulement en cas de réussite.",
-        "Expliquer dans trois commentaires : définition/appel, paramètre/argument et print/return. L’interface graphique reste dans l’atelier complémentaire."
+        "Surprise (5 min). Importe random et tire chance. Affiche « Attaque surprise » si chance < 0.5, sinon « Aucun ennemi ». Vérifie temporairement avec 0.49 puis 0.5 et note les messages attendus ; rétablis le hasard.",
+        "Ton premier dé (10 min). Écris entièrement la fonction lancer_de(nb_faces), qui renvoie un entier aléatoire entre 1 et nb_faces inclus. Écris trois appels de test avec print : 1 face, 6 faces et 20 faces. Pour 1 face, prévois la valeur exacte ; pour 6 et 20, indique l’intervalle attendu. Observe le type du résultat et relance pour vérifier les bornes.",
+        "Décider si l’attaque réussit. Définis attaque_reussie(de, seuil) : elle renvoie True si le dé atteint ou dépasse le seuil, False sinon. Écris quatre tests avec print : (10, 11), (11, 11), (12, 11), puis (7, 7). Prévois les quatre résultats. Explique pourquoi le dernier appel vérifie que la fonction utilise réellement le paramètre seuil.",
+        "Calculer les dégâts. Définis calculer_degats(force, bonus), qui renvoie la somme de force et bonus. Écris deux tests : (8, 3) et (8, 0). Calcule l’attendu avant l’exécution et indique ce que vérifie le bonus nul.",
+        "Retirer des PV sans passer sous zéro. Définis appliquer_degats(pv, degats), qui renvoie les PV restants. Si les dégâts dépassent les PV, le résultat doit être 0. Utilise un calcul puis une condition. Écris trois tests : (30, 8), (8, 8), (5, 8). Pour chacun, explique s’il reste des PV, si le coup tombe exactement à zéro ou s’il dépasse les PV disponibles.",
+        "Soigner sans dépasser 100 PV. Définis soigner(pv, soin), qui renvoie les nouveaux PV, plafonnés à 100. Utilise un calcul puis une condition. Écris trois tests : (60, 20), (80, 20), (95, 20). Prévois l’attendu pour un soin ordinaire, un soin qui atteint exactement le plafond et un soin qui le dépasse.",
+        "Savoir si un personnage vit. Définis est_vivant(pv), qui renvoie un booléen : True si les PV sont strictement positifs, False à zéro. Écris deux tests : 1 PV et 0 PV. Vérifie aussi avec type que le résultat est bien un booléen, et non une chaîne de caractères.",
+        "Compléter ton carnet de tests. Tu as maintenant 17 appels de test aux six fonctions. Ajoute deux appels supplémentaires de ton choix, différents de ceux demandés, avec print. Pour chacun, écris en commentaire ce qu’il cherche à vérifier. Tous les tests doivent afficher un libellé, les entrées, l’attendu prévu à l’avance et l’obtenu calculé par la fonction. Au moins deux commentaires doivent consigner la comparaison attendu/observé et ta conclusion. Un test ne consiste pas à afficher uniquement une réponse écrite à la main.",
+        "Assembler une scène d’un tour (25 min). Le héros commence à 70 PV, le monstre à 12 PV. Lance un dé à 20 faces et utilise attaque_reussie au seuil 11. En cas de réussite, calcule les dégâts avec force 8 et bonus 3, puis mets à jour les PV du monstre avec appliquer_degats ; sinon, affiche « Raté ». Le héros boit ensuite une potion de 20 PV avec soigner. Si est_vivant indique que le monstre vit encore, celui-ci inflige 7 dégâts au héros avec appliquer_degats ; sinon, affiche « Victoire » et ne fais pas riposter le monstre. Affiche le dé et les PV finaux des deux personnages. Réutilise les six fonctions, sans réécrire leurs calculs dans la scène. Pour vérifier l’assemblage, fais trois essais temporaires : dé 10 avec monstre à 12 PV ; dé 11 avec monstre à 12 PV ; dé 11 avec monstre à 11 PV. Calcule puis note les PV finaux attendus et observés pour chaque essai. Rétablis enfin le hasard et les PV initiaux.",
+        "Vérifier et rendre (15 min). Organise le code en trois zones commentées : définitions, tests avec print, scène. Les tests doivent être écrits après les définitions et avant la scène ; ils ne doivent pas modifier ses PV initiaux. Ajoute un exemple commenté de définition/appel, paramètre/argument et print/return. Explique une erreur corrigée grâce à un test, ou une erreur que ton test pourrait détecter si aucun échec n’a été rencontré. Signale tes aides, lance le programme complet puis exporte le fichier. Le TP3 commence seulement une fois ce rendu terminé."
       ],
       "tests": [
-        "chance = 0.49 → surprise ; chance = 0.5 → aucun ennemi.",
-        "lancer_de(6) reste entre 1 et 6 ; lancer_de(20) reste entre 1 et 20.",
-        "attaque_reussie(10, 11) → False ; attaque_reussie(11, 11) → True.",
-        "calculer_degats(8, 3) → 11 ; le résultat est réutilisable."
+        "lancer_de : trois appels avec 1, 6 et 20 faces ; attendu exact pour 1, type entier et bornes pour les autres. Un seul tirage est stocké pour chaque test.",
+        "attaque_reussie : quatre appels (10, 11), (11, 11), (12, 11), (7, 7) ; tester les deux branches, la frontière et un autre seuil.",
+        "calculer_degats : deux appels (8, 3), (8, 0) ; cas ordinaire et bonus nul.",
+        "appliquer_degats : trois appels (30, 8), (8, 8), (5, 8) ; dégâts ordinaires, PV exactement à zéro, dégâts dépassant les PV.",
+        "soigner : trois appels (60, 20), (80, 20), (95, 20) ; en dessous du plafond, exactement dessus, au-delà.",
+        "est_vivant : deux appels, 1 et 0 ; True et False de type bool.",
+        "Ajoute deux appels personnels commentés : 19 appels de test au total. Chaque test affiche entrées, attendu et obtenu avec print. Prévois les attendus avant d’exécuter.",
+        "Teste aussi la scène : dé 10 / monstre 12 PV ; dé 11 / monstre 12 PV ; dé 11 / monstre 11 PV. Note les PV finaux attendus et observés ; aucune riposte après la victoire. Restaure les valeurs initiales et le hasard."
       ],
       "criteria": [
         [
-          "Surprise et seuil 0.5 corrects",
+          "Six définitions personnelles, paramètres et return corrects",
+          1.5
+        ],
+        [
+          "Règles des fonctions : seuil, plancher zéro, plafond et booléens",
           1
         ],
         [
-          "lancer_de paramétrable et bornes correctes",
-          1
+          "19 appels de test lisibles, frontières et deux choix justifiés",
+          1.5
         ],
         [
-          "Fonctions avec paramètres et return",
-          1
+          "Scène utilisant les six fonctions et ses trois essais commentés",
+          0.75
         ],
         [
-          "Assemblage des fonctions dans la rencontre",
-          1
-        ],
-        [
-          "Tests de frontières et explications",
-          1
+          "Explications, organisation et sauvegarde du rendu",
+          0.25
         ]
       ],
-      "starter": "# PARTIE 2 — Hasard et fonctions\nimport random\n\ndef lancer_de(nb_faces):\n    # TODO : renvoyer un tirage adapté au nombre de faces.\n    pass\n\ndef attaque_reussie(de, seuil):\n    # TODO : renvoyer un booléen.\n    pass\n\ndef calculer_degats(force, bonus):\n    # TODO : renvoyer le total.\n    pass\n\n# TODO : surprise, tests fixes, puis rencontre assemblée.\n# TEST 1 : entrées / attendu / observé\n# TEST 2 : entrées / attendu / observé\n",
+      "starter": "# PARTIE 2 — Fonctions, tests et scène\n# Écris toi-même les imports et toutes les définitions (def).\n# Le cours est consultable ; aucun corps de fonction n’est fourni ici.\n\n# 1. DÉFINITIONS : six fonctions, avec leurs paramètres et return\n\n\n# 2. TESTS AVEC PRINT : 17 appels demandés + 2 appels personnels\n# Afficher pour chacun : entrées, attendu prévu, obtenu calculé.\n# Justifier les deux tests personnels ; commenter les observations.\n\n\n# 3. SCÈNE : surprise, puis un tour avec attaque, potion et riposte\n# Tester les trois scénarios imposés et noter attendu / observé.\n\n\n# EXPLICATIONS : définition/appel, paramètre/argument, print/return\n# Erreur corrigée ou erreur que ton test pourrait détecter :\n# Aides utilisées :\n",
       "inputs": "",
-      "extension": "Créer choisir_butin() sans paramètre, puis une variante choisir_butin(chance) facile à tester avec des valeurs fixes."
+      "extension": "Après les six fonctions, les 19 tests et la scène : définir choisir_butin(chance), qui renvoie \"potion\" si chance < 0.3, \"or\" si chance < 0.8, \"rien\" sinon. Choisis toi-même les tests de chaque intervalle et des deux frontières, puis passe au début du TP3."
     },
     {
       "id": 3,
@@ -494,6 +503,38 @@
           "result": "Avec 6 : un entier entre 1 et 6.",
           "trap": "La valeur saisie doit être un entier positif. Dans cet exercice, on ne traite pas encore une saisie non numérique.",
           "inputs": "6"
+        },
+        {
+          "title": "16. Tester une fonction avec print",
+          "text": "Un test consiste à choisir des entrées, prévoir le résultat à partir de la consigne, exécuter le programme, puis comparer le résultat obtenu au résultat attendu. Calcule l’attendu avant de lancer le code : il ne doit pas être recopié depuis la sortie de ta fonction. Ici, on vérifie une fonction indépendante du RPG. Chaque print précise l’appel, l’attendu et l’obtenu.",
+          "code": "def prix_places(nombre, tarif):\n    return nombre * tarif\n\n# Cas ordinaire : 3 places à 4 euros coûtent 12 euros.\nprint(\"prix_places(3, 4) | attendu : 12 | obtenu :\", prix_places(3, 4))\n# Cas particulier : aucune place ne coûte rien.\nprint(\"prix_places(0, 4) | attendu : 0 | obtenu :\", prix_places(0, 4))",
+          "result": "prix_places(3, 4) | attendu : 12 | obtenu : 12\nprix_places(0, 4) | attendu : 0 | obtenu : 0",
+          "trap": "Ces print ne décident pas automatiquement si le test réussit : c’est à toi de comparer. Un résultat None peut signaler un return oublié. Une erreur Python est aussi un résultat à analyser.",
+          "inputs": ""
+        },
+        {
+          "title": "17. Choisir des cas qui peuvent révéler une erreur",
+          "text": "Un cas ordinaire vérifie une situation courante. Un test de frontière vérifie l’endroit où la règle change : juste avant, exactement à la limite, juste après. Pour un accès autorisé à partir de 12 ans, on teste 11, 12 et 13. Le cas 12 distingue >= de >. Teste aussi chaque branche : une réponse True et une réponse False. Pour une fonction paramétrable, change le paramètre : cela révèle une valeur écrite en dur.",
+          "code": "def acces_autorise(age):\n    if age >= 12:\n        return True\n    else:\n        return False\n\nprint(\"11 ans | attendu : False | obtenu :\", acces_autorise(11))\nprint(\"12 ans | attendu : True | obtenu :\", acces_autorise(12))\nprint(\"13 ans | attendu : True | obtenu :\", acces_autorise(13))",
+          "result": "11 ans | attendu : False | obtenu : False\n12 ans | attendu : True | obtenu : True\n13 ans | attendu : True | obtenu : True",
+          "trap": "Un test a une raison d’être. Trois valeurs toutes éloignées de la limite peuvent laisser passer une erreur. Quelques tests réussis ne prouvent pas que le programme est correct pour toutes les entrées.",
+          "inputs": ""
+        },
+        {
+          "title": "18. Tester une règle et tester le hasard",
+          "text": "Pour une fonction déterministe, les mêmes entrées donnent le même résultat : tu peux prévoir une valeur précise. Pour un dé, tu ne peux généralement pas prévoir le nombre tiré ; tu vérifies plutôt qu’il s’agit d’un entier entre les bornes autorisées. Stocke un seul tirage et vérifie cette même valeur. Tester un dé à une face donne un cas particulier dont le résultat est certain : 1.",
+          "code": "import random\n\ntirage = random.randint(1, 6)\nprint(\"Dé 6 faces | attendu : entier de 1 à 6 | obtenu :\", tirage)\nprint(\"Type attendu : int | obtenu :\", type(tirage))\nprint(\"Bornes attendues : True | obtenu :\", 1 <= tirage <= 6)",
+          "result": "Le nombre varie de 1 à 6.\nLe type est <class 'int'>.\nLe contrôle des bornes affiche True.",
+          "trap": "1 <= tirage <= 6 signifie que tirage est au moins 1 et au plus 6. Un tirage correct ne suffit pas à valider toute une fonction aléatoire. Vérifie aussi le code, change le nombre de faces et relance. Ne demande pas au hasard de produire un résultat fixé.",
+          "inputs": ""
+        },
+        {
+          "title": "19. Passer des tests de fonctions au test du programme",
+          "text": "Teste d’abord chaque fonction seule, puis leur assemblage. Une fonction peut être correcte alors que le programme oublie de récupérer son résultat. Ici, le premier appel renvoie bien 12, mais stock reste 9. Le second appel affecte le résultat à stock. Pour le RPG, pense à réaffecter les PV renvoyés par les fonctions.",
+          "code": "def ajouter_stock(stock, livraison):\n    return stock + livraison\n\nstock = 9\najouter_stock(stock, 3)\nprint(\"Sans récupération :\", stock)\nstock = ajouter_stock(stock, 3)\nprint(\"Avec récupération :\", stock)",
+          "result": "Sans récupération : 9\nAvec récupération : 12",
+          "trap": "Si attendu et obtenu diffèrent, garde une trace du test, recherche l’erreur, corrige puis relance. Pour tester une scène avec un dé, remplace temporairement le hasard par une valeur choisie, puis restaure le tirage après vérification.",
+          "inputs": ""
         }
       ],
       "exercises": [
@@ -521,10 +562,10 @@
         },
         {
           "title": "Échauffement B · trois points de courage",
-          "task": "Écris une fonction ajouter_bonus(points) qui renvoie points + 3. Appelle-la avec 4 et affiche le résultat.",
-          "code": "def ajouter_bonus(points):\n    # TODO : renvoyer le résultat\n    pass\n\nprint(ajouter_bonus(4))",
+          "task": "Écris une fonction ajouter_bonus(points) qui renvoie points + 3. Ajoute toi-même sa définition au-dessus de l’appel proposé. Remplace les ... par 4 pour appeler la fonction et afficher le résultat. Les ... indiquent ici du code à compléter, pas une valeur à conserver.",
+          "code": "print(ajouter_bonus(...))",
           "expected": "7",
-          "hint": "Remplace pass par return suivi du calcul.",
+          "hint": "Définis la fonction au-dessus de l’appel avec def, puis renvoie le calcul avec return.",
           "inputs": "",
           "hints": [
             {
@@ -537,14 +578,14 @@
             },
             {
               "text": "Complète le calcul et le nom de la valeur renvoyée.",
-              "code": "def ajouter_bonus(points):\n    resultat = ___ + ___\n    return ___\n\nprint(ajouter_bonus(4))"
+              "code": "def ajouter_bonus(points):\n    resultat = ___ + ___\n    return ___\n\nprint(ajouter_bonus(...))"
             }
           ]
         },
         {
           "title": "Entraînement C · un dé à plusieurs faces",
-          "task": "Complète lancer_de(nb_faces), puis appelle-la avec 6, 10 et 20. Chaque résultat doit respecter sa borne.",
-          "code": "import random\n\ndef lancer_de(nb_faces):\n    # TODO : utiliser nb_faces\n    pass\n\nprint(lancer_de(6))\nprint(lancer_de(10))\nprint(lancer_de(20))",
+          "task": "Écris entièrement lancer_de(nb_faces), avec l’import nécessaire, au-dessus des appels proposés. Appelle-la avec 6, 10 puis 20. Pour le premier appel, complète l’argument ; pour les deux suivants, écris toi-même le nom de la fonction, les parenthèses et l’argument à l’intérieur de print. Chaque résultat doit respecter sa borne.",
+          "code": "print(lancer_de(...))\nprint(...)\nprint(...)",
           "expected": "Trois entiers : 1–6, puis 1–10, puis 1–20.",
           "hint": "Utilise random.randint(1, nb_faces), puis return.",
           "inputs": "",
@@ -556,39 +597,31 @@
             {
               "text": "Le tirage va de 1 à nb_faces, inclus. Récupère-le dans une variable.",
               "code": ""
-            },
-            {
-              "text": "Complète sans remplacer nb_faces par un nombre fixe.",
-              "code": "def lancer_de(nb_faces):\n    tirage = random.randint(1, ___)\n    return ___"
             }
           ]
         },
         {
           "title": "Entraînement D · print ou return ?",
-          "task": "Corrige bonus : le programme doit pouvoir calculer et afficher 10. Ne modifie pas la dernière ligne.",
-          "code": "def bonus(force):\n    print(force + 2)\n\nresultat = bonus(7)\nprint(resultat + 1)",
+          "task": "Écris entièrement une fonction bonus(force) qui renvoie force + 2. Appelle-la avec 7 et stocke sa réponse dans resultat, puis complète print pour afficher resultat augmenté de 1. Tu dois obtenir 10. Explique pourquoi afficher le calcul dans la fonction avec print ne permettrait pas de réutiliser sa réponse.",
+          "code": "resultat = ...\nprint(...)",
           "expected": "10",
-          "hint": "La fonction doit renvoyer 9 au lieu de seulement l’afficher.",
+          "hint": "La fonction doit renvoyer 9 ; le programme récupère cette valeur, ajoute 1 puis affiche 10.",
           "inputs": "",
           "hints": [
             {
-              "text": "Le 9 apparaît à l’écran, mais resultat ne reçoit pas 9.",
+              "text": "Définis la fonction avant son appel. La valeur renvoyée sera stockée dans resultat.",
               "code": ""
             },
             {
-              "text": "Sans return, la fonction renvoie None. Il faut transmettre force + 2 à l’appelant.",
+              "text": "return transmet le calcul à l’appelant ; print seul ne le fait pas. Après l’appel, ajoute 1 à la valeur reçue avant de l’afficher.",
               "code": ""
-            },
-            {
-              "text": "Remplace le mot manquant : ce n’est pas print.",
-              "code": "def bonus(force):\n    ___ force + 2"
             }
           ]
         },
         {
           "title": "Entraînement E · répondre vrai ou faux",
-          "task": "Complète peut_entrer(niveau) : elle renvoie True si niveau est supérieur ou égal à 3, False sinon. Utilise if / else. Teste 2, 3 et 4.",
-          "code": "def peut_entrer(niveau):\n    # TODO : tester le niveau et renvoyer un booléen\n    pass\n\nprint(peut_entrer(2))\nprint(peut_entrer(3))\nprint(peut_entrer(4))",
+          "task": "Écris entièrement peut_entrer(niveau) : elle renvoie True si niveau est supérieur ou égal à 3, False sinon. Utilise if / else. Cette fois, écris seul la définition et les trois lignes de test avec print pour 2, 3 et 4 : aucun appel n’est prérempli.",
+          "code": "# Définis la fonction avec son paramètre.\n\n# Écris les tests : avant la limite, sur la limite, après la limite.",
           "expected": "False\nTrue\nTrue",
           "hint": "La valeur 3 autorise déjà l’entrée.",
           "inputs": "",
@@ -600,125 +633,134 @@
             {
               "text": "Si oui, renvoie True ; sinon, renvoie False. Le cas égal à 3 est accepté.",
               "code": ""
-            },
-            {
-              "text": "Complète les trois trous, puis explique le chemin suivi pour 2 et pour 3.",
-              "code": "def peut_entrer(niveau):\n    if niveau ___ 3:\n        return ___\n    else:\n        return ___"
             }
           ]
         }
       ],
       "steps": [
-        "Importe random au début de Mon travail.",
-        "Tire chance avec random.random(). Affiche « Attaque surprise » si chance < 0.5, sinon « Aucun ennemi ».",
-        "Écris lancer_de(nb_faces), qui renvoie un entier entre 1 et nb_faces. Appelle-la avec 6 puis 20.",
-        "Écris attaque_reussie(de, seuil) avec if / else : renvoie True si de >= seuil, False sinon. Affiche ses résultats pour (10, 11), (11, 11) et (12, 11). L’écriture courte n’est pas demandée.",
-        "Écris calculer_degats(force, bonus), qui renvoie la somme de ses deux paramètres. Vérifie calculer_degats(8, 3).",
-        "Assemble les fonctions : lance un dé à 20 faces, teste une réussite au seuil 11 et affiche les dégâts calculés seulement si l’attaque réussit.",
-        "Ajoute trois commentaires expliquant définition/appel, paramètre/argument et print/return. Exporte le .py."
+        "Surprise (5 min). Importe random et tire chance. Affiche « Attaque surprise » si chance < 0.5, sinon « Aucun ennemi ». Vérifie temporairement avec 0.49 puis 0.5 et note les messages attendus ; rétablis le hasard.",
+        "Ton premier dé (10 min). Écris entièrement la fonction lancer_de(nb_faces), qui renvoie un entier aléatoire entre 1 et nb_faces inclus. Écris trois appels de test avec print : 1 face, 6 faces et 20 faces. Pour 1 face, prévois la valeur exacte ; pour 6 et 20, indique l’intervalle attendu. Observe le type du résultat et relance pour vérifier les bornes.",
+        "Décider si l’attaque réussit. Définis attaque_reussie(de, seuil) : elle renvoie True si le dé atteint ou dépasse le seuil, False sinon. Écris quatre tests avec print : (10, 11), (11, 11), (12, 11), puis (7, 7). Prévois les quatre résultats. Explique pourquoi le dernier appel vérifie que la fonction utilise réellement le paramètre seuil.",
+        "Calculer les dégâts. Définis calculer_degats(force, bonus), qui renvoie la somme de force et bonus. Écris deux tests : (8, 3) et (8, 0). Calcule l’attendu avant l’exécution et indique ce que vérifie le bonus nul.",
+        "Retirer des PV sans passer sous zéro. Définis appliquer_degats(pv, degats), qui renvoie les PV restants. Si les dégâts dépassent les PV, le résultat doit être 0. Utilise un calcul puis une condition. Écris trois tests : (30, 8), (8, 8), (5, 8). Pour chacun, explique s’il reste des PV, si le coup tombe exactement à zéro ou s’il dépasse les PV disponibles.",
+        "Soigner sans dépasser 100 PV. Définis soigner(pv, soin), qui renvoie les nouveaux PV, plafonnés à 100. Utilise un calcul puis une condition. Écris trois tests : (60, 20), (80, 20), (95, 20). Prévois l’attendu pour un soin ordinaire, un soin qui atteint exactement le plafond et un soin qui le dépasse.",
+        "Savoir si un personnage vit. Définis est_vivant(pv), qui renvoie un booléen : True si les PV sont strictement positifs, False à zéro. Écris deux tests : 1 PV et 0 PV. Vérifie aussi avec type que le résultat est bien un booléen, et non une chaîne de caractères.",
+        "Compléter ton carnet de tests. Tu as maintenant 17 appels de test aux six fonctions. Ajoute deux appels supplémentaires de ton choix, différents de ceux demandés, avec print. Pour chacun, écris en commentaire ce qu’il cherche à vérifier. Tous les tests doivent afficher un libellé, les entrées, l’attendu prévu à l’avance et l’obtenu calculé par la fonction. Au moins deux commentaires doivent consigner la comparaison attendu/observé et ta conclusion. Un test ne consiste pas à afficher uniquement une réponse écrite à la main.",
+        "Assembler une scène d’un tour (25 min). Le héros commence à 70 PV, le monstre à 12 PV. Lance un dé à 20 faces et utilise attaque_reussie au seuil 11. En cas de réussite, calcule les dégâts avec force 8 et bonus 3, puis mets à jour les PV du monstre avec appliquer_degats ; sinon, affiche « Raté ». Le héros boit ensuite une potion de 20 PV avec soigner. Si est_vivant indique que le monstre vit encore, celui-ci inflige 7 dégâts au héros avec appliquer_degats ; sinon, affiche « Victoire » et ne fais pas riposter le monstre. Affiche le dé et les PV finaux des deux personnages. Réutilise les six fonctions, sans réécrire leurs calculs dans la scène. Pour vérifier l’assemblage, fais trois essais temporaires : dé 10 avec monstre à 12 PV ; dé 11 avec monstre à 12 PV ; dé 11 avec monstre à 11 PV. Calcule puis note les PV finaux attendus et observés pour chaque essai. Rétablis enfin le hasard et les PV initiaux.",
+        "Vérifier et rendre (15 min). Organise le code en trois zones commentées : définitions, tests avec print, scène. Les tests doivent être écrits après les définitions et avant la scène ; ils ne doivent pas modifier ses PV initiaux. Ajoute un exemple commenté de définition/appel, paramètre/argument et print/return. Explique une erreur corrigée grâce à un test, ou une erreur que ton test pourrait détecter si aucun échec n’a été rencontré. Signale tes aides, lance le programme complet puis exporte le fichier. Le TP3 commence seulement une fois ce rendu terminé."
       ],
-      "deliverable": "Une surprise aléatoire, trois fonctions réutilisables et une petite rencontre qui assemble leurs résultats. Tkinter reste facultatif.",
+      "deliverable": "Un programme personnel comprenant une surprise aléatoire, six fonctions entièrement définies par toi, au moins 19 appels de test affichés avec print, et une scène d’un tour qui réutilise les fonctions. Aucun def n’est prérempli dans Mon travail. Les tests précisent les entrées, l’attendu et l’obtenu ; explique le choix de deux tests. Pas de boucle ni de liste nécessaire. On suppose les entrées valides : nombres entiers positifs ou nuls, PV entre 0 et 100, dé avec au moins une face. La gestion des saisies invalides n’est pas demandée. Le cours reste consultable ; la version if / else avec return True et return False est pleinement acceptée.",
       "stepHints": [
         [
           {
-            "text": "Le hasard se trouve dans un module Python.",
+            "text": "Il y a deux messages possibles. Sépare les cas avec if / else.",
             "code": ""
           },
           {
-            "text": "Le nom du module est random.",
+            "text": "random.random() produit le tirage. La valeur 0.5 appartient au cas Aucun ennemi.",
             "code": ""
           },
           {
-            "text": "Place cette ligne avant tes fonctions.",
-            "code": "import random"
+            "text": "Complète les trous, puis vérifie les deux cas.",
+            "code": "import random\nchance = random.random()\nif chance ___ 0.5:\n    print(\"Attaque surprise\")\nelse:\n    print(___)"
           }
         ],
         [
           {
-            "text": "Deux messages possibles : sépare les cas avec if / else.",
+            "text": "Le nombre de faces dépend de l’argument de chaque appel.",
             "code": ""
           },
           {
-            "text": "random.random() produit le tirage. La frontière 0.5 appartient au cas Aucun ennemi.",
+            "text": "Définis une fonction à un paramètre. Le tirage va de 1 à nb_faces inclus ; la fonction doit le renvoyer.",
             "code": ""
           },
           {
-            "text": "Complète les trous.",
-            "code": "chance = random.random()\nif chance ___ 0.5:\n    print(\"Attaque surprise\")\nelse:\n    print(___)"
+            "text": "Retrouve le mot qui définit une fonction et celui qui renvoie sa valeur.",
+            "code": "___ lancer_de(nb_faces):\n    tirage = random.randint(1, ___)\n    ___ tirage"
           }
         ],
         [
           {
-            "text": "Le nombre de faces dépend de l’appel.",
+            "text": "Deux chemins doivent renvoyer une valeur logique.",
             "code": ""
           },
           {
-            "text": "Le tirage va de 1 à nb_faces, inclus. Récupère-le dans une variable.",
+            "text": "Le seuil lui-même réussit. Utilise le paramètre reçu, pas le nombre 11 écrit dans la fonction. Teste les deux branches.",
             "code": ""
-          },
-          {
-            "text": "Complète sans remplacer nb_faces par un nombre fixe.",
-            "code": "def lancer_de(nb_faces):\n    tirage = random.randint(1, ___)\n    return ___"
           }
         ],
         [
           {
-            "text": "Écris sur papier : 10 échoue, 11 réussit, 12 réussit pour un seuil de 11.",
+            "text": "Le résultat est un nombre réutilisable.",
             "code": ""
           },
           {
-            "text": "Teste de >= seuil. Dans chaque branche, renvoie un booléen sans guillemets.",
+            "text": "Additionne les paramètres et renvoie la somme. L’affichage appartient aux tests, en dehors de la fonction.",
             "code": ""
-          },
-          {
-            "text": "Complète sans utiliser print dans la fonction.",
-            "code": "def attaque_reussie(de, seuil):\n    if ___ >= ___:\n        return ___\n    else:\n        return ___\n\nprint(attaque_reussie(10, 11))\nprint(attaque_reussie(11, 11))\nprint(attaque_reussie(12, 11))"
           }
         ],
         [
           {
-            "text": "Les dégâts sont une somme, pas un tirage.",
+            "text": "Calcule d’abord les PV théoriques après le coup.",
             "code": ""
           },
           {
-            "text": "Additionne les deux paramètres, puis renvoie la valeur.",
+            "text": "Si le calcul donne un nombre négatif, renvoie zéro ; sinon, renvoie le résultat. Réfléchis au cas exactement égal à zéro.",
             "code": ""
-          },
-          {
-            "text": "Stocker le calcul avant return est autorisé.",
-            "code": "def calculer_degats(force, bonus):\n    total = ___ + ___\n    return ___"
           }
         ],
         [
           {
-            "text": "Appelle tes fonctions dans l’ordre : tirer, décider, puis calculer les dégâts si l’attaque réussit.",
+            "text": "Calcule d’abord les PV après ajout du soin.",
             "code": ""
           },
           {
-            "text": "Stocke le dé dans de et la réponse booléenne dans reussite. Un if utilise ensuite reussite.",
+            "text": "Compare ce résultat au plafond. Prévois le retour pour le cas qui dépasse 100 et pour celui qui ne le dépasse pas.",
             "code": ""
-          },
-          {
-            "text": "Les fonctions doivent déjà être définies au-dessus.",
-            "code": "de = lancer_de(___)\nreussite = attaque_reussie(de, ___)\nif reussite:\n    degats = calculer_degats(8, 3)\n    print(\"Dégâts :\", ___)\nelse:\n    print(\"Raté !\")"
           }
         ],
         [
           {
-            "text": "Explique une ligne de ton propre programme pour chaque différence.",
+            "text": "La question est : reste-t-il au moins un PV ?",
             "code": ""
           },
           {
-            "text": "def définit ; nom(...) appelle. Le paramètre reçoit l’argument. print affiche ; return renvoie.",
+            "text": "Renvoie un booléen dans chaque branche. Zéro n’est pas vivant. Les booléens s’écrivent sans guillemets.",
+            "code": ""
+          }
+        ],
+        [
+          {
+            "text": "Choisis des entrées qui révéleraient une erreur encore possible.",
             "code": ""
           },
           {
-            "text": "Ajoute les commentaires avec #, puis télécharge ton fichier. Signale les indices utilisés.",
+            "text": "Un soin nul, aucun dégât ou un autre seuil sont des pistes. Calcule l’attendu à la main, puis affiche la vraie réponse de la fonction à côté.",
+            "code": ""
+          }
+        ],
+        [
+          {
+            "text": "Distingue l’ordre des actions : attaque du héros, potion, puis éventuelle riposte.",
+            "code": ""
+          },
+          {
+            "text": "Chaque mise à jour doit récupérer la valeur renvoyée. Teste la vie du monstre après les dégâts. Le troisième scénario doit emprunter le chemin sans riposte.",
+            "code": ""
+          }
+        ],
+        [
+          {
+            "text": "Relance tout le programme, pas seulement le dernier morceau écrit.",
+            "code": ""
+          },
+          {
+            "text": "Vérifie tes six définitions et tes 19 appels de test. La scène doit repartir de ses propres PV initiaux. Télécharge ensuite ton travail.",
             "code": ""
           }
         ]
       ],
-      "session": "Priorité de cette séance : comprendre les fonctions et réussir le TP2. Prends le temps de tracer un appel et ses deux chemins vrai/faux. La version if / else est pleinement acceptée. Si tu termines, commence le parcours découverte du TP3."
+      "session": "TP2 · séance de 2 h. Repères indicatifs : 15 min de cours ciblé, 10 min d’échauffement, 55 min pour définir et tester les fonctions, 25 min pour la scène, 15 min de vérification et de sauvegarde. Les six fonctions et leurs tests font partie du rendu. Écris toi-même chaque ligne def, ses paramètres, les deux-points et son corps. Les indices 3 sont réservés aux deux premières étapes de mission et aux deux premiers échauffements. Si tout est terminé et expliqué, commence le TP3."
     },
     {
       "concepts": [
@@ -831,10 +873,6 @@
             {
               "text": "Appelle attaque_reussie avec de et 11, puis stocke sa réponse.",
               "code": ""
-            },
-            {
-              "text": "Complète seulement ces lignes indentées dans la boucle.",
-              "code": "    reussite = attaque_reussie(___, ___)\n    print(de, ___)"
             }
           ]
         }
@@ -886,10 +924,6 @@
           {
             "text": "Initialise une seule fois, avant for.",
             "code": ""
-          },
-          {
-            "text": "Cette ligne reste en dehors de la boucle.",
-            "code": "nombre_gobelins = 0"
           }
         ],
         [
@@ -900,10 +934,6 @@
           {
             "text": "range(1, 11) donne dix numéros ; appelle ensuite choisir_ennemi(x).",
             "code": ""
-          },
-          {
-            "text": "Complète les appels.",
-            "code": "for numero in range(1, 11):\n    x = random.random()\n    ennemi = choisir_ennemi(___)\n    print(numero, ___)"
           }
         ],
         [
@@ -914,10 +944,6 @@
           {
             "text": "Le if est dans la boucle ; le bilan est après la boucle.",
             "code": ""
-          },
-          {
-            "text": "Ajoute le test dans for et complète la mise à jour.",
-            "code": "    if ennemi == \"gobelin\":\n        nombre_gobelins = ___ + 1\n\n# Après la boucle, sans indentation :\nprint(nombre_gobelins)"
           }
         ],
         [
@@ -927,10 +953,6 @@
           },
           {
             "text": "Teste 0.49, 0.5, 0.79 et 0.8 avant de remettre le hasard.",
-            "code": ""
-          },
-          {
-            "text": "Attendus : gobelin, araignee, araignee, troll. Avec x = 0.2 dans la boucle, le bilan doit être 10 gobelins.",
             "code": ""
           }
         ]
