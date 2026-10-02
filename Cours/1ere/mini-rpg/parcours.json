@@ -1,8 +1,8 @@
 {
   "version": "2.0",
   "niveau": "Première NSI",
-  "intro": "Construis un mini RPG textuel en six étapes. Pour chaque étape : lis le cours, prédis l’exemple, expérimente, puis écris ta solution dans l’atelier à rendre. Conserve les six versions pour montrer ta progression.",
-  "delivery": "À rendre : un seul fichier NOM_Prenom_mini_rpg.py exporté depuis le navigateur. Il contient six parties indépendantes sélectionnées au lancement par un menu fourni. Ne modifie pas les marqueurs de partie. Dans chaque partie, suis les tests demandés et commente les résultats. Pour le TP2, écris 19 appels de test avec print et vérifie les trois scénarios de la scène ; pour les autres parties, conserve au moins deux tests commentés (entrées, attendu, observé). En tête du fichier, indique les aides utilisées et une correction que tu sais expliquer. Sauvegarde à chaque séance ; une sauvegarde du navigateur ne remplace pas le fichier téléchargé.",
+  "intro": "Construis le même mini RPG textuel en six versions successives. Pour chaque étape : lis le cours, prédis l’exemple, expérimente, puis écris ta solution. Reprends le code utile des étapes précédentes et conserve les six versions pour montrer ta progression.",
+  "delivery": "À rendre : un seul fichier NOM_Prenom_mini_rpg.py exporté depuis le navigateur. Il contient six versions du RPG sélectionnées au lancement par un menu fourni. Chacune se lance seule : reprends dans sa partie le code nécessaire des TP précédents, car leurs variables ne sont pas automatiquement disponibles. Ne modifie pas les marqueurs de partie. Dans chaque partie, suis les tests demandés et commente les résultats. Pour le TP2, écris 19 appels de test avec print et vérifie les trois scénarios de la scène ; pour les autres parties, conserve au moins deux tests commentés (entrées, attendu, observé). En tête du fichier, indique les aides utilisées et une correction que tu sais expliquer. Sauvegarde à chaque séance ; une sauvegarde du navigateur ne remplace pas le fichier téléchargé.",
   "policy": "Tu dois pouvoir expliquer et modifier chaque ligne que tu rends. Signale les aides consultées (cours, camarade, site, IA) et ce que tu as repris ou adapté. Pendant l’oral, travaille sans aide extérieure. Un code court compris vaut mieux qu’une fonction complexe que tu ne peux pas expliquer. Les conditions d’autorisation des aides sont précisées par ton professeur.",
   "parts": [
     {
@@ -19,7 +19,8 @@
       "tasks": [
         "Prédire les PV pour attaquer, soigner et dormir avant d’exécuter l’exemple. Modifier ensuite le soin de 15 à 12.",
         "Dans la partie 1 du fichier à rendre, demander le nom et la classe (guerrier, mage ou archer), puis afficher un accueil personnalisé. Signaler une classe inconnue avec if/elif/else.",
-        "Demander trois entiers force, intelligence et agilite. Le budget est 15. Calculer le total et accepter uniquement trois valeurs positives ou nulles dont la somme vaut 15. Afficher un récapitulatif et un message valide/invalide. Une saisie invalide ne doit pas être annoncée valide ; la redemande n’est pas exigée ici."
+        "Demander trois entiers force, intelligence et agilite. Le budget est 15. Calculer le total et accepter uniquement trois valeurs positives ou nulles dont la somme vaut 15. Afficher un récapitulatif et un message valide/invalide. Une saisie invalide ne doit pas être annoncée valide ; la redemande n’est pas exigée ici.",
+        "Conserve le code de création et de validation : il sera repris dans chaque version du RPG à partir du TP2, avec les mêmes noms de variables."
       ],
       "tests": [
         "Lina, mage, 5, 4, 6 → total 15 et répartition valide.",
@@ -59,7 +60,9 @@
         "return renvoie un résultat et termine l’appel. print affiche ; il ne remplace pas return. Une valeur renvoyée peut être stockée, comparée ou transmise à une autre fonction.",
         "Pour vérifier un seuil, choisir des valeurs fixes avant de remettre le tirage aléatoire. Un petit nombre de tirages n’a pas nécessairement les proportions théoriques.",
         "Un booléen (type bool) vaut True ou False. Pour renvoyer une comparaison, commence par if / else avec return True et return False. La forme courte est facultative.",
-        "Tester : prévoir les résultats à partir des règles, choisir des cas ordinaires et des frontières, afficher attendu/obtenu avec print, comparer puis corriger. Tester séparément les fonctions puis leur assemblage."
+        "Tester : prévoir les résultats à partir des règles, choisir des cas ordinaires et des frontières, afficher attendu/obtenu avec print, comparer puis corriger. Tester séparément les fonctions puis leur assemblage.",
+        "Chaque lancement de l’atelier repart de zéro. Choisir la partie 3 ou 4 du fichier exporté n’exécute pas les parties précédentes. Pour construire une nouvelle version du même RPG, recopie le code utile dans la nouvelle partie, sans effacer l’ancienne : les saisies et contrôles du TP1, puis les définitions de fonctions déjà écrites. Ne recopie ni le menu fourni ni les marqueurs de partie. Ne recopie pas les anciens appels de tests et les anciennes scènes : ils lanceraient les essais et actions une seconde fois.",
+        "Du TP2 au TP4, les caractéristiques choisies au TP1 ont les mêmes effets : dégâts du héros = force + 3 (bonus d’arme) ; soin = 10 + intelligence ; seuil de réussite = 20 - agilite. Une attaque réussit si de >= seuil. Plus l’agilité augmente, plus le seuil baisse. Les fonctions restent générales : on leur passe ces valeurs comme arguments. Le nom et la classe figurent dans les messages ; la classe ne donne pas de bonus supplémentaire à ce stade."
       ],
       "example": "import random\n\ndef lancer_de(nb_faces):\n    tirage = random.randint(1, nb_faces)\n    return tirage\n\ndef attaque_reussie(de, seuil):\n    if de >= seuil:\n        return True\n    else:\n        return False\n\nprint(attaque_reussie(10, 11))\nprint(attaque_reussie(11, 11))\nde = lancer_de(20)\nreussite = attaque_reussie(de, 11)\nprint(\"Dé :\", de)\nprint(\"Attaque réussie :\", reussite)",
       "tasks": [
@@ -71,8 +74,8 @@
         "Soigner sans dépasser 100 PV. Définis soigner(pv, soin), qui renvoie les nouveaux PV, plafonnés à 100. Utilise un calcul puis une condition. Écris trois tests : (60, 20), (80, 20), (95, 20). Prévois l’attendu pour un soin ordinaire, un soin qui atteint exactement le plafond et un soin qui le dépasse.",
         "Savoir si un personnage vit. Définis est_vivant(pv), qui renvoie un booléen : True si les PV sont strictement positifs, False à zéro. Écris deux tests : 1 PV et 0 PV. Vérifie aussi avec type que le résultat est bien un booléen, et non une chaîne de caractères.",
         "Compléter ton carnet de tests. Tu as maintenant 17 appels de test aux six fonctions. Ajoute deux appels supplémentaires de ton choix, différents de ceux demandés, avec print. Pour chacun, écris en commentaire ce qu’il cherche à vérifier. Tous les tests doivent afficher un libellé, les entrées, l’attendu prévu à l’avance et l’obtenu calculé par la fonction. Au moins deux commentaires doivent consigner la comparaison attendu/observé et ta conclusion. Un test ne consiste pas à afficher uniquement une réponse écrite à la main.",
-        "Assembler une scène d’un tour (25 min). Le héros commence à 70 PV, le monstre à 12 PV. Lance un dé à 20 faces et utilise attaque_reussie au seuil 11. En cas de réussite, calcule les dégâts avec force 8 et bonus 3, puis mets à jour les PV du monstre avec appliquer_degats ; sinon, affiche « Raté ». Le héros boit ensuite une potion de 20 PV avec soigner. Si est_vivant indique que le monstre vit encore, celui-ci inflige 7 dégâts au héros avec appliquer_degats ; sinon, affiche « Victoire » et ne fais pas riposter le monstre. Affiche le dé et les PV finaux des deux personnages. Réutilise les six fonctions, sans réécrire leurs calculs dans la scène. Pour vérifier l’assemblage, fais trois essais temporaires : dé 10 avec monstre à 12 PV ; dé 11 avec monstre à 12 PV ; dé 11 avec monstre à 11 PV. Calcule puis note les PV finaux attendus et observés pour chaque essai. Rétablis enfin le hasard et les PV initiaux.",
-        "Vérifier et rendre (15 min). Organise le code en trois zones commentées : définitions, tests avec print, scène. Les tests doivent être écrits après les définitions et avant la scène ; ils ne doivent pas modifier ses PV initiaux. Ajoute un exemple commenté de définition/appel, paramètre/argument et print/return. Explique une erreur corrigée grâce à un test, ou une erreur que ton test pourrait détecter si aucun échec n’a été rencontré. Signale tes aides, lance le programme complet puis exporte le fichier. Le TP3 commence seulement une fois ce rendu terminé."
+        "Assembler la première scène de ton personnage (25 min). Après les définitions et les 19 tests, reprends les saisies et contrôles de ton TP1 : nom, classe, force, intelligence, agilite. Lance la scène seulement si le personnage est valide. Le héros commence à 70 PV, le monstre à 12 PV. Calcule seuil = 20 - agilite et soin = 10 + intelligence. Lance un dé avec lancer_de(20), puis appelle attaque_reussie avec ce dé et ton seuil. En cas de réussite, appelle calculer_degats avec la variable force et le bonus 3, puis mets à jour les PV du monstre avec appliquer_degats ; sinon, affiche « Raté ». Le héros boit ensuite une potion : appelle soigner avec ses PV et la variable soin. Si est_vivant indique que le monstre vit encore, celui-ci inflige 7 dégâts au héros avec appliquer_degats ; sinon, affiche « Victoire » sans riposte. Affiche nom, classe, dé, seuil et PV finaux. Vérifie la scène avec Lina, mage, 5/4/6 : dé fixé à 13 et monstre à 12 PV ; dé 14 et monstre à 12 PV ; dé 14 et monstre à 8 PV. Prévois et note les PV attendus et observés. Remets ensuite le hasard et les PV initiaux, puis essaie ton propre personnage.",
+        "Vérifier et rendre (15 min). Garde trois zones : définitions, tests avec print, puis création du personnage et scène. Les anciennes parties restent dans leur onglet. Les constantes des tests de fonctions, comme (8, 3), restent utiles ; dans la scène, remplace-les par les caractéristiques réellement saisies au TP1. Compare aussi deux personnages valides avec le même dé fixé pour observer l’effet de leurs caractéristiques. Ajoute les explications définition/appel, paramètre/argument et print/return, ainsi qu’une erreur corrigée ou détectable par tes tests. Signale les aides utilisées. Prévois les attendus avant les essais, vérifie les saisies invalides, puis exporte les six versions."
       ],
       "tests": [
         "lancer_de : trois appels avec 1, 6 et 20 faces ; attendu exact pour 1, type entier et bornes pour les autres. Un seul tirage est stocké pour chaque test.",
@@ -82,7 +85,8 @@
         "soigner : trois appels (60, 20), (80, 20), (95, 20) ; en dessous du plafond, exactement dessus, au-delà.",
         "est_vivant : deux appels, 1 et 0 ; True et False de type bool.",
         "Ajoute deux appels personnels commentés : 19 appels de test au total. Chaque test affiche entrées, attendu et obtenu avec print. Prévois les attendus avant d’exécuter.",
-        "Teste aussi la scène : dé 10 / monstre 12 PV ; dé 11 / monstre 12 PV ; dé 11 / monstre 11 PV. Note les PV finaux attendus et observés ; aucune riposte après la victoire. Restaure les valeurs initiales et le hasard."
+        "Scène avec Lina, mage, 5/4/6 : dégâts 8, soin 14, seuil 14. Dé 13 / monstre 12 → héros 77, monstre 12 ; dé 14 / monstre 12 → héros 77, monstre 4 ; dé 14 / monstre 8 → héros 84, monstre 0, victoire sans riposte. Avant chaque essai, héros à 70 PV. Calcule les attendus avant de consulter cette vérification.",
+        "Comparaison à dé fixé 13 : 5/4/6 → dégâts 8, soin 14, seuil 14, attaque ratée ; 3/5/7 → dégâts 6, soin 15, seuil 13, attaque réussie. Dans les deux cas, somme 15. Vérifie aussi classe dragon ou répartition 5/5/6 : aucun lancement de scène."
       ],
       "criteria": [
         [
@@ -98,7 +102,7 @@
           1.5
         ],
         [
-          "Scène utilisant les six fonctions et ses trois essais commentés",
+          "Scène reliée au personnage du TP1, six fonctions et essais commentés",
           0.75
         ],
         [
@@ -106,104 +110,118 @@
           0.25
         ]
       ],
-      "starter": "# PARTIE 2 — Fonctions, tests et scène\n# Écris toi-même les imports et toutes les définitions (def).\n# Le cours est consultable ; aucun corps de fonction n’est fourni ici.\n\n# 1. DÉFINITIONS : six fonctions, avec leurs paramètres et return\n\n\n# 2. TESTS AVEC PRINT : 17 appels demandés + 2 appels personnels\n# Afficher pour chacun : entrées, attendu prévu, obtenu calculé.\n# Justifier les deux tests personnels ; commenter les observations.\n\n\n# 3. SCÈNE : surprise, puis un tour avec attaque, potion et riposte\n# Tester les trois scénarios imposés et noter attendu / observé.\n\n\n# EXPLICATIONS : définition/appel, paramètre/argument, print/return\n# Erreur corrigée ou erreur que ton test pourrait détecter :\n# Aides utilisées :\n",
-      "inputs": "",
+      "starter": "# PARTIE 2 — Fonctions, tests et scène\n# Écris toi-même les imports et toutes les définitions (def).\n# Le cours est consultable ; aucun corps de fonction n’est fourni ici.\n\n# 1. DÉFINITIONS : six fonctions, avec leurs paramètres et return\n\n\n# 2. TESTS AVEC PRINT : 17 appels demandés + 2 appels personnels\n# Afficher pour chacun : entrées, attendu prévu, obtenu calculé.\n# Justifier les deux tests personnels ; commenter les observations.\n\n\n# 3. PERSONNAGE ET SCÈNE\n# Reprendre ici les saisies et contrôles du TP1 ; garder la partie 1.\n# Scène seulement si le personnage est valide.\n# Dégâts : force + 3 ; soin : 10 + intelligence ; seuil : 20 - agilite.\n# Surprise, puis un tour avec attaque, potion et riposte.\n# Tester les trois scénarios imposés et noter attendu / observé.\n\n\n# EXPLICATIONS : définition/appel, paramètre/argument, print/return\n# Erreur corrigée ou erreur que ton test pourrait détecter :\n# Aides utilisées :\n",
+      "inputs": "Lina\nmage\n5\n4\n6",
       "extension": "Après les six fonctions, les 19 tests et la scène : définir choisir_butin(chance), qui renvoie \"potion\" si chance < 0.3, \"or\" si chance < 0.8, \"rien\" sinon. Choisis toi-même les tests de chaque intervalle et des deux frontières, puis passe au début du TP3."
     },
     {
       "id": 3,
       "title": "Explorer avec une boucle for",
-      "goal": "Répéter un nombre connu de fois et compter des rencontres.",
+      "goal": "Faire explorer dix rencontres au personnage du TP1 en réutilisant les fonctions du TP2.",
       "course": [
         "for i in range(1, 11): fait prendre à i les valeurs 1 à 10. La borne finale est exclue. range(10) produit 0 à 9. Le corps indenté est répété ; le code après le bloc ne l’est pas.",
         "Un compteur est initialisé avant la boucle, puis augmenté dans le bloc : nombre = nombre + 1. L’initialiser dans le bloc efface le comptage précédent.",
         "Avec x = random.random(), les intervalles x < 0.5, puis x < 0.8, puis le reste donnent des probabilités 50 %, 30 %, 20 %. elif empêche qu’un même tirage sélectionne deux ennemis.",
-        "Une fonction peut isoler ce choix : choisir_ennemi(x) reçoit le tirage et renvoie un nom. Le tirage reste à l’extérieur pour tester facilement les valeurs aux frontières."
+        "Une fonction peut isoler ce choix : choisir_ennemi(x) reçoit le tirage et renvoie un nom. Le tirage reste à l’extérieur pour tester facilement les valeurs aux frontières.",
+        "Chaque lancement de l’atelier repart de zéro. Choisir la partie 3 ou 4 du fichier exporté n’exécute pas les parties précédentes. Pour construire une nouvelle version du même RPG, recopie le code utile dans la nouvelle partie, sans effacer l’ancienne : les saisies et contrôles du TP1, puis les définitions de fonctions déjà écrites. Ne recopie ni le menu fourni ni les marqueurs de partie. Ne recopie pas les anciens appels de tests et les anciennes scènes : ils lanceraient les essais et actions une seconde fois.",
+        "Du TP2 au TP4, les caractéristiques choisies au TP1 ont les mêmes effets : dégâts du héros = force + 3 (bonus d’arme) ; soin = 10 + intelligence ; seuil de réussite = 20 - agilite. Une attaque réussit si de >= seuil. Plus l’agilité augmente, plus le seuil baisse. Les fonctions restent générales : on leur passe ces valeurs comme arguments. Le nom et la classe figurent dans les messages ; la classe ne donne pas de bonus supplémentaire à ce stade."
       ],
       "example": "potions = 0\nif potions == 0:\n    print(\"Repos\")\nelse:\n    print(\"Boire une potion\")\nprint(\"Entrer dans la grotte\")\n\nfor numero in range(1, 4):\n    print(\"Pas\", numero)\nprint(\"Fin du trajet\")",
       "tasks": [
-        "Prédire l’affichage de l’exemple pour 0 et 1 potion. Indenter la ligne Entrer dans la grotte pour ne l’afficher que si on boit une potion.",
-        "Définir choisir_ennemi(x) : gobelin si x < 0.5, araignee si 0.5 <= x < 0.8, troll sinon. Utiliser if/elif/else et return.",
-        "Simuler exactement 10 rencontres numérotées de 1 à 10. À chaque tour, appeler choisir_ennemi(random.random()). Compter les gobelins et afficher le bilan une seule fois après la boucle."
+        "Reprendre les acquis. Dans le bac à sable, fais la quête A « trois portes » et explique pourquoi Fin s’affiche une seule fois. Observe l’exemple des potions : déplace « Entrer dans la grotte » pour que cette ligne soit exécutée seulement après « Boire une potion ». Ne recopie pas cet échauffement dans le jeu à rendre.",
+        "Retrouver ton personnage. Dans Mon travail, reprends les saisies et contrôles du TP1 ainsi que la définition de calculer_degats du TP2. Garde les anciennes parties. Affiche le nom, la classe, force, intelligence, agilite, puis les dégâts obtenus en appelant calculer_degats avec force et le bonus 3, le soin 10 + intelligence et le seuil 20 - agilite. Pour un personnage invalide, affiche un message sans commencer l’exploration. Les fonctions sont définies avant leurs appels ; le personnage est saisi une seule fois avant la boucle.",
+        "Choisir l’ennemi. Écris entièrement choisir_ennemi(x), sans tirage dans la fonction : elle renvoie \"gobelin\" si x < 0.5, \"araignee\" si x < 0.8 après le premier test, \"troll\" sinon. Écris six appels avec print pour 0, 0.49, 0.5, 0.79, 0.8 et 0.99. Indique l’attendu et compare à l’obtenu. Tu réutilises ici def, les paramètres, les conditions et return du TP2.",
+        "Explorer dix fois. Si le personnage est valide, écris une boucle donnant les numéros 1 à 10 inclus. À chaque tour, tire x avec random.random(), puis appelle choisir_ennemi(x). Affiche le numéro, le nom de ton personnage et le nom de l’ennemi rencontré. Après la boucle, affiche une seule fois « Fin de l’exploration » avec le nom du personnage. Aucun dégât n’est infligé : tu repères les ennemis ; le combat viendra au TP4.",
+        "Tester puis sauvegarder : point d’arrêt de la séance courte. Vérifie les six tests de choisir_ennemi, dix rencontres numérotées et une seule fin. Remplace temporairement le tirage par 0.2 : les dix ennemis doivent être des gobelins. Vérifie les messages avec un autre nom et une autre répartition valide ; vérifie qu’un personnage invalide ne part pas explorer. Rétablis random.random(), ajoute deux commentaires attendu/observé et exporte ton fichier.",
+        "Prolongement si tu as terminé : compter les gobelins. Initialise nombre_gobelins à 0 avant la boucle des rencontres. Dans la boucle, augmente-le seulement si l’ennemi est un gobelin. Affiche le bilan une seule fois après la boucle. Avec x fixé à 0.2, le total doit être 10 ; avec 0.6, le total doit être 0. Remets ensuite le hasard. Ce compteur est facultatif dans le rendu court."
       ],
       "tests": [
-        "0 et 0.49 → gobelin ; 0.5 et 0.79 → araignee ; 0.8 et 0.99 → troll.",
-        "Exactement dix lignes de rencontre, puis un bilan ; le compteur vaut entre 0 et 10.",
-        "En remplaçant tous les tirages par 0.2, le bilan doit compter 10 gobelins."
+        "choisir_ennemi : 0 et 0.49 → gobelin ; 0.5 et 0.79 → araignee ; 0.8 et 0.99 → troll. Affiche attendu et obtenu avec print.",
+        "Lina, mage, 5/4/6 → récapitulatif : dégâts 8, soin 14, seuil 14. Puis dix rencontres, numéros 1 à 10, nom Lina, et une seule fin d’exploration.",
+        "Remplace temporairement le tirage par 0.2 : dix gobelins. Restaure ensuite le hasard. Un autre nom saisi doit apparaître dans toutes les rencontres.",
+        "Classe dragon ou répartition 5/5/6 → message de personnage invalide et aucune rencontre.",
+        "Prolongement compteur uniquement : total entre 0 et 10 ; tirage fixe 0.2 → 10, tirage fixe 0.6 → 0. Un seul bilan après la boucle."
       ],
       "criteria": [
         [
-          "Indentation expliquée et modifiée",
+          "Personnage du TP1 repris, contrôlé et relié à calculer_degats du TP2",
           1
         ],
         [
-          "Dix rencontres numérotées correctement",
+          "Fonction choisir_ennemi définie et trois intervalles corrects",
           1
         ],
         [
-          "Trois intervalles et return corrects",
+          "Dix rencontres numérotées, nouveau tirage et appel à chaque tour",
           1
         ],
         [
-          "Compteur initialisé et mis à jour au bon endroit",
+          "Indentation expliquée et fin affichée une seule fois",
           1
         ],
         [
-          "Tests de frontières et bilan unique",
+          "Tests avec print, frontières et essais commentés",
           1
         ]
       ],
-      "starter": "# PARTIE 3 — Exploration\nimport random\n\ndef choisir_ennemi(x):\n    # TODO : renvoyer le nom selon les trois intervalles.\n    pass\n\n# TODO : exemple d'indentation puis dix rencontres et compteur.\n# TEST 1 : entrées / attendu / observé\n# TEST 2 : entrées / attendu / observé\n",
-      "inputs": "",
-      "extension": "Passer à 100 rencontres et comparer les effectifs, sans attendre exactement 50, 30 et 20."
+      "starter": "# PARTIE 3 — Mon personnage explore la forêt\n# Imports et définitions : reprendre calculer_degats du TP2.\n# Écrire entièrement choisir_ennemi et ses six tests avec print.\n\n# Reprendre les saisies et contrôles du TP1.\n# Afficher le personnage, ses dégâts, son soin et son seuil.\n\n# Si le personnage est valide : dix rencontres avec for.\n# Tirer, appeler choisir_ennemi, afficher numéro / nom / ennemi.\n# Afficher une seule fin après la boucle.\n\n# POINT D’ARRÊT : tester, commenter, sauvegarder.\n# Facultatif ensuite : compteur de gobelins.\n",
+      "inputs": "Lina\nmage\n5\n4\n6",
+      "extension": "Après le rendu court, ajoute le compteur. Ensuite, pour chaque rencontre, reprends lancer_de et attaque_reussie du TP2 pour simuler une tentative au seuil 20 - agilite, sans modifier les PV. Le combat complet sera construit avec while au TP4."
     },
     {
       "id": 4,
       "title": "Faire durer le combat avec while",
-      "goal": "Répéter jusqu’à une condition de fin et gérer un tour complet.",
+      "goal": "Faire combattre le personnage du TP1 avec les fonctions du TP2 et un ennemi du TP3.",
       "course": [
         "while condition: répète son bloc tant que la condition est vraie. Elle est vérifiée avant chaque tour. Une mise à jour doit permettre d’en sortir. Contrairement à for, le nombre de tours n’est pas connu à l’avance.",
         "while pv_hero > 0 and pv_monstre > 0: continue seulement si les deux combattants vivent. or serait incorrect : le combat continuerait si un seul survit. break permet de sortir immédiatement, par exemple pour fuir.",
-        "Un soin doit être plafonné : après pv_hero = pv_hero + 10, si pv_hero > 100, remettre 100. On peut écrire min(100, pv_hero + 10) une fois min compris. max(0, pv) permet un affichage sans valeur négative.",
-        "Un tour a un ordre : action du héros, contrôle de survie du monstre, puis riposte éventuelle. Un monstre vaincu ne riposte pas. Tester d’abord avec des dés fixés permet de vérifier la logique."
+        "Réutilise soigner(pv, soin) et appliquer_degats(pv, degats) du TP2 : leurs retours maintiennent les PV entre 0 et 100. Affecte chaque valeur renvoyée à la variable de PV concernée.",
+        "Un tour a un ordre : action du héros, contrôle de survie du monstre, puis riposte éventuelle. Un monstre vaincu ne riposte pas. Tester d’abord avec des dés fixés permet de vérifier la logique.",
+        "Chaque lancement de l’atelier repart de zéro. Choisir la partie 3 ou 4 du fichier exporté n’exécute pas les parties précédentes. Pour construire une nouvelle version du même RPG, recopie le code utile dans la nouvelle partie, sans effacer l’ancienne : les saisies et contrôles du TP1, puis les définitions de fonctions déjà écrites. Ne recopie ni le menu fourni ni les marqueurs de partie. Ne recopie pas les anciens appels de tests et les anciennes scènes : ils lanceraient les essais et actions une seconde fois.",
+        "Du TP2 au TP4, les caractéristiques choisies au TP1 ont les mêmes effets : dégâts du héros = force + 3 (bonus d’arme) ; soin = 10 + intelligence ; seuil de réussite = 20 - agilite. Une attaque réussit si de >= seuil. Plus l’agilité augmente, plus le seuil baisse. Les fonctions restent générales : on leur passe ces valeurs comme arguments. Le nom et la classe figurent dans les messages ; la classe ne donne pas de bonus supplémentaire à ce stade."
       ],
       "example": "vie = 40\nwhile vie > 0:\n    vie = vie - 20\n    print(\"Vie :\", vie)\nprint(\"Fin\")",
       "tasks": [
-        "Échauffement : commencer à 100 PV. attaquer enlève 20 PV au héros, defendre rend 10 PV plafonnés à 100, rien enlève 5. Ajouter fuir pour sortir et un message pour une action inconnue. Ce mini-jeu est indépendant du combat suivant.",
-        "Combat à rendre : héros et monstre commencent à 100 PV. attaquer lance un dé : si > 10, le monstre perd 20 PV ; defendre soigne le héros de 10 (maximum 100) ; rien ne modifie pas directement les PV. Après une action valide, le monstre encore vivant lance son dé et inflige 20 PV si > 10.",
-        "Une action inconnue ne consomme pas de tour. fuir termine sans riposte. Afficher les PV après chaque tour et une issue distincte : victoire, défaite ou fuite. Garder une version indépendante en partie 4."
+        "Réutiliser les versions précédentes. Reprends les six définitions de fonctions du TP2 et choisir_ennemi du TP3, puis le code de création et les contrôles du TP1. Ne recopie pas les tests, la scène d’un tour ni la boucle des dix rencontres. Si le personnage est invalide, affiche un message sans demander d’action de combat.",
+        "Préparer le combat. Pour le personnage valide, calcule les dégâts avec calculer_degats(force, 3), le soin avec 10 + intelligence et le seuil avec 20 - agilite. Choisis un seul ennemi en passant random.random() à choisir_ennemi. Affiche nom, classe et ennemi. Initialise pv_hero à 100, pv_monstre à 30 et fuite à False, avant la boucle. Les trois types d’ennemis ont ici les mêmes PV et la même force : seules leurs appellations diffèrent.",
+        "Faire durer la rencontre. Tant que est_vivant(pv_hero) ET est_vivant(pv_monstre), demande attaquer, defendre, rien ou fuir. Si l’action est fuir, mémorise la fuite et sors de la boucle avec break. Pour une action inconnue, affiche un message ; elle ne déclenche ni soin, ni attaque, ni riposte. La demande suivante se fera au tour suivant.",
+        "Action du héros. attaquer appelle lancer_de(20), puis attaque_reussie avec le seuil calculé à partir de son agilité ; en cas de réussite, mets à jour les PV du monstre avec appliquer_degats et les dégâts du héros. defendre utilise soigner avec le soin calculé à partir de son intelligence. rien ne change pas directement les PV. Contrairement à la scène guidée du TP2, le soin n’est plus automatique : il correspond maintenant à l’action defendre.",
+        "Riposte. Après une action valide attaquer, defendre ou rien, vérifie est_vivant(pv_monstre). Si le monstre vit, appelle lancer_de(20) et attaque_reussie avec son seuil fixe 11 ; une réussite lui permet d’infliger 7 dégâts au héros avec appliquer_degats. Pas de riposte après la fuite, une saisie inconnue ou la mort du monstre. Cette fois, sa riposte dépend aussi d’un dé, contrairement à celle du TP2.",
+        "Terminer et tester. Affiche les deux PV après chaque tour puis une seule issue : Fuite si fuite est vraie, sinon Victoire si le monstre est mort, sinon Défaite. Vérifie les tests proposés avec des dés fixés temporairement et des PV proches de zéro, puis restaure lancer_de et les PV initiaux. Ajoute des commentaires attendu/observé, vérifie avec deux répartitions valides différentes et exporte en conservant les parties 1 à 3."
       ],
       "tests": [
-        "Dé 10 → échec ; dé 11 → 20 dégâts ; héros 95 + soin → 100 avant riposte.",
-        "Monstre à 20, attaque du héros réussie → victoire et aucune riposte.",
-        "Héros à 20, attaque du monstre réussie → défaite ; fuir → fin immédiate.",
-        "Action xyz → message puis nouvelle saisie, PV inchangés."
+        "Personnage de référence : Lina, mage, 5/4/6 → dégâts 8, soin 14, seuil 14. Dé du héros 13 : raté ; 14 : réussi. Dé du monstre 10 : raté ; 11 : 7 dégâts.",
+        "Test d’un tour : héros 100, monstre 30, action attaquer, dé héros 14 et dé monstre 11 → héros 93, monstre 22. Ces PV doivent servir au tour suivant, sans réinitialisation.",
+        "Soin : héros 95, action defendre → 100 avant riposte, puis 93 si le monstre réussit. Avec un héros à 60, le même soin donne 74 avant riposte.",
+        "Victoire : monstre à 8, héros 100, attaque réussie → monstre 0, héros 100, aucun dé de riposte ni nouvelle saisie. Défaite : héros à 7, action rien, dé monstre 11 → héros 0 et sortie de boucle.",
+        "fuir → Fuite sans riposte ; xyz → message puis nouvelle demande, PV inchangés et aucun lancer de dé. Personnage invalide → aucune demande d’action.",
+        "Autre personnage valide 3/5/7 : dégâts 6, soin 15, seuil 13. Avec dé héros 13 et dé monstre 10, une attaque depuis 100/30 donne 100/24. Pour chaque essai, affiche ou commente attendu et observé."
       ],
       "criteria": [
         [
-          "Boucle et trois issues correctes",
+          "Personnage du TP1 et fonctions des TP2–TP3 réutilisés",
           1
         ],
         [
-          "Actions et plafonnement du soin",
+          "Boucle, PV conservés entre tours et trois issues",
           1
         ],
         [
-          "Dés et dégâts corrects des deux côtés",
+          "Attaque et soin utilisant les caractéristiques saisies",
           1
         ],
         [
-          "Ordre du tour et absence de riposte après victoire",
+          "Riposte conditionnelle et absence de riposte après victoire",
           1
         ],
         [
-          "Saisie invalide, fuite et tests",
+          "Tests, fuite et saisie invalide sans effet",
           1
         ]
       ],
-      "starter": "# PARTIE 4 — Combat\nimport random\n\n# TODO : boucle du mini-jeu d'échauffement.\n# TODO : combat indépendant à 100 PV chacun, puis message de fin.\n# TEST 1 : entrées / attendu / observé\n# TEST 2 : entrées / attendu / observé\n",
-      "inputs": "fuir\nfuir",
-      "extension": "Comparer le mini-jeu et le combat : attaquer ne diminue pas directement les PV du héros dans le combat."
+      "starter": "# PARTIE 4 — Le même héros entre en combat\n# Reprendre les six fonctions du TP2 et choisir_ennemi du TP3.\n# Reprendre les saisies et contrôles du TP1 ; conserver les parties précédentes.\n\n# Si le personnage est valide : calculer dégâts, soin et seuil.\n# Choisir un ennemi ; PV initiaux héros 100 / monstre 30.\n# Boucle while : action du héros, riposte éventuelle, affichage.\n# Terminer par victoire, défaite ou fuite.\n\n# TESTS : dés fixes, frontières, fin de combat, autre personnage.\n# Commenter attendu / observé, puis restaurer le hasard.\n",
+      "inputs": "Lina\nmage\n5\n4\n6\nfuir",
+      "extension": "Après le combat fonctionnel, donne des PV initiaux différents au gobelin, à l’araignée et au troll avec if / elif / else. Teste chaque cas. Les listes et les dictionnaires permettront ensuite de faire évoluer le bestiaire."
     },
     {
       "id": 5,
@@ -213,7 +231,7 @@
         "Une liste est une collection ordonnée et modifiable : monstres = ['gobelin', 'araignee', 'troll']. L’indice du premier élément est 0. len(monstres) donne sa taille. Une liste vide s’écrit [].",
         "append(x) ajoute x à la fin ; remove(x) retire la première occurrence de x et échoue s’il est absent. Vérifier if x in monstres: avant de retirer une valeur dont on ne connaît pas la présence.",
         "random.choice(monstres) choisit un élément au hasard, avec la même probabilité par position. Il faut vérifier que la liste n’est pas vide avant l’appel. while monstres: signifie tant que la liste n’est pas vide.",
-        "À partir de cette partie, la règle de combat évolue : attaque réussie si dé <= attaque ; elle est bloquée si le dé du défenseur <= defense. Des dégâts de 20 arrivent seulement si l’attaque réussit ET si la défense échoue. Le seuil > 10 de la partie 4 est remplacé."
+        "À partir de cette partie, la règle de combat évolue : attaque réussie si dé <= attaque ; elle est bloquée si le dé du défenseur <= defense. Des dégâts de 20 arrivent seulement si l’attaque réussit ET si la défense échoue. Le seuil calculé à partir de l’agilité dans la partie 4 est remplacé par cette nouvelle règle."
       ],
       "example": "sac = [\"potion\", \"cle\"]\nprint(sac[0])\nsac.append(\"carte\")\nif \"cle\" in sac:\n    sac.remove(\"cle\")\nprint(sac, len(sac))",
       "tasks": [
@@ -380,7 +398,7 @@
         "Affiche « Répartition valide » seulement si total vaut 15 ET si aucune des trois valeurs n’est négative. Sinon, affiche « Répartition invalide ». Le contrôle de la répartition est indépendant du contrôle de classe.",
         "Lance les tests proposés et ajoute deux commentaires : entrées, résultat attendu, résultat observé. Télécharge ensuite ton fichier .py."
       ],
-      "deliverable": "Une création de personnage en console. On ne combat pas encore dans le programme à rendre de cette partie."
+      "deliverable": "Une création de personnage en console. On ne combat pas encore dans le programme à rendre de cette partie. Conserve ce code : au TP2, tu reprendras les saisies nom, classe, force, intelligence et agilite ainsi que leurs contrôles. Ces caractéristiques serviront ensuite aux dégâts, au soin et à la réussite des attaques."
     },
     {
       "concepts": [
@@ -646,10 +664,10 @@
         "Soigner sans dépasser 100 PV. Définis soigner(pv, soin), qui renvoie les nouveaux PV, plafonnés à 100. Utilise un calcul puis une condition. Écris trois tests : (60, 20), (80, 20), (95, 20). Prévois l’attendu pour un soin ordinaire, un soin qui atteint exactement le plafond et un soin qui le dépasse.",
         "Savoir si un personnage vit. Définis est_vivant(pv), qui renvoie un booléen : True si les PV sont strictement positifs, False à zéro. Écris deux tests : 1 PV et 0 PV. Vérifie aussi avec type que le résultat est bien un booléen, et non une chaîne de caractères.",
         "Compléter ton carnet de tests. Tu as maintenant 17 appels de test aux six fonctions. Ajoute deux appels supplémentaires de ton choix, différents de ceux demandés, avec print. Pour chacun, écris en commentaire ce qu’il cherche à vérifier. Tous les tests doivent afficher un libellé, les entrées, l’attendu prévu à l’avance et l’obtenu calculé par la fonction. Au moins deux commentaires doivent consigner la comparaison attendu/observé et ta conclusion. Un test ne consiste pas à afficher uniquement une réponse écrite à la main.",
-        "Assembler une scène d’un tour (25 min). Le héros commence à 70 PV, le monstre à 12 PV. Lance un dé à 20 faces et utilise attaque_reussie au seuil 11. En cas de réussite, calcule les dégâts avec force 8 et bonus 3, puis mets à jour les PV du monstre avec appliquer_degats ; sinon, affiche « Raté ». Le héros boit ensuite une potion de 20 PV avec soigner. Si est_vivant indique que le monstre vit encore, celui-ci inflige 7 dégâts au héros avec appliquer_degats ; sinon, affiche « Victoire » et ne fais pas riposter le monstre. Affiche le dé et les PV finaux des deux personnages. Réutilise les six fonctions, sans réécrire leurs calculs dans la scène. Pour vérifier l’assemblage, fais trois essais temporaires : dé 10 avec monstre à 12 PV ; dé 11 avec monstre à 12 PV ; dé 11 avec monstre à 11 PV. Calcule puis note les PV finaux attendus et observés pour chaque essai. Rétablis enfin le hasard et les PV initiaux.",
-        "Vérifier et rendre (15 min). Organise le code en trois zones commentées : définitions, tests avec print, scène. Les tests doivent être écrits après les définitions et avant la scène ; ils ne doivent pas modifier ses PV initiaux. Ajoute un exemple commenté de définition/appel, paramètre/argument et print/return. Explique une erreur corrigée grâce à un test, ou une erreur que ton test pourrait détecter si aucun échec n’a été rencontré. Signale tes aides, lance le programme complet puis exporte le fichier. Le TP3 commence seulement une fois ce rendu terminé."
+        "Assembler la première scène de ton personnage (25 min). Après les définitions et les 19 tests, reprends les saisies et contrôles de ton TP1 : nom, classe, force, intelligence, agilite. Lance la scène seulement si le personnage est valide. Le héros commence à 70 PV, le monstre à 12 PV. Calcule seuil = 20 - agilite et soin = 10 + intelligence. Lance un dé avec lancer_de(20), puis appelle attaque_reussie avec ce dé et ton seuil. En cas de réussite, appelle calculer_degats avec la variable force et le bonus 3, puis mets à jour les PV du monstre avec appliquer_degats ; sinon, affiche « Raté ». Le héros boit ensuite une potion : appelle soigner avec ses PV et la variable soin. Si est_vivant indique que le monstre vit encore, celui-ci inflige 7 dégâts au héros avec appliquer_degats ; sinon, affiche « Victoire » sans riposte. Affiche nom, classe, dé, seuil et PV finaux. Vérifie la scène avec Lina, mage, 5/4/6 : dé fixé à 13 et monstre à 12 PV ; dé 14 et monstre à 12 PV ; dé 14 et monstre à 8 PV. Prévois et note les PV attendus et observés. Remets ensuite le hasard et les PV initiaux, puis essaie ton propre personnage.",
+        "Vérifier et rendre (15 min). Garde trois zones : définitions, tests avec print, puis création du personnage et scène. Les anciennes parties restent dans leur onglet. Les constantes des tests de fonctions, comme (8, 3), restent utiles ; dans la scène, remplace-les par les caractéristiques réellement saisies au TP1. Compare aussi deux personnages valides avec le même dé fixé pour observer l’effet de leurs caractéristiques. Ajoute les explications définition/appel, paramètre/argument et print/return, ainsi qu’une erreur corrigée ou détectable par tes tests. Signale les aides utilisées. Prévois les attendus avant les essais, vérifie les saisies invalides, puis exporte les six versions."
       ],
-      "deliverable": "Un programme personnel comprenant une surprise aléatoire, six fonctions entièrement définies par toi, au moins 19 appels de test affichés avec print, et une scène d’un tour qui réutilise les fonctions. Aucun def n’est prérempli dans Mon travail. Les tests précisent les entrées, l’attendu et l’obtenu ; explique le choix de deux tests. Pas de boucle ni de liste nécessaire. On suppose les entrées valides : nombres entiers positifs ou nuls, PV entre 0 et 100, dé avec au moins une face. La gestion des saisies invalides n’est pas demandée. Le cours reste consultable ; la version if / else avec return True et return False est pleinement acceptée.",
+      "deliverable": "Un programme personnel comprenant une surprise aléatoire, six fonctions entièrement définies par toi, au moins 19 appels de test affichés avec print, et une scène d’un tour qui réutilise ces fonctions avec le personnage du TP1. Aucun def n’est prérempli dans Mon travail. Les tests précisent les entrées, l’attendu et l’obtenu ; explique le choix de deux tests. Pas de boucle ni de liste nécessaire. On suppose les entrées valides : nombres entiers positifs ou nuls, PV entre 0 et 100, dé avec au moins une face. La gestion des saisies invalides n’est pas demandée. Le cours reste consultable ; la version if / else avec return True et return False est pleinement acceptée.",
       "stepHints": [
         [
           {
@@ -741,26 +759,35 @@
         ],
         [
           {
-            "text": "Distingue l’ordre des actions : attaque du héros, potion, puis éventuelle riposte.",
+            "text": "Reprends ton code de création du TP1 après les tests, puis utilise ses variables dans la scène.",
             "code": ""
           },
           {
-            "text": "Chaque mise à jour doit récupérer la valeur renvoyée. Teste la vie du monstre après les dégâts. Le troisième scénario doit emprunter le chemin sans riposte.",
+            "text": "Calcule seuil et soin à partir d’agilite et d’intelligence. Passe force à calculer_degats. Récupère chaque valeur de PV renvoyée ; vérifie la vie du monstre avant la riposte.",
             "code": ""
           }
         ],
         [
           {
-            "text": "Relance tout le programme, pas seulement le dernier morceau écrit.",
+            "text": "Le dé fixé permet de comparer les personnages sans que le hasard explique la différence.",
             "code": ""
           },
           {
-            "text": "Vérifie tes six définitions et tes 19 appels de test. La scène doit repartir de ses propres PV initiaux. Télécharge ensuite ton travail.",
+            "text": "Vérifie que changer les saisies change les résultats du jeu. Les fonctions doivent utiliser leurs paramètres, la scène les variables du personnage.",
             "code": ""
           }
         ]
       ],
-      "session": "TP2 · séance de 2 h. Repères indicatifs : 15 min de cours ciblé, 10 min d’échauffement, 55 min pour définir et tester les fonctions, 25 min pour la scène, 15 min de vérification et de sauvegarde. Les six fonctions et leurs tests font partie du rendu. Écris toi-même chaque ligne def, ses paramètres, les deux-points et son corps. Les indices 3 sont réservés aux deux premières étapes de mission et aux deux premiers échauffements. Si tout est terminé et expliqué, commence le TP3."
+      "session": "TP2 · séance de 2 h. Repères indicatifs : 15 min de cours ciblé, 10 min d’échauffement, 55 min pour définir et tester les fonctions, 25 min pour la scène, 15 min de vérification et de sauvegarde. Les six fonctions et leurs tests font partie du rendu. Écris toi-même chaque ligne def, ses paramètres, les deux-points et son corps. Les indices 3 sont réservés aux deux premières étapes de mission et aux deux premiers échauffements. Si tout est terminé et expliqué, commence le TP3.",
+      "continuity": {
+        "title": "Le même personnage, une nouvelle version du RPG",
+        "paragraphs": [
+          "Chaque lancement de l’atelier repart de zéro. Choisir la partie 3 ou 4 du fichier exporté n’exécute pas les parties précédentes. Pour construire une nouvelle version du même RPG, recopie le code utile dans la nouvelle partie, sans effacer l’ancienne : les saisies et contrôles du TP1, puis les définitions de fonctions déjà écrites. Ne recopie ni le menu fourni ni les marqueurs de partie. Ne recopie pas les anciens appels de tests et les anciennes scènes : ils lanceraient les essais et actions une seconde fois.",
+          "Du TP2 au TP4, les caractéristiques choisies au TP1 ont les mêmes effets : dégâts du héros = force + 3 (bonus d’arme) ; soin = 10 + intelligence ; seuil de réussite = 20 - agilite. Une attaque réussit si de >= seuil. Plus l’agilité augmente, plus le seuil baisse. Les fonctions restent générales : on leur passe ces valeurs comme arguments. Le nom et la classe figurent dans les messages ; la classe ne donne pas de bonus supplémentaire à ce stade.",
+          "Garde les règles du TP1 : classe guerrier, mage ou archer ; force, intelligence et agilite entières et positives ou nulles, somme égale à 15. Après les saisies et le récapitulatif, place le jeu dans une condition qui vérifie la classe ET la répartition. Sinon, affiche « Personnage invalide : relance avec des valeurs correctes » et ne lance pas le jeu. Pas de redemande obligatoire. Les saisies non numériques restent hors du sujet.",
+          "Exemple de vérification : Lina, mage, force 5, intelligence 4, agilite 6. Total 15, dégâts 8, soin 14, seuil 14. Ce personnage sert aux tests ; dans le jeu, utilise les valeurs saisies, pas ces nombres écrits en dur."
+        ]
+      }
     },
     {
       "concepts": [
@@ -878,85 +905,94 @@
         }
       ],
       "steps": [
-        "Recopie l’exemple sur les potions dans Mon travail. Déplace seulement l’indentation de la ligne « Entrer dans la grotte » pour qu’elle soit exécutée uniquement lorsqu’on boit une potion.",
-        "Définis choisir_ennemi(x). Elle renvoie gobelin si x < 0.5, araignee si x < 0.8 après le premier test, troll sinon. Utilise if / elif / else.",
-        "Initialise nombre_gobelins à 0 avant la boucle des rencontres.",
-        "Écris une boucle de 1 à 10 inclus. À chaque tour, tire x avec random.random(), appelle choisir_ennemi(x), puis affiche le numéro et le nom de l’ennemi.",
-        "Si l’ennemi vaut gobelin, augmente le compteur. Après la boucle, affiche le nombre de gobelins une seule fois.",
-        "Teste les frontières de la fonction, puis remplace temporairement le tirage par 0.2 : tu dois compter 10 gobelins. Remets le hasard et exporte."
+        "Reprendre les acquis. Dans le bac à sable, fais la quête A « trois portes » et explique pourquoi Fin s’affiche une seule fois. Observe l’exemple des potions : déplace « Entrer dans la grotte » pour que cette ligne soit exécutée seulement après « Boire une potion ». Ne recopie pas cet échauffement dans le jeu à rendre.",
+        "Retrouver ton personnage. Dans Mon travail, reprends les saisies et contrôles du TP1 ainsi que la définition de calculer_degats du TP2. Garde les anciennes parties. Affiche le nom, la classe, force, intelligence, agilite, puis les dégâts obtenus en appelant calculer_degats avec force et le bonus 3, le soin 10 + intelligence et le seuil 20 - agilite. Pour un personnage invalide, affiche un message sans commencer l’exploration. Les fonctions sont définies avant leurs appels ; le personnage est saisi une seule fois avant la boucle.",
+        "Choisir l’ennemi. Écris entièrement choisir_ennemi(x), sans tirage dans la fonction : elle renvoie \"gobelin\" si x < 0.5, \"araignee\" si x < 0.8 après le premier test, \"troll\" sinon. Écris six appels avec print pour 0, 0.49, 0.5, 0.79, 0.8 et 0.99. Indique l’attendu et compare à l’obtenu. Tu réutilises ici def, les paramètres, les conditions et return du TP2.",
+        "Explorer dix fois. Si le personnage est valide, écris une boucle donnant les numéros 1 à 10 inclus. À chaque tour, tire x avec random.random(), puis appelle choisir_ennemi(x). Affiche le numéro, le nom de ton personnage et le nom de l’ennemi rencontré. Après la boucle, affiche une seule fois « Fin de l’exploration » avec le nom du personnage. Aucun dégât n’est infligé : tu repères les ennemis ; le combat viendra au TP4.",
+        "Tester puis sauvegarder : point d’arrêt de la séance courte. Vérifie les six tests de choisir_ennemi, dix rencontres numérotées et une seule fin. Remplace temporairement le tirage par 0.2 : les dix ennemis doivent être des gobelins. Vérifie les messages avec un autre nom et une autre répartition valide ; vérifie qu’un personnage invalide ne part pas explorer. Rétablis random.random(), ajoute deux commentaires attendu/observé et exporte ton fichier.",
+        "Prolongement si tu as terminé : compter les gobelins. Initialise nombre_gobelins à 0 avant la boucle des rencontres. Dans la boucle, augmente-le seulement si l’ennemi est un gobelin. Affiche le bilan une seule fois après la boucle. Avec x fixé à 0.2, le total doit être 10 ; avec 0.6, le total doit être 0. Remets ensuite le hasard. Ce compteur est facultatif dans le rendu court."
       ],
-      "deliverable": "L’exercice d’indentation suivi d’une exploration de dix rencontres, avec un bilan final.",
-      "session": "Pour les plus rapides, aujourd’hui : lis les notions 1 et 2, réalise la quête A « trois portes », puis la quête C « trois attaques ». Tu peux t’arrêter après ces deux réussites et sauvegarder. Le compteur et l’exploration complète seront travaillés ensuite.",
+      "deliverable": "Une exploration menée par le personnage du TP1 : nom, classe et caractéristiques conservés par reprise du code, une fonction calculer_degats réutilisée du TP2, une nouvelle fonction choisir_ennemi écrite par toi et dix rencontres numérotées. Le rendu court se termine après les tests de l’étape 5. Le compteur est facultatif pour cette séance après le DST ; il pourra être repris ensuite. Les échauffements restent dans le bac à sable.",
+      "session": "Après le DST : parcours court d’environ 50 à 55 min, à adapter au temps restant. 5 min de rappel sur def/return et les saisies, 10 min sur for/range, puis 30 min pour les étapes 1 à 5 et 5 à 10 min pour tester et sauvegarder. Le point d’arrêt est l’étape 5 : ton personnage rencontre dix ennemis et le programme affiche une seule fin d’exploration. Le compteur de gobelins est un prolongement pour les élèves qui ont terminé. Aucun combat complet à écrire dans cette séance.",
       "stepHints": [
         [
           {
-            "text": "Observe à quel bloc appartient l’affichage.",
+            "text": "Repère ce qui doit se répéter et ce qui doit apparaître à la fin.",
             "code": ""
           },
           {
-            "text": "L’entrée dans la grotte doit appartenir au bloc où l’on boit.",
+            "text": "Une ligne indentée dans for est répétée ; une ligne revenue à gauche ne l’est pas.",
             "code": ""
           },
           {
-            "text": "Place cette ligne au même niveau d’indentation que l’affichage Boire. Teste avec et sans potion.",
+            "text": "Complète les bornes pour obtenir trois portes.",
+            "code": "for numero in range(___, ___):\n    print(\"Porte\", numero)\nprint(\"Fin\")"
+          }
+        ],
+        [
+          {
+            "text": "Reprends ton code, pas seulement les valeurs que tu avais saisies.",
+            "code": ""
+          },
+          {
+            "text": "Les variables du TP1 n’existent pas automatiquement ici. Copie les saisies, les contrôles et la fonction calculer_degats, pas les scènes.",
+            "code": ""
+          },
+          {
+            "text": "Complète après les saisies ; la fonction doit être définie au-dessus.",
+            "code": "print(nom, classe)\nprint(\"Dégâts :\", calculer_degats(...))\nprint(\"Soin :\", ...)\nprint(\"Seuil :\", ...)"
+          }
+        ],
+        [
+          {
+            "text": "Un seul nom doit être renvoyé à chaque appel.",
+            "code": ""
+          },
+          {
+            "text": "Utilise if / elif / else. Le elif n’est atteint que lorsque le premier test est faux. Écris les noms entre guillemets.",
             "code": ""
           }
         ],
         [
           {
-            "text": "Cette fonction renvoie un nom, donc une chaîne de caractères.",
+            "text": "La borne finale de range est exclue. Le nouveau tirage appartient à la boucle.",
             "code": ""
           },
           {
-            "text": "Teste x < 0.5, puis elif x < 0.8, puis else. Chaque branche utilise return.",
-            "code": ""
-          },
-          {
-            "text": "Complète les noms en conservant les guillemets.",
-            "code": "def choisir_ennemi(x):\n    if x < 0.5:\n        return \"___\"\n    elif x < 0.8:\n        return \"___\"\n    else:\n        return \"___\""
-          }
-        ],
-        [
-          {
-            "text": "Avant toute rencontre, aucun gobelin n’a été croisé.",
-            "code": ""
-          },
-          {
-            "text": "Initialise une seule fois, avant for.",
+            "text": "La saisie du personnage reste avant for ; le tirage, l’appel de fonction et la rencontre sont dans for ; la fin est après for.",
             "code": ""
           }
         ],
         [
           {
-            "text": "Le nouveau tirage doit avoir lieu à chaque rencontre.",
+            "text": "Un tirage fixe permet de savoir ce que les dix rencontres doivent afficher.",
             "code": ""
           },
           {
-            "text": "range(1, 11) donne dix numéros ; appelle ensuite choisir_ennemi(x).",
+            "text": "Compte les lignes et regarde les numéros. Teste aussi un personnage différent pour déceler un nom ou des caractéristiques écrits en dur.",
             "code": ""
           }
         ],
         [
           {
-            "text": "On augmente le compteur seulement si le nom est gobelin.",
+            "text": "Le compteur doit garder son total entre deux rencontres.",
             "code": ""
           },
           {
-            "text": "Le if est dans la boucle ; le bilan est après la boucle.",
-            "code": ""
-          }
-        ],
-        [
-          {
-            "text": "Les valeurs aux frontières révèlent les erreurs de comparaison.",
-            "code": ""
-          },
-          {
-            "text": "Teste 0.49, 0.5, 0.79 et 0.8 avant de remettre le hasard.",
+            "text": "Initialise-le avant for ; mets-le à jour dans un if à l’intérieur de for ; affiche-le après for.",
             "code": ""
           }
         ]
-      ]
+      ],
+      "continuity": {
+        "title": "Le même personnage, une nouvelle version du RPG",
+        "paragraphs": [
+          "Chaque lancement de l’atelier repart de zéro. Choisir la partie 3 ou 4 du fichier exporté n’exécute pas les parties précédentes. Pour construire une nouvelle version du même RPG, recopie le code utile dans la nouvelle partie, sans effacer l’ancienne : les saisies et contrôles du TP1, puis les définitions de fonctions déjà écrites. Ne recopie ni le menu fourni ni les marqueurs de partie. Ne recopie pas les anciens appels de tests et les anciennes scènes : ils lanceraient les essais et actions une seconde fois.",
+          "Du TP2 au TP4, les caractéristiques choisies au TP1 ont les mêmes effets : dégâts du héros = force + 3 (bonus d’arme) ; soin = 10 + intelligence ; seuil de réussite = 20 - agilite. Une attaque réussit si de >= seuil. Plus l’agilité augmente, plus le seuil baisse. Les fonctions restent générales : on leur passe ces valeurs comme arguments. Le nom et la classe figurent dans les messages ; la classe ne donne pas de bonus supplémentaire à ce stade.",
+          "Garde les règles du TP1 : classe guerrier, mage ou archer ; force, intelligence et agilite entières et positives ou nulles, somme égale à 15. Après les saisies et le récapitulatif, place le jeu dans une condition qui vérifie la classe ET la répartition. Sinon, affiche « Personnage invalide : relance avec des valeurs correctes » et ne lance pas le jeu. Pas de redemande obligatoire. Les saisies non numériques restent hors du sujet.",
+          "Exemple de vérification : Lina, mage, force 5, intelligence 4, agilite 6. Total 15, dégâts 8, soin 14, seuil 14. Ce personnage sert aux tests ; dans le jeu, utilise les valeurs saisies, pas ces nombres écrits en dur."
+        ]
+      }
     },
     {
       "concepts": [
@@ -986,10 +1022,10 @@
         },
         {
           "title": "4. Limiter les points de vie",
-          "text": "Après un soin, il faut vérifier que les PV ne dépassent pas 100. min renvoie la plus petite des valeurs données ; max la plus grande.",
+          "text": "Les fonctions soigner et appliquer_degats du TP2 limitent déjà les PV. Réutilise-les dans le combat et récupère leur résultat. L’exemple ci-dessous montre une autre écriture possible avec min et max ; elle n’est pas exigée.",
           "code": "pv = 95\npv = min(100, pv + 10)\nprint(pv)\nprint(max(0, -5))",
           "result": "100\n0",
-          "trap": "Plafonne le soin avant l’attaque du monstre. Un héros peut ensuite redescendre à 80 après la riposte.",
+          "trap": "Plafonne le soin avant la riposte. Avec les règles de ce combat, un héros à 100 peut ensuite redescendre à 93 si le monstre réussit son attaque.",
           "inputs": ""
         },
         {
@@ -1012,22 +1048,95 @@
         },
         {
           "title": "Échauffement B · soin sans débordement",
-          "task": "Un héros possède 97 PV. Ajoute 10 PV et limite le résultat à 100. Fais aussi le test avec 50 PV.",
-          "code": "pv = 97\n# TODO : soigner et plafonner\nprint(pv)",
+          "task": "Reprends uniquement la définition de soigner du TP2 dans le bac à sable. Appelle-la avec 97 PV et un soin de 10, puis avec 50 PV et un soin de 10. Récupère ou affiche la valeur renvoyée.",
+          "code": "# Reprendre ici ta fonction soigner du TP2.\n\nprint(soigner(...))\nprint(...)",
           "expected": "97 → 100 ; 50 → 60",
-          "hint": "Utilise un if après l’addition, ou min(100, pv + 10).",
+          "hint": "Passe les PV et le soin comme arguments ; affiche le résultat renvoyé. Ne recopie pas toute la scène du TP2.",
           "inputs": ""
         }
       ],
       "steps": [
-        "Échauffement dans Mon travail : crée un mini-jeu indépendant avec vie = 100. attaquer enlève 20 PV au héros, defendre rend 10 (plafond 100), rien enlève 5, fuir sort. Affiche la vie après chaque action et termine si vie <= 0.",
-        "Après l’échauffement, initialise un nouveau combat : pv_hero = 100 et pv_monstre = 100. Ces valeurs ne dépendent pas de l’échauffement.",
-        "Répète tant que les deux PV sont > 0. Demande exactement attaquer, defendre, rien ou fuir. Ici, attaquer ne retire pas directement de PV au héros.",
-        "Action du héros : attaquer lance un dé de 1 à 20, et enlève 20 PV au monstre si le dé > 10 ; defendre soigne de 10, plafond 100 ; rien ne fait rien ; fuir termine le combat.",
-        "Après attaquer, defendre ou rien, si le monstre est encore vivant, lance son dé. Il retire 20 PV au héros si le résultat > 10. Pour une action inconnue : affiche un message et redemande sans riposte.",
-        "Affiche les deux PV après chaque tour. À la fin, affiche une seule issue : Victoire, Défaite ou Fuite. Teste les cas proposés puis exporte."
+        "Réutiliser les versions précédentes. Reprends les six définitions de fonctions du TP2 et choisir_ennemi du TP3, puis le code de création et les contrôles du TP1. Ne recopie pas les tests, la scène d’un tour ni la boucle des dix rencontres. Si le personnage est invalide, affiche un message sans demander d’action de combat.",
+        "Préparer le combat. Pour le personnage valide, calcule les dégâts avec calculer_degats(force, 3), le soin avec 10 + intelligence et le seuil avec 20 - agilite. Choisis un seul ennemi en passant random.random() à choisir_ennemi. Affiche nom, classe et ennemi. Initialise pv_hero à 100, pv_monstre à 30 et fuite à False, avant la boucle. Les trois types d’ennemis ont ici les mêmes PV et la même force : seules leurs appellations diffèrent.",
+        "Faire durer la rencontre. Tant que est_vivant(pv_hero) ET est_vivant(pv_monstre), demande attaquer, defendre, rien ou fuir. Si l’action est fuir, mémorise la fuite et sors de la boucle avec break. Pour une action inconnue, affiche un message ; elle ne déclenche ni soin, ni attaque, ni riposte. La demande suivante se fera au tour suivant.",
+        "Action du héros. attaquer appelle lancer_de(20), puis attaque_reussie avec le seuil calculé à partir de son agilité ; en cas de réussite, mets à jour les PV du monstre avec appliquer_degats et les dégâts du héros. defendre utilise soigner avec le soin calculé à partir de son intelligence. rien ne change pas directement les PV. Contrairement à la scène guidée du TP2, le soin n’est plus automatique : il correspond maintenant à l’action defendre.",
+        "Riposte. Après une action valide attaquer, defendre ou rien, vérifie est_vivant(pv_monstre). Si le monstre vit, appelle lancer_de(20) et attaque_reussie avec son seuil fixe 11 ; une réussite lui permet d’infliger 7 dégâts au héros avec appliquer_degats. Pas de riposte après la fuite, une saisie inconnue ou la mort du monstre. Cette fois, sa riposte dépend aussi d’un dé, contrairement à celle du TP2.",
+        "Terminer et tester. Affiche les deux PV après chaque tour puis une seule issue : Fuite si fuite est vraie, sinon Victoire si le monstre est mort, sinon Défaite. Vérifie les tests proposés avec des dés fixés temporairement et des PV proches de zéro, puis restaure lancer_de et les PV initiaux. Ajoute des commentaires attendu/observé, vérifie avec deux répartitions valides différentes et exporte en conservant les parties 1 à 3."
       ],
-      "deliverable": "Deux blocs successifs : le mini-jeu d’échauffement puis un combat indépendant. Dans les saisies du navigateur, prévoir aussi les réponses de l’échauffement, par exemple fuir pour le quitter."
+      "deliverable": "Un combat utilisant le personnage du TP1, les six fonctions du TP2 et choisir_ennemi du TP3. Le héros commence ce combat à 100 PV, son adversaire à 30 PV quel que soit son nom ; ces PV de départ ne sont pas ceux de la scène d’essai du TP2. Les caractéristiques du personnage gardent les mêmes effets. Les échauffements restent dans le bac à sable et ne consomment aucune saisie du jeu à rendre. Dans le navigateur, prépare d’abord nom, classe, force, intelligence, agilite, puis une action par ligne ; fuir permet un premier essai court.",
+      "continuity": {
+        "title": "Le même personnage, une nouvelle version du RPG",
+        "paragraphs": [
+          "Chaque lancement de l’atelier repart de zéro. Choisir la partie 3 ou 4 du fichier exporté n’exécute pas les parties précédentes. Pour construire une nouvelle version du même RPG, recopie le code utile dans la nouvelle partie, sans effacer l’ancienne : les saisies et contrôles du TP1, puis les définitions de fonctions déjà écrites. Ne recopie ni le menu fourni ni les marqueurs de partie. Ne recopie pas les anciens appels de tests et les anciennes scènes : ils lanceraient les essais et actions une seconde fois.",
+          "Du TP2 au TP4, les caractéristiques choisies au TP1 ont les mêmes effets : dégâts du héros = force + 3 (bonus d’arme) ; soin = 10 + intelligence ; seuil de réussite = 20 - agilite. Une attaque réussit si de >= seuil. Plus l’agilité augmente, plus le seuil baisse. Les fonctions restent générales : on leur passe ces valeurs comme arguments. Le nom et la classe figurent dans les messages ; la classe ne donne pas de bonus supplémentaire à ce stade.",
+          "Garde les règles du TP1 : classe guerrier, mage ou archer ; force, intelligence et agilite entières et positives ou nulles, somme égale à 15. Après les saisies et le récapitulatif, place le jeu dans une condition qui vérifie la classe ET la répartition. Sinon, affiche « Personnage invalide : relance avec des valeurs correctes » et ne lance pas le jeu. Pas de redemande obligatoire. Les saisies non numériques restent hors du sujet.",
+          "Exemple de vérification : Lina, mage, force 5, intelligence 4, agilite 6. Total 15, dégâts 8, soin 14, seuil 14. Ce personnage sert aux tests ; dans le jeu, utilise les valeurs saisies, pas ces nombres écrits en dur.",
+          "Le TP3 repère plusieurs ennemis avec for. Au TP4, tu réutilises choisir_ennemi pour sélectionner un seul adversaire et while pour combattre jusqu’à une issue. N’imbrique pas encore le combat dans les dix rencontres : l’enchaînement des combats arrivera plus tard."
+        ]
+      },
+      "session": "Objectif du TP4 : transformer la scène d’un tour du TP2 en combat, contre un ennemi choisi avec la fonction du TP3. Fais les deux courts échauffements dans le bac à sable, puis construis le jeu avec ton personnage. Les six fonctions du TP2 sont à réutiliser, pas à réécrire avec de nouvelles règles.",
+      "stepHints": [
+        [
+          {
+            "text": "Tu changes l’organisation des tours, pas le rôle des fonctions déjà testées.",
+            "code": ""
+          },
+          {
+            "text": "Copie seulement les définitions nécessaires et la création du personnage. Chaque partie doit pouvoir démarrer seule.",
+            "code": ""
+          }
+        ],
+        [
+          {
+            "text": "Le personnage et le monstre sont initialisés une seule fois.",
+            "code": ""
+          },
+          {
+            "text": "Place les PV avant while ; dans la boucle, modifie les valeurs existantes. Le choix de l’ennemi utilise la fonction du TP3.",
+            "code": ""
+          }
+        ],
+        [
+          {
+            "text": "Deux combattants vivants sont nécessaires pour continuer.",
+            "code": ""
+          },
+          {
+            "text": "Combine les deux appels à est_vivant avec and. La fuite se mémorise avant break ; une saisie inconnue ne doit pas entrer dans le bloc de riposte.",
+            "code": ""
+          }
+        ],
+        [
+          {
+            "text": "Sépare les actions avec if / elif.",
+            "code": ""
+          },
+          {
+            "text": "Réutilise le résultat des fonctions : une valeur de PV renvoyée doit être réaffectée. Le soin intervient seulement pour defendre.",
+            "code": ""
+          }
+        ],
+        [
+          {
+            "text": "La riposte dépend de deux conditions : action valide et monstre encore vivant.",
+            "code": ""
+          },
+          {
+            "text": "Place le test de survie après l’action du héros. Utilise le seuil 11 pour le monstre et le seuil calculé pour le héros.",
+            "code": ""
+          }
+        ],
+        [
+          {
+            "text": "Teste séparément victoire, défaite, fuite et action inconnue.",
+            "code": ""
+          },
+          {
+            "text": "Avec les mêmes dés fixés, change le personnage pour vérifier les paramètres. Restaure ensuite les valeurs normales.",
+            "code": ""
+          }
+        ]
+      ]
     },
     {
       "concepts": [
@@ -1094,7 +1203,7 @@
         "Échauffement : crée une liste de courses vide et un menu a / r / l / q. a demande un article et l’ajoute ; r demande un article et le retire si présent ; l affiche ; q quitte cet échauffement.",
         "Dans la partie 5, recopie le combat de la partie 4 sans effacer la partie 4. Crée monstres = [\"gobelin\", \"araignee\", \"troll\"]. Initialise le héros une seule fois à 100 PV.",
         "Tant qu’il reste des monstres et que le héros vit, choisis un ennemi avec random.choice et donne-lui 100 PV. Le héros garde les PV du combat précédent.",
-        "Remplace la règle du dé > 10 par attaque/défense : héros (12,10), monstre (9,7). Une attaque qui touche et n’est pas bloquée retire 20 PV. Applique cette règle aux deux côtés.",
+        "Remplace la règle du seuil calculé à partir de l’agilité par attaque/défense : héros (12,10), monstre (9,7). Une attaque qui touche et n’est pas bloquée retire 20 PV. Applique cette règle aux deux côtés.",
         "Remplace defendre par potion : gain aléatoire de 10 à 20, plafond 100, puis riposte du monstre vivant. Les potions sont illimitées ici. Garde attaquer, rien et fuir ; une saisie inconnue ne consomme pas de tour.",
         "Retire le monstre uniquement après sa défaite. Choisis ensuite un autre ennemi seulement s’il en reste. La liste vide donne « Victoire de la forêt ». Une fuite ou une défaite termine toute l’exploration.",
         "Teste la dernière victoire, les seuils de défense et la conservation des PV, puis exporte."

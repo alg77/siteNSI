@@ -32,7 +32,11 @@ if choix_partie == "2":
     # Justifier les deux tests personnels ; commenter les observations.
     
     
-    # 3. SCÈNE : surprise, puis un tour avec attaque, potion et riposte
+    # 3. PERSONNAGE ET SCÈNE
+    # Reprendre ici les saisies et contrôles du TP1 ; garder la partie 1.
+    # Scène seulement si le personnage est valide.
+    # Dégâts : force + 3 ; soin : 10 + intelligence ; seuil : 20 - agilite.
+    # Surprise, puis un tour avec attaque, potion et riposte.
     # Tester les trois scénarios imposés et noter attendu / observé.
     
     
@@ -45,28 +49,37 @@ if choix_partie == "2":
 # === DEBUT PARTIE 3 ===
 if choix_partie == "3":
     pass  # garde le fichier exécutable tant que la partie est vide
-    # PARTIE 3 — Exploration
-    import random
+    # PARTIE 3 — Mon personnage explore la forêt
+    # Imports et définitions : reprendre calculer_degats du TP2.
+    # Écrire entièrement choisir_ennemi et ses six tests avec print.
     
-    def choisir_ennemi(x):
-        # TODO : renvoyer le nom selon les trois intervalles.
-        pass
+    # Reprendre les saisies et contrôles du TP1.
+    # Afficher le personnage, ses dégâts, son soin et son seuil.
     
-    # TODO : exemple d'indentation puis dix rencontres et compteur.
-    # TEST 1 : entrées / attendu / observé
-    # TEST 2 : entrées / attendu / observé
+    # Si le personnage est valide : dix rencontres avec for.
+    # Tirer, appeler choisir_ennemi, afficher numéro / nom / ennemi.
+    # Afficher une seule fin après la boucle.
+    
+    # POINT D’ARRÊT : tester, commenter, sauvegarder.
+    # Facultatif ensuite : compteur de gobelins.
+    
 # === FIN PARTIE 3 ===
 
 # === DEBUT PARTIE 4 ===
 if choix_partie == "4":
     pass  # garde le fichier exécutable tant que la partie est vide
-    # PARTIE 4 — Combat
-    import random
+    # PARTIE 4 — Le même héros entre en combat
+    # Reprendre les six fonctions du TP2 et choisir_ennemi du TP3.
+    # Reprendre les saisies et contrôles du TP1 ; conserver les parties précédentes.
     
-    # TODO : boucle du mini-jeu d'échauffement.
-    # TODO : combat indépendant à 100 PV chacun, puis message de fin.
-    # TEST 1 : entrées / attendu / observé
-    # TEST 2 : entrées / attendu / observé
+    # Si le personnage est valide : calculer dégâts, soin et seuil.
+    # Choisir un ennemi ; PV initiaux héros 100 / monstre 30.
+    # Boucle while : action du héros, riposte éventuelle, affichage.
+    # Terminer par victoire, défaite ou fuite.
+    
+    # TESTS : dés fixes, frontières, fin de combat, autre personnage.
+    # Commenter attendu / observé, puis restaurer le hasard.
+    
 # === FIN PARTIE 4 ===
 
 # === DEBUT PARTIE 5 ===
