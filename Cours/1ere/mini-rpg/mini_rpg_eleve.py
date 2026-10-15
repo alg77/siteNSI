@@ -98,14 +98,25 @@ if choix_partie == "5":
 # === DEBUT PARTIE 6 ===
 if choix_partie == "6":
     pass  # garde le fichier exécutable tant que la partie est vide
-    # PARTIE 6 — Dictionnaires
-    import random
+    # PARTIE 6 — Mon personnage et les dictionnaires
+    # 1. Reprendre les saisies et contrôles du TP1.
+    # Pour le personnage valide, créer hero avec les variables saisies.
     
-    # TODO : bestiaire de descriptions et manipulations.
-    # TODO : modèles de monstres et de héros, sélection validée.
-    # TODO : adapter le combat de partie 5 aux dictionnaires.
-    # TEST 1 : entrées / attendu / observé
-    # TEST 2 : entrées / attendu / observé
+    # 2. Lire et afficher ses informations depuis hero.
+    
+    # 3. Modifier les PV, ajouter puis diminuer les potions.
+    
+    # 4. Modèle de gobelin, copie du combattant et test des deux PV.
+    # Expliquer .copy() ; créer un deuxième gobelin depuis le modèle.
+    
+    # 5. TESTS AVEC PRINT ET SAUVEGARDE
+    # Entrées / attendu / observé :
+    # Clé et valeur :
+    # Pourquoi copier le modèle :
+    
+    # POINT D’ARRÊT : le rendu de base se termine ici.
+    # Facultatif : bestiaire imbriqué, puis combat du TP5 adapté.
+    
 # === FIN PARTIE 6 ===
 
 if choix_partie not in ("1", "2", "3", "4", "5", "6"):

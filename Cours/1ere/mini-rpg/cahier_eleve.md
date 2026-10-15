@@ -1492,167 +1492,352 @@ Le menu de courses, puis une exploration de trois combats. Quitte les courses av
 
 ## Partie 6 — Construire le bestiaire avec des dictionnaires
 
-### 1. Lire une valeur grâce à sa clé
+Séance avant les vacances : découvre les dictionnaires directement sur ordinateur, à ton rythme. Lis une notion, prévois les affichages, exécute puis modifie un exemple. Les échauffements se font dans le bac à sable. Pour le rendu, vise les étapes 1 à 5 : ton personnage, ses informations et un exemple de copie compris. Sauvegarde même si tu n’as pas tout terminé. Le bestiaire imbriqué et le combat sont des prolongements ; nous reprendrons les notions ensemble après les vacances.
 
-Un dictionnaire associe des clés à des valeurs. On écrit des paires clé: valeur entre accolades. Ici les clés sont des textes ; le nom de la clé indique le sens de la donnée.
+### 1. Regrouper les informations du personnage
+
+Jusqu’ici, ton RPG utilisait plusieurs variables : nom, pv, force… Un dictionnaire permet de regrouper ces informations et d’accéder à chacune par une clé. Entre accolades, chaque paire associe une clé à une valeur avec deux-points ; les paires sont séparées par des virgules. Ici, "nom" est une clé et "Lina" sa valeur. Le type de cet objet est dict.
 
 ```python
-hero = {"nom": "Lina", "pv": 100}
+hero = {"nom": "Lina", "pv": 100, "force": 5}
 print(hero["nom"])
-print(hero["pv"])
+print(hero["force"])
 ```
 
-**À l’écran :**
+Prévois les affichages avant de vérifier.
+
+<details><summary>Vérification</summary>
 
 ```text
 Lina
+5
+```
+
+</details>
+
+À surveiller : Les clés utilisées ici sont des textes entre guillemets. hero["pv"] lit une information par sa clé ; hero[0] ne signifie pas « première valeur » et provoque une erreur si la clé 0 n’existe pas.
+
+### 2. Lire puis modifier une valeur
+
+Les crochets permettent de lire la valeur associée à une clé. Avec une affectation, ils permettent aussi de la remplacer. Pour retirer des PV, lis d’abord leur ancienne valeur, calcule, puis remplace cette valeur dans le dictionnaire. Les autres informations sont conservées.
+
+```python
+hero = {"nom": "Lina", "pv": 100}
+print(hero["pv"])
+hero["pv"] = hero["pv"] - 15
+print(hero["pv"])
+print(hero["nom"])
+```
+
+Prévois les affichages avant de vérifier.
+
+<details><summary>Vérification</summary>
+
+```text
 100
+85
+Lina
 ```
 
-À surveiller : hero[0] ne désigne pas la première valeur. Un dictionnaire se lit par clé, pas par position.
+</details>
 
-### 2. Ajouter, modifier, supprimer
+À surveiller : hero["pv"] = 85 modifie le dictionnaire. Écrire seulement pv = 85 crée ou modifie une autre variable : cela ne met pas automatiquement hero["pv"] à jour.
 
-Affecter une valeur à une nouvelle clé ajoute cette entrée. Affecter une valeur à une clé existante la modifie. del supprime une entrée. in teste la présence d’une clé.
+### 3. Ajouter, tester une clé et supprimer
+
+Affecter une valeur à une nouvelle clé ajoute une information. Une clé déjà présente est mise à jour. in pose une question et renvoie un booléen : la clé existe-t-elle ? del supprime une entrée. Tu peux tester la présence d’une clé avant de lire sa valeur.
 
 ```python
-hero = {"pv": 100}
-hero["attaque"] = 12
-hero["pv"] = 80
-del hero["attaque"]
-print(hero)
+hero = {"pv": 85}
+hero["potions"] = 2
+print(hero["potions"])
+print("potions" in hero)
+print(85 in hero)
+del hero["potions"]
+print("potions" in hero)
 ```
 
-**À l’écran :**
+Prévois les affichages avant de vérifier.
+
+<details><summary>Vérification</summary>
 
 ```text
-{'pv': 80}
+2
+True
+False
+False
 ```
 
-À surveiller : Accéder à une clé absente produit une erreur. Vérifie sa présence si elle vient d’une saisie.
+</details>
 
-### 3. Imbriquer pour décrire plusieurs monstres
+À surveiller : in vérifie les clés, pas les valeurs : 85 est ici une valeur, pas une clé. Après del, lire hero["potions"] provoquerait une erreur KeyError car cette clé n’existe plus.
 
-Un dictionnaire peut contenir d’autres dictionnaires. La première paire de crochets choisit le monstre ; la seconde choisit une de ses caractéristiques.
+### 4. Pourquoi une simple affectation ne suffit pas
+
+Un bestiaire décrit les PV de départ d’un monstre. Pendant le combat, on veut diminuer les PV du combattant en gardant le modèle intact. Mais monstre = modele ne duplique pas le dictionnaire : les deux noms désignent le même objet. Modifier cet objet par l’un des noms rend la modification visible par l’autre. Avant d’exécuter, prévois les deux nombres affichés.
 
 ```python
-bestiaire = {
-    "gobelin": {"pv": 60, "attaque": 9},
-    "troll": {"pv": 100, "attaque": 8}
-}
-print(bestiaire["troll"]["attaque"])
-```
-
-**À l’écran :**
-
-```text
-8
-```
-
-À surveiller : Les nombres sont des valeurs, pas des textes : écris 100 sans guillemets si tu veux faire des calculs.
-
-### 4. Séparer le modèle et le combattant
-
-Avec monstre = modele, les deux noms désignent le même dictionnaire. copy() crée un nouveau dictionnaire pour le combat. La copie est superficielle : elle suffit ici car les valeurs du modèle sont des nombres ou des chaînes.
-
-```python
-modele = {"pv": 60}
-monstre = modele.copy()
-monstre["pv"] = 40
+modele = {"nom": "gobelin", "pv": 60}
+monstre = modele
+monstre["pv"] = monstre["pv"] - 20
 print(monstre["pv"])
 print(modele["pv"])
 ```
 
-**À l’écran :**
+Prévois les affichages avant de vérifier.
+
+<details><summary>Vérification</summary>
+
+```text
+40
+40
+```
+
+</details>
+
+À surveiller : Le modèle a perdu des PV lui aussi. Si on s’en sert pour créer le prochain gobelin, celui-ci partira déjà blessé. Ce n’est pas ce que l’on veut pour un modèle de départ.
+
+### 5. À quoi sert .copy() ?
+
+modele.copy() crée un nouveau dictionnaire contenant les mêmes entrées. Au départ, les deux dictionnaires ont les mêmes informations, mais tu peux modifier les PV du combattant sans modifier ceux du modèle. Dans le RPG, fais la copie au début d’un nouveau combat, puis garde ce combattant pendant tous ses tours. Compare les affichages avec l’exemple précédent.
+
+```python
+modele = {"nom": "gobelin", "pv": 60}
+monstre = modele.copy()
+monstre["pv"] = monstre["pv"] - 20
+print(monstre["pv"])
+print(modele["pv"])
+```
+
+Prévois les affichages avant de vérifier.
+
+<details><summary>Vérification</summary>
 
 ```text
 40
 60
 ```
 
-À surveiller : Sans copy(), blesser le combattant modifierait aussi ses PV de départ dans le bestiaire.
+</details>
 
-### 5. Choisir parmi des clés
+À surveiller : Copier à chaque tour remettrait le monstre à ses PV de départ ! .copy() réalise une copie superficielle : les deux dictionnaires sont distincts, mais une liste ou un dictionnaire placé à l’intérieur resterait partagé. Ici les valeurs sont des textes et des nombres : cette copie suffit.
 
-list(dictionnaire) construit la liste de ses clés. Pour valider un choix, teste si le texte saisi est une clé du dictionnaire. Redemande tant que ce n’est pas le cas.
+### 6. Pour poursuivre : un bestiaire dans un dictionnaire
+
+Prolongement facultatif. Quand tu es à l’aise avec les manipulations précédentes, un dictionnaire peut contenir les fiches de plusieurs monstres. Lis les deux crochets séparément : bestiaire["gobelin"] sélectionne sa fiche ; ["pv"] sélectionne ensuite ses PV. Copie la fiche du monstre choisi pour le combat, afin de garder le bestiaire intact.
 
 ```python
-heros = {"mage": 14, "guerrier": 12}
-print(list(heros))
-print("dragon" in heros)
+bestiaire = {
+    "gobelin": {"pv": 60, "attaque": 9},
+    "troll": {"pv": 100, "attaque": 8}
+}
+monstre = bestiaire["gobelin"].copy()
+monstre["pv"] = monstre["pv"] - 20
+print(monstre["pv"])
+print(bestiaire["gobelin"]["pv"])
+print(bestiaire["troll"]["attaque"])
 ```
 
-**À l’écran :**
+Prévois les affichages avant de vérifier.
+
+<details><summary>Vérification</summary>
 
 ```text
-['mage', 'guerrier']
-False
+40
+60
+8
 ```
 
-À surveiller : Dans le jeu final, copie le dictionnaire du héros choisi avant de modifier ses PV.
+</details>
+
+À surveiller : Copie bestiaire["gobelin"], pas seulement bestiaire : bestiaire.copy() ne copie pas les fiches imbriquées. Le prolongement peut attendre si tu veux d’abord consolider les bases.
+
+### 7. Pour poursuivre : choisir un nom de monstre
+
+Prolongement facultatif. list(bestiaire) produit une liste de ses clés, donc des noms de monstres. random.choice peut choisir un nom dans cette liste. Pour un premier essai, utilise un nom fixé plutôt que le hasard : tu peux ainsi prévoir le résultat et vérifier ton code.
+
+```python
+bestiaire = {"gobelin": {"pv": 60}, "troll": {"pv": 100}}
+noms = list(bestiaire)
+print(noms)
+choix = "gobelin"
+print(choix in bestiaire)
+monstre = bestiaire[choix].copy()
+print(monstre["pv"])
+```
+
+Prévois les affichages avant de vérifier.
+
+<details><summary>Vérification</summary>
+
+```text
+['gobelin', 'troll']
+True
+60
+```
+
+</details>
+
+À surveiller : Vérifie la clé avant de lire sa fiche. Pour un tirage aléatoire, la liste des noms ne doit pas être vide ; reprends le contrôle déjà vu au TP5.
 
 ### Petites quêtes
 
-#### Échauffement A · panneau du bestiaire
+#### Échauffement A · déroule le code du personnage
 
-Crée le dictionnaire indiqué, puis ajoute la clé defense avec la valeur 7. Affiche seulement cette défense.
+Sans exécuter, note dans la zone de réponse les trois affichages, dans leur ordre. Suis la valeur associée à "pv" ligne par ligne. Exécute ensuite dans le bac à sable, compare et explique pourquoi le nom ne change pas.
 
 ```python
-gobelin = {"pv": 60, "attaque": 9}
-# TODO : ajouter puis afficher defense
+hero = {"nom": "Lina", "pv": 80}
+print(hero["pv"])
+hero["pv"] = hero["pv"] + 12
+print(hero["pv"])
+print(hero["nom"])
 ```
 
-Objectif : 7
+<details><summary>Comparer après réflexion</summary>
 
-Indice : gobelin["defense"] = ... ajoute la clé.
+80
+92
+Lina
+Seule la valeur associée à "pv" est modifiée.
 
-#### Échauffement B · garde le modèle neuf
+</details>
 
-Complète pour que le monstre perde 20 PV sans changer le modèle.
+**Indice 1** — Relève les PV avant et après l’affectation.
+
+**Indice 2** — Le calcul lit 80, ajoute 12, puis stocke le résultat à la clé "pv". La clé "nom" n’est pas modifiée.
+
+#### Échauffement B · une clé ou une valeur ?
+
+Prévois les quatre affichages avant de lancer le code. Pour chaque in, indique quelle clé est recherchée. Compare ensuite à l’exécution ; explique pourquoi le nombre 2 n’est pas trouvé.
 
 ```python
-modele = {"pv": 60}
-# TODO : copier dans monstre
-# TODO : retirer 20 PV au monstre
+hero = {"pv": 90}
+hero["potions"] = 2
+print("potions" in hero)
+print(2 in hero)
+del hero["potions"]
+print("potions" in hero)
+print(hero["pv"])
+```
+
+<details><summary>Comparer après réflexion</summary>
+
+True
+False
+False
+90
+in cherche les clés. Supprimer les potions ne supprime pas les PV.
+
+</details>
+
+**Indice 1** — Dresse la liste des clés présentes avant et après del.
+
+**Indice 2** — Après l’ajout, les clés sont "pv" et "potions". Le nombre 2 est une valeur, pas une clé.
+
+#### Échauffement C · le modèle est-il blessé ?
+
+Déroule ce code sans l’exécuter et prévois les deux affichages. Vérifie dans le bac à sable. Remplace ensuite uniquement monstre = modele par monstre = modele.copy(), prévois les nouveaux affichages et relance. Explique en une phrase l’utilité de copy pour le RPG.
+
+```python
+modele = {"nom": "gobelin", "pv": 60}
+monstre = modele
+monstre["pv"] = monstre["pv"] - 20
+print(monstre["pv"])
 print(modele["pv"])
 ```
 
-Objectif : Le modèle doit encore afficher 60.
+<details><summary>Comparer après réflexion</summary>
 
-Indice : Utilise .copy() avant de modifier monstre["pv"].
+Sans copie : 40 puis 40, car les deux noms désignent le même dictionnaire.
+Avec .copy() : 40 puis 60, car les PV du modèle restent intacts.
+
+</details>
+
+**Indice 1** — La ligne monstre = modele ne crée pas de nouveau dictionnaire.
+
+**Indice 2** — Avec .copy(), tu obtiens un dictionnaire distinct ; la modification des PV du combattant ne modifie plus le modèle.
+
+#### Petite quête D · écris les accès toi-même
+
+Crée un dictionnaire hero avec nom, pv et force, en choisissant tes valeurs. Affiche son nom, ajoute 2 à sa force, ajoute une clé potions valant 3, puis affiche la force et le nombre de potions. Écris toi-même les clés et les instructions. Ne change pas les PV.
+
+```python
+# Crée ton dictionnaire ici.
+
+print(...)
+# Modifie la force et ajoute les potions.
+print(...)
+print(...)
+```
+
+Objectif : Le nom choisi ; la force choisie augmentée de 2 ; 3 potions. Les PV sont conservés.
+
+**Indice 1** — La lecture et l’affectation utilisent les crochets avec une clé.
+
+**Indice 2** — Une clé existante est mise à jour ; une nouvelle clé est ajoutée. Lis l’ancienne force pour calculer sa nouvelle valeur.
 
 ### Mission
 
-Le bestiaire de descriptions, puis le jeu complet utilisant les dictionnaires. Le héros sélectionné peut maintenant changer les caractéristiques du combat.
+Pour cette séance : ton personnage du TP1 rangé dans un dictionnaire, quelques lectures et mises à jour, puis un modèle de gobelin et un combattant copié. Le rendu de base correspond aux étapes 1 à 5. Le bestiaire imbriqué et l’intégration au combat sont facultatifs pour avancer à ton rythme. Les échauffements restent dans le bac à sable ; conserve tes réponses de déroulement sur cet appareil, puis ajoute les observations utiles en commentaires dans ton fichier à rendre.
 
-1. Échauffement : crée trois descriptions dans un dictionnaire. Affiche l’une d’elles. Ajoute dragon, modifie sa description puis supprime cette entrée avec del.
+1. Reprendre ton personnage. Dans la partie 6, recopie les saisies et contrôles du TP1 : nom, classe, force, intelligence, agilite. Garde les parties précédentes. Chaque partie se lance seule : les variables du TP1 ne sont pas automatiquement disponibles. Pour le personnage valide, crée un dictionnaire hero dont les clés sont "nom", "classe", "force", "intelligence", "agilite" et "pv". Utilise les variables saisies comme valeurs ; les PV commencent à 100. Ne remplace pas ton personnage par un héros prédéfini.
 
-2. Construis bestiaire avec les champs pv, attaque, defense, description. Valeurs (PV, attaque, défense) : gobelin (60,9,7), araignee (40,11,5), troll (100,8,9).
+**Indice 1** — Le dictionnaire regroupe des informations que tu as déjà.
 
-3. Construis heros avec pv, attaque, defense, description et image. Valeurs : mage (100,14,6), guerrier (100,12,10), archer (100,13,8). image contient seulement un nom de fichier, par exemple mage.png ; aucune image n’est chargée par le code console.
+**Indice 2** — À gauche des deux-points, une clé entre guillemets ; à droite, la variable qui contient la valeur saisie. Les PV de départ sont une valeur numérique.
 
-4. Demande mage, guerrier ou archer. Tant que le choix n’est pas une clé de heros, redemande. Copie ensuite le héros sélectionné avec .copy().
+2. Lire ses informations. Affiche le nom, la classe, les trois caractéristiques et les PV en les lisant dans hero. Pour vérifier que ce sont bien les valeurs saisies, essaie un autre nom et une autre répartition valide. La création reste soumise aux contrôles du TP1 ; ne poursuis pas le jeu pour un personnage invalide.
 
-5. Recopie le combat de la partie 5 dans cette partie. Remplace les caractéristiques fixes par les valeurs des dictionnaires. Initialise les ennemis restants avec list(bestiaire). À chaque rencontre, copie le modèle du monstre choisi.
+**Indice 1** — Relis chaque information par sa clé dans le dictionnaire.
 
-6. Conserve les règles de la partie 5 : test <= attaque, blocage <= defense, dégâts 20, potion 10 à 20 plafonnée à 100, pas de riposte après une victoire, fuite possible et PV du héros conservés.
+**Indice 2** — Les noms de clés sont des textes : respecte leur orthographe et utilise les crochets. Un changement de saisie doit apparaître dans le récapitulatif.
 
-7. Teste un choix inconnu, les trois monstres et l’absence de modification des modèles. Exporte ton fichier final en conservant les six parties.
+3. Faire évoluer sa fiche. Retire 20 PV en modifiant hero["pv"]. Ajoute la clé "potions" avec la valeur 3, puis consomme une potion en diminuant cette valeur de 1. Affiche les PV restants et le nombre de potions. Vérifie avec in que la clé "potions" existe. Si tu réutilises tes fonctions de PV, récupère leur résultat dans hero["pv"].
+
+**Indice 1** — Lis l’ancienne valeur avant de calculer la nouvelle.
+
+**Indice 2** — Modifie les valeurs dans hero, sans créer une variable pv indépendante. Ajouter une clé et modifier une clé utilisent la même forme d’affectation.
+
+4. Garder un modèle intact. Crée modele_gobelin avec les clés "nom" et "pv", valant "gobelin" et 60. Crée monstre par copie du modèle, puis retire 20 PV à monstre uniquement. Affiche les deux valeurs de PV et explique en commentaire pourquoi le modèle doit rester à 60. Crée un deuxième gobelin par une nouvelle copie du modèle : il doit commencer à 60 PV, même si le premier n’en a plus que 40.
+
+**Indice 1** — Le modèle doit servir de point de départ à plusieurs combattants.
+
+**Indice 2** — Crée monstre avec .copy(), puis modifie seulement ses PV. Le deuxième gobelin doit être copié depuis le modèle intact, pas depuis le premier blessé.
+
+5. Point de sauvegarde de la séance. Ton rendu de base peut s’arrêter ici. Prévois puis vérifie les tests proposés avec print ; écris deux commentaires attendu / observé, dont un sur .copy(). En une phrase, distingue une clé et une valeur ; en une autre, explique pourquoi monstre = modele_gobelin ne suffit pas à protéger le modèle. Signale les aides utilisées et exporte. Si tu as du temps, poursuis ; sinon, nous reprendrons après les vacances.
+
+**Indice 1** — Compare ce que tu avais prévu à ce que Python affiche.
+
+**Indice 2** — Écris pourquoi les deux valeurs 40 et 60 sont différentes avec la copie. Télécharge ton fichier, même si le prolongement n’est pas fait.
+
+6. Prolongement A · le bestiaire. Crée un dictionnaire bestiaire contenant les fiches gobelin (PV 60, attaque 9, défense 7), araignee (40, 11, 5) et troll (100, 8, 9), avec les clés "pv", "attaque", "defense" et "description" dans chaque fiche. Commence par choisir "gobelin" sans hasard. Copie sa fiche, retire 20 PV au combattant, puis affiche ses PV et ceux du modèle du bestiaire. Essaie ensuite un autre monstre.
+
+**Indice 1** — Lis les deux crochets dans l’ordre : nom du monstre, puis caractéristique.
+
+**Indice 2** — La copie doit porter sur la fiche choisie, pas seulement sur le dictionnaire extérieur bestiaire.
+
+7. Prolongement B · adapter ton combat. Reprends uniquement le code utile du TP5 dans cette partie, après les définitions nécessaires et la création du personnage. Les essais de manipulation des étapes 3 et 4 restent des tests séparés : au début du jeu, réinitialise une seule fois hero["pv"] à 100. Ajoute dans hero les clés "attaque" et "defense" avec les valeurs de ton combat du TP5 (12 et 10 dans la version de base). Garde nom, classe, force, intelligence et agilite : cette étape change le rangement des données, pas les règles de combat du TP5. Utilise hero["pv"], hero["attaque"] et hero["defense"] à la place des variables correspondantes. Les monstres restants sont list(bestiaire). Choisis un nom, puis copie bestiaire[choix] au début de chaque nouveau combat. Ne recopie pas le modèle à chaque tour. Retire le nom seulement après la victoire et conserve les PV du héros entre les combats. Teste avec un ennemi fixé avant de remettre le hasard ; conserve la fuite, les seuils <= attaque et <= defense, les dégâts de 20 et le soin aléatoire du TP5.
+
+**Indice 1** — Commence par un seul adversaire, avec un choix fixé.
+
+**Indice 2** — Crée la copie avant le combat ; mets ses PV à jour à chaque tour. Une copie à chaque tour effacerait les dégâts précédents.
 
 ### Tests
 
-- Héros dragon → nouvelle demande ; mage → attaque 14, défense 6.
-- Gobelin 60, dégâts 20 → monstre courant 40, modèle du bestiaire toujours 60.
-- Ajout puis suppression de dragon → les trois descriptions d’origine restent.
-- Vaincre les trois monstres → victoire ; les PV du héros persistent, les caractéristiques changent selon le monstre.
+- Base · Lina, mage, 5/4/6 : les clés de hero contiennent les valeurs saisies et 100 PV au départ ; après les manipulations, 80 PV et 2 potions. Le nom, la classe et les caractéristiques sont conservés.
+- Base · Essaie un autre nom et une autre répartition valide : les affichages changent. Classe inconnue ou répartition invalide : message explicite et pas de poursuite du jeu.
+- Base · "potions" in hero → True après l’ajout. Dans l’échauffement B, 2 in hero → False : on recherche des clés, pas des valeurs.
+- Base · Avec .copy() : premier gobelin 40 PV, modèle 60 PV, nouveau gobelin 60 PV. Sans copie dans l’échauffement C : combattant et modèle affichent tous les deux 40.
+- Prolongement uniquement · Gobelin du bestiaire : combattant 40 après les dégâts, modèle toujours 60. Entre deux tours, les dégâts restent appliqués ; entre deux combats, les PV du héros sont conservés. Aucun choice sur une liste vide.
 
-### Barème sur 5
+### Barème du rendu de base sur 5
 
-- Descriptions avec ajout, modification et suppression : 1 point(s)
-- Bestiaire imbriqué et champs exacts : 1 point(s)
-- Héros et sélection validée : 1 point(s)
-- Combat utilisant les données et des copies : 1 point(s)
-- Tests de copie et intégration : 1 point(s)
+- Personnage personnel regroupé dans hero avec ses clés et valeurs : 1 point(s)
+- Lectures correctes et récapitulatif utilisant le dictionnaire : 1 point(s)
+- Mises à jour des PV, ajout et modification des potions : 1 point(s)
+- Copie du monstre, modèle intact et explication de .copy() : 1 point(s)
+- Tests avec print et deux commentaires attendu / observé : 1 point(s)
 
 ## Atelier Tkinter facultatif
 
