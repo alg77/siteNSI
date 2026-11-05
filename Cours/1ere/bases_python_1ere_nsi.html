@@ -3,439 +3,240 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Les bases de Python — Cours 1ère NSI</title>
-<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<title>Les bases de Python · Première NSI · Saint-Laurent</title>
+<meta name="theme-color" content="#fdeef1">
+<meta name="description" content="Cours de Première NSI : les bases de Python, avec code exécutable, exercices corrigés et QCM interactif.">
+<link rel="stylesheet" href="../../assets/nsi-pastel.css">
 <style>
-:root {
-  --bg:       #ffffff;
-  --surface:  #f8fafc;
-  --surface2: #f1f5f9;
-  --border:   #e2e8f0;
-  --blue:     #2563eb;
-  --blue-lt:  #eff6ff;
-  --blue-dk:  #1e3a5f;
-  --green:    #059669;
-  --green-lt: #f0fdf4;
-  --orange:   #d97706;
-  --orange-lt:#fffbeb;
-  --red:      #dc2626;
-  --red-lt:   #fef2f2;
-  --purple:   #6366f1;
-  --purple-lt:#eef2ff;
-  --text:     #1e293b;
-  --text2:    #475569;
-  --muted:    #64748b;
+/* ==========================================================================
+   Page de cours NSI — composants propres au cours, dans la charte du site
+   (en-tête, bandeau, boutons et pied de page : ../../assets/nsi-pastel.css)
+   ========================================================================== */
+:root{
+  --accent:#94516f;  --accent-lt:#faedf2; --accent-dk:#67485f;
+  --green:#3f7a5c;   --green-lt:#edf5ef;
+  --orange:#a2602a;  --orange-lt:#fcf2e6;
+  --red:#b0465a;     --red-lt:#fcedef;
+  --purple:#705689;  --purple-lt:#f1ecf8;
+  --text:#47384c;    --text2:#5c4d5d;    --muted:#6d5d68;
+  --border:#eadfe5;  --surface:#fffefd;  --surface2:#f8f1f5;
+  --mono:ui-monospace,'Cascadia Code','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
 }
-* { margin:0; padding:0; box-sizing:border-box; }
-html { scroll-behavior:smooth; }
-body {
-  font-family: Arial, Helvetica, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.75;
-  font-size: 16px;
-}
+:where(.container) *{margin:0;padding:0}
+strong{color:var(--text)}
 
-/* ── HERO ── */
-.hero {
-  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 60%, #1d4ed8 100%);
-  padding: 60px 40px 50px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
-}
-.hero::before {
-  content:'';
-  position:absolute; inset:0;
-  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 70%);
-}
-.hero-badge {
-  display:inline-block;
-  background: rgba(255,255,255,0.15);
-  border: 1px solid rgba(255,255,255,0.35);
-  color: white;
-  font-family:'JetBrains Mono',monospace;
-  font-size:12px; letter-spacing:2px; text-transform:uppercase;
-  padding:4px 14px; border-radius:20px; margin-bottom:20px;
-}
-.hero h1 {
-  font-size: clamp(32px,6vw,66px);
-  font-weight:900; line-height:1.1;
-  letter-spacing:-2px; margin-bottom:14px; color:white;
-}
-.hero h1 span { color:#93c5fd; }
-.hero p {
-  color:rgba(255,255,255,0.78);
-  font-style:italic; font-size:18px;
-  max-width:520px; margin:0 auto;
-}
+/* --- Raccourcis et sommaire collant --- */
+.level-shortcuts{display:flex;flex-wrap:wrap}
+.level-shortcuts a{text-decoration:none}
+.level-shortcuts a:hover{background:var(--accent-lt)}
+.toc{position:sticky;top:8px;z-index:100;display:flex;flex-wrap:wrap;justify-content:center;gap:2px;margin:0 0 8px;padding:7px 8px;overflow-x:auto;scrollbar-width:thin;border:1px solid var(--border);border-radius:16px;background:#fffaf8f2;backdrop-filter:blur(6px);box-shadow:0 6px 18px #966e7d10;font-size:13px;font-weight:600}
+.toc a{flex-shrink:0;white-space:nowrap;padding:5px 10px;border-radius:9px;border:1px solid transparent;color:var(--muted);text-decoration:none;transition:background .2s,color .2s}
+.toc a:hover{background:var(--accent-lt);border-color:#ecd3de;color:var(--accent);text-decoration:none}
 
-/* ── NAV ── */
-.toc {
-  background: var(--surface2);
-  border-bottom: 2px solid var(--border);
-  padding:12px 28px;
-  display:flex; flex-wrap:wrap; gap:5px;
-  justify-content:center;
-  position:sticky; top:0; z-index:100;
-}
-.toc a {
-  font-family:'JetBrains Mono',monospace; font-size:11.5px;
-  color:var(--muted); text-decoration:none;
-  padding:5px 11px; border-radius:4px;
-  border:1px solid transparent; transition:all .2s;
-}
-.toc a:hover { color:var(--blue); border-color:var(--blue); background:var(--blue-lt); }
+/* --- Mise en page des parties --- */
+.container{max-width:920px;margin:0 auto;font-size:16px;line-height:1.75}
+.section{padding:52px 0 36px;border-bottom:1px solid var(--border);scroll-margin-top:70px}
+.section:last-child{border-bottom:none}
+.section-num{font-size:11px;font-weight:750;letter-spacing:1.6px;text-transform:uppercase;color:#844360;margin-bottom:8px}
+.section-num::before{content:"";display:inline-block;width:8px;height:8px;margin-right:10px;border-radius:50%;background:#d98ba4;vertical-align:1px}
+.section h2{font-size:clamp(24px,3.4vw,34px);font-weight:750;letter-spacing:-.9px;line-height:1.2;margin-bottom:22px;color:var(--text)}
+.section h3{font-size:19px;font-weight:700;color:#a35478;margin:34px 0 12px}
+.section h4{font-size:12px;font-weight:750;letter-spacing:1px;text-transform:uppercase;color:var(--purple);margin:22px 0 8px}
+.section p{color:var(--text2);margin-bottom:12px}
+.section ul,.section ol{padding-left:22px;margin-bottom:12px}
+.section li{color:var(--text2);margin-bottom:5px}
+p code,li code,td code,th code,.container :not(pre)>code{font-family:var(--mono);font-size:.84em;color:var(--accent-dk);background:var(--accent-lt);padding:1px 6px;border-radius:5px}
 
-/* ── LAYOUT ── */
-.container { max-width:920px; margin:0 auto; padding:0 28px; }
-.section { padding:56px 0 38px; border-bottom:1px solid var(--border); }
-.section:last-child { border-bottom:none; }
+/* --- Blocs de code (sombres, teinte prune) --- */
+.code-block{background:#2e2533;border:1px solid #463a4c;border-radius:14px;margin:18px 0;overflow:hidden;box-shadow:0 8px 20px #4a2c4012}
+.code-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 14px;background:#3a2f40;border-bottom:1px solid #4b3e51;font-family:var(--mono);font-size:11px;color:#bfaebf}
+.code-header-left{display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%}
+.dr{background:#f2a7b8}.dy{background:#f3d48f}.dg{background:#a8d5b9}
+pre{padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.7;color:#f3eaf0}
+.kw{color:#d9b8ff}.fn{color:#9cc8f2}.st{color:#b5e2c2}.cm{color:#9d8ca0;font-style:italic}.nb{color:#f6c28f}.op{color:#cdbfd0}.df{color:#f5d98b}.bi{color:#f5a8c6}
+.run-btn-mini{padding:5px 13px;border:none;border-radius:7px;background:#f2a7c0;color:#3b2333;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:background .2s}
+.run-btn-mini:hover{background:#f7c3d4}
+.run-btn-mini:disabled{opacity:.55;cursor:wait}
+.code-editor{display:block;width:100%;min-height:110px;padding:18px 20px;border:none;resize:vertical;background:transparent;color:#f3eaf0;font-family:var(--mono);font-size:13.5px;line-height:1.7}
+.code-editor:focus{outline:2px solid #f2a7c0;outline-offset:-2px}
+.code-output{margin:0;padding:12px 20px;border-top:1px solid #463a4c;background:#251d29;color:#b5e2c2;font-family:var(--mono);font-size:12.5px;line-height:1.6;white-space:pre-wrap}
 
-/* ── SECTION HEADERS ── */
-.section-num {
-  font-family:'JetBrains Mono',monospace; font-size:12px;
-  color:var(--blue); letter-spacing:3px; text-transform:uppercase; margin-bottom:6px;
-}
-.section h2 {
-  font-size:clamp(22px,4vw,36px); font-weight:900;
-  letter-spacing:-1px; margin-bottom:22px; line-height:1.15; color:var(--text);
-}
-.section h3 {
-  font-size:18px; font-weight:700; color:var(--orange);
-  margin:34px 0 12px;
-}
-.section h4 {
-  font-family:'JetBrains Mono',monospace; font-size:13px;
-  color:var(--blue-dk); margin:22px 0 8px; letter-spacing:1px;
-}
-.section p { color:var(--text2); margin-bottom:12px; }
-.section ul, .section ol { padding-left:22px; margin-bottom:12px; }
-.section li { color:var(--text2); margin-bottom:5px; }
-strong { color:var(--text); }
-p code, li code, td code, th code {
-  font-family:'JetBrains Mono',monospace; font-size:13px;
-  color:var(--green); background:var(--green-lt);
-  padding:1px 6px; border-radius:3px;
-}
+/* --- Encadrés --- */
+.box{margin:18px 0;padding:16px 20px;border:1px solid;border-left-width:4px;border-radius:14px;font-size:15px}
+.box-tip{background:var(--green-lt);border-color:#cfe3d6;border-left-color:var(--green)}
+.box-warn{background:var(--orange-lt);border-color:#f0dcc4;border-left-color:var(--orange)}
+.box-info{background:var(--accent-lt);border-color:#efd6e1;border-left-color:var(--accent)}
+.box-alert{background:var(--red-lt);border-color:#f3d0d7;border-left-color:var(--red)}
+.box-key{background:var(--purple-lt);border-color:#ddd3ea;border-left-color:var(--purple)}
+.box-title{margin-bottom:7px;font-size:11px;font-weight:750;letter-spacing:1.4px;text-transform:uppercase}
+.box-tip .box-title{color:var(--green)}.box-warn .box-title{color:var(--orange)}.box-info .box-title{color:var(--accent)}.box-alert .box-title{color:var(--red)}.box-key .box-title{color:var(--purple)}
 
-/* ── CODE BLOCKS (dark, intentional) ── */
-.code-block {
-  background:#0d1117; border:1px solid #2a2f45;
-  border-radius:10px; margin:18px 0; overflow:hidden;
-}
-.code-header {
-  background:#1e2333; border-bottom:1px solid #2a2f45;
-  padding:8px 16px; display:flex; align-items:center; gap:8px;
-  font-family:'JetBrains Mono',monospace; font-size:11px; color:#64748b;
-}
-.dot { width:10px; height:10px; border-radius:50%; }
-.dr{background:#ff5f56;} .dy{background:#ffbd2e;} .dg{background:#27c93f;}
-pre {
-  padding:18px 20px; overflow-x:auto;
-  font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7;
-  color:#e2e8f0;
-}
-/* Python syntax */
-.kw  { color:#c084fc; }   /* keyword */
-.fn  { color:#60a5fa; }   /* built-in function */
-.st  { color:#4ade80; }   /* string */
-.cm  { color:#475569; font-style:italic; } /* comment */
-.nb  { color:#fb923c; }   /* number */
-.op  { color:#94a3b8; }   /* operator */
-.df  { color:#fbbf24; }   /* def name */
-.bi  { color:#f472b6; }   /* bool / None */
+/* --- Tableaux --- */
+table{width:100%;margin:18px 0;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:15px;background:var(--surface)}
+th{padding:10px 14px;background:#f6e6ee;color:var(--accent-dk);font-size:11.5px;font-weight:750;letter-spacing:1px;text-transform:uppercase;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:9px 14px;color:var(--text2);vertical-align:top;border-bottom:1px solid var(--border)}
+th+th,td+td{border-left:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:#fdf8fa}
 
-/* ── INFO BOXES ── */
-.box {
-  border-radius:10px; padding:16px 20px;
-  margin:18px 0; border-left:4px solid; font-size:15px;
-}
-.box-tip   { background:var(--green-lt);  border-color:var(--green); }
-.box-warn  { background:var(--orange-lt); border-color:var(--orange); }
-.box-info  { background:var(--blue-lt);   border-color:var(--blue); }
-.box-alert { background:var(--red-lt);    border-color:var(--red); }
-.box-key   { background:var(--purple-lt); border-color:var(--purple); }
-.box-title {
-  font-family:'JetBrains Mono',monospace; font-size:11px;
-  letter-spacing:2px; text-transform:uppercase; font-weight:700; margin-bottom:7px;
-}
-.box-tip .box-title   { color:var(--green); }
-.box-warn .box-title  { color:var(--orange); }
-.box-info .box-title  { color:var(--blue); }
-.box-alert .box-title { color:var(--red); }
-.box-key .box-title   { color:var(--purple); }
+/* --- Comparaison for / while --- */
+.compare-title{margin:18px 0 0!important}
+.compare-loops{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch}
+.compare-loops .code-block{margin:8px 0 18px}
+@media(max-width:640px){.compare-loops{grid-template-columns:1fr;gap:0}}
 
-/* ── TABLES ── */
-table { width:100%; border-collapse:collapse; margin:18px 0; font-size:15px; }
-th {
-  background:var(--blue-dk); color:white;
-  font-family:'JetBrains Mono',monospace; font-size:11px;
-  letter-spacing:1px; text-transform:uppercase;
-  padding:9px 14px; text-align:left; border:1px solid var(--blue-dk);
-}
-td { padding:9px 14px; border:1px solid var(--border); color:var(--text2); vertical-align:top; }
-tr:nth-child(even) td { background:var(--surface); }
+/* --- Fiches de fonctions --- */
+.fn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:18px 0}
+.fn-card{overflow:hidden;border:1px solid var(--border);border-top:3px solid #c4b3de;border-radius:16px;background:var(--surface);transition:box-shadow .2s}
+.fn-card:hover{box-shadow:0 8px 22px #966e7d18}
+.fn-card-hdr{padding:9px 14px;background:var(--purple-lt);color:#4f3b66;font-family:var(--mono);font-size:14px;font-weight:700}
+.fn-card-hdr span{margin-left:8px;color:var(--muted);font-weight:400;font-size:12px}
+.fn-card-body{padding:11px 14px;font-size:14px;line-height:1.6;color:var(--text2)}
+.fn-card-body code{font-family:var(--mono);font-size:12px;color:var(--accent-dk);background:var(--accent-lt);padding:1px 5px;border-radius:5px}
+.fn-card-ex{padding:8px 14px;border-top:1px solid var(--border);background:var(--surface2);font-family:var(--mono);font-size:12px;color:var(--muted)}
 
-/* ── FUNCTION CARDS ── */
-.fn-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin:18px 0; }
-.fn-card {
-  border:1px solid var(--border); border-radius:8px; overflow:hidden;
-  transition:box-shadow .2s;
-}
-.fn-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); }
-.fn-card-hdr {
-  background:var(--blue-dk); color:white;
-  padding:8px 14px;
-  font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700;
-}
-.fn-card-hdr span { color:#93c5fd; font-weight:400; font-size:12px; margin-left:8px; }
-.fn-card-body { padding:11px 14px; font-size:14px; color:var(--text2); line-height:1.6; background:white; }
-.fn-card-body code {
-  font-family:'JetBrains Mono',monospace; font-size:12px;
-  color:var(--green); background:var(--green-lt);
-  padding:1px 5px; border-radius:3px;
-}
-.fn-card-ex {
-  background:var(--surface2); border-top:1px solid var(--border);
-  padding:8px 14px;
-  font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);
-}
-
-/* ── EXERCISES ── */
-.exo-card {
-  border:1px solid var(--border); border-radius:10px;
-  overflow:hidden; margin-bottom:22px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.04);
-}
-.exo-hdr { padding:12px 20px; display:flex; align-items:center; gap:14px; }
-.exo-hdr.easy   { background:linear-gradient(90deg,#1e5631,#059669); }
-.exo-hdr.medium { background:linear-gradient(90deg,#92400e,#d97706); }
-.exo-hdr.hard   { background:linear-gradient(90deg,#7f1d1d,#dc2626); }
-.exo-level {
-  font-family:'JetBrains Mono',monospace; font-size:11px;
-  color:rgba(255,255,255,.8); letter-spacing:2px; text-transform:uppercase;
-}
-.exo-title { font-weight:700; font-size:16px; color:white; }
-.exo-body { padding:20px 22px; background:white; }
-.exo-body p { margin-bottom:10px; color:var(--text2); }
-.exo-body ol { padding-left:20px; }
-.exo-body li { margin-bottom:7px; color:var(--text2); }
-
-.toggle-btn {
-  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
-  margin-top:14px; padding:7px 16px; border-radius:6px;
-  font-family:'JetBrains Mono',monospace; font-size:12px;
-  transition:all .2s; user-select:none;
-}
-.btn-hint { background:var(--blue-lt); border:1px solid #bfdbfe; color:var(--blue); }
-.btn-hint:hover { background:#dbeafe; }
-.btn-corr { background:var(--green-lt); border:1px solid #a7f3d0; color:var(--green); }
-.btn-corr:hover { background:#d1fae5; }
-.toggle-icon { font-size:10px; }
-.hint-box, .corr-box { display:none; margin-top:14px; }
-.hint-box.open, .corr-box.open { display:block; }
-.hint-box { background:var(--blue-lt); border:1px solid #bfdbfe; border-radius:7px; padding:14px 16px; }
-.corr-box { background:var(--green-lt); border:1px solid #a7f3d0; border-radius:7px; padding:14px 16px; }
-.corr-box p { color:var(--text2) !important; }
-
-/* ── DST SECTION ── */
-.dst-section {
-  background:var(--red-lt); border:1px solid #fecaca;
-  border-radius:12px; padding:34px; margin:36px 0;
-}
-.dst-section h2 { color:var(--red) !important; }
-.dst-section .section-num { color:var(--red) !important; }
-.checklist { list-style:none; padding:0; }
-.checklist li {
-  padding:8px 0; border-bottom:1px solid #fecaca;
-  display:flex; align-items:flex-start; gap:12px; color:var(--text2);
-}
-.checklist li:last-child { border-bottom:none; }
-.checklist li::before { content:'□'; font-size:15px; color:var(--blue); flex-shrink:0; }
-
-/* ── QCM ── */
-.qcm-controls {
-  display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:22px;
-}
-.qcm-size-opt {
-  display:flex; align-items:center; gap:8px; cursor:pointer;
-  padding:8px 18px; border-radius:8px;
-  border:1px solid var(--border);
-  font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted);
-  transition:all .2s; user-select:none; background:white;
-}
-.qcm-size-opt:has(input:checked) { border-color:var(--blue); background:var(--blue-lt); color:var(--blue); }
-.qcm-size-opt input { accent-color:var(--blue); }
-.qcm-q {
-  background:white; border:1px solid var(--border);
-  border-radius:10px; padding:20px 22px; margin-bottom:14px;
-  transition:border-color .3s; box-shadow:0 1px 4px rgba(0,0,0,0.04);
-}
-.qcm-q.correct { border-color:var(--green); background:var(--green-lt); }
-.qcm-q.wrong   { border-color:var(--red);   background:var(--red-lt); }
-.qcm-num {
-  font-family:'JetBrains Mono',monospace; font-size:10px;
-  color:var(--blue); letter-spacing:2px; text-transform:uppercase; margin-bottom:7px;
-}
-.qcm-question { font-size:15px; font-weight:700; color:var(--text); margin-bottom:13px; line-height:1.5; }
-.qcm-question code {
-  font-family:'JetBrains Mono',monospace; font-size:13px;
-  color:var(--green); background:var(--green-lt); padding:1px 5px; border-radius:3px;
-}
-.qcm-opts { display:flex; flex-direction:column; gap:7px; }
-.qcm-opt {
-  display:flex; align-items:flex-start; gap:10px;
-  padding:9px 13px; border:1px solid var(--border);
-  border-radius:7px; cursor:pointer; transition:all .15s;
-  font-size:14px; color:var(--text2); background:white;
-}
-.qcm-opt:hover { border-color:var(--blue); background:var(--blue-lt); }
-.qcm-opt input { accent-color:var(--blue); width:14px; height:14px; flex-shrink:0; margin-top:2px; }
-.qcm-opt.opt-ok  { border-color:var(--green)!important; background:var(--green-lt)!important; color:var(--green); font-weight:700; }
-.qcm-opt.opt-ko  { border-color:var(--red)!important;   background:var(--red-lt)!important;   color:var(--red); }
-.qcm-opt code { font-family:'JetBrains Mono',monospace; font-size:12px; background:var(--green-lt); padding:1px 4px; border-radius:3px; color:inherit; }
-.qcm-fb {
-  margin-top:9px; font-size:13px; font-family:'JetBrains Mono',monospace;
-  padding:7px 11px; border-radius:5px; display:none; line-height:1.55;
-}
-.qcm-fb.show { display:block; }
-.qcm-fb.ok { background:var(--green-lt); color:var(--green); }
-.qcm-fb.ko { background:var(--red-lt);   color:var(--red); }
-#qcm-result {
-  background:var(--surface2); border:1px solid var(--border);
-  border-radius:12px; padding:26px; margin-top:22px; text-align:center; display:none;
-}
-.score-big { font-size:58px; font-weight:900; line-height:1; margin-bottom:6px; }
-.score-sub { color:var(--muted); font-size:14px; margin-bottom:14px; }
-.score-bar-bg { background:var(--border); border-radius:99px; height:10px; overflow:hidden; margin:14px 0; }
-.score-bar-fill { height:100%; border-radius:99px; transition:width .8s cubic-bezier(.4,0,.2,1); }
-.score-msg { font-size:17px; font-weight:700; margin-top:10px; }
-.qcm-btn {
-  font-family:'JetBrains Mono',monospace; font-size:12px;
-  padding:9px 20px; border-radius:7px; border:none; cursor:pointer;
-  font-weight:700; transition:opacity .2s;
-}
-.qcm-btn-primary { background:var(--blue); color:white; }
-.qcm-btn-secondary { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
-.qcm-btn:hover { opacity:.85; }
-
-.hero-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:22px; }
-.hero-btn {
-  display:inline-flex; align-items:center; gap:8px;
-  background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.4);
-  color: white; text-decoration:none;
-  font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:700;
-  padding:10px 18px; border-radius:8px; transition: background .2s, transform .15s;
-}
-.hero-btn:hover { background: rgba(255,255,255,0.26); transform: translateY(-1px); }
-.hero-btn .ic { font-size:15px; }
-
-footer {
-  text-align:center; padding:38px;
-  color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;
-  border-top:1px solid var(--border);
-}
-@media(max-width:640px){
-  .hero{padding:36px 18px 30px;}
-  .container{padding:0 14px;}
-  pre{font-size:12px;}
-  .fn-grid{grid-template-columns:1fr;}
-}
-
-/* ── EXTRA : code executable (Pyodide) ── */
-.code-header { justify-content: space-between; }
-.code-header-left { display:flex; align-items:center; gap:8px; }
-.run-btn-mini {
-  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
-  background:var(--green); color:white; border:none; border-radius:5px;
-  padding:4px 12px; cursor:pointer; transition:opacity .2s;
-}
-.run-btn-mini:hover { opacity:.85; }
-.run-btn-mini:disabled { opacity:.5; cursor:wait; }
-.code-editor {
-  width:100%; display:block; box-sizing:border-box; border:none; resize:vertical;
-  background:transparent; color:#e2e8f0;
-  padding:18px 20px; font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7;
-  min-height:110px;
-}
-.code-editor:focus { outline:2px solid var(--blue); outline-offset:-2px; }
-.code-output {
-  margin:0; padding:12px 20px; border-top:1px solid #2a2f45;
-  font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.6;
-  color:#86efac; background:#0a0d14; white-space:pre-wrap;
-}
-
-/* ── EXTRA : mémo Python (détails) ── */
-.pymemo-toggle {
-  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
-  margin:18px 0 4px; padding:9px 18px; border-radius:7px;
-  font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:700;
-  background:var(--purple-lt); border:1px solid #c7d2fe; color:var(--purple);
-  transition:all .2s; user-select:none;
-}
-.pymemo-toggle:hover { background:#e0e7ff; }
-.pymemo-box { display:none; margin:10px 0 22px; }
-.pymemo-box.open { display:block; }
-.pymemo-item {
-  background:var(--purple-lt); border:1px solid #c7d2fe; border-left:4px solid var(--purple);
-  border-radius:8px; padding:14px 18px; margin-bottom:12px; font-size:14.5px; color:var(--text2);
-}
-.pymemo-item strong { color:var(--text); }
-.pymemo-item .code-block { margin:8px 0 0; }
-
-/* ── EXTRA : auto-évaluation DST à 3 niveaux (persistance) ── */
-.selfassess { width:100%; border-collapse:collapse; margin:16px 0; font-size:13.5px; }
-.selfassess th { background:var(--blue-dk); color:white; text-align:left; padding:9px 12px; }
-.selfassess th:not(:first-child) { text-align:center; }
-.selfassess td { padding:9px 12px; border-bottom:1px solid var(--border); color:var(--text2); }
-.selfassess td:not(:first-child) { text-align:center; }
-.selfassess tr:nth-child(even) td { background:var(--surface2); }
-.selfassess input[type="radio"] {
-  width:18px; height:18px; accent-color:var(--red); cursor:pointer;
-}
-.selfassess tr.done td:first-child { color:var(--muted); }
-.checklist-reset {
-  margin-top:10px; font-family:'JetBrains Mono',monospace; font-size:11.5px; font-weight:700;
-  color:var(--red); background:white; border:1px solid var(--red); border-radius:6px;
-  padding:6px 14px; cursor:pointer;
-}
-.checklist-reset:hover { background:var(--red-lt); }
-
-/* ── EXTRA : convertisseur interactif ── */
-.converter {
-  background:var(--surface2); border:1px solid var(--border); border-radius:12px;
-  padding:24px; margin:18px 0;
-}
-.conv-row { display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; margin-bottom:8px; }
-.conv-field { flex:1; min-width:150px; }
-.conv-field label {
-  display:block; font-family:'JetBrains Mono',monospace; font-size:11px;
-  color:var(--blue); margin-bottom:6px; letter-spacing:1px; text-transform:uppercase;
-}
-.conv-field input {
-  width:100%; padding:9px 12px; border-radius:7px; border:1px solid var(--border);
-  font-family:'JetBrains Mono',monospace; font-size:14px; background:white;
-}
-.conv-arrow { font-size:1.3rem; color:var(--blue); padding-bottom:9px; }
-.conv-note { font-size:12.5px; color:var(--muted); margin-top:6px; }
-
-.hint-box{font-size:14px}
-td .hint-box.open{display:inline-block;margin:0 0 0 10px}
+/* --- Exercices (niveau 1 vert, 2 pêche, 3 rose) --- */
+.exo-card{margin-bottom:22px;overflow:hidden;border:1px solid var(--border);border-radius:20px;background:var(--surface);box-shadow:0 6px 18px #966e7d0a}
+.exo-hdr{display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid var(--border)}
+.exo-hdr.easy{background:linear-gradient(90deg,#e8f3ec,#f4f9f5)}
+.exo-hdr.medium{background:linear-gradient(90deg,#fbecd9,#fdf6ec)}
+.exo-hdr.hard{background:linear-gradient(90deg,#f8dde4,#fcf0f3)}
+.exo-level{font-size:11px;font-weight:750;letter-spacing:1.4px;text-transform:uppercase}
+.exo-hdr.easy .exo-level{color:var(--green)}.exo-hdr.medium .exo-level{color:var(--orange)}.exo-hdr.hard .exo-level{color:var(--red)}
+.exo-title{font-weight:700;font-size:16px;color:var(--text)}
+.exo-body{padding:20px 22px}
+.exo-body p{margin-bottom:10px;color:var(--text2)}
+.exo-body ol{padding-left:20px}
+.exo-body li{margin-bottom:7px;color:var(--text2)}
 .exo-body table td:last-child:empty{min-width:120px}
+.toggle-btn{font:inherit;display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:7px 15px;border-radius:9px;font-size:13px;font-weight:650;cursor:pointer;user-select:none;transition:background .2s}
+.btn-hint{background:var(--purple-lt);border:1px solid #ddd3ea;color:var(--purple)}
+.btn-hint:hover{background:#e7def3}
+.btn-corr{background:var(--accent-lt);border:1px solid #efd6e1;color:var(--accent)}
+.btn-corr:hover{background:#f4dce7}
+.toggle-icon{font-size:10px}
+.toggle-btn:focus-visible{outline:3px solid #94516f;outline-offset:2px}
+.hint-box,.corr-box{display:none;margin-top:14px}
+.hint-box.open,.corr-box.open{display:block}
+.hint-box{padding:14px 16px;border:1px solid #ddd3ea;border-radius:12px;background:var(--purple-lt);font-size:14px}
+.corr-box{padding:14px 16px;border:1px solid #cfe3d6;border-radius:12px;background:var(--green-lt)}
+.corr-box p{color:var(--text2)!important}
+td .hint-box.open{display:inline-block;margin:0 0 0 10px}
+
+/* --- Bilan / auto-évaluation --- */
+.dst-section{margin:36px 0;padding:34px;border:1px solid #efd6e1;border-top:3px solid #dfa6bd;border-radius:22px;background:linear-gradient(115deg,#fff4f7,#f7f1fb)}
+.dst-section h2{color:var(--text)!important}
+.dst-section .section-num{color:#844360!important}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:1px solid #efd6e1;color:var(--text2)}
+.checklist li:last-child{border-bottom:none}
+.checklist li::before{content:'□';flex-shrink:0;font-size:15px;color:var(--accent)}
+.selfassess{width:100%;margin:16px 0;font-size:13.5px}
+.selfassess th{text-align:left}
+.selfassess th:not(:first-child),.selfassess td:not(:first-child){text-align:center}
+.selfassess td{padding:9px 12px}
+.selfassess input[type="radio"]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+.selfassess tr.done td:first-child{color:var(--muted)}
+.checklist-reset{margin-top:10px;padding:7px 15px;border:1px solid #e7cdd9;border-radius:9px;background:#fff;color:var(--accent);font:inherit;font-size:13px;font-weight:650;cursor:pointer}
+.checklist-reset:hover{background:var(--accent-lt)}
+
+/* --- Mémo Python --- */
+.pymemo-toggle{display:inline-flex;align-items:center;gap:8px;margin:18px 0 4px;padding:9px 18px;border:1px solid #ddd3ea;border-radius:10px;background:var(--purple-lt);color:var(--purple);font-size:13px;font-weight:700;cursor:pointer;user-select:none;transition:background .2s}
+.pymemo-toggle:hover{background:#e7def3}
+.pymemo-box{display:none;margin:10px 0 22px}
+.pymemo-box.open{display:block}
+.pymemo-item{margin-bottom:12px;padding:14px 18px;border:1px solid #ddd3ea;border-left:4px solid var(--purple);border-radius:12px;background:var(--purple-lt);font-size:14.5px;color:var(--text2)}
+.pymemo-item strong{color:var(--text)}
+.pymemo-item .code-block{margin:8px 0 0}
+
+/* --- Convertisseur --- */
+.converter{margin:18px 0;padding:24px;border:1px solid var(--border);border-radius:20px;background:var(--surface2)}
+.conv-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;margin-bottom:8px}
+.conv-field{flex:1;min-width:150px}
+.conv-field label{display:block;margin-bottom:6px;font-size:11px;font-weight:750;letter-spacing:1px;text-transform:uppercase;color:var(--accent)}
+.conv-field input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:9px;background:#fff;font-family:var(--mono);font-size:14px}
+.conv-arrow{padding-bottom:9px;font-size:1.3rem;color:var(--accent)}
+.conv-note{margin-top:6px;font-size:12.5px;color:var(--muted)}
+
+/* --- QCM --- */
+.qcm-controls{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:22px}
+.qcm-size-opt{display:flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;user-select:none;transition:background .2s,border-color .2s}
+.qcm-size-opt:has(input:checked){border-color:var(--accent);background:var(--accent-lt);color:var(--accent)}
+.qcm-size-opt input{accent-color:var(--accent)}
+.qcm-q{margin-bottom:14px;padding:20px 22px;border:1px solid var(--border);border-radius:18px;background:var(--surface);box-shadow:0 4px 14px #966e7d08;transition:border-color .3s}
+.qcm-q.correct{border-color:#9fcbb0;background:var(--green-lt)}
+.qcm-q.wrong{border-color:#e6a9b6;background:var(--red-lt)}
+.qcm-num{margin-bottom:7px;font-size:11px;font-weight:750;letter-spacing:1.4px;text-transform:uppercase;color:#844360}
+.qcm-question{margin-bottom:13px;font-size:15px;font-weight:700;line-height:1.5;color:var(--text)}
+.qcm-question code{font-family:var(--mono);font-size:13px;color:var(--accent-dk);background:var(--accent-lt);padding:1px 5px;border-radius:5px}
+.qcm-opts{display:flex;flex-direction:column;gap:7px}
+.qcm-opt{display:flex;align-items:flex-start;gap:10px;padding:9px 13px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--text2);font-size:14px;cursor:pointer;transition:background .15s,border-color .15s}
+.qcm-opt:hover{border-color:#d9a9be;background:#fdf4f8}
+.qcm-opt input{flex-shrink:0;width:14px;height:14px;margin-top:4px;accent-color:var(--accent)}
+.qcm-opt.opt-ok{border-color:var(--green)!important;background:var(--green-lt)!important;color:var(--green);font-weight:700}
+.qcm-opt.opt-ko{border-color:var(--red)!important;background:var(--red-lt)!important;color:var(--red)}
+.qcm-opt code{font-family:var(--mono);font-size:12px;background:var(--accent-lt);padding:1px 4px;border-radius:4px;color:inherit}
+.qcm-fb{display:none;margin-top:9px;padding:8px 12px;border-radius:9px;font-size:13.5px;line-height:1.55}
+.qcm-fb.show{display:block}
+.qcm-fb.ok{background:#e1efe6;color:var(--green)}
+.qcm-fb.ko{background:#f8e0e5;color:var(--red)}
+#qcm-result{display:none;margin-top:22px;padding:26px;border:1px solid var(--border);border-radius:22px;background:linear-gradient(115deg,#fff4f7,#f5f0fa);text-align:center}
+.score-big{margin-bottom:6px;font-size:58px;font-weight:750;line-height:1}
+.score-sub{margin-bottom:14px;color:var(--muted);font-size:14px}
+.score-bar-bg{height:10px;margin:14px 0;overflow:hidden;border-radius:99px;background:var(--border)}
+.score-bar-fill{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.score-msg{margin-top:10px;font-size:17px;font-weight:700}
+.qcm-btn{padding:11px 18px;border:none;border-radius:10px;font:inherit;font-size:14px;font-weight:650;cursor:pointer;transition:background .2s}
+.qcm-btn-primary{background:#86648f;color:#fff}
+.qcm-btn-primary:hover{background:#705078}
+.qcm-btn-secondary{background:#faedf2;color:#844360;border:1px solid #efd6e1}
+.qcm-btn-secondary:hover{background:#efdae5}
+
+/* --- Bandeau : boutons de téléchargement --- */
+.hero-cta{margin-top:10px}
+.hero-cta .button{margin-top:0}
+
+@media(max-width:900px){.toc{flex-wrap:nowrap;justify-content:flex-start}}
+@media(max-width:640px){
+  .toc{top:0;border-radius:0 0 14px 14px}
+  .section{padding:40px 0 28px}
+  pre,.code-editor{font-size:12.5px}
+  .fn-grid{grid-template-columns:1fr}
+  .exo-body,.exo-hdr{padding-left:16px;padding-right:16px}
+  .dst-section{padding:24px 18px}
+  table{display:block;overflow-x:auto}
+}
+@media(prefers-reduced-motion:reduce){.score-bar-fill{transition:none}}
+
+/* --- Bandeau de cours compact : fenêtre de code au lieu de l'avatar --- */
+.course-hero{grid-template-columns:1.5fr 1fr;margin:26px 0 30px;padding:32px 40px}
+.course-hero h1{font-size:clamp(32px,3.8vw,46px);margin-bottom:16px}
+.course-hero .intro{margin:0 0 6px}
+.hero-code{justify-self:center;width:100%;max-width:320px;border-radius:14px;overflow:hidden;background:#2e2533;border:1px solid #463a4c;box-shadow:0 14px 30px #4a2c4026;transform:rotate(1.5deg)}
+.hc-bar{display:flex;align-items:center;gap:6px;padding:8px 12px;background:#3a2f40;border-bottom:1px solid #4b3e51}
+.hc-bar span{width:9px;height:9px;border-radius:50%;background:#f2a7b8}.hc-bar span:nth-child(2){background:#f3d48f}.hc-bar span:nth-child(3){background:#a8d5b9}
+.hc-bar em{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:11px;color:#bfaebf}
+.hero-code pre{margin:0;padding:16px 18px;font-family:var(--mono);font-size:14px;line-height:1.75;color:#f3eaf0;white-space:pre}
+.hero-code .p{color:#9d8ca0}.hero-code .st{color:#b5e2c2}.hero-code .nb{color:#f6c28f}.hero-code .fn{color:#9cc8f2}.hero-code .out{color:#f5a8c6}
+.hero-code .cur{display:inline-block;width:8px;height:15px;vertical-align:-2px;background:#f2a7c0;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.hero-code .cur{animation:none}}
+@media(max-width:900px){.course-hero{padding:28px 30px}}
+@media(max-width:600px){.course-hero{grid-template-columns:1fr;padding:24px 22px;margin-top:20px}.hero-code{display:none}}
 </style>
 </head>
 <body>
-<div class="hero">
-  <div class="hero-badge">NSI · 1ère Spécialité · Langages et programmation</div>
-  <h1>Les <span>bases</span> de Python</h1>
-  <p>Cours complet — Python exécutable — 23 exercices — QCM interactif</p>
-  <div class="hero-actions" style="justify-content:center">
-    <a class="hero-btn" href="1NSI-T6-Chap2-Bases-de-Python-cours.docx" download><span class="ic">📄</span> Télécharger le doc élève (Word)</a>
-    <a class="hero-btn" href="1NSI-T6-Chap2-Bases-de-Python.pptx" download><span class="ic">🖥️</span> Mode présentation (diaporama)</a>
-  </div>
-</div>
-<nav class="toc"><a href="#s1">1. Vocabulaire et variables</a><a href="#s2">2. Types et opérations</a><a href="#s3">3. Afficher et saisir</a><a href="#s4">4. Les conditions</a><a href="#s5">5. Les fonctions</a><a href="#s6">6. Les boucles</a><a href="#s7">7. Comprendre son programme</a><a href="#voc">📚 Vocabulaire</a><a href="#dst">⚠ Bilan</a><a href="#qcm">🎯 QCM</a></nav>
+<a class="skip" href="#s1">Aller au contenu</a>
+<header><div class="wrap top"><a class="brand" href="../../index.html"><img src="../../assets/avatar-nsi-nuit-du-code.png" alt="" width="52" height="52"><span>Maths &amp; informatique<small>Spécialité NSI · Mme L.</small></span></a><nav aria-label="Navigation principale"><a href="../../index.html">Accueil</a><a href="../index.html" aria-current="page">Cours &amp; TP</a><a href="../../index.html#team">Projets des élèves</a><a href="../../../maths-info/index.html">Mathématiques ↗</a></nav></div></header>
+<main id="contenu" class="wrap">
+<section class="hero course-hero"><div><p class="eyebrow">Spécialité NSI · Première · Langages et programmation</p><h1>Les bases<br><em>de Python.</em></h1><p class="intro">Cours complet avec du Python exécutable dans le navigateur, 23 exercices corrigés et un QCM interactif.</p><div class="hero-cta"><a class="button" href="1NSI-S02-Bases-Python-fiche.pdf" download>📄 Fiche résumé (PDF)</a></div></div><div class="hero-code" aria-hidden="true"><div class="hc-bar"><span></span><span></span><span></span><em>python</em></div><pre><span class="p">&gt;&gt;&gt;</span> nom = <span class="st">"Link"</span>
+<span class="p">&gt;&gt;&gt;</span> pv = <span class="nb">100</span> - <span class="nb">30</span>
+<span class="p">&gt;&gt;&gt;</span> <span class="fn">print</span>(nom, pv)
+<span class="out">Link 70</span>
+<span class="p">&gt;&gt;&gt;</span> <span class="cur"></span></pre></div></section>
+<nav class="level-shortcuts" aria-label="Retour aux cours"><a href="index.html">← Cours de Première</a><a href="../index.html">Choisir un niveau</a></nav>
+<nav class="toc" aria-label="Sommaire du cours"><a href="#s1">1. Vocabulaire et variables</a><a href="#s2">2. Types et opérations</a><a href="#s3">3. Afficher et saisir</a><a href="#s4">4. Les conditions</a><a href="#s5">5. Les fonctions</a><a href="#s6">6. Les boucles</a><a href="#s7">7. Comprendre son programme</a><a href="#voc">📚 Vocabulaire</a><a href="#dst">⚠ Bilan</a><a href="#qcm">🎯 QCM</a></nav>
 <div class="container">
 <div class="section" id="s1"><div class="section-num">01 — Vocabulaire et variables</div><h2>Vocabulaire et variables</h2><div class="box box-key"><div class="box-title">🐍 Sur cette page</div>Les blocs de code sont <strong>modifiables et exécutables</strong> dans le navigateur (Pyodide, un vrai interpréteur Python). Clique sur <strong>▶ Exécuter</strong>. Quand un programme utilise <code>input()</code>, une fenêtre s’ouvre pour la saisie. <strong>Prédis toujours l’affichage avant d’exécuter !</strong></div><h3>Programme et instructions</h3><ul><li>Un <strong>algorithme</strong> est une suite finie d’étapes qui permet d’atteindre un but.</li><li>Un <strong>programme</strong> est la traduction d’un algorithme dans un langage compréhensible par l’ordinateur, ici <strong>Python</strong>.</li><li>Un programme est une suite d’<strong>instructions</strong> exécutées <strong>de haut en bas</strong>, une par une : c’est une <strong>séquence</strong>.</li><li>Python est <strong>interprété</strong> : en cas d’erreur, le programme s’arrête <strong>à la ligne fautive</strong> et affiche un message.</li></ul><h3>Variables et affectation</h3><div class="box box-info"><div class="box-title">📋 Définition — Variable</div>Un <strong>nom</strong> associé à une <strong>valeur</strong>. On peut l’imaginer comme une <strong>étiquette</strong> collée sur une valeur.</div>
 <ul><li>L’<strong>affectation</strong> <code>nom = valeur</code> : Python <strong>calcule d’abord la partie droite</strong>, puis colle l’étiquette <code>nom</code> sur le résultat.</li><li><code>=</code> <strong>affecte</strong> une valeur ; <code>==</code> <strong>compare</strong> deux valeurs (voir partie II).</li></ul>
@@ -452,14 +253,14 @@ print(pv)</textarea>
 # (7 &gt; 9) or (3 &gt; 2)
 # False or True
 print(expr)</textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>True</code></p><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 1</div><div class="exo-title">Créer une variable</div></div></div><div class="exo-body"><p>Quel est le bon moyen de créer une variable qui stocke le nombre 10 ?</p><ul><li>☐ <code>var == 10</code></li><li>☐ <code>var = 10</code></li><li>☐ <code>10 = var</code></li><li>☐ <code>int var = 10</code></li></ul><div class="toggle-btn btn-corr" onclick="toggle('c-ex1')"><span class="toggle-icon" id="ic-ex1">▶</span> Voir la correction</div><div class="corr-box" id="c-ex1"><p>Réponse : <code>var = 10</code></p><p><code>var = 10</code>. <code>==</code> compare, <code>10 = var</code> affecte dans le mauvais sens, <code>int var</code> n’existe pas en Python.</p></div></div></div>
-<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 2</div><div class="exo-title">Noms de variables</div></div></div><div class="exo-body"><p>Entourer les noms de variables <strong>corrects</strong>, puis expliquer pourquoi les autres sont incorrects :<br><code>nombre_de_pv</code>   <code>2eme_vie</code>   <code>prix manga</code>   <code>for</code>   <code>pvMax</code>   <code>vie-restante</code>   <code>niveau2</code></p><div class="toggle-btn btn-corr" onclick="toggle('c-ex2')"><span class="toggle-icon" id="ic-ex2">▶</span> Voir la correction</div><div class="corr-box" id="c-ex2"><p>Corrects : <code>nombre_de_pv</code>, <code>pvMax</code>, <code>niveau2</code>. Incorrects : <code>2eme_vie</code> (commence par un chiffre), <code>prix manga</code> (espace), <code>for</code> (mot-clé), <code>vie-restante</code> (tiret).</p></div></div></div>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>True</code></p><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 1</div><div class="exo-title">Créer une variable</div></div></div><div class="exo-body"><p>Quel est le bon moyen de créer une variable qui stocke le nombre 10 ?</p><ul><li>☐ <code>var == 10</code></li><li>☐ <code>var = 10</code></li><li>☐ <code>10 = var</code></li><li>☐ <code>int var = 10</code></li></ul><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex1" onclick="toggle('c-ex1')"><span class="toggle-icon" id="ic-ex1">▶</span> Voir la correction</button><div class="corr-box" id="c-ex1"><p>Réponse : <code>var = 10</code></p><p><code>var = 10</code>.<br><code>==</code> compare, <code>10 = var</code> affecte dans le mauvais sens, <code>int var</code> n’existe pas en Python.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 2</div><div class="exo-title">Noms de variables</div></div></div><div class="exo-body"><p>Entourer les noms de variables <strong>corrects</strong>, puis expliquer pourquoi les autres sont incorrects :<br><code>nombre_de_pv</code>   <code>2eme_vie</code>   <code>prix manga</code>   <code>for</code>   <code>pvMax</code>   <code>vie-restante</code>   <code>niveau2</code></p><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex2" onclick="toggle('c-ex2')"><span class="toggle-icon" id="ic-ex2">▶</span> Voir la correction</button><div class="corr-box" id="c-ex2"><p>Corrects : <code>nombre_de_pv</code>, <code>pvMax</code>, <code>niveau2</code>.<br>Incorrects : <code>2eme_vie</code> (commence par un chiffre), <code>prix manga</code> (espace), <code>for</code> (mot-clé), <code>vie-restante</code> (tiret).</p></div></div></div>
 <div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 3</div><div class="exo-title">Prédis !</div></div></div><div class="exo-body"><p>Sans exécuter, écrire ce qu’affiche ce programme.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="4">x = 3
 y = x * 2
 x = x + 1
 print(x, y)</textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex3')"><span class="toggle-icon" id="ic-ex3">▶</span> Voir la correction</div><div class="corr-box" id="c-ex3"><p><code>4 6</code>. y reçoit la valeur 6 au moment de la ligne 2 ; modifier x ensuite ne change pas y.</p></div></div></div></div>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex3" onclick="toggle('c-ex3')"><span class="toggle-icon" id="ic-ex3">▶</span> Voir la correction</button><div class="corr-box" id="c-ex3"><p><code>4 6</code>.<br>y reçoit la valeur 6 au moment de la ligne 2 ; modifier x ensuite ne change pas y.</p></div></div></div></div>
 <div class="section" id="s2"><div class="section-num">02 — Types et opérations</div><h2>Types et opérations</h2><h3>Les quatre types de base</h3><table><tr><th>Type</th><th>Nom</th><th>Exemples</th></tr><tr><td><code>int</code></td><td>entier</td><td><code>5</code>, <code>-3</code>, <code>2026</code></td></tr><tr><td><code>float</code></td><td>flottant (décimal)</td><td><code>3.14</code>, <code>7 / 2</code>, <code>6.0</code></td></tr><tr><td><code>str</code></td><td>chaîne de caractères</td><td><code>"Naruto"</code>, <code>'7'</code></td></tr><tr><td><code>bool</code></td><td>booléen</td><td><code>True</code>, <code>False</code></td></tr></table>
 <ul><li>Python devine le type tout seul (<strong>typage dynamique</strong>). <code>type(x)</code> donne le type de <code>x</code>.</li><li>Attention : <code>"7"</code> (entre guillemets) est une <strong>chaîne</strong>, pas un nombre.</li></ul><h3>Convertir un type</h3><table><tr><th>Fonction</th><th>Exemple</th><th>Résultat</th></tr><tr><td><code>int(...)</code></td><td><code>int("16")</code></td><td><code>16</code></td></tr><tr><td><code>float(...)</code></td><td><code>float("6.9")</code></td><td><code>6.9</code></td></tr><tr><td><code>str(...)</code></td><td><code>str(42)</code></td><td><code>"42"</code></td></tr><tr><td><code>int(...)</code></td><td><code>int(3.9)</code></td><td><code>3</code>  (on tronque)</td></tr></table>
 <div class="box box-tip"><div class="box-title">🔑 À retenir</div>La conversion doit être possible : <code>int("abc")</code> provoque une erreur <strong>ValueError</strong>.</div><h3>Opérateurs arithmétiques</h3><table><tr><th>Opérateur</th><th>Rôle</th><th>Exemple</th><th>Résultat</th></tr><tr><td><code>+  -  *</code></td><td>addition, soustraction, multiplication</td><td><code>2 + 3 * 4</code></td><td><code>14</code></td></tr><tr><td><code>/</code></td><td>division (résultat décimal)</td><td><code>7 / 2</code></td><td><code>3.5</code></td></tr><tr><td><code>//</code></td><td>quotient de la division euclidienne</td><td><code>17 // 5</code></td><td><code>3</code></td></tr><tr><td><code>%</code></td><td>reste de la division euclidienne</td><td><code>17 % 5</code></td><td><code>2</code></td></tr><tr><td><code>**</code></td><td>puissance</td><td><code>2 ** 3</code></td><td><code>8</code></td></tr></table>
@@ -473,15 +274,15 @@ print(3 + 4)</textarea>
 est_chaud = temperature &gt; 20
 print(est_chaud)</textarea>
 <div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>True</code></p><h3>Opérateurs logiques</h3><ul><li><code>A and B</code> est vrai si <strong>les deux</strong> sont vrais ; <code>A or B</code> si <strong>au moins un</strong> est vrai ; <code>not A</code> <strong>inverse</strong>.</li></ul>
-<table><tr><th>A</th><th>B</th><th>A and B</th><th>A or B</th><th>not A</th></tr><tr><td>True</td><td>True</td><td>True</td><td>True</td><td>False</td></tr><tr><td>True</td><td>False</td><td>False</td><td>True</td><td>False</td></tr><tr><td>False</td><td>True</td><td>False</td><td>True</td><td>True</td></tr><tr><td>False</td><td>False</td><td>False</td><td>False</td><td>True</td></tr></table><h3>À toi de prédire : quel type, quelle valeur ?</h3><table><tr><th>Code</th><th>Réponse</th></tr><tr><td><code>10 / 5</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-II-0')"><span class="toggle-icon" id="ix-II-0">▶</span> Voir</span><span class="hint-box" id="x-II-0" style="padding:6px 10px"><code>float</code> : 2.0</span></td></tr><tr><td><code>10 // 4</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-II-1')"><span class="toggle-icon" id="ix-II-1">▶</span> Voir</span><span class="hint-box" id="x-II-1" style="padding:6px 10px"><code>int</code> : 2</span></td></tr><tr><td><code>"10"</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-II-2')"><span class="toggle-icon" id="ix-II-2">▶</span> Voir</span><span class="hint-box" id="x-II-2" style="padding:6px 10px"><code>str</code></span></td></tr><tr><td><code>3 == 3.0</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-II-3')"><span class="toggle-icon" id="ix-II-3">▶</span> Voir</span><span class="hint-box" id="x-II-3" style="padding:6px 10px"><code>bool</code> : True</span></td></tr><tr><td><code>"Py" * 2</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-II-4')"><span class="toggle-icon" id="ix-II-4">▶</span> Voir</span><span class="hint-box" id="x-II-4" style="padding:6px 10px"><code>str</code> : "PyPy"</span></td></tr></table><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 4</div><div class="exo-title">Quel type ?</div></div></div><div class="exo-body"><p>Donner le type (<code>int</code>, <code>float</code>, <code>str</code> ou <code>bool</code>) de chaque valeur :<br>a) <code>7 / 2</code>     b) <code>7 // 2</code>     c) <code>"7"</code>     d) <code>7 &gt; 2</code>     e) <code>3.0</code></p><div class="toggle-btn btn-corr" onclick="toggle('c-ex4')"><span class="toggle-icon" id="ic-ex4">▶</span> Voir la correction</div><div class="corr-box" id="c-ex4"><p>a) <code>float</code> (3.5) ; b) <code>int</code> (3) ; c) <code>str</code> ; d) <code>bool</code> (True) ; e) <code>float</code>.</p></div></div></div>
-<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 5</div><div class="exo-title">Évaluer des expressions</div></div></div><div class="exo-body"><p>Donner la valeur de chaque expression :<br>a) <code>2 + 3 * 4</code>   b) <code>(2 + 3) * 4</code>   c) <code>17 // 5</code>   d) <code>17 % 5</code>   e) <code>2 ** 3</code>   f) <code>"ha" * 3</code>   g) <code>"3" + "4"</code></p><div class="toggle-btn btn-corr" onclick="toggle('c-ex5')"><span class="toggle-icon" id="ic-ex5">▶</span> Voir la correction</div><div class="corr-box" id="c-ex5"><p>a) 14 ; b) 20 ; c) 3 ; d) 2 ; e) 8 ; f) <code>"hahaha"</code> ; g) <code>"34"</code> (concaténation de chaînes).</p></div></div></div>
-<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 6</div><div class="exo-title">Vrai ou faux ?</div></div></div><div class="exo-body"><p>Compléter avec <code>True</code> ou <code>False</code>.</p><table><tr><th>Expression</th><th>True ou False ?</th></tr><tr><td><code>3 + 2 == 5 and 7 - 1 == 6</code></td><td></td></tr><tr><td><code>4 != 4 or 5 &gt;= 6</code></td><td></td></tr><tr><td><code>not (2 * 2 == 5)</code></td><td></td></tr><tr><td><code>10 &lt; 5 and not (3 &gt; 1)</code></td><td></td></tr><tr><td><code>(8 // 2) == 4 or (9 % 3) != 0</code></td><td></td></tr><tr><td><code>("Python" == "python") and (4 &lt; 5 or 2 &gt; 3)</code></td><td></td></tr><tr><td><code>not (7 &gt; 3 and 2 == 2)</code></td><td></td></tr></table><div class="toggle-btn btn-corr" onclick="toggle('c-ex6')"><span class="toggle-icon" id="ic-ex6">▶</span> Voir la correction</div><div class="corr-box" id="c-ex6"><table><tr><th>Expression</th><th>Valeur</th></tr><tr><td><code>3 + 2 == 5 and 7 - 1 == 6</code></td><td><strong>True</strong></td></tr><tr><td><code>4 != 4 or 5 &gt;= 6</code></td><td><strong>False</strong></td></tr><tr><td><code>not (2 * 2 == 5)</code></td><td><strong>True</strong></td></tr><tr><td><code>10 &lt; 5 and not (3 &gt; 1)</code></td><td><strong>False</strong></td></tr><tr><td><code>(8 // 2) == 4 or (9 % 3) != 0</code></td><td><strong>True</strong></td></tr><tr><td><code>("Python" == "python") and (4 &lt; 5 or 2 &gt; 3)</code></td><td><strong>False</strong></td></tr><tr><td><code>not (7 &gt; 3 and 2 == 2)</code></td><td><strong>False</strong></td></tr></table><p>True ; False ; True ; False ; True ; False (majuscule ≠ minuscule) ; False.</p></div></div></div></div>
+<table><tr><th>A</th><th>B</th><th>A and B</th><th>A or B</th><th>not A</th></tr><tr><td>True</td><td>True</td><td>True</td><td>True</td><td>False</td></tr><tr><td>True</td><td>False</td><td>False</td><td>True</td><td>False</td></tr><tr><td>False</td><td>True</td><td>False</td><td>True</td><td>True</td></tr><tr><td>False</td><td>False</td><td>False</td><td>False</td><td>True</td></tr></table><h3>À toi de prédire : quel type, quelle valeur ?</h3><table><tr><th>Code</th><th>Réponse</th></tr><tr><td><code>10 / 5</code></td><td><button type="button" class="toggle-btn btn-hint" style="margin-top:0" aria-expanded="false" aria-controls="x-II-0" onclick="toggle('x-II-0')"><span class="toggle-icon" id="ix-II-0">▶</span> Voir</button><span class="hint-box" id="x-II-0" style="padding:6px 10px"><code>float</code> : 2.0</span></td></tr><tr><td><code>10 // 4</code></td><td><button type="button" class="toggle-btn btn-hint" style="margin-top:0" aria-expanded="false" aria-controls="x-II-1" onclick="toggle('x-II-1')"><span class="toggle-icon" id="ix-II-1">▶</span> Voir</button><span class="hint-box" id="x-II-1" style="padding:6px 10px"><code>int</code> : 2</span></td></tr><tr><td><code>"10"</code></td><td><button type="button" class="toggle-btn btn-hint" style="margin-top:0" aria-expanded="false" aria-controls="x-II-2" onclick="toggle('x-II-2')"><span class="toggle-icon" id="ix-II-2">▶</span> Voir</button><span class="hint-box" id="x-II-2" style="padding:6px 10px"><code>str</code></span></td></tr><tr><td><code>3 == 3.0</code></td><td><button type="button" class="toggle-btn btn-hint" style="margin-top:0" aria-expanded="false" aria-controls="x-II-3" onclick="toggle('x-II-3')"><span class="toggle-icon" id="ix-II-3">▶</span> Voir</button><span class="hint-box" id="x-II-3" style="padding:6px 10px"><code>bool</code> : True</span></td></tr><tr><td><code>"Py" * 2</code></td><td><button type="button" class="toggle-btn btn-hint" style="margin-top:0" aria-expanded="false" aria-controls="x-II-4" onclick="toggle('x-II-4')"><span class="toggle-icon" id="ix-II-4">▶</span> Voir</button><span class="hint-box" id="x-II-4" style="padding:6px 10px"><code>str</code> : "PyPy"</span></td></tr></table><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 4</div><div class="exo-title">Quel type ?</div></div></div><div class="exo-body"><p>Donner le type (<code>int</code>, <code>float</code>, <code>str</code> ou <code>bool</code>) de chaque valeur :<br>a) <code>7 / 2</code>     b) <code>7 // 2</code>     c) <code>"7"</code>     d) <code>7 &gt; 2</code>     e) <code>3.0</code></p><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex4" onclick="toggle('c-ex4')"><span class="toggle-icon" id="ic-ex4">▶</span> Voir la correction</button><div class="corr-box" id="c-ex4"><p>a) <code>float</code> (3.5) ; b) <code>int</code> (3) ; c) <code>str</code> ; d) <code>bool</code> (True) ; e) <code>float</code>.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 5</div><div class="exo-title">Évaluer des expressions</div></div></div><div class="exo-body"><p>Donner la valeur de chaque expression :<br>a) <code>2 + 3 * 4</code>   b) <code>(2 + 3) * 4</code>   c) <code>17 // 5</code>   d) <code>17 % 5</code>   e) <code>2 ** 3</code>   f) <code>"ha" * 3</code>   g) <code>"3" + "4"</code></p><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex5" onclick="toggle('c-ex5')"><span class="toggle-icon" id="ic-ex5">▶</span> Voir la correction</button><div class="corr-box" id="c-ex5"><p>a) 14 ; b) 20 ; c) 3 ; d) 2 ; e) 8 ; f) <code>"hahaha"</code> ; g) <code>"34"</code> (concaténation de chaînes).</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 6</div><div class="exo-title">Vrai ou faux ?</div></div></div><div class="exo-body"><p>Compléter avec <code>True</code> ou <code>False</code>.</p><table><tr><th>Expression</th><th>True ou False ?</th></tr><tr><td><code>3 + 2 == 5 and 7 - 1 == 6</code></td><td></td></tr><tr><td><code>4 != 4 or 5 &gt;= 6</code></td><td></td></tr><tr><td><code>not (2 * 2 == 5)</code></td><td></td></tr><tr><td><code>10 &lt; 5 and not (3 &gt; 1)</code></td><td></td></tr><tr><td><code>(8 // 2) == 4 or (9 % 3) != 0</code></td><td></td></tr><tr><td><code>("Python" == "python") and (4 &lt; 5 or 2 &gt; 3)</code></td><td></td></tr><tr><td><code>not (7 &gt; 3 and 2 == 2)</code></td><td></td></tr></table><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex6" onclick="toggle('c-ex6')"><span class="toggle-icon" id="ic-ex6">▶</span> Voir la correction</button><div class="corr-box" id="c-ex6"><table><tr><th>Expression</th><th>Valeur</th></tr><tr><td><code>3 + 2 == 5 and 7 - 1 == 6</code></td><td><strong>True</strong></td></tr><tr><td><code>4 != 4 or 5 &gt;= 6</code></td><td><strong>False</strong></td></tr><tr><td><code>not (2 * 2 == 5)</code></td><td><strong>True</strong></td></tr><tr><td><code>10 &lt; 5 and not (3 &gt; 1)</code></td><td><strong>False</strong></td></tr><tr><td><code>(8 // 2) == 4 or (9 % 3) != 0</code></td><td><strong>True</strong></td></tr><tr><td><code>("Python" == "python") and (4 &lt; 5 or 2 &gt; 3)</code></td><td><strong>False</strong></td></tr><tr><td><code>not (7 &gt; 3 and 2 == 2)</code></td><td><strong>False</strong></td></tr></table><p>True ; False ; True ; False ; True ; False (majuscule ≠ minuscule) ; False.</p></div></div></div></div>
 <div class="section" id="s3"><div class="section-num">03 — Afficher et saisir</div><h2>Afficher et saisir</h2><h3>Afficher avec print</h3><ul><li><code>print(...)</code> affiche une ou plusieurs valeurs, séparées par des <strong>virgules</strong> (affichées avec un espace).</li><li><code>print</code> <strong>affiche</strong> seulement : il ne modifie aucune variable et ne « renvoie » rien.</li></ul>
 <div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
-<textarea class="code-editor" spellcheck="false" rows="3">nom = "Lina"
+<textarea class="code-editor" spellcheck="false" rows="3">nom = "Link"
 pv = 70
 print("Héros :", nom, "-", pv, "PV")</textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>Héros : Lina - 70 PV</code></p><h3>Saisir avec input</h3><ul><li><code>input("question")</code> affiche la question, <strong>attend</strong> que l’utilisateur tape une réponse puis appuie sur Entrée.</li><li><code>input</code> renvoie <strong>toujours une chaîne</strong> (<code>str</code>), même si on tape un nombre.</li><li>Pour calculer : <code>int(input(...))</code> (entier) ou <code>float(input(...))</code> (décimal).</li></ul>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>Héros : Link - 70 PV</code></p><h3>Saisir avec input</h3><ul><li><code>input("question")</code> affiche la question, <strong>attend</strong> que l’utilisateur tape une réponse puis appuie sur Entrée.</li><li><code>input</code> renvoie <strong>toujours une chaîne</strong> (<code>str</code>), même si on tape un nombre.</li><li>Pour calculer : <code>int(input(...))</code> (entier) ou <code>float(input(...))</code> (décimal).</li></ul>
 <div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="3">nom = input("Nom du manga ? ")
 prix = float(input("Prix ? "))
@@ -490,17 +291,17 @@ print(nom, ":", prix * 2, "€ les 2 tomes")</textarea>
 <div class="box box-tip"><div class="box-title">🔑 À retenir</div>Un résultat qui ressemble à des chiffres « collés » (<code>"5" + "6"</code> → <code>56</code>) : il manque <code>int(...)</code> !</div><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 7</div><div class="exo-title">Trouve les erreurs</div></div></div><div class="exo-body"><p>Ce programme contient trois erreurs. Les corriger.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="3">prenom = "sophie"
 note == 13
-printe("La note de", prenom, "est de", note, "/20")</textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex7')"><span class="toggle-icon" id="ic-ex7">▶</span> Voir la correction</div><div class="corr-box" id="c-ex7"><p>Ligne 2 : <code>note = 13</code> (affectation, pas comparaison). Ligne 3 : <code>print</code> (et non <code>printe</code>). Au passage, <code>note</code> n’existait pas : la ligne 2 provoquait une <strong>NameError</strong>.</p></div></div></div>
+printe("La note de", prenom, "est de", note, "/20"</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex7" onclick="toggle('c-ex7')"><span class="toggle-icon" id="ic-ex7">▶</span> Voir la correction</button><div class="corr-box" id="c-ex7"><p>Ligne 2 : <code>note = 13</code> (affectation, pas comparaison).<br>Ligne 3 : <code>print</code> (et non <code>printe</code>).<br>Ligne 3 : il manque la parenthèse fermante à la fin : <strong>SyntaxError</strong>, c’est la première erreur signalée par Python.<br>Au passage, <code>note</code> n’existait pas : la ligne 2 provoquait une <strong>NameError</strong>.</p></div></div></div>
 <div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 8</div><div class="exo-title">Trouve l’erreur</div></div></div><div class="exo-body"><p>On tape 5. Que se passe-t-il ? Corriger.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="3">n = input("Entrez un nombre : ")
 somme = n + 2
 print("La somme est", somme)</textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex8')"><span class="toggle-icon" id="ic-ex8">▶</span> Voir la correction</div><div class="corr-box" id="c-ex8"><p><strong>TypeError</strong> : <code>n</code> est la chaîne <code>"5"</code>, on ne peut pas lui ajouter 2. Correction : <code>n = int(input("Entrez un nombre : "))</code> → affiche <code>La somme est 7</code>.</p></div></div></div>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex8" onclick="toggle('c-ex8')"><span class="toggle-icon" id="ic-ex8">▶</span> Voir la correction</button><div class="corr-box" id="c-ex8"><p><strong>TypeError</strong> : <code>n</code> est la chaîne <code>"5"</code>, on ne peut pas lui ajouter 2.<br>Correction : <code>n = int(input("Entrez un nombre : "))</code> → affiche <code>La somme est 7</code>.</p></div></div></div>
 <div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 9</div><div class="exo-title">Ma collection de mangas</div></div></div><div class="exo-body"><p>Écrire un programme qui demande le nom d’un manga et son prix, puis affiche : <code>Le manga [nom] a été ajouté à votre collection pour [prix] euros.</code><br>Le compléter pour demander le prix de <strong>trois</strong> mangas et afficher la valeur totale de la collection.</p><p style="margin-top:12px"><strong>À toi de coder :</strong></p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="9"># Écris ton programme ici
 </textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex9')"><span class="toggle-icon" id="ic-ex9">▶</span> Voir la correction</div><div class="corr-box" id="c-ex9"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre>nom <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Nom du manga ? "</span>)
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex9" onclick="toggle('c-ex9')"><span class="toggle-icon" id="ic-ex9">▶</span> Voir la correction</button><div class="corr-box" id="c-ex9"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre>nom <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Nom du manga ? "</span>)
 prix <span class="op">=</span> <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"Prix ? "</span>))
 <span class="fn">print</span>(<span class="st">"Le manga"</span>, nom, <span class="st">"a été ajouté à votre collection pour"</span>, prix, <span class="st">"euros."</span>)
 
@@ -529,7 +330,7 @@ else:
     print("Manteau, bonnet et gants")</textarea>
 <div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div>
 <div class="box box-tip"><div class="box-title">🔑 À retenir</div>Les conditions sont testées <strong>dans l’ordre</strong> : <strong>seul le premier bloc vrai</strong> est exécuté, les suivants sont ignorés.</div><h3>if … if  ou  if … elif ?</h3><table><tr><th>Deux if à la suite</th><th>if … elif</th></tr><tr><td>Tests <strong>indépendants</strong> : <strong>plusieurs</strong> blocs peuvent s’exécuter.</td><td>Tests <strong>exclusifs</strong> : <strong>un seul</strong> bloc s’exécute.</td></tr></table>
-<ul><li>Conditions composées : <code>if age &gt;= 12 and age &lt; 18:</code> (adolescent) ; <code>if pluie or arrosage:</code> ; <code>if not nuit:</code>.</li></ul><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 10</div><div class="exo-title">Quelle tenue ?</div></div></div><div class="exo-body"><p>On reprend le programme de la tenue (partie IV). Qu’affiche-t-il si l’on tape <strong>20</strong> ? <strong>30</strong> ? <strong>−5</strong> ?</p><div class="toggle-btn btn-corr" onclick="toggle('c-ex10')"><span class="toggle-icon" id="ic-ex10">▶</span> Voir la correction</div><div class="corr-box" id="c-ex10"><p>20 → « Un pull » (20 &gt; 20 est faux, 20 &gt; 10 est vrai). 30 → « Chemise légère » (30 &gt; 30 est faux). −5 → « Manteau, bonnet et gants ».</p></div></div></div>
+<ul><li>Conditions composées : <code>if age &gt;= 12 and age &lt; 18:</code> (adolescent) ; <code>if pluie or arrosage:</code> ; <code>if not nuit:</code>.</li></ul><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 10</div><div class="exo-title">Quelle tenue ?</div></div></div><div class="exo-body"><p>On reprend le programme de la tenue (partie IV). Qu’affiche-t-il si l’on tape <strong>20</strong> ? <strong>30</strong> ? <strong>−5</strong> ?</p><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex10" onclick="toggle('c-ex10')"><span class="toggle-icon" id="ic-ex10">▶</span> Voir la correction</button><div class="corr-box" id="c-ex10"><p>20 → « Un pull » (20 &gt; 20 est faux, 20 &gt; 10 est vrai).<br>30 → « Chemise légère » (30 &gt; 30 est faux).<br>−5 → « Manteau, bonnet et gants ».</p></div></div></div>
 <div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 11</div><div class="exo-title">if ou elif ?</div></div></div><div class="exo-body"><p>Qu’affiche ce programme ? Et si l’on remplace le second <code>if</code> par <code>elif</code> ?</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="7">x = 15
 if x &gt; 10:
@@ -538,11 +339,11 @@ if x &gt; 5:
     print("B")
 else:
     print("C")</textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex11')"><span class="toggle-icon" id="ic-ex11">▶</span> Voir la correction</div><div class="corr-box" id="c-ex11"><p>Deux <code>if</code> indépendants : <code>A</code> puis <code>B</code>. Avec <code>elif</code>, seul <code>A</code> s’affiche (le premier test vrai arrête tout).</p></div></div></div>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex11" onclick="toggle('c-ex11')"><span class="toggle-icon" id="ic-ex11">▶</span> Voir la correction</button><div class="corr-box" id="c-ex11"><p>Deux <code>if</code> indépendants : <code>A</code> puis <code>B</code>.<br>Avec <code>elif</code>, seul <code>A</code> s’affiche (le premier test vrai arrête tout).</p></div></div></div>
 <div class="exo-card"><div class="exo-hdr hard"><div><div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 12</div><div class="exo-title">Parité et âge</div></div></div><div class="exo-body"><p>a) Écrire un programme qui demande un entier et affiche « Pair » ou « Impair » (utiliser <code>%</code>).<br>b) Écrire un programme qui demande un âge et affiche « Enfant » (moins de 12 ans), « Adolescent » (12 à 17 ans) ou « Adulte » (18 ans ou plus).</p><p style="margin-top:12px"><strong>À toi de coder :</strong></p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="11"># Écris ton programme ici
 </textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex12')"><span class="toggle-icon" id="ic-ex12">▶</span> Voir la correction</div><div class="corr-box" id="c-ex12"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre>n <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Entier ? "</span>))
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex12" onclick="toggle('c-ex12')"><span class="toggle-icon" id="ic-ex12">▶</span> Voir la correction</button><div class="corr-box" id="c-ex12"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre>n <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Entier ? "</span>))
 <span class="kw">if</span> n <span class="op">%</span> <span class="nb">2</span> <span class="op">==</span> <span class="nb">0</span><span class="op">:</span>
     <span class="fn">print</span>(<span class="st">"Pair"</span>)
 <span class="kw">else</span><span class="op">:</span>
@@ -592,7 +393,7 @@ def triple(n):
 a = double(4)
 b = triple(4)
 print(a, b)</textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex13')"><span class="toggle-icon" id="ic-ex13">▶</span> Voir la correction</div><div class="corr-box" id="c-ex13"><p><code>12</code> (affiché par <code>triple</code>), puis <code>8 None</code> : <code>triple</code> affiche mais ne renvoie rien, donc <code>b</code> vaut <code>None</code>.</p></div></div></div>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex13" onclick="toggle('c-ex13')"><span class="toggle-icon" id="ic-ex13">▶</span> Voir la correction</button><div class="corr-box" id="c-ex13"><p><code>12</code> (affiché par <code>triple</code>), puis <code>8 None</code> : <code>triple</code> affiche mais ne renvoie rien, donc <code>b</code> vaut <code>None</code>.</p></div></div></div>
 <div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 14</div><div class="exo-title">Variable locale</div></div></div><div class="exo-body"><p>Qu’affiche ce programme ? Le corriger pour obtenir 60.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="7">def soigner(pv):
     pv = pv + 10
@@ -601,11 +402,11 @@ print(a, b)</textarea>
 pv = 50
 soigner(pv)
 print(pv)</textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex14')"><span class="toggle-icon" id="ic-ex14">▶</span> Voir la correction</div><div class="corr-box" id="c-ex14"><p><code>50</code> : la valeur renvoyée (60) n’est rangée nulle part. Correction : <code>pv = soigner(pv)</code>.</p></div></div></div>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex14" onclick="toggle('c-ex14')"><span class="toggle-icon" id="ic-ex14">▶</span> Voir la correction</button><div class="corr-box" id="c-ex14"><p><code>50</code> : la valeur renvoyée (60) n’est rangée nulle part.<br>Correction : <code>pv = soigner(pv)</code>.</p></div></div></div>
 <div class="exo-card"><div class="exo-hdr hard"><div><div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 15</div><div class="exo-title">Écrire des fonctions</div></div></div><div class="exo-body"><p>a) Écrire <code>prix_ttc(prix_ht)</code> qui renvoie le prix TTC (TVA de 20 %).<br>b) Écrire <code>est_majeur(age)</code> qui renvoie <code>True</code> si l’âge est au moins 18, <code>False</code> sinon.<br>c) Écrire deux appels de test pour chaque fonction, avec le résultat attendu en commentaire.</p><p style="margin-top:12px"><strong>À toi de coder :</strong></p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="11"># Écris ton programme ici
 </textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex15')"><span class="toggle-icon" id="ic-ex15">▶</span> Voir la correction</div><div class="corr-box" id="c-ex15"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre><span class="kw">def</span> <span class="df">prix_ttc</span>(prix_ht)<span class="op">:</span>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex15" onclick="toggle('c-ex15')"><span class="toggle-icon" id="ic-ex15">▶</span> Voir la correction</button><div class="corr-box" id="c-ex15"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre><span class="kw">def</span> <span class="df">prix_ttc</span>(prix_ht)<span class="op">:</span>
     <span class="kw">return</span> prix_ht <span class="op">*</span> <span class="nb">1.2</span>
 
 <span class="kw">def</span> <span class="df">est_majeur</span>(age)<span class="op">:</span>
@@ -644,34 +445,34 @@ while code != "JURASSIC":
 print("Systèmes réinitialisés !")</textarea>
 <div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div>
 <ul><li>On ne sait pas combien d’essais il faudra : c’est un cas typique de <code>while</code>.</li><li><code>code</code> doit exister <strong>avant</strong> la boucle (sinon <strong>NameError</strong> au premier test).</li></ul><h3>for ou while ?</h3><table><tr><th></th><th>for</th><th>while</th></tr><tr><td>Quand ?</td><td>nombre de tours <strong>connu</strong> à l’avance</td><td>on répète <strong>tant que</strong> une condition est vraie</td></tr><tr><td>Exemples</td><td>10 rencontres ; chaque lettre d’un mot</td><td>combat ; saisie à redemander ; fuir jusqu’à 100 m</td></tr><tr><td>Mise à jour</td><td>automatique</td><td>à écrire soi-même dans la boucle</td></tr></table>
-<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre><span class="cm"># Ces deux boucles affichent 1, 2, 3</span>
-<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">1</span>, <span class="nb">4</span>)<span class="op">:</span>        i <span class="op">=</span> <span class="nb">1</span>
-    <span class="fn">print</span>(i)                  <span class="kw">while</span> i <span class="op">&lt;</span> <span class="nb">4</span><span class="op">:</span>
-                                  <span class="fn">print</span>(i)
-                                  i <span class="op">=</span> i <span class="op">+</span> <span class="nb">1</span></pre></div><h3>À toi de prédire : quelles valeurs prend i ?</h3><table><tr><th>Code</th><th>Réponse</th></tr><tr><td><code>for i in range(3):</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-VI-0')"><span class="toggle-icon" id="ix-VI-0">▶</span> Voir</span><span class="hint-box" id="x-VI-0" style="padding:6px 10px">0, 1, 2</span></td></tr><tr><td><code>for i in range(1, 6):</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-VI-1')"><span class="toggle-icon" id="ix-VI-1">▶</span> Voir</span><span class="hint-box" id="x-VI-1" style="padding:6px 10px">1, 2, 3, 4, 5</span></td></tr><tr><td><code>for i in range(0, 10, 2):</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-VI-2')"><span class="toggle-icon" id="ix-VI-2">▶</span> Voir</span><span class="hint-box" id="x-VI-2" style="padding:6px 10px">0, 2, 4, 6, 8</span></td></tr><tr><td><code>for i in range(3, 0, -1):</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-VI-3')"><span class="toggle-icon" id="ix-VI-3">▶</span> Voir</span><span class="hint-box" id="x-VI-3" style="padding:6px 10px">3, 2, 1</span></td></tr></table><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 16</div><div class="exo-title">Les valeurs de range</div></div></div><div class="exo-body"><p>Donner les valeurs prises par i et le nombre de tours :<br>a) <code>for i in range(4):</code>   b) <code>for i in range(3, 8):</code>   c) <code>for i in range(0, 20, 5):</code>   d) <code>for i in range(5, 0, -1):</code></p><div class="toggle-btn btn-corr" onclick="toggle('c-ex16')"><span class="toggle-icon" id="ic-ex16">▶</span> Voir la correction</div><div class="corr-box" id="c-ex16"><p>a) 0, 1, 2, 3 (4 tours) ; b) 3, 4, 5, 6, 7 (5 tours) ; c) 0, 5, 10, 15 (4 tours) ; d) 5, 4, 3, 2, 1 (5 tours).</p></div></div></div>
+<p class="compare-title">Ces deux boucles affichent 1, 2, 3 :</p><div class="compare-loops"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>avec for</span></div><pre><span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">1</span>, <span class="nb">4</span>)<span class="op">:</span>
+    <span class="fn">print</span>(i)</pre></div><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>avec while</span></div><pre>i <span class="op">=</span> <span class="nb">1</span>
+<span class="kw">while</span> i <span class="op">&lt;</span> <span class="nb">4</span><span class="op">:</span>
+    <span class="fn">print</span>(i)
+    i <span class="op">=</span> i <span class="op">+</span> <span class="nb">1</span></pre></div></div><h3>À toi de prédire : quelles valeurs prend i ?</h3><table><tr><th>Code</th><th>Réponse</th></tr><tr><td><code>for i in range(3):</code></td><td><button type="button" class="toggle-btn btn-hint" style="margin-top:0" aria-expanded="false" aria-controls="x-VI-0" onclick="toggle('x-VI-0')"><span class="toggle-icon" id="ix-VI-0">▶</span> Voir</button><span class="hint-box" id="x-VI-0" style="padding:6px 10px">0, 1, 2</span></td></tr><tr><td><code>for i in range(1, 6):</code></td><td><button type="button" class="toggle-btn btn-hint" style="margin-top:0" aria-expanded="false" aria-controls="x-VI-1" onclick="toggle('x-VI-1')"><span class="toggle-icon" id="ix-VI-1">▶</span> Voir</button><span class="hint-box" id="x-VI-1" style="padding:6px 10px">1, 2, 3, 4, 5</span></td></tr><tr><td><code>for i in range(0, 10, 2):</code></td><td><button type="button" class="toggle-btn btn-hint" style="margin-top:0" aria-expanded="false" aria-controls="x-VI-2" onclick="toggle('x-VI-2')"><span class="toggle-icon" id="ix-VI-2">▶</span> Voir</button><span class="hint-box" id="x-VI-2" style="padding:6px 10px">0, 2, 4, 6, 8</span></td></tr><tr><td><code>for i in range(3, 0, -1):</code></td><td><button type="button" class="toggle-btn btn-hint" style="margin-top:0" aria-expanded="false" aria-controls="x-VI-3" onclick="toggle('x-VI-3')"><span class="toggle-icon" id="ix-VI-3">▶</span> Voir</button><span class="hint-box" id="x-VI-3" style="padding:6px 10px">3, 2, 1</span></td></tr></table><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 16</div><div class="exo-title">Les valeurs de range</div></div></div><div class="exo-body"><p>Donner les valeurs prises par i et le nombre de tours :<br>a) <code>for i in range(4):</code>   b) <code>for i in range(3, 8):</code>   c) <code>for i in range(0, 20, 5):</code>   d) <code>for i in range(5, 0, -1):</code></p><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex16" onclick="toggle('c-ex16')"><span class="toggle-icon" id="ic-ex16">▶</span> Voir la correction</button><div class="corr-box" id="c-ex16"><p>a) 0, 1, 2, 3 (4 tours) ; b) 3, 4, 5, 6, 7 (5 tours) ; c) 0, 5, 10, 15 (4 tours) ; d) 5, 4, 3, 2, 1 (5 tours).</p></div></div></div>
 <div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 17</div><div class="exo-title">Accumuler</div></div></div><div class="exo-body"><p>Compléter le tableau de suivi (prix, total) puis donner l’affichage.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="4">total = 0
 for prix in [6.9, 7.5, 8]:
     total = total + prix
 print(total)</textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><table><tr><th>Tour</th><th>prix</th><th>total</th></tr><tr><td>1</td><td></td><td></td></tr><tr><td>2</td><td></td><td></td></tr><tr><td>3</td><td></td><td></td></tr></table><div class="toggle-btn btn-corr" onclick="toggle('c-ex17')"><span class="toggle-icon" id="ic-ex17">▶</span> Voir la correction</div><div class="corr-box" id="c-ex17"><p>Tour 1 : 6.9 → 6.9 ; tour 2 : 7.5 → 14.4 ; tour 3 : 8 → 22.4. Affichage : <code>22.4</code>.</p></div></div></div>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><table><tr><th>Tour</th><th>prix</th><th>total</th></tr><tr><td>1</td><td></td><td></td></tr><tr><td>2</td><td></td><td></td></tr><tr><td>3</td><td></td><td></td></tr></table><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex17" onclick="toggle('c-ex17')"><span class="toggle-icon" id="ic-ex17">▶</span> Voir la correction</button><div class="corr-box" id="c-ex17"><p>Tour 1 : 6.9 → 6.9 ; tour 2 : 7.5 → 14.4 ; tour 3 : 8 → 22.4.<br>Affichage : <code>22.4</code>.</p></div></div></div>
 <div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 18</div><div class="exo-title">DinoTech Park : les portes</div></div></div><div class="exo-body"><p>La tempête a ouvert les 3 portes des enclos. Le programme les referme une par une.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="4">portes_fermees = 0
 while portes_fermees &lt; 3:
     portes_fermees = portes_fermees + 1
     print("Porte", portes_fermees, "fermée")</textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><ul><li>a) Combien de fois la boucle s’exécute-t-elle ?</li><li>b) Que se passe-t-il si on oublie la ligne 3 ?</li><li>c) Que se passe-t-il si la condition devient <code>while portes_fermees &gt; 3:</code> ?</li></ul><div class="toggle-btn btn-corr" onclick="toggle('c-ex18')"><span class="toggle-icon" id="ic-ex18">▶</span> Voir la correction</div><div class="corr-box" id="c-ex18"><p>a) 3 fois (Porte 1, 2, 3 fermée). b) <code>portes_fermees</code> reste à 0 : <strong>boucle infinie</strong> (« Porte 0 fermée » sans fin). c) 0 &gt; 3 est faux dès le départ : la boucle <strong>ne s’exécute jamais</strong>.</p></div></div></div>
-<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 19</div><div class="exo-title">DinoTech Park : l’alarme</div></div></div><div class="exo-body"><p>Un dinosaure est à 60 m du bâtiment et se rapproche de 8 m à chaque tour. On reprend le programme du tableau de suivi (partie VII).</p><ul><li>a) Combien de tours faut-il pour déclencher l’alarme (distance &lt; 50 m) ?</li><li>b) Le dinosaure part maintenant de 66 m. Faire le tableau de suivi et donner l’affichage.</li></ul><div class="toggle-btn btn-corr" onclick="toggle('c-ex19')"><span class="toggle-icon" id="ic-ex19">▶</span> Voir la correction</div><div class="corr-box" id="c-ex19"><p>a) 2 tours (60 → 52 → 44). b) 66 → 58 → 50 → 42 : 3 tours (50 &gt;= 50 est encore vrai). Affichage : <code>42 3</code>.</p></div></div></div>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><ul><li>a) Combien de fois la boucle s’exécute-t-elle ?</li><li>b) Que se passe-t-il si on oublie la ligne 3 ?</li><li>c) Que se passe-t-il si la condition devient <code>while portes_fermees &gt; 3:</code> ?</li></ul><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex18" onclick="toggle('c-ex18')"><span class="toggle-icon" id="ic-ex18">▶</span> Voir la correction</button><div class="corr-box" id="c-ex18"><p>a) 3 fois (Porte 1, 2, 3 fermée).<br>b) <code>portes_fermees</code> reste à 0 : <strong>boucle infinie</strong> (« Porte 0 fermée » sans fin).<br>c) 0 &gt; 3 est faux dès le départ : la boucle <strong>ne s’exécute jamais</strong>.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 19</div><div class="exo-title">DinoTech Park : l’alarme</div></div></div><div class="exo-body"><p>Un dinosaure est à 60 m du bâtiment et se rapproche de 8 m à chaque tour. On reprend le programme du tableau de suivi (partie VII).</p><ul><li>a) Combien de tours faut-il pour déclencher l’alarme (distance &lt; 50 m) ?</li><li>b) Le dinosaure part maintenant de 66 m. Faire le tableau de suivi et donner l’affichage.</li></ul><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex19" onclick="toggle('c-ex19')"><span class="toggle-icon" id="ic-ex19">▶</span> Voir la correction</button><div class="corr-box" id="c-ex19"><p>a) 2 tours (60 → 52 → 44).<br>b) 66 → 58 → 50 → 42 : 3 tours (50 &gt;= 50 est encore vrai).<br>Affichage : <code>42 3</code>.</p></div></div></div>
 <div class="exo-card"><div class="exo-hdr hard"><div><div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 20</div><div class="exo-title">DinoTech Park : le code</div></div></div><div class="exo-body"><p>On reprend le programme « Redemander tant que ce n’est pas bon » (partie VI).</p><ul><li>a) L’utilisateur tape <code>jurassic</code> en minuscules. Que se passe-t-il ?</li><li>b) Que se passe-t-il si on supprime la ligne <code>code = ""</code> ?</li><li>c) Ajouter un compteur d’essais, affiché à la fin.</li></ul><p style="margin-top:12px"><strong>À toi de coder :</strong></p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="7"># Écris ton programme ici
 </textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex20')"><span class="toggle-icon" id="ic-ex20">▶</span> Voir la correction</div><div class="corr-box" id="c-ex20"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre>code <span class="op">=</span> <span class="st">""</span>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex20" onclick="toggle('c-ex20')"><span class="toggle-icon" id="ic-ex20">▶</span> Voir la correction</button><div class="corr-box" id="c-ex20"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre>code <span class="op">=</span> <span class="st">""</span>
 essais <span class="op">=</span> <span class="nb">0</span>
 <span class="kw">while</span> code <span class="op">!=</span> <span class="st">"JURASSIC"</span><span class="op">:</span>
     code <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Code de réinitialisation : "</span>)
     essais <span class="op">=</span> essais <span class="op">+</span> <span class="nb">1</span>
-<span class="fn">print</span>(<span class="st">"Systèmes réinitialisés en"</span>, essais, <span class="st">"essais !"</span>)</pre></div><p>a) Le code est refusé : <code>"jurassic" != "JURASSIC"</code> est vrai, la boucle continue. b) <strong>NameError</strong> : <code>code</code> n’existe pas au moment du premier test.</p></div></div></div>
-<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 21</div><div class="exo-title">for ou while ?</div></div></div><div class="exo-body"><p>Pour chaque situation, choisir <code>for</code> ou <code>while</code> et justifier.<br>a) Afficher les 10 rencontres d’une exploration.   b) Fuir le T-rex jusqu’à être à 100 m.<br>c) Afficher chaque lettre d’un prénom.   d) Redemander une note tant qu’elle n’est pas entre 0 et 20.</p><div class="toggle-btn btn-corr" onclick="toggle('c-ex21')"><span class="toggle-icon" id="ic-ex21">▶</span> Voir la correction</div><div class="corr-box" id="c-ex21"><p>a) <code>for</code> (10 tours connus). b) <code>while</code> (on ne sait pas combien de pas). c) <code>for</code> (une lettre par tour). d) <code>while</code> (nombre d’essais inconnu).</p></div></div></div></div>
+<span class="fn">print</span>(<span class="st">"Systèmes réinitialisés en"</span>, essais, <span class="st">"essais !"</span>)</pre></div><p>a) Le code est refusé : <code>"jurassic" != "JURASSIC"</code> est vrai, la boucle continue.<br>b) <strong>NameError</strong> : <code>code</code> n’existe pas au moment du premier test.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 21</div><div class="exo-title">for ou while ?</div></div></div><div class="exo-body"><p>Pour chaque situation, choisir <code>for</code> ou <code>while</code> et justifier.<br>a) Afficher les 10 rencontres d’une exploration.   b) Fuir le T-rex jusqu’à être à 100 m.<br>c) Afficher chaque lettre d’un prénom.   d) Redemander une note tant qu’elle n’est pas entre 0 et 20.</p><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex21" onclick="toggle('c-ex21')"><span class="toggle-icon" id="ic-ex21">▶</span> Voir la correction</button><div class="corr-box" id="c-ex21"><p>a) <code>for</code> (10 tours connus).<br>b) <code>while</code> (on ne sait pas combien de pas).<br>c) <code>for</code> (une lettre par tour).<br>d) <code>while</code> (nombre d’essais inconnu).</p></div></div></div></div>
 <div class="section" id="s7"><div class="section-num">07 — Comprendre son programme</div><h2>Comprendre son programme</h2><h3>Le tableau de suivi</h3><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="6">distance = 60
 tours = 0
@@ -690,11 +491,11 @@ nom <span class="op">=</span> <span class="fn">input</span>(<span class="st">"No
 i <span class="op">=</span> <span class="nb">0</span>
 <span class="kw">while</span> i <span class="op">&lt;</span> <span class="nb">3</span><span class="op">:</span>
     <span class="fn">print</span>(i)
-i <span class="op">=</span> i <span class="op">+</span> <span class="nb">1</span></pre></div><p style="font-size:13px;color:var(--muted)">⚠ Ce code n’est pas exécutable ici : le programme B tourne sans fin.</p><div class="toggle-btn btn-corr" onclick="toggle('c-ex22')"><span class="toggle-icon" id="ic-ex22">▶</span> Voir la correction</div><div class="corr-box" id="c-ex22"><p>A : <strong>NameError</strong>, <code>Nom</code> ≠ <code>nom</code> → <code>print("Bonjour", nom)</code>. B : <code>i = i + 1</code> n’est pas indenté, il est hors de la boucle : <strong>boucle infinie</strong> (0 0 0…) → l’indenter.</p></div></div></div>
+i <span class="op">=</span> i <span class="op">+</span> <span class="nb">1</span></pre></div><p style="font-size:13px;color:var(--muted)">⚠ Ce code n’est pas exécutable ici : le programme B tourne sans fin.</p><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex22" onclick="toggle('c-ex22')"><span class="toggle-icon" id="ic-ex22">▶</span> Voir la correction</button><div class="corr-box" id="c-ex22"><p>A : <strong>NameError</strong>, <code>Nom</code> ≠ <code>nom</code> → <code>print("Bonjour", nom)</code>.<br>B : <code>i = i + 1</code> n’est pas indenté, il est hors de la boucle : <strong>boucle infinie</strong> (0 0 0…) → l’indenter.</p></div></div></div>
 <div class="exo-card"><div class="exo-hdr hard"><div><div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 23</div><div class="exo-title">Défi : le nombre mystère</div></div></div><div class="exo-body"><p>a) Écrire une fonction <code>comparer(proposition, secret)</code> qui renvoie <code>"Trop bas"</code>, <code>"Trop haut"</code> ou <code>"Gagné"</code>.<br>b) Écrire le jeu : l’ordinateur tire un nombre entre 1 et 100 avec <code>random.randint</code> ; le joueur propose tant qu’il n’a pas trouvé ; on affiche à chaque fois la réponse de <code>comparer</code>, puis le nombre d’essais à la fin.</p><p style="margin-top:12px"><strong>À toi de coder :</strong></p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
 <textarea class="code-editor" spellcheck="false" rows="12"># Écris ton programme ici
 </textarea>
-<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex23')"><span class="toggle-icon" id="ic-ex23">▶</span> Voir la correction</div><div class="corr-box" id="c-ex23"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre><span class="kw">import</span> random
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex23" onclick="toggle('c-ex23')"><span class="toggle-icon" id="ic-ex23">▶</span> Voir la correction</button><div class="corr-box" id="c-ex23"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre><span class="kw">import</span> random
 
 <span class="kw">def</span> <span class="df">comparer</span>(proposition, secret)<span class="op">:</span>
     <span class="kw">if</span> proposition <span class="op">&lt;</span> secret<span class="op">:</span>
@@ -732,7 +533,7 @@ essais <span class="op">=</span> <span class="nb">0</span>
 </table><button class="checklist-reset" onclick="resetChecklist()">↺ Réinitialiser</button></div>
 <div class="section" id="qcm"><div class="section-num">10 — QCM</div><h2>Quiz interactif — Les bases de Python</h2>
 <p style="color:var(--muted);margin-bottom:16px;">Banque de <strong style="color:var(--green)">33 questions</strong>. Choisis le nombre de questions et lance le tirage.</p>
-<div class="qcm-controls"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)">Nombre de questions :</span>
+<div class="qcm-controls"><span style="font-family:var(--mono);font-size:12px;color:var(--muted)">Nombre de questions :</span>
 <label class="qcm-size-opt" id="lbl5"><input type="radio" name="qsz" value="5" checked onchange="onSzChange()"> 5 questions</label>
 <label class="qcm-size-opt" id="lbl10"><input type="radio" name="qsz" value="10" onchange="onSzChange()"> 10 questions</label>
 <button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button></div>
@@ -740,17 +541,31 @@ essais <span class="op">=</span> <span class="nb">0</span>
 <div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;"><button class="qcm-btn qcm-btn-primary" onclick="submitQCM()" id="btn-sub">✅ Valider mes réponses</button><button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button></div>
 <div id="qcm-result"></div></div>
 </div>
-<footer>NSI · 1ère Spécialité · Les bases de Python · Cours complet + Exercices + QCM</footer>
+</main>
+<footer><div class="wrap foot"><p>© 2026 Mme L. · Maths &amp; informatique · Les bases de Python</p><a href="../../index.html#contact">Contact</a></div></footer>
 <script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
 <script>
-function toggle(id){const el=document.getElementById(id);const icon=document.getElementById('i'+id);el.classList.toggle('open');if(icon)icon.textContent=el.classList.contains('open')?'\u25bc':'\u25b6';}
-function onSzChange(){const v5=document.querySelector('[name="qsz"][value="5"]').checked;document.getElementById('lbl5').style.borderColor=v5?'#2563eb':'';document.getElementById('lbl10').style.borderColor=!v5?'#2563eb':'';}
+function toggle(id){const el=document.getElementById(id);const icon=document.getElementById('i'+id);const open=el.classList.toggle('open');if(icon)icon.textContent=open?'\u25bc':'\u25b6';document.querySelectorAll('[aria-controls="'+id+'"]').forEach(function(b){b.setAttribute('aria-expanded',open);});}
+function onSzChange(){const v5=document.querySelector('[name="qsz"][value="5"]').checked;document.getElementById('lbl5').style.borderColor=v5?'#94516f':'';document.getElementById('lbl10').style.borderColor=!v5?'#94516f':'';}
 let _pyodidePromise=null;
 function getPyodide(){ if(!_pyodidePromise){ _pyodidePromise=loadPyodide().then(async function(py){
   await py.runPythonAsync(`
-import builtins, js
+import builtins, js, sys, time
+LIMITE = 5  # secondes de calcul autorisées avant d'arrêter le programme
+_garde = {'t0': 0.0}
+def _trace(frame, event, arg):
+    if time.time() - _garde['t0'] > LIMITE:
+        sys.settrace(None)
+        raise TimeoutError("programme arrêté au bout de " + str(LIMITE) + " s. Boucle infinie ? Vérifie que la condition du while finit par devenir fausse.")
+    return _trace
+def _garde_on():
+    _garde['t0'] = time.time()
+    sys.settrace(_trace)
+def _garde_off():
+    sys.settrace(None)
 def _saisie(message=''):
     v = js.prompt(str(message))
+    _garde['t0'] = time.time()   # le temps passé à taper ne compte pas
     if v is None:
         raise KeyboardInterrupt("saisie annulée")
     print(str(message) + v)
@@ -762,9 +577,12 @@ async function runPycode(btn){
   const original=btn.textContent; btn.disabled=true; btn.textContent='...'; out.textContent='';
   try{
     const py=await getPyodide();
-    py.setStdout({batched:function(s){out.textContent+=s+'\n';}});
-    py.setStderr({batched:function(s){out.textContent+=s+'\n';}});
-    await py.runPythonAsync(ta.value);
+    let lignes=0; const MAX_LIGNES=300;
+    const ecrire=function(t){ if(lignes<MAX_LIGNES){ out.textContent+=t+'\n'; } else if(lignes===MAX_LIGNES){ out.textContent+='… (affichage limité à '+MAX_LIGNES+' lignes)\n'; } lignes++; };
+    py.setStdout({batched:ecrire});
+    py.setStderr({batched:ecrire});
+    py.runPython('_garde_on()');
+    try{ await py.runPythonAsync(ta.value); } finally { py.runPython('_garde_off()'); }
     if(!out.textContent.trim()) out.textContent='(aucune sortie : pense à utiliser print() pour afficher un résultat)';
   }catch(err){
     const msg=String(err.message||err).trim().split('\n'); out.textContent+='Erreur : '+msg[msg.length-1];
@@ -789,7 +607,7 @@ document.querySelectorAll('input[name="q'+qi+'"]').forEach(r=>r.disabled=true);c
 if(sel){const ch=parseInt(sel.value);if(ch===corrSi){score++;block.classList.add('correct');fb.className='qcm-fb show ok';fb.innerHTML='Bonne réponse ! '+q.ex;}
 else{block.classList.add('wrong');document.getElementById('opt-'+qi+'-'+ch)?.classList.add('opt-ko');fb.className='qcm-fb show ko';fb.innerHTML='Mauvaise réponse. '+q.ex;}}
 else{block.classList.add('wrong');fb.className='qcm-fb show ko';fb.innerHTML='Pas de réponse. '+q.ex;}});
-const pct=(score/qSz)*100,ratio=score/qSz,col=ratio<0.3?'#dc2626':ratio<0.5?'#d97706':ratio<0.7?'#ca8a04':ratio<0.9?'#059669':'#0891b2';
+const pct=(score/qSz)*100,ratio=score/qSz,col=ratio<0.3?'#b0465a':ratio<0.5?'#a2602a':ratio<0.7?'#8a7424':ratio<0.9?'#3f7a5c':'#705689';
 const msg=p=>p<30?'Relis le cours !':p<50?'Quelques révisions s’imposent.':p<70?'Pas mal, continue !':p<90?'Très bien !':'Parfait, maîtrise totale !';
 const r=document.getElementById('qcm-result');r.style.display='block';
 r.innerHTML='<div class="score-big" style="color:'+col+'">'+score+'<span style="font-size:26px;opacity:.5">/'+qSz+'</span></div><div class="score-sub">≈ <strong>'+Math.round(ratio*20)+'/20</strong></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%;background:'+col+'" id="sfill"></div></div><div class="score-msg" style="color:'+col+'">'+msg(pct)+'</div>';

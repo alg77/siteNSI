@@ -1,0 +1,801 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Les bases de Python — Cours 1ère NSI</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:       #ffffff;
+  --surface:  #f8fafc;
+  --surface2: #f1f5f9;
+  --border:   #e2e8f0;
+  --blue:     #2563eb;
+  --blue-lt:  #eff6ff;
+  --blue-dk:  #1e3a5f;
+  --green:    #059669;
+  --green-lt: #f0fdf4;
+  --orange:   #d97706;
+  --orange-lt:#fffbeb;
+  --red:      #dc2626;
+  --red-lt:   #fef2f2;
+  --purple:   #6366f1;
+  --purple-lt:#eef2ff;
+  --text:     #1e293b;
+  --text2:    #475569;
+  --muted:    #64748b;
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body {
+  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.75;
+  font-size: 16px;
+}
+
+/* ── HERO ── */
+.hero {
+  background: linear-gradient(135deg, #1e3a5f 0%, #2563eb 60%, #1d4ed8 100%);
+  padding: 60px 40px 50px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content:'';
+  position:absolute; inset:0;
+  background: radial-gradient(ellipse 80% 60% at 50% 0%, rgba(255,255,255,0.08) 0%, transparent 70%);
+}
+.hero-badge {
+  display:inline-block;
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.35);
+  color: white;
+  font-family:'JetBrains Mono',monospace;
+  font-size:12px; letter-spacing:2px; text-transform:uppercase;
+  padding:4px 14px; border-radius:20px; margin-bottom:20px;
+}
+.hero h1 {
+  font-size: clamp(32px,6vw,66px);
+  font-weight:900; line-height:1.1;
+  letter-spacing:-2px; margin-bottom:14px; color:white;
+}
+.hero h1 span { color:#93c5fd; }
+.hero p {
+  color:rgba(255,255,255,0.78);
+  font-style:italic; font-size:18px;
+  max-width:520px; margin:0 auto;
+}
+
+/* ── NAV ── */
+.toc {
+  background: var(--surface2);
+  border-bottom: 2px solid var(--border);
+  padding:12px 28px;
+  display:flex; flex-wrap:wrap; gap:5px;
+  justify-content:center;
+  position:sticky; top:0; z-index:100;
+}
+.toc a {
+  font-family:'JetBrains Mono',monospace; font-size:11.5px;
+  color:var(--muted); text-decoration:none;
+  padding:5px 11px; border-radius:4px;
+  border:1px solid transparent; transition:all .2s;
+}
+.toc a:hover { color:var(--blue); border-color:var(--blue); background:var(--blue-lt); }
+
+/* ── LAYOUT ── */
+.container { max-width:920px; margin:0 auto; padding:0 28px; }
+.section { padding:56px 0 38px; border-bottom:1px solid var(--border); }
+.section:last-child { border-bottom:none; }
+
+/* ── SECTION HEADERS ── */
+.section-num {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:var(--blue); letter-spacing:3px; text-transform:uppercase; margin-bottom:6px;
+}
+.section h2 {
+  font-size:clamp(22px,4vw,36px); font-weight:900;
+  letter-spacing:-1px; margin-bottom:22px; line-height:1.15; color:var(--text);
+}
+.section h3 {
+  font-size:18px; font-weight:700; color:var(--orange);
+  margin:34px 0 12px;
+}
+.section h4 {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--blue-dk); margin:22px 0 8px; letter-spacing:1px;
+}
+.section p { color:var(--text2); margin-bottom:12px; }
+.section ul, .section ol { padding-left:22px; margin-bottom:12px; }
+.section li { color:var(--text2); margin-bottom:5px; }
+strong { color:var(--text); }
+p code, li code, td code, th code {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--green); background:var(--green-lt);
+  padding:1px 6px; border-radius:3px;
+}
+
+/* ── CODE BLOCKS (dark, intentional) ── */
+.code-block {
+  background:#0d1117; border:1px solid #2a2f45;
+  border-radius:10px; margin:18px 0; overflow:hidden;
+}
+.code-header {
+  background:#1e2333; border-bottom:1px solid #2a2f45;
+  padding:8px 16px; display:flex; align-items:center; gap:8px;
+  font-family:'JetBrains Mono',monospace; font-size:11px; color:#64748b;
+}
+.dot { width:10px; height:10px; border-radius:50%; }
+.dr{background:#ff5f56;} .dy{background:#ffbd2e;} .dg{background:#27c93f;}
+pre {
+  padding:18px 20px; overflow-x:auto;
+  font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7;
+  color:#e2e8f0;
+}
+/* Python syntax */
+.kw  { color:#c084fc; }   /* keyword */
+.fn  { color:#60a5fa; }   /* built-in function */
+.st  { color:#4ade80; }   /* string */
+.cm  { color:#475569; font-style:italic; } /* comment */
+.nb  { color:#fb923c; }   /* number */
+.op  { color:#94a3b8; }   /* operator */
+.df  { color:#fbbf24; }   /* def name */
+.bi  { color:#f472b6; }   /* bool / None */
+
+/* ── INFO BOXES ── */
+.box {
+  border-radius:10px; padding:16px 20px;
+  margin:18px 0; border-left:4px solid; font-size:15px;
+}
+.box-tip   { background:var(--green-lt);  border-color:var(--green); }
+.box-warn  { background:var(--orange-lt); border-color:var(--orange); }
+.box-info  { background:var(--blue-lt);   border-color:var(--blue); }
+.box-alert { background:var(--red-lt);    border-color:var(--red); }
+.box-key   { background:var(--purple-lt); border-color:var(--purple); }
+.box-title {
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  letter-spacing:2px; text-transform:uppercase; font-weight:700; margin-bottom:7px;
+}
+.box-tip .box-title   { color:var(--green); }
+.box-warn .box-title  { color:var(--orange); }
+.box-info .box-title  { color:var(--blue); }
+.box-alert .box-title { color:var(--red); }
+.box-key .box-title   { color:var(--purple); }
+
+/* ── TABLES ── */
+table { width:100%; border-collapse:collapse; margin:18px 0; font-size:15px; }
+th {
+  background:var(--blue-dk); color:white;
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  letter-spacing:1px; text-transform:uppercase;
+  padding:9px 14px; text-align:left; border:1px solid var(--blue-dk);
+}
+td { padding:9px 14px; border:1px solid var(--border); color:var(--text2); vertical-align:top; }
+tr:nth-child(even) td { background:var(--surface); }
+
+/* ── FUNCTION CARDS ── */
+.fn-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:14px; margin:18px 0; }
+.fn-card {
+  border:1px solid var(--border); border-radius:8px; overflow:hidden;
+  transition:box-shadow .2s;
+}
+.fn-card:hover { box-shadow:0 4px 16px rgba(0,0,0,0.08); }
+.fn-card-hdr {
+  background:var(--blue-dk); color:white;
+  padding:8px 14px;
+  font-family:'JetBrains Mono',monospace; font-size:14px; font-weight:700;
+}
+.fn-card-hdr span { color:#93c5fd; font-weight:400; font-size:12px; margin-left:8px; }
+.fn-card-body { padding:11px 14px; font-size:14px; color:var(--text2); line-height:1.6; background:white; }
+.fn-card-body code {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  color:var(--green); background:var(--green-lt);
+  padding:1px 5px; border-radius:3px;
+}
+.fn-card-ex {
+  background:var(--surface2); border-top:1px solid var(--border);
+  padding:8px 14px;
+  font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);
+}
+
+/* ── EXERCISES ── */
+.exo-card {
+  border:1px solid var(--border); border-radius:10px;
+  overflow:hidden; margin-bottom:22px;
+  box-shadow:0 2px 8px rgba(0,0,0,0.04);
+}
+.exo-hdr { padding:12px 20px; display:flex; align-items:center; gap:14px; }
+.exo-hdr.easy   { background:linear-gradient(90deg,#1e5631,#059669); }
+.exo-hdr.medium { background:linear-gradient(90deg,#92400e,#d97706); }
+.exo-hdr.hard   { background:linear-gradient(90deg,#7f1d1d,#dc2626); }
+.exo-level {
+  font-family:'JetBrains Mono',monospace; font-size:11px;
+  color:rgba(255,255,255,.8); letter-spacing:2px; text-transform:uppercase;
+}
+.exo-title { font-weight:700; font-size:16px; color:white; }
+.exo-body { padding:20px 22px; background:white; }
+.exo-body p { margin-bottom:10px; color:var(--text2); }
+.exo-body ol { padding-left:20px; }
+.exo-body li { margin-bottom:7px; color:var(--text2); }
+
+.toggle-btn {
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+  margin-top:14px; padding:7px 16px; border-radius:6px;
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  transition:all .2s; user-select:none;
+}
+.btn-hint { background:var(--blue-lt); border:1px solid #bfdbfe; color:var(--blue); }
+.btn-hint:hover { background:#dbeafe; }
+.btn-corr { background:var(--green-lt); border:1px solid #a7f3d0; color:var(--green); }
+.btn-corr:hover { background:#d1fae5; }
+.toggle-icon { font-size:10px; }
+.hint-box, .corr-box { display:none; margin-top:14px; }
+.hint-box.open, .corr-box.open { display:block; }
+.hint-box { background:var(--blue-lt); border:1px solid #bfdbfe; border-radius:7px; padding:14px 16px; }
+.corr-box { background:var(--green-lt); border:1px solid #a7f3d0; border-radius:7px; padding:14px 16px; }
+.corr-box p { color:var(--text2) !important; }
+
+/* ── DST SECTION ── */
+.dst-section {
+  background:var(--red-lt); border:1px solid #fecaca;
+  border-radius:12px; padding:34px; margin:36px 0;
+}
+.dst-section h2 { color:var(--red) !important; }
+.dst-section .section-num { color:var(--red) !important; }
+.checklist { list-style:none; padding:0; }
+.checklist li {
+  padding:8px 0; border-bottom:1px solid #fecaca;
+  display:flex; align-items:flex-start; gap:12px; color:var(--text2);
+}
+.checklist li:last-child { border-bottom:none; }
+.checklist li::before { content:'□'; font-size:15px; color:var(--blue); flex-shrink:0; }
+
+/* ── QCM ── */
+.qcm-controls {
+  display:flex; align-items:center; gap:14px; flex-wrap:wrap; margin-bottom:22px;
+}
+.qcm-size-opt {
+  display:flex; align-items:center; gap:8px; cursor:pointer;
+  padding:8px 18px; border-radius:8px;
+  border:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:13px; color:var(--muted);
+  transition:all .2s; user-select:none; background:white;
+}
+.qcm-size-opt:has(input:checked) { border-color:var(--blue); background:var(--blue-lt); color:var(--blue); }
+.qcm-size-opt input { accent-color:var(--blue); }
+.qcm-q {
+  background:white; border:1px solid var(--border);
+  border-radius:10px; padding:20px 22px; margin-bottom:14px;
+  transition:border-color .3s; box-shadow:0 1px 4px rgba(0,0,0,0.04);
+}
+.qcm-q.correct { border-color:var(--green); background:var(--green-lt); }
+.qcm-q.wrong   { border-color:var(--red);   background:var(--red-lt); }
+.qcm-num {
+  font-family:'JetBrains Mono',monospace; font-size:10px;
+  color:var(--blue); letter-spacing:2px; text-transform:uppercase; margin-bottom:7px;
+}
+.qcm-question { font-size:15px; font-weight:700; color:var(--text); margin-bottom:13px; line-height:1.5; }
+.qcm-question code {
+  font-family:'JetBrains Mono',monospace; font-size:13px;
+  color:var(--green); background:var(--green-lt); padding:1px 5px; border-radius:3px;
+}
+.qcm-opts { display:flex; flex-direction:column; gap:7px; }
+.qcm-opt {
+  display:flex; align-items:flex-start; gap:10px;
+  padding:9px 13px; border:1px solid var(--border);
+  border-radius:7px; cursor:pointer; transition:all .15s;
+  font-size:14px; color:var(--text2); background:white;
+}
+.qcm-opt:hover { border-color:var(--blue); background:var(--blue-lt); }
+.qcm-opt input { accent-color:var(--blue); width:14px; height:14px; flex-shrink:0; margin-top:2px; }
+.qcm-opt.opt-ok  { border-color:var(--green)!important; background:var(--green-lt)!important; color:var(--green); font-weight:700; }
+.qcm-opt.opt-ko  { border-color:var(--red)!important;   background:var(--red-lt)!important;   color:var(--red); }
+.qcm-opt code { font-family:'JetBrains Mono',monospace; font-size:12px; background:var(--green-lt); padding:1px 4px; border-radius:3px; color:inherit; }
+.qcm-fb {
+  margin-top:9px; font-size:13px; font-family:'JetBrains Mono',monospace;
+  padding:7px 11px; border-radius:5px; display:none; line-height:1.55;
+}
+.qcm-fb.show { display:block; }
+.qcm-fb.ok { background:var(--green-lt); color:var(--green); }
+.qcm-fb.ko { background:var(--red-lt);   color:var(--red); }
+#qcm-result {
+  background:var(--surface2); border:1px solid var(--border);
+  border-radius:12px; padding:26px; margin-top:22px; text-align:center; display:none;
+}
+.score-big { font-size:58px; font-weight:900; line-height:1; margin-bottom:6px; }
+.score-sub { color:var(--muted); font-size:14px; margin-bottom:14px; }
+.score-bar-bg { background:var(--border); border-radius:99px; height:10px; overflow:hidden; margin:14px 0; }
+.score-bar-fill { height:100%; border-radius:99px; transition:width .8s cubic-bezier(.4,0,.2,1); }
+.score-msg { font-size:17px; font-weight:700; margin-top:10px; }
+.qcm-btn {
+  font-family:'JetBrains Mono',monospace; font-size:12px;
+  padding:9px 20px; border-radius:7px; border:none; cursor:pointer;
+  font-weight:700; transition:opacity .2s;
+}
+.qcm-btn-primary { background:var(--blue); color:white; }
+.qcm-btn-secondary { background:var(--surface2); color:var(--text); border:1px solid var(--border); }
+.qcm-btn:hover { opacity:.85; }
+
+.hero-actions { display:flex; gap:12px; flex-wrap:wrap; margin-top:22px; }
+.hero-btn {
+  display:inline-flex; align-items:center; gap:8px;
+  background: rgba(255,255,255,0.14); border: 1px solid rgba(255,255,255,0.4);
+  color: white; text-decoration:none;
+  font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:700;
+  padding:10px 18px; border-radius:8px; transition: background .2s, transform .15s;
+}
+.hero-btn:hover { background: rgba(255,255,255,0.26); transform: translateY(-1px); }
+.hero-btn .ic { font-size:15px; }
+
+footer {
+  text-align:center; padding:38px;
+  color:var(--muted); font-family:'JetBrains Mono',monospace; font-size:11px;
+  border-top:1px solid var(--border);
+}
+@media(max-width:640px){
+  .hero{padding:36px 18px 30px;}
+  .container{padding:0 14px;}
+  pre{font-size:12px;}
+  .fn-grid{grid-template-columns:1fr;}
+}
+
+/* ── EXTRA : code executable (Pyodide) ── */
+.code-header { justify-content: space-between; }
+.code-header-left { display:flex; align-items:center; gap:8px; }
+.run-btn-mini {
+  font-family:'JetBrains Mono',monospace; font-size:11px; font-weight:700;
+  background:var(--green); color:white; border:none; border-radius:5px;
+  padding:4px 12px; cursor:pointer; transition:opacity .2s;
+}
+.run-btn-mini:hover { opacity:.85; }
+.run-btn-mini:disabled { opacity:.5; cursor:wait; }
+.code-editor {
+  width:100%; display:block; box-sizing:border-box; border:none; resize:vertical;
+  background:transparent; color:#e2e8f0;
+  padding:18px 20px; font-family:'JetBrains Mono',monospace; font-size:13.5px; line-height:1.7;
+  min-height:110px;
+}
+.code-editor:focus { outline:2px solid var(--blue); outline-offset:-2px; }
+.code-output {
+  margin:0; padding:12px 20px; border-top:1px solid #2a2f45;
+  font-family:'JetBrains Mono',monospace; font-size:12.5px; line-height:1.6;
+  color:#86efac; background:#0a0d14; white-space:pre-wrap;
+}
+
+/* ── EXTRA : mémo Python (détails) ── */
+.pymemo-toggle {
+  display:inline-flex; align-items:center; gap:8px; cursor:pointer;
+  margin:18px 0 4px; padding:9px 18px; border-radius:7px;
+  font-family:'JetBrains Mono',monospace; font-size:12.5px; font-weight:700;
+  background:var(--purple-lt); border:1px solid #c7d2fe; color:var(--purple);
+  transition:all .2s; user-select:none;
+}
+.pymemo-toggle:hover { background:#e0e7ff; }
+.pymemo-box { display:none; margin:10px 0 22px; }
+.pymemo-box.open { display:block; }
+.pymemo-item {
+  background:var(--purple-lt); border:1px solid #c7d2fe; border-left:4px solid var(--purple);
+  border-radius:8px; padding:14px 18px; margin-bottom:12px; font-size:14.5px; color:var(--text2);
+}
+.pymemo-item strong { color:var(--text); }
+.pymemo-item .code-block { margin:8px 0 0; }
+
+/* ── EXTRA : auto-évaluation DST à 3 niveaux (persistance) ── */
+.selfassess { width:100%; border-collapse:collapse; margin:16px 0; font-size:13.5px; }
+.selfassess th { background:var(--blue-dk); color:white; text-align:left; padding:9px 12px; }
+.selfassess th:not(:first-child) { text-align:center; }
+.selfassess td { padding:9px 12px; border-bottom:1px solid var(--border); color:var(--text2); }
+.selfassess td:not(:first-child) { text-align:center; }
+.selfassess tr:nth-child(even) td { background:var(--surface2); }
+.selfassess input[type="radio"] {
+  width:18px; height:18px; accent-color:var(--red); cursor:pointer;
+}
+.selfassess tr.done td:first-child { color:var(--muted); }
+.checklist-reset {
+  margin-top:10px; font-family:'JetBrains Mono',monospace; font-size:11.5px; font-weight:700;
+  color:var(--red); background:white; border:1px solid var(--red); border-radius:6px;
+  padding:6px 14px; cursor:pointer;
+}
+.checklist-reset:hover { background:var(--red-lt); }
+
+/* ── EXTRA : convertisseur interactif ── */
+.converter {
+  background:var(--surface2); border:1px solid var(--border); border-radius:12px;
+  padding:24px; margin:18px 0;
+}
+.conv-row { display:flex; gap:14px; flex-wrap:wrap; align-items:flex-end; margin-bottom:8px; }
+.conv-field { flex:1; min-width:150px; }
+.conv-field label {
+  display:block; font-family:'JetBrains Mono',monospace; font-size:11px;
+  color:var(--blue); margin-bottom:6px; letter-spacing:1px; text-transform:uppercase;
+}
+.conv-field input {
+  width:100%; padding:9px 12px; border-radius:7px; border:1px solid var(--border);
+  font-family:'JetBrains Mono',monospace; font-size:14px; background:white;
+}
+.conv-arrow { font-size:1.3rem; color:var(--blue); padding-bottom:9px; }
+.conv-note { font-size:12.5px; color:var(--muted); margin-top:6px; }
+
+.hint-box{font-size:14px}
+td .hint-box.open{display:inline-block;margin:0 0 0 10px}
+.exo-body table td:last-child:empty{min-width:120px}
+</style>
+</head>
+<body>
+<div class="hero">
+  <div class="hero-badge">NSI · 1ère Spécialité · Langages et programmation</div>
+  <h1>Les <span>bases</span> de Python</h1>
+  <p>Cours complet — Python exécutable — 23 exercices — QCM interactif</p>
+  <div class="hero-actions" style="justify-content:center">
+    <a class="hero-btn" href="1NSI-T6-Chap2-Bases-de-Python-cours.docx" download><span class="ic">📄</span> Télécharger le doc élève (Word)</a>
+    <a class="hero-btn" href="1NSI-T6-Chap2-Bases-de-Python.pptx" download><span class="ic">🖥️</span> Mode présentation (diaporama)</a>
+  </div>
+</div>
+<nav class="toc"><a href="#s1">1. Vocabulaire et variables</a><a href="#s2">2. Types et opérations</a><a href="#s3">3. Afficher et saisir</a><a href="#s4">4. Les conditions</a><a href="#s5">5. Les fonctions</a><a href="#s6">6. Les boucles</a><a href="#s7">7. Comprendre son programme</a><a href="#voc">📚 Vocabulaire</a><a href="#dst">⚠ Bilan</a><a href="#qcm">🎯 QCM</a></nav>
+<div class="container">
+<div class="section" id="s1"><div class="section-num">01 — Vocabulaire et variables</div><h2>Vocabulaire et variables</h2><div class="box box-key"><div class="box-title">🐍 Sur cette page</div>Les blocs de code sont <strong>modifiables et exécutables</strong> dans le navigateur (Pyodide, un vrai interpréteur Python). Clique sur <strong>▶ Exécuter</strong>. Quand un programme utilise <code>input()</code>, une fenêtre s’ouvre pour la saisie. <strong>Prédis toujours l’affichage avant d’exécuter !</strong></div><h3>Programme et instructions</h3><ul><li>Un <strong>algorithme</strong> est une suite finie d’étapes qui permet d’atteindre un but.</li><li>Un <strong>programme</strong> est la traduction d’un algorithme dans un langage compréhensible par l’ordinateur, ici <strong>Python</strong>.</li><li>Un programme est une suite d’<strong>instructions</strong> exécutées <strong>de haut en bas</strong>, une par une : c’est une <strong>séquence</strong>.</li><li>Python est <strong>interprété</strong> : en cas d’erreur, le programme s’arrête <strong>à la ligne fautive</strong> et affiche un message.</li></ul><h3>Variables et affectation</h3><div class="box box-info"><div class="box-title">📋 Définition — Variable</div>Un <strong>nom</strong> associé à une <strong>valeur</strong>. On peut l’imaginer comme une <strong>étiquette</strong> collée sur une valeur.</div>
+<ul><li>L’<strong>affectation</strong> <code>nom = valeur</code> : Python <strong>calcule d’abord la partie droite</strong>, puis colle l’étiquette <code>nom</code> sur le résultat.</li><li><code>=</code> <strong>affecte</strong> une valeur ; <code>==</code> <strong>compare</strong> deux valeurs (voir partie II).</li></ul>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="3">pv = 100
+pv = pv - 30
+print(pv)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>70</code></p>
+<div class="box box-tip"><div class="box-title">🔑 À retenir</div>On lit <code>pv = pv - 30</code> : « pv <strong>prend la valeur</strong> pv − 30 ». Ce n’est pas une équation !</div><h3>Nommer une variable</h3><ul><li>Caractères autorisés : lettres <strong>non accentuées</strong>, chiffres et <code>_</code> (tiret du 8).</li><li>Le nom ne <strong>commence pas par un chiffre</strong>, ne contient <strong>ni espace ni tiret</strong>.</li><li>Python distingue <strong>majuscules et minuscules</strong> : <code>nom</code> et <code>Nom</code> sont deux variables différentes.</li><li>Un nom ne peut pas être un <strong>mot-clé</strong> du langage (<code>if</code>, <code>for</code>, <code>def</code>, <code>while</code>…). Il doit être <strong>significatif</strong>.</li></ul>
+<table><tr><th>Noms corrects</th><th>Noms incorrects</th></tr><tr><td><code>compteur</code></td><td><code>2eme_vie</code>  (commence par un chiffre)</td></tr><tr><td><code>nombre_de_pv</code></td><td><code>mon nom</code>  (espace)</td></tr><tr><td><code>prix_manga2</code></td><td><code>prix-total</code>  (tiret)</td></tr><tr><td><code>pv_max</code></td><td><code>if</code>  (mot-clé)</td></tr></table><h3>Expressions</h3><div class="box box-info"><div class="box-title">📋 Définition — Expression</div>Un calcul qui <strong>produit une valeur</strong>. Exemple : <code>3 + 5</code> a pour valeur 8.</div>
+<ul><li><code>resultat = 3 + 5</code> : on <strong>évalue</strong> l’expression, puis on <strong>affecte</strong> sa valeur à <code>resultat</code>.</li><li>Les priorités sont celles des mathématiques ; les parenthèses sont prioritaires.</li></ul>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="4">expr = (5 + 2 &gt; 9) or (3 &gt; 2)
+# (7 &gt; 9) or (3 &gt; 2)
+# False or True
+print(expr)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>True</code></p><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 1</div><div class="exo-title">Créer une variable</div></div></div><div class="exo-body"><p>Quel est le bon moyen de créer une variable qui stocke le nombre 10 ?</p><ul><li>☐ <code>var == 10</code></li><li>☐ <code>var = 10</code></li><li>☐ <code>10 = var</code></li><li>☐ <code>int var = 10</code></li></ul><div class="toggle-btn btn-corr" onclick="toggle('c-ex1')"><span class="toggle-icon" id="ic-ex1">▶</span> Voir la correction</div><div class="corr-box" id="c-ex1"><p>Réponse : <code>var = 10</code></p><p><code>var = 10</code>. <code>==</code> compare, <code>10 = var</code> affecte dans le mauvais sens, <code>int var</code> n’existe pas en Python.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 2</div><div class="exo-title">Noms de variables</div></div></div><div class="exo-body"><p>Entourer les noms de variables <strong>corrects</strong>, puis expliquer pourquoi les autres sont incorrects :<br><code>nombre_de_pv</code>   <code>2eme_vie</code>   <code>prix manga</code>   <code>for</code>   <code>pvMax</code>   <code>vie-restante</code>   <code>niveau2</code></p><div class="toggle-btn btn-corr" onclick="toggle('c-ex2')"><span class="toggle-icon" id="ic-ex2">▶</span> Voir la correction</div><div class="corr-box" id="c-ex2"><p>Corrects : <code>nombre_de_pv</code>, <code>pvMax</code>, <code>niveau2</code>. Incorrects : <code>2eme_vie</code> (commence par un chiffre), <code>prix manga</code> (espace), <code>for</code> (mot-clé), <code>vie-restante</code> (tiret).</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 3</div><div class="exo-title">Prédis !</div></div></div><div class="exo-body"><p>Sans exécuter, écrire ce qu’affiche ce programme.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="4">x = 3
+y = x * 2
+x = x + 1
+print(x, y)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex3')"><span class="toggle-icon" id="ic-ex3">▶</span> Voir la correction</div><div class="corr-box" id="c-ex3"><p><code>4 6</code>. y reçoit la valeur 6 au moment de la ligne 2 ; modifier x ensuite ne change pas y.</p></div></div></div></div>
+<div class="section" id="s2"><div class="section-num">02 — Types et opérations</div><h2>Types et opérations</h2><h3>Les quatre types de base</h3><table><tr><th>Type</th><th>Nom</th><th>Exemples</th></tr><tr><td><code>int</code></td><td>entier</td><td><code>5</code>, <code>-3</code>, <code>2026</code></td></tr><tr><td><code>float</code></td><td>flottant (décimal)</td><td><code>3.14</code>, <code>7 / 2</code>, <code>6.0</code></td></tr><tr><td><code>str</code></td><td>chaîne de caractères</td><td><code>"Naruto"</code>, <code>'7'</code></td></tr><tr><td><code>bool</code></td><td>booléen</td><td><code>True</code>, <code>False</code></td></tr></table>
+<ul><li>Python devine le type tout seul (<strong>typage dynamique</strong>). <code>type(x)</code> donne le type de <code>x</code>.</li><li>Attention : <code>"7"</code> (entre guillemets) est une <strong>chaîne</strong>, pas un nombre.</li></ul><h3>Convertir un type</h3><table><tr><th>Fonction</th><th>Exemple</th><th>Résultat</th></tr><tr><td><code>int(...)</code></td><td><code>int("16")</code></td><td><code>16</code></td></tr><tr><td><code>float(...)</code></td><td><code>float("6.9")</code></td><td><code>6.9</code></td></tr><tr><td><code>str(...)</code></td><td><code>str(42)</code></td><td><code>"42"</code></td></tr><tr><td><code>int(...)</code></td><td><code>int(3.9)</code></td><td><code>3</code>  (on tronque)</td></tr></table>
+<div class="box box-tip"><div class="box-title">🔑 À retenir</div>La conversion doit être possible : <code>int("abc")</code> provoque une erreur <strong>ValueError</strong>.</div><h3>Opérateurs arithmétiques</h3><table><tr><th>Opérateur</th><th>Rôle</th><th>Exemple</th><th>Résultat</th></tr><tr><td><code>+  -  *</code></td><td>addition, soustraction, multiplication</td><td><code>2 + 3 * 4</code></td><td><code>14</code></td></tr><tr><td><code>/</code></td><td>division (résultat décimal)</td><td><code>7 / 2</code></td><td><code>3.5</code></td></tr><tr><td><code>//</code></td><td>quotient de la division euclidienne</td><td><code>17 // 5</code></td><td><code>3</code></td></tr><tr><td><code>%</code></td><td>reste de la division euclidienne</td><td><code>17 % 5</code></td><td><code>2</code></td></tr><tr><td><code>**</code></td><td>puissance</td><td><code>2 ** 3</code></td><td><code>8</code></td></tr></table>
+<div class="box box-tip"><div class="box-title">🔑 À retenir</div><code>n % 2 == 0</code> signifie « n est <strong>pair</strong> ». Le reste sert aussi pour les conversions en base 2.</div><h3>Opérations sur les chaînes</h3><ul><li><code>+</code> <strong>concatène</strong> (colle) deux chaînes : <code>"Jean" + "-" + "Marie"</code> donne <code>"Jean-Marie"</code>.</li><li><code>*</code> <strong>duplique</strong> une chaîne : <code>"ha" * 3</code> donne <code>"hahaha"</code>.</li><li>On ne peut pas ajouter une chaîne et un nombre : <code>"PV : " + 70</code> provoque une <strong>TypeError</strong>. Il faut écrire <code>"PV : " + str(70)</code>.</li></ul>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="3">print("3" + "4")
+print(3 + 4)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>34  ·  7</code></p><h3>Comparaisons et booléens</h3><ul><li>Comparaisons : <code>==</code> égal, <code>!=</code> différent, <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code>.</li><li>Une comparaison produit un <strong>booléen</strong> : <code>True</code> ou <code>False</code>.</li></ul>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="3">temperature = 25
+est_chaud = temperature &gt; 20
+print(est_chaud)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>True</code></p><h3>Opérateurs logiques</h3><ul><li><code>A and B</code> est vrai si <strong>les deux</strong> sont vrais ; <code>A or B</code> si <strong>au moins un</strong> est vrai ; <code>not A</code> <strong>inverse</strong>.</li></ul>
+<table><tr><th>A</th><th>B</th><th>A and B</th><th>A or B</th><th>not A</th></tr><tr><td>True</td><td>True</td><td>True</td><td>True</td><td>False</td></tr><tr><td>True</td><td>False</td><td>False</td><td>True</td><td>False</td></tr><tr><td>False</td><td>True</td><td>False</td><td>True</td><td>True</td></tr><tr><td>False</td><td>False</td><td>False</td><td>False</td><td>True</td></tr></table><h3>À toi de prédire : quel type, quelle valeur ?</h3><table><tr><th>Code</th><th>Réponse</th></tr><tr><td><code>10 / 5</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-II-0')"><span class="toggle-icon" id="ix-II-0">▶</span> Voir</span><span class="hint-box" id="x-II-0" style="padding:6px 10px"><code>float</code> : 2.0</span></td></tr><tr><td><code>10 // 4</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-II-1')"><span class="toggle-icon" id="ix-II-1">▶</span> Voir</span><span class="hint-box" id="x-II-1" style="padding:6px 10px"><code>int</code> : 2</span></td></tr><tr><td><code>"10"</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-II-2')"><span class="toggle-icon" id="ix-II-2">▶</span> Voir</span><span class="hint-box" id="x-II-2" style="padding:6px 10px"><code>str</code></span></td></tr><tr><td><code>3 == 3.0</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-II-3')"><span class="toggle-icon" id="ix-II-3">▶</span> Voir</span><span class="hint-box" id="x-II-3" style="padding:6px 10px"><code>bool</code> : True</span></td></tr><tr><td><code>"Py" * 2</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-II-4')"><span class="toggle-icon" id="ix-II-4">▶</span> Voir</span><span class="hint-box" id="x-II-4" style="padding:6px 10px"><code>str</code> : "PyPy"</span></td></tr></table><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 4</div><div class="exo-title">Quel type ?</div></div></div><div class="exo-body"><p>Donner le type (<code>int</code>, <code>float</code>, <code>str</code> ou <code>bool</code>) de chaque valeur :<br>a) <code>7 / 2</code>     b) <code>7 // 2</code>     c) <code>"7"</code>     d) <code>7 &gt; 2</code>     e) <code>3.0</code></p><div class="toggle-btn btn-corr" onclick="toggle('c-ex4')"><span class="toggle-icon" id="ic-ex4">▶</span> Voir la correction</div><div class="corr-box" id="c-ex4"><p>a) <code>float</code> (3.5) ; b) <code>int</code> (3) ; c) <code>str</code> ; d) <code>bool</code> (True) ; e) <code>float</code>.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 5</div><div class="exo-title">Évaluer des expressions</div></div></div><div class="exo-body"><p>Donner la valeur de chaque expression :<br>a) <code>2 + 3 * 4</code>   b) <code>(2 + 3) * 4</code>   c) <code>17 // 5</code>   d) <code>17 % 5</code>   e) <code>2 ** 3</code>   f) <code>"ha" * 3</code>   g) <code>"3" + "4"</code></p><div class="toggle-btn btn-corr" onclick="toggle('c-ex5')"><span class="toggle-icon" id="ic-ex5">▶</span> Voir la correction</div><div class="corr-box" id="c-ex5"><p>a) 14 ; b) 20 ; c) 3 ; d) 2 ; e) 8 ; f) <code>"hahaha"</code> ; g) <code>"34"</code> (concaténation de chaînes).</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 6</div><div class="exo-title">Vrai ou faux ?</div></div></div><div class="exo-body"><p>Compléter avec <code>True</code> ou <code>False</code>.</p><table><tr><th>Expression</th><th>True ou False ?</th></tr><tr><td><code>3 + 2 == 5 and 7 - 1 == 6</code></td><td></td></tr><tr><td><code>4 != 4 or 5 &gt;= 6</code></td><td></td></tr><tr><td><code>not (2 * 2 == 5)</code></td><td></td></tr><tr><td><code>10 &lt; 5 and not (3 &gt; 1)</code></td><td></td></tr><tr><td><code>(8 // 2) == 4 or (9 % 3) != 0</code></td><td></td></tr><tr><td><code>("Python" == "python") and (4 &lt; 5 or 2 &gt; 3)</code></td><td></td></tr><tr><td><code>not (7 &gt; 3 and 2 == 2)</code></td><td></td></tr></table><div class="toggle-btn btn-corr" onclick="toggle('c-ex6')"><span class="toggle-icon" id="ic-ex6">▶</span> Voir la correction</div><div class="corr-box" id="c-ex6"><table><tr><th>Expression</th><th>Valeur</th></tr><tr><td><code>3 + 2 == 5 and 7 - 1 == 6</code></td><td><strong>True</strong></td></tr><tr><td><code>4 != 4 or 5 &gt;= 6</code></td><td><strong>False</strong></td></tr><tr><td><code>not (2 * 2 == 5)</code></td><td><strong>True</strong></td></tr><tr><td><code>10 &lt; 5 and not (3 &gt; 1)</code></td><td><strong>False</strong></td></tr><tr><td><code>(8 // 2) == 4 or (9 % 3) != 0</code></td><td><strong>True</strong></td></tr><tr><td><code>("Python" == "python") and (4 &lt; 5 or 2 &gt; 3)</code></td><td><strong>False</strong></td></tr><tr><td><code>not (7 &gt; 3 and 2 == 2)</code></td><td><strong>False</strong></td></tr></table><p>True ; False ; True ; False ; True ; False (majuscule ≠ minuscule) ; False.</p></div></div></div></div>
+<div class="section" id="s3"><div class="section-num">03 — Afficher et saisir</div><h2>Afficher et saisir</h2><h3>Afficher avec print</h3><ul><li><code>print(...)</code> affiche une ou plusieurs valeurs, séparées par des <strong>virgules</strong> (affichées avec un espace).</li><li><code>print</code> <strong>affiche</strong> seulement : il ne modifie aucune variable et ne « renvoie » rien.</li></ul>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="3">nom = "Lina"
+pv = 70
+print("Héros :", nom, "-", pv, "PV")</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>Héros : Lina - 70 PV</code></p><h3>Saisir avec input</h3><ul><li><code>input("question")</code> affiche la question, <strong>attend</strong> que l’utilisateur tape une réponse puis appuie sur Entrée.</li><li><code>input</code> renvoie <strong>toujours une chaîne</strong> (<code>str</code>), même si on tape un nombre.</li><li>Pour calculer : <code>int(input(...))</code> (entier) ou <code>float(input(...))</code> (décimal).</li></ul>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="3">nom = input("Nom du manga ? ")
+prix = float(input("Prix ? "))
+print(nom, ":", prix * 2, "€ les 2 tomes")</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div>
+<div class="box box-tip"><div class="box-title">🔑 À retenir</div>Un résultat qui ressemble à des chiffres « collés » (<code>"5" + "6"</code> → <code>56</code>) : il manque <code>int(...)</code> !</div><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 7</div><div class="exo-title">Trouve les erreurs</div></div></div><div class="exo-body"><p>Ce programme contient trois erreurs. Les corriger.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="3">prenom = "sophie"
+note == 13
+printe("La note de", prenom, "est de", note, "/20")</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex7')"><span class="toggle-icon" id="ic-ex7">▶</span> Voir la correction</div><div class="corr-box" id="c-ex7"><p>Ligne 2 : <code>note = 13</code> (affectation, pas comparaison). Ligne 3 : <code>print</code> (et non <code>printe</code>). Au passage, <code>note</code> n’existait pas : la ligne 2 provoquait une <strong>NameError</strong>.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 8</div><div class="exo-title">Trouve l’erreur</div></div></div><div class="exo-body"><p>On tape 5. Que se passe-t-il ? Corriger.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="3">n = input("Entrez un nombre : ")
+somme = n + 2
+print("La somme est", somme)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex8')"><span class="toggle-icon" id="ic-ex8">▶</span> Voir la correction</div><div class="corr-box" id="c-ex8"><p><strong>TypeError</strong> : <code>n</code> est la chaîne <code>"5"</code>, on ne peut pas lui ajouter 2. Correction : <code>n = int(input("Entrez un nombre : "))</code> → affiche <code>La somme est 7</code>.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 9</div><div class="exo-title">Ma collection de mangas</div></div></div><div class="exo-body"><p>Écrire un programme qui demande le nom d’un manga et son prix, puis affiche : <code>Le manga [nom] a été ajouté à votre collection pour [prix] euros.</code><br>Le compléter pour demander le prix de <strong>trois</strong> mangas et afficher la valeur totale de la collection.</p><p style="margin-top:12px"><strong>À toi de coder :</strong></p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="9"># Écris ton programme ici
+</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex9')"><span class="toggle-icon" id="ic-ex9">▶</span> Voir la correction</div><div class="corr-box" id="c-ex9"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre>nom <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Nom du manga ? "</span>)
+prix <span class="op">=</span> <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"Prix ? "</span>))
+<span class="fn">print</span>(<span class="st">"Le manga"</span>, nom, <span class="st">"a été ajouté à votre collection pour"</span>, prix, <span class="st">"euros."</span>)
+
+manga1 <span class="op">=</span> <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"Prix du manga 1 ? "</span>))
+manga2 <span class="op">=</span> <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"Prix du manga 2 ? "</span>))
+manga3 <span class="op">=</span> <span class="fn">float</span>(<span class="fn">input</span>(<span class="st">"Prix du manga 3 ? "</span>))
+valeur_totale <span class="op">=</span> manga1 <span class="op">+</span> manga2 <span class="op">+</span> manga3
+<span class="fn">print</span>(<span class="st">"Valeur totale :"</span>, valeur_totale, <span class="st">"euros"</span>)</pre></div><p><code>float</code> car un prix peut être décimal.</p></div></div></div></div>
+<div class="section" id="s4"><div class="section-num">04 — Les conditions</div><h2>Les conditions</h2><h3>if … else</h3><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="6">age = int(input("Âge ? "))
+if age &gt;= 18:
+    print("Majeur")
+else:
+    print("Mineur")
+print("Fin")</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div>
+<ul><li>Après la condition : <strong>deux-points</strong> <code>:</code>. Le <strong>bloc</strong> à exécuter est <strong>indenté</strong> (4 espaces).</li><li>L’indentation n’est pas décorative : c’est elle qui dit <strong>ce qui fait partie du bloc</strong>. <code>print("Fin")</code> est exécuté dans tous les cas.</li></ul><h3>Plusieurs cas : elif</h3><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="9">temperature = int(input("Température ? "))
+if temperature &gt; 30:
+    print("T-shirt et short")
+elif temperature &gt; 20:
+    print("Chemise légère")
+elif temperature &gt; 10:
+    print("Un pull")
+else:
+    print("Manteau, bonnet et gants")</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div>
+<div class="box box-tip"><div class="box-title">🔑 À retenir</div>Les conditions sont testées <strong>dans l’ordre</strong> : <strong>seul le premier bloc vrai</strong> est exécuté, les suivants sont ignorés.</div><h3>if … if  ou  if … elif ?</h3><table><tr><th>Deux if à la suite</th><th>if … elif</th></tr><tr><td>Tests <strong>indépendants</strong> : <strong>plusieurs</strong> blocs peuvent s’exécuter.</td><td>Tests <strong>exclusifs</strong> : <strong>un seul</strong> bloc s’exécute.</td></tr></table>
+<ul><li>Conditions composées : <code>if age &gt;= 12 and age &lt; 18:</code> (adolescent) ; <code>if pluie or arrosage:</code> ; <code>if not nuit:</code>.</li></ul><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 10</div><div class="exo-title">Quelle tenue ?</div></div></div><div class="exo-body"><p>On reprend le programme de la tenue (partie IV). Qu’affiche-t-il si l’on tape <strong>20</strong> ? <strong>30</strong> ? <strong>−5</strong> ?</p><div class="toggle-btn btn-corr" onclick="toggle('c-ex10')"><span class="toggle-icon" id="ic-ex10">▶</span> Voir la correction</div><div class="corr-box" id="c-ex10"><p>20 → « Un pull » (20 &gt; 20 est faux, 20 &gt; 10 est vrai). 30 → « Chemise légère » (30 &gt; 30 est faux). −5 → « Manteau, bonnet et gants ».</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 11</div><div class="exo-title">if ou elif ?</div></div></div><div class="exo-body"><p>Qu’affiche ce programme ? Et si l’on remplace le second <code>if</code> par <code>elif</code> ?</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="7">x = 15
+if x &gt; 10:
+    print("A")
+if x &gt; 5:
+    print("B")
+else:
+    print("C")</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex11')"><span class="toggle-icon" id="ic-ex11">▶</span> Voir la correction</div><div class="corr-box" id="c-ex11"><p>Deux <code>if</code> indépendants : <code>A</code> puis <code>B</code>. Avec <code>elif</code>, seul <code>A</code> s’affiche (le premier test vrai arrête tout).</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr hard"><div><div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 12</div><div class="exo-title">Parité et âge</div></div></div><div class="exo-body"><p>a) Écrire un programme qui demande un entier et affiche « Pair » ou « Impair » (utiliser <code>%</code>).<br>b) Écrire un programme qui demande un âge et affiche « Enfant » (moins de 12 ans), « Adolescent » (12 à 17 ans) ou « Adulte » (18 ans ou plus).</p><p style="margin-top:12px"><strong>À toi de coder :</strong></p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="11"># Écris ton programme ici
+</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex12')"><span class="toggle-icon" id="ic-ex12">▶</span> Voir la correction</div><div class="corr-box" id="c-ex12"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre>n <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Entier ? "</span>))
+<span class="kw">if</span> n <span class="op">%</span> <span class="nb">2</span> <span class="op">==</span> <span class="nb">0</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Pair"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Impair"</span>)
+
+age <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Âge ? "</span>))
+<span class="kw">if</span> age <span class="op">&lt;</span> <span class="nb">12</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Enfant"</span>)
+<span class="kw">elif</span> age <span class="op">&lt;</span> <span class="nb">18</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Adolescent"</span>)
+<span class="kw">else</span><span class="op">:</span>
+    <span class="fn">print</span>(<span class="st">"Adulte"</span>)</pre></div><p>Grâce au <code>elif</code>, la condition <code>age &lt; 18</code> n’est testée que si <code>age &lt; 12</code> est faux : inutile d’écrire <code>age &gt;= 12</code>.</p></div></div></div></div>
+<div class="section" id="s5"><div class="section-num">05 — Les fonctions</div><h2>Les fonctions</h2><h3>Définir et appeler une fonction</h3><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="5">def aire_rectangle(longueur, largeur):
+    return longueur * largeur
+
+resultat = aire_rectangle(4, 3)
+print(resultat)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>12</code></p>
+<ul><li><code>def</code> <strong>définit</strong> la fonction : son code ne s’exécute <strong>qu’au moment de l’appel</strong>.</li><li><strong>Paramètres</strong> : les noms dans <code>def</code> (<code>longueur</code>, <code>largeur</code>). <strong>Arguments</strong> : les valeurs données à l’<strong>appel</strong> (<code>4</code>, <code>3</code>).</li><li><code>return</code> <strong>renvoie</strong> une valeur au programme qui a appelé la fonction, et <strong>termine</strong> la fonction.</li></ul><h3>return ou print ?</h3><table><tr><th>return</th><th>print</th></tr><tr><td><strong>renvoie</strong> une valeur au programme</td><td><strong>affiche</strong> une valeur à l’écran</td></tr><tr><td>la valeur peut être stockée, comparée, réutilisée</td><td>la valeur est perdue pour le programme</td></tr><tr><td>termine la fonction</td><td>ne termine rien</td></tr></table>
+<div class="box box-tip"><div class="box-title">🔑 À retenir</div>Une fonction sans <code>return</code> renvoie la valeur spéciale <code>None</code>.</div><h3>Variables locales</h3><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="9">def perdre(pv, degats):
+    pv = pv - degats
+    return pv
+
+pv = 100
+perdre(pv, 30)
+print(pv)
+pv = perdre(pv, 30)
+print(pv)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>100  ·  70</code></p>
+<ul><li>Le <code>pv</code> de la fonction est une variable <strong>locale</strong> : elle n’existe que pendant l’appel.</li><li>Pour garder le résultat, il faut le <strong>récupérer</strong> : <code>pv = perdre(pv, 30)</code>.</li></ul><h3>Utiliser un module : random</h3><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="6">import random
+
+de = random.randint(1, 6)       # entier de 1 à 6 inclus
+x = random.random()             # décimal dans [0 ; 1[
+ennemi = random.choice(["gobelin", "troll"])
+print(de, x, ennemi)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div>
+<ul><li>Un <strong>module</strong> regroupe des fonctions prêtes à l’emploi. On l’importe une fois, en haut du programme.</li><li><code>random.randint(a, b)</code> : les <strong>deux bornes sont incluses</strong>.</li></ul><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 13</div><div class="exo-title">return ou print ?</div></div></div><div class="exo-body"><p>Prévoir <strong>tous</strong> les affichages, dans l’ordre.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="9">def double(n):
+    return 2 * n
+
+def triple(n):
+    print(3 * n)
+
+a = double(4)
+b = triple(4)
+print(a, b)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex13')"><span class="toggle-icon" id="ic-ex13">▶</span> Voir la correction</div><div class="corr-box" id="c-ex13"><p><code>12</code> (affiché par <code>triple</code>), puis <code>8 None</code> : <code>triple</code> affiche mais ne renvoie rien, donc <code>b</code> vaut <code>None</code>.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 14</div><div class="exo-title">Variable locale</div></div></div><div class="exo-body"><p>Qu’affiche ce programme ? Le corriger pour obtenir 60.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="7">def soigner(pv):
+    pv = pv + 10
+    return pv
+
+pv = 50
+soigner(pv)
+print(pv)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex14')"><span class="toggle-icon" id="ic-ex14">▶</span> Voir la correction</div><div class="corr-box" id="c-ex14"><p><code>50</code> : la valeur renvoyée (60) n’est rangée nulle part. Correction : <code>pv = soigner(pv)</code>.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr hard"><div><div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 15</div><div class="exo-title">Écrire des fonctions</div></div></div><div class="exo-body"><p>a) Écrire <code>prix_ttc(prix_ht)</code> qui renvoie le prix TTC (TVA de 20 %).<br>b) Écrire <code>est_majeur(age)</code> qui renvoie <code>True</code> si l’âge est au moins 18, <code>False</code> sinon.<br>c) Écrire deux appels de test pour chaque fonction, avec le résultat attendu en commentaire.</p><p style="margin-top:12px"><strong>À toi de coder :</strong></p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="11"># Écris ton programme ici
+</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex15')"><span class="toggle-icon" id="ic-ex15">▶</span> Voir la correction</div><div class="corr-box" id="c-ex15"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre><span class="kw">def</span> <span class="df">prix_ttc</span>(prix_ht)<span class="op">:</span>
+    <span class="kw">return</span> prix_ht <span class="op">*</span> <span class="nb">1.2</span>
+
+<span class="kw">def</span> <span class="df">est_majeur</span>(age)<span class="op">:</span>
+    <span class="kw">if</span> age <span class="op">&gt;=</span> <span class="nb">18</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="bi">True</span>
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="bi">False</span>
+
+<span class="fn">print</span>(prix_ttc(<span class="nb">10</span>))      <span class="cm"># attendu 12.0</span>
+<span class="fn">print</span>(prix_ttc(<span class="nb">7.5</span>))     <span class="cm"># attendu 9.0</span>
+<span class="fn">print</span>(est_majeur(<span class="nb">18</span>))    <span class="cm"># attendu True (frontière)</span>
+<span class="fn">print</span>(est_majeur(<span class="nb">17</span>))    <span class="cm"># attendu False</span></pre></div><p>Tester 18 et 17 vérifie la frontière : une erreur <code>&gt;</code> au lieu de <code>&gt;=</code> serait détectée.</p></div></div></div></div>
+<div class="section" id="s6"><div class="section-num">06 — Les boucles</div><h2>Les boucles</h2><h3>La boucle for et range</h3><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="3">for i in range(1, 4):
+    print("Pas", i)
+print("Fin")</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>Pas 1  ·  Pas 2  ·  Pas 3  ·  Fin</code></p>
+<table><tr><th>Écriture</th><th>Valeurs prises par i</th><th>Nombre de tours</th></tr><tr><td><code>range(5)</code></td><td>0, 1, 2, 3, 4</td><td>5</td></tr><tr><td><code>range(2, 6)</code></td><td>2, 3, 4, 5</td><td>4</td></tr><tr><td><code>range(1, 10, 3)</code></td><td>1, 4, 7</td><td>3</td></tr><tr><td><code>range(10, 0, -2)</code></td><td>10, 8, 6, 4, 2</td><td>5</td></tr></table>
+<div class="box box-tip"><div class="box-title">🔑 À retenir</div>La <strong>borne de fin n’est jamais atteinte</strong>. <code>range(n)</code> fait exactement n tours, de 0 à n − 1.</div><h3>Parcourir une séquence, compter, accumuler</h3><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="5">nb = 0
+for lettre in "naruto":
+    if lettre == "a" or lettre == "u":
+        nb = nb + 1
+print(nb)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>2</code></p>
+<ul><li><code>for x in ...</code> : x prend <strong>chaque élément</strong> d’une chaîne (ou d’une liste), dans l’ordre.</li><li>Un <strong>compteur</strong> ou un <strong>accumulateur</strong> s’initialise <strong>avant</strong> la boucle, se met à jour <strong>dans</strong> la boucle, s’affiche <strong>après</strong>.</li></ul><h3>La boucle while</h3><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="4">compteur = 1
+while compteur &lt;= 5:
+    print(compteur)
+    compteur = compteur + 1</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>1  ·  2  ·  3  ·  4  ·  5</code></p>
+<ul><li><code>while condition:</code> répète le bloc <strong>tant que</strong> la condition est vraie. Elle est testée <strong>avant chaque tour</strong>.</li><li>Une variable de la condition doit <strong>changer</strong> dans la boucle, sinon : <strong>boucle infinie</strong>.</li><li><code>break</code> sort immédiatement de la boucle.</li></ul><h3>Redemander tant que ce n’est pas bon</h3><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="4">code = ""
+while code != "JURASSIC":
+    code = input("Code de réinitialisation : ")
+print("Systèmes réinitialisés !")</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div>
+<ul><li>On ne sait pas combien d’essais il faudra : c’est un cas typique de <code>while</code>.</li><li><code>code</code> doit exister <strong>avant</strong> la boucle (sinon <strong>NameError</strong> au premier test).</li></ul><h3>for ou while ?</h3><table><tr><th></th><th>for</th><th>while</th></tr><tr><td>Quand ?</td><td>nombre de tours <strong>connu</strong> à l’avance</td><td>on répète <strong>tant que</strong> une condition est vraie</td></tr><tr><td>Exemples</td><td>10 rencontres ; chaque lettre d’un mot</td><td>combat ; saisie à redemander ; fuir jusqu’à 100 m</td></tr><tr><td>Mise à jour</td><td>automatique</td><td>à écrire soi-même dans la boucle</td></tr></table>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre><span class="cm"># Ces deux boucles affichent 1, 2, 3</span>
+<span class="kw">for</span> i <span class="kw">in</span> <span class="fn">range</span>(<span class="nb">1</span>, <span class="nb">4</span>)<span class="op">:</span>        i <span class="op">=</span> <span class="nb">1</span>
+    <span class="fn">print</span>(i)                  <span class="kw">while</span> i <span class="op">&lt;</span> <span class="nb">4</span><span class="op">:</span>
+                                  <span class="fn">print</span>(i)
+                                  i <span class="op">=</span> i <span class="op">+</span> <span class="nb">1</span></pre></div><h3>À toi de prédire : quelles valeurs prend i ?</h3><table><tr><th>Code</th><th>Réponse</th></tr><tr><td><code>for i in range(3):</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-VI-0')"><span class="toggle-icon" id="ix-VI-0">▶</span> Voir</span><span class="hint-box" id="x-VI-0" style="padding:6px 10px">0, 1, 2</span></td></tr><tr><td><code>for i in range(1, 6):</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-VI-1')"><span class="toggle-icon" id="ix-VI-1">▶</span> Voir</span><span class="hint-box" id="x-VI-1" style="padding:6px 10px">1, 2, 3, 4, 5</span></td></tr><tr><td><code>for i in range(0, 10, 2):</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-VI-2')"><span class="toggle-icon" id="ix-VI-2">▶</span> Voir</span><span class="hint-box" id="x-VI-2" style="padding:6px 10px">0, 2, 4, 6, 8</span></td></tr><tr><td><code>for i in range(3, 0, -1):</code></td><td><span class="toggle-btn btn-hint" style="margin-top:0" onclick="toggle('x-VI-3')"><span class="toggle-icon" id="ix-VI-3">▶</span> Voir</span><span class="hint-box" id="x-VI-3" style="padding:6px 10px">3, 2, 1</span></td></tr></table><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 16</div><div class="exo-title">Les valeurs de range</div></div></div><div class="exo-body"><p>Donner les valeurs prises par i et le nombre de tours :<br>a) <code>for i in range(4):</code>   b) <code>for i in range(3, 8):</code>   c) <code>for i in range(0, 20, 5):</code>   d) <code>for i in range(5, 0, -1):</code></p><div class="toggle-btn btn-corr" onclick="toggle('c-ex16')"><span class="toggle-icon" id="ic-ex16">▶</span> Voir la correction</div><div class="corr-box" id="c-ex16"><p>a) 0, 1, 2, 3 (4 tours) ; b) 3, 4, 5, 6, 7 (5 tours) ; c) 0, 5, 10, 15 (4 tours) ; d) 5, 4, 3, 2, 1 (5 tours).</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 17</div><div class="exo-title">Accumuler</div></div></div><div class="exo-body"><p>Compléter le tableau de suivi (prix, total) puis donner l’affichage.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="4">total = 0
+for prix in [6.9, 7.5, 8]:
+    total = total + prix
+print(total)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><table><tr><th>Tour</th><th>prix</th><th>total</th></tr><tr><td>1</td><td></td><td></td></tr><tr><td>2</td><td></td><td></td></tr><tr><td>3</td><td></td><td></td></tr></table><div class="toggle-btn btn-corr" onclick="toggle('c-ex17')"><span class="toggle-icon" id="ic-ex17">▶</span> Voir la correction</div><div class="corr-box" id="c-ex17"><p>Tour 1 : 6.9 → 6.9 ; tour 2 : 7.5 → 14.4 ; tour 3 : 8 → 22.4. Affichage : <code>22.4</code>.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 18</div><div class="exo-title">DinoTech Park : les portes</div></div></div><div class="exo-body"><p>La tempête a ouvert les 3 portes des enclos. Le programme les referme une par une.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="4">portes_fermees = 0
+while portes_fermees &lt; 3:
+    portes_fermees = portes_fermees + 1
+    print("Porte", portes_fermees, "fermée")</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><ul><li>a) Combien de fois la boucle s’exécute-t-elle ?</li><li>b) Que se passe-t-il si on oublie la ligne 3 ?</li><li>c) Que se passe-t-il si la condition devient <code>while portes_fermees &gt; 3:</code> ?</li></ul><div class="toggle-btn btn-corr" onclick="toggle('c-ex18')"><span class="toggle-icon" id="ic-ex18">▶</span> Voir la correction</div><div class="corr-box" id="c-ex18"><p>a) 3 fois (Porte 1, 2, 3 fermée). b) <code>portes_fermees</code> reste à 0 : <strong>boucle infinie</strong> (« Porte 0 fermée » sans fin). c) 0 &gt; 3 est faux dès le départ : la boucle <strong>ne s’exécute jamais</strong>.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 19</div><div class="exo-title">DinoTech Park : l’alarme</div></div></div><div class="exo-body"><p>Un dinosaure est à 60 m du bâtiment et se rapproche de 8 m à chaque tour. On reprend le programme du tableau de suivi (partie VII).</p><ul><li>a) Combien de tours faut-il pour déclencher l’alarme (distance &lt; 50 m) ?</li><li>b) Le dinosaure part maintenant de 66 m. Faire le tableau de suivi et donner l’affichage.</li></ul><div class="toggle-btn btn-corr" onclick="toggle('c-ex19')"><span class="toggle-icon" id="ic-ex19">▶</span> Voir la correction</div><div class="corr-box" id="c-ex19"><p>a) 2 tours (60 → 52 → 44). b) 66 → 58 → 50 → 42 : 3 tours (50 &gt;= 50 est encore vrai). Affichage : <code>42 3</code>.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr hard"><div><div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 20</div><div class="exo-title">DinoTech Park : le code</div></div></div><div class="exo-body"><p>On reprend le programme « Redemander tant que ce n’est pas bon » (partie VI).</p><ul><li>a) L’utilisateur tape <code>jurassic</code> en minuscules. Que se passe-t-il ?</li><li>b) Que se passe-t-il si on supprime la ligne <code>code = ""</code> ?</li><li>c) Ajouter un compteur d’essais, affiché à la fin.</li></ul><p style="margin-top:12px"><strong>À toi de coder :</strong></p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="7"># Écris ton programme ici
+</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex20')"><span class="toggle-icon" id="ic-ex20">▶</span> Voir la correction</div><div class="corr-box" id="c-ex20"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre>code <span class="op">=</span> <span class="st">""</span>
+essais <span class="op">=</span> <span class="nb">0</span>
+<span class="kw">while</span> code <span class="op">!=</span> <span class="st">"JURASSIC"</span><span class="op">:</span>
+    code <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Code de réinitialisation : "</span>)
+    essais <span class="op">=</span> essais <span class="op">+</span> <span class="nb">1</span>
+<span class="fn">print</span>(<span class="st">"Systèmes réinitialisés en"</span>, essais, <span class="st">"essais !"</span>)</pre></div><p>a) Le code est refusé : <code>"jurassic" != "JURASSIC"</code> est vrai, la boucle continue. b) <strong>NameError</strong> : <code>code</code> n’existe pas au moment du premier test.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 21</div><div class="exo-title">for ou while ?</div></div></div><div class="exo-body"><p>Pour chaque situation, choisir <code>for</code> ou <code>while</code> et justifier.<br>a) Afficher les 10 rencontres d’une exploration.   b) Fuir le T-rex jusqu’à être à 100 m.<br>c) Afficher chaque lettre d’un prénom.   d) Redemander une note tant qu’elle n’est pas entre 0 et 20.</p><div class="toggle-btn btn-corr" onclick="toggle('c-ex21')"><span class="toggle-icon" id="ic-ex21">▶</span> Voir la correction</div><div class="corr-box" id="c-ex21"><p>a) <code>for</code> (10 tours connus). b) <code>while</code> (on ne sait pas combien de pas). c) <code>for</code> (une lettre par tour). d) <code>while</code> (nombre d’essais inconnu).</p></div></div></div></div>
+<div class="section" id="s7"><div class="section-num">07 — Comprendre son programme</div><h2>Comprendre son programme</h2><h3>Le tableau de suivi</h3><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="6">distance = 60
+tours = 0
+while distance &gt;= 50:
+    distance = distance - 8
+    tours = tours + 1
+print(distance, tours)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Affichage attendu : <code>44 2</code></p>
+<table><tr><th>Moment</th><th>distance</th><th>tours</th><th>distance &gt;= 50 ?</th></tr><tr><td>avant la boucle</td><td>60</td><td>0</td><td>True → on entre</td></tr><tr><td>après le tour 1</td><td>52</td><td>1</td><td>True → on continue</td></tr><tr><td>après le tour 2</td><td>44</td><td>2</td><td>False → on sort</td></tr></table>
+<div class="box box-tip"><div class="box-title">🔑 À retenir</div>« <strong>Jouer la machine</strong> » : une ligne par tour, une colonne par variable. On <strong>prédit</strong> avant d’exécuter.</div><h3>Lire un message d’erreur</h3><div class="box box-tip"><div class="box-title">🔑 À retenir</div>Le message indique <strong>la ligne</strong> et <strong>le type</strong> d’erreur (dernière ligne) : on le <strong>lit</strong> avant de modifier quoi que ce soit.</div>
+<table><tr><th>Erreur</th><th>Ce qu’elle veut dire</th><th>Exemple</th></tr><tr><td><strong>SyntaxError</strong></td><td>code mal écrit : oubli de <code>:</code>, de guillemet, de parenthèse</td><td><code>if pv &gt; 0</code></td></tr><tr><td><strong>IndentationError</strong></td><td>décalage incorrect après un <code>:</code></td><td><code>if pv &gt; 0:</code> puis ligne non décalée</td></tr><tr><td><strong>NameError</strong></td><td>nom inconnu : faute de frappe, variable pas encore créée</td><td><code>print(Nom)</code></td></tr><tr><td><strong>TypeError</strong></td><td>types incompatibles</td><td><code>"16" + 1</code></td></tr><tr><td><strong>ValueError</strong></td><td>bonne fonction, valeur impossible</td><td><code>int("abc")</code></td></tr><tr><td><strong>IndexError</strong></td><td>indice hors de la liste</td><td><code>[1, 2][2]</code></td></tr></table><h3>Tester son programme</h3><ul><li>Avant d’exécuter, <strong>prévoir le résultat attendu</strong> (à la main, avec un tableau de suivi).</li><li>Choisir des cas <strong>ordinaires</strong> et des cas <strong>frontières</strong> (0, la valeur limite, une valeur juste au-dessus…).</li><li>Comparer <strong>attendu / obtenu</strong>. S’ils diffèrent, chercher <strong>pourquoi</strong> au lieu de modifier au hasard.</li><li>Pour voir l’exécution pas à pas : <strong>Python Tutor</strong> (pythontutor.com).</li></ul><h3>✏ Exercices d’application</h3><div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 22</div><div class="exo-title">Trouve l’erreur</div></div></div><div class="exo-body"><p>Chaque programme pose problème. Dire lequel, puis corriger.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre><span class="cm"># Programme A</span>
+nom <span class="op">=</span> <span class="fn">input</span>(<span class="st">"Nom ? "</span>)
+<span class="fn">print</span>(<span class="st">"Bonjour"</span>, Nom)
+
+<span class="cm"># Programme B</span>
+i <span class="op">=</span> <span class="nb">0</span>
+<span class="kw">while</span> i <span class="op">&lt;</span> <span class="nb">3</span><span class="op">:</span>
+    <span class="fn">print</span>(i)
+i <span class="op">=</span> i <span class="op">+</span> <span class="nb">1</span></pre></div><p style="font-size:13px;color:var(--muted)">⚠ Ce code n’est pas exécutable ici : le programme B tourne sans fin.</p><div class="toggle-btn btn-corr" onclick="toggle('c-ex22')"><span class="toggle-icon" id="ic-ex22">▶</span> Voir la correction</div><div class="corr-box" id="c-ex22"><p>A : <strong>NameError</strong>, <code>Nom</code> ≠ <code>nom</code> → <code>print("Bonjour", nom)</code>. B : <code>i = i + 1</code> n’est pas indenté, il est hors de la boucle : <strong>boucle infinie</strong> (0 0 0…) → l’indenter.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr hard"><div><div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 23</div><div class="exo-title">Défi : le nombre mystère</div></div></div><div class="exo-body"><p>a) Écrire une fonction <code>comparer(proposition, secret)</code> qui renvoie <code>"Trop bas"</code>, <code>"Trop haut"</code> ou <code>"Gagné"</code>.<br>b) Écrire le jeu : l’ordinateur tire un nombre entre 1 et 100 avec <code>random.randint</code> ; le joueur propose tant qu’il n’a pas trouvé ; on affiche à chaque fois la réponse de <code>comparer</code>, puis le nombre d’essais à la fin.</p><p style="margin-top:12px"><strong>À toi de coder :</strong></p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="12"># Écris ton programme ici
+</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><div class="toggle-btn btn-corr" onclick="toggle('c-ex23')"><span class="toggle-icon" id="ic-ex23">▶</span> Voir la correction</div><div class="corr-box" id="c-ex23"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div></div><pre><span class="kw">import</span> random
+
+<span class="kw">def</span> <span class="df">comparer</span>(proposition, secret)<span class="op">:</span>
+    <span class="kw">if</span> proposition <span class="op">&lt;</span> secret<span class="op">:</span>
+        <span class="kw">return</span> <span class="st">"Trop bas"</span>
+    <span class="kw">elif</span> proposition <span class="op">&gt;</span> secret<span class="op">:</span>
+        <span class="kw">return</span> <span class="st">"Trop haut"</span>
+    <span class="kw">else</span><span class="op">:</span>
+        <span class="kw">return</span> <span class="st">"Gagné"</span>
+
+secret <span class="op">=</span> random.randint(<span class="nb">1</span>, <span class="nb">100</span>)
+reponse <span class="op">=</span> <span class="st">""</span>
+essais <span class="op">=</span> <span class="nb">0</span>
+<span class="kw">while</span> reponse <span class="op">!=</span> <span class="st">"Gagné"</span><span class="op">:</span>
+    proposition <span class="op">=</span> <span class="fn">int</span>(<span class="fn">input</span>(<span class="st">"Ta proposition ? "</span>))
+    essais <span class="op">=</span> essais <span class="op">+</span> <span class="nb">1</span>
+    reponse <span class="op">=</span> comparer(proposition, secret)
+    <span class="fn">print</span>(reponse)
+<span class="fn">print</span>(<span class="st">"Trouvé en"</span>, essais, <span class="st">"essais"</span>)</pre></div><p>Tests de <code>comparer</code> : (3, 7) → Trop bas ; (9, 7) → Trop haut ; (7, 7) → Gagné.</p></div></div></div></div>
+<div class="section" id="voc"><div class="section-num">08 — Vocabulaire</div><h2>Les mots à connaître</h2><div class="fn-grid"><div class="fn-card"><div class="fn-card-hdr">Algorithme</div><div class="fn-card-body">suite finie d’étapes permettant d’atteindre un but</div></div><div class="fn-card"><div class="fn-card-hdr">Instruction</div><div class="fn-card-body">un ordre donné à l’ordinateur (une ligne de code)</div></div><div class="fn-card"><div class="fn-card-hdr">Variable</div><div class="fn-card-body">nom associé à une valeur</div></div><div class="fn-card"><div class="fn-card-hdr">Affectation</div><div class="fn-card-body">instruction <code>nom = valeur</code> qui associe une valeur à un nom</div></div><div class="fn-card"><div class="fn-card-hdr">Expression</div><div class="fn-card-body">calcul qui produit une valeur</div></div><div class="fn-card"><div class="fn-card-hdr">Type</div><div class="fn-card-body">nature d’une valeur : <code>int</code>, <code>float</code>, <code>str</code>, <code>bool</code></div></div><div class="fn-card"><div class="fn-card-hdr">Booléen</div><div class="fn-card-body">valeur <code>True</code> ou <code>False</code></div></div><div class="fn-card"><div class="fn-card-hdr">Bloc</div><div class="fn-card-body">lignes indentées sous un <code>if</code>, un <code>for</code>, un <code>while</code>, un <code>def</code></div></div><div class="fn-card"><div class="fn-card-hdr">Condition</div><div class="fn-card-body">expression booléenne testée par <code>if</code> ou <code>while</code></div></div><div class="fn-card"><div class="fn-card-hdr">Boucle / itération</div><div class="fn-card-body">répétition d’un bloc / un tour de boucle</div></div><div class="fn-card"><div class="fn-card-hdr">Compteur, accumulateur</div><div class="fn-card-body">variable initialisée avant une boucle et mise à jour à chaque tour</div></div><div class="fn-card"><div class="fn-card-hdr">Fonction</div><div class="fn-card-body">bloc de code nommé, défini avec <code>def</code>, exécuté à chaque appel</div></div><div class="fn-card"><div class="fn-card-hdr">Paramètre / argument</div><div class="fn-card-body">nom dans <code>def</code> / valeur donnée à l’appel</div></div><div class="fn-card"><div class="fn-card-hdr">Valeur de retour</div><div class="fn-card-body">valeur renvoyée par <code>return</code> (<code>None</code> s’il n’y en a pas)</div></div><div class="fn-card"><div class="fn-card-hdr">Variable locale</div><div class="fn-card-body">variable créée dans une fonction, qui n’existe que pendant l’appel</div></div><div class="fn-card"><div class="fn-card-hdr">Module</div><div class="fn-card-body">ensemble de fonctions à importer (<code>import random</code>)</div></div></div></div>
+<div class="dst-section" id="dst"><div class="section-num">09 — Bilan</div><h2>Ce que tu dois maîtriser</h2>
+<p style="color:var(--text2);margin-bottom:20px;">Coche une case par ligne : ta progression est enregistrée sur cet appareil. Pour une notion « à revoir », relis la partie correspondante puis refais un exercice sans aide.</p>
+<table class="selfassess"><tr><th>Compétence</th><th>Seul</th><th>Avec aide</th><th>À revoir</th></tr>
+<tr><td>Nommer correctement une variable et faire une affectation</td><td><input type="radio" name="c1" value="seul"></td><td><input type="radio" name="c1" value="aide"></td><td><input type="radio" name="c1" value="revoir"></td></tr>
+<tr><td>Donner le type d’une valeur et la convertir</td><td><input type="radio" name="c2" value="seul"></td><td><input type="radio" name="c2" value="aide"></td><td><input type="radio" name="c2" value="revoir"></td></tr>
+<tr><td>Utiliser <code>/</code>, <code>//</code>, <code>%</code>, <code>**</code> et les opérateurs sur les chaînes</td><td><input type="radio" name="c3" value="seul"></td><td><input type="radio" name="c3" value="aide"></td><td><input type="radio" name="c3" value="revoir"></td></tr>
+<tr><td>Évaluer une expression avec <code>and</code>, <code>or</code>, <code>not</code></td><td><input type="radio" name="c4" value="seul"></td><td><input type="radio" name="c4" value="aide"></td><td><input type="radio" name="c4" value="revoir"></td></tr>
+<tr><td>Afficher avec <code>print</code> et saisir un nombre avec <code>int(input(...))</code></td><td><input type="radio" name="c5" value="seul"></td><td><input type="radio" name="c5" value="aide"></td><td><input type="radio" name="c5" value="revoir"></td></tr>
+<tr><td>Écrire un <code>if / elif / else</code> et prévoir quel bloc s’exécute</td><td><input type="radio" name="c6" value="seul"></td><td><input type="radio" name="c6" value="aide"></td><td><input type="radio" name="c6" value="revoir"></td></tr>
+<tr><td>Définir une fonction, l’appeler et récupérer son résultat</td><td><input type="radio" name="c7" value="seul"></td><td><input type="radio" name="c7" value="aide"></td><td><input type="radio" name="c7" value="revoir"></td></tr>
+<tr><td>Expliquer la différence entre <code>return</code> et <code>print</code></td><td><input type="radio" name="c8" value="seul"></td><td><input type="radio" name="c8" value="aide"></td><td><input type="radio" name="c8" value="revoir"></td></tr>
+<tr><td>Donner les valeurs de <code>range</code> à 1, 2 ou 3 paramètres</td><td><input type="radio" name="c9" value="seul"></td><td><input type="radio" name="c9" value="aide"></td><td><input type="radio" name="c9" value="revoir"></td></tr>
+<tr><td>Choisir entre <code>for</code> et <code>while</code>, éviter une boucle infinie</td><td><input type="radio" name="c10" value="seul"></td><td><input type="radio" name="c10" value="aide"></td><td><input type="radio" name="c10" value="revoir"></td></tr>
+<tr><td>Faire le tableau de suivi d’un programme</td><td><input type="radio" name="c11" value="seul"></td><td><input type="radio" name="c11" value="aide"></td><td><input type="radio" name="c11" value="revoir"></td></tr>
+<tr><td>Lire un message d’erreur (type et ligne)</td><td><input type="radio" name="c12" value="seul"></td><td><input type="radio" name="c12" value="aide"></td><td><input type="radio" name="c12" value="revoir"></td></tr>
+</table><button class="checklist-reset" onclick="resetChecklist()">↺ Réinitialiser</button></div>
+<div class="section" id="qcm"><div class="section-num">10 — QCM</div><h2>Quiz interactif — Les bases de Python</h2>
+<p style="color:var(--muted);margin-bottom:16px;">Banque de <strong style="color:var(--green)">33 questions</strong>. Choisis le nombre de questions et lance le tirage.</p>
+<div class="qcm-controls"><span style="font-family:'JetBrains Mono',monospace;font-size:12px;color:var(--muted)">Nombre de questions :</span>
+<label class="qcm-size-opt" id="lbl5"><input type="radio" name="qsz" value="5" checked onchange="onSzChange()"> 5 questions</label>
+<label class="qcm-size-opt" id="lbl10"><input type="radio" name="qsz" value="10" onchange="onSzChange()"> 10 questions</label>
+<button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button></div>
+<div id="qcm-questions"></div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;"><button class="qcm-btn qcm-btn-primary" onclick="submitQCM()" id="btn-sub">✅ Valider mes réponses</button><button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button></div>
+<div id="qcm-result"></div></div>
+</div>
+<footer>NSI · 1ère Spécialité · Les bases de Python · Cours complet + Exercices + QCM</footer>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+function toggle(id){const el=document.getElementById(id);const icon=document.getElementById('i'+id);el.classList.toggle('open');if(icon)icon.textContent=el.classList.contains('open')?'\u25bc':'\u25b6';}
+function onSzChange(){const v5=document.querySelector('[name="qsz"][value="5"]').checked;document.getElementById('lbl5').style.borderColor=v5?'#2563eb':'';document.getElementById('lbl10').style.borderColor=!v5?'#2563eb':'';}
+let _pyodidePromise=null;
+function getPyodide(){ if(!_pyodidePromise){ _pyodidePromise=loadPyodide().then(async function(py){
+  await py.runPythonAsync(`
+import builtins, js
+def _saisie(message=''):
+    v = js.prompt(str(message))
+    if v is None:
+        raise KeyboardInterrupt("saisie annulée")
+    print(str(message) + v)
+    return v
+builtins.input = _saisie
+`); return py; }); } return _pyodidePromise; }
+async function runPycode(btn){
+  const box=btn.closest('.code-block'), ta=box.querySelector('.code-editor'), out=box.querySelector('.code-output');
+  const original=btn.textContent; btn.disabled=true; btn.textContent='...'; out.textContent='';
+  try{
+    const py=await getPyodide();
+    py.setStdout({batched:function(s){out.textContent+=s+'\n';}});
+    py.setStderr({batched:function(s){out.textContent+=s+'\n';}});
+    await py.runPythonAsync(ta.value);
+    if(!out.textContent.trim()) out.textContent='(aucune sortie : pense à utiliser print() pour afficher un résultat)';
+  }catch(err){
+    const msg=String(err.message||err).trim().split('\n'); out.textContent+='Erreur : '+msg[msg.length-1];
+  }
+  btn.disabled=false; btn.textContent=original;
+}
+(function(){const KEY='nsi-bases-python-selfassess';let st={};try{st=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){st={};}
+document.querySelectorAll('.selfassess input[type="radio"]').forEach(function(r){if(st[r.name]===r.value){r.checked=true;r.closest('tr').classList.add('done');}
+r.addEventListener('change',function(){st[r.name]=r.value;r.closest('tr').classList.add('done');try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}});});})();
+function resetChecklist(){document.querySelectorAll('.selfassess input[type="radio"]').forEach(function(r){r.checked=false;r.closest('tr').classList.remove('done');});try{localStorage.removeItem('nsi-bases-python-selfassess');}catch(e){}}
+const BANK=[{"q":"L’instruction <code>x = 5</code> est :","o":["une affectation","une comparaison","une déclaration de type","un appel de fonction"],"a":0,"ex":"<code>=</code> affecte la valeur 5 à x. La comparaison s’écrit <code>==</code>."},{"q":"Quel est le type de <code>7 / 2</code> ?","o":["float","int","str","bool"],"a":0,"ex":"<code>/</code> donne toujours un décimal : 3.5."},{"q":"Que vaut <code>17 // 5</code> ?","o":["3","3.4","2","5"],"a":0,"ex":"<code>//</code> donne le quotient de la division euclidienne : 17 = 5 × 3 + 2."},{"q":"Que vaut <code>17 % 5</code> ?","o":["2","3","0.4","5"],"a":0,"ex":"<code>%</code> donne le reste : 17 = 5 × 3 + 2."},{"q":"Que vaut <code>\"3\" + \"4\"</code> ?","o":["\"34\"","7","\"7\"","une erreur"],"a":0,"ex":"Avec des chaînes, <code>+</code> concatène (colle)."},{"q":"Que vaut <code>\"ab\" * 3</code> ?","o":["\"ababab\"","une erreur","\"ab3\"","\"aaabbb\""],"a":0,"ex":"Une chaîne multipliée par un entier est dupliquée."},{"q":"La fonction <code>input()</code> renvoie toujours :","o":["une chaîne (str)","un entier (int)","un décimal (float)","le type de ce qui est tapé"],"a":0,"ex":"Même si on tape un nombre : il faut convertir avec <code>int(...)</code> ou <code>float(...)</code>."},{"q":"On tape 5 : <code>n = input()</code> puis <code>print(n * 2)</code> affiche :","o":["55","10","une erreur","5 5"],"a":0,"ex":"n vaut la chaîne \"5\" ; \"5\" * 2 = \"55\"."},{"q":"Quel nom de variable est correct ?","o":["nombre_de_pv","2eme_vie","mon nom","for"],"a":0,"ex":"Pas de chiffre au début, pas d’espace, pas de mot-clé."},{"q":"Que provoque <code>int(\"abc\")</code> ?","o":["une ValueError","0","\"abc\"","une TypeError"],"a":0,"ex":"La fonction est bonne mais la valeur ne peut pas être convertie : ValueError."},{"q":"Que vaut <code>not (3 > 1)</code> ?","o":["False","True","None","une erreur"],"a":0,"ex":"3 > 1 vaut True, not l’inverse."},{"q":"Que vaut <code>True and False or True</code> ?","o":["True","False","None","une erreur"],"a":0,"ex":"<code>and</code> est évalué d’abord : False or True → True."},{"q":"Avec <code>x = 15</code> : <code>if x > 10: print(\"A\")</code> puis <code>elif x > 5: print(\"B\")</code> affiche :","o":["A","B","A puis B","rien"],"a":0,"ex":"Avec elif, seul le premier bloc vrai est exécuté."},{"q":"Avec <code>x = 15</code> : <code>if x > 10: print(\"A\")</code> puis <code>if x > 5: print(\"B\")</code> affiche :","o":["A puis B","A","B","rien"],"a":0,"ex":"Deux if indépendants : les deux tests sont vrais."},{"q":"<code>def f(n): print(n * 2)</code> puis <code>r = f(3)</code>. Que vaut r ?","o":["None","6","\"6\"","une erreur"],"a":0,"ex":"f affiche 6 mais ne renvoie rien : r vaut None."},{"q":"Dans <code>def aire(l, L):</code>, l et L sont :","o":["des paramètres","des arguments","des valeurs de retour","des mots-clés"],"a":0,"ex":"Les noms dans def sont les paramètres ; les valeurs données à l’appel sont les arguments."},{"q":"<code>random.randint(1, 6)</code> peut renvoyer :","o":["un entier de 1 à 6 inclus","un entier de 1 à 5","un entier de 0 à 6","un décimal entre 1 et 6"],"a":0,"ex":"Avec randint, les deux bornes sont incluses."},{"q":"Quelles valeurs prend i dans <code>for i in range(5):</code> ?","o":["0, 1, 2, 3, 4","1, 2, 3, 4, 5","0, 1, 2, 3, 4, 5","1, 2, 3, 4"],"a":0,"ex":"range(n) va de 0 à n − 1 : la borne de fin est exclue."},{"q":"Quelles valeurs prend i dans <code>for i in range(2, 8, 2):</code> ?","o":["2, 4, 6","2, 4, 6, 8","2, 8","4, 6, 8"],"a":0,"ex":"On part de 2, on avance de 2, on s’arrête avant 8."},{"q":"Quelles valeurs prend i dans <code>for i in range(10, 0, -3):</code> ?","o":["10, 7, 4, 1","10, 7, 4","10, 7, 4, 1, -2","9, 6, 3"],"a":0,"ex":"Pas négatif : on descend de 3 tant qu’on reste strictement au-dessus de 0."},{"q":"Combien de fois <code>for i in range(3): print(\"ok\")</code> affiche-t-il « ok » ?","o":["3","2","4","0"],"a":0,"ex":"range(3) fait 3 tours : 0, 1, 2."},{"q":"<code>i = 0</code> puis <code>while i < 3: print(i)</code> (rien d’autre dans la boucle) :","o":["boucle infinie","affiche 0 1 2","affiche 0","erreur"],"a":0,"ex":"i ne change jamais : la condition reste vraie."},{"q":"<code>n = 10</code> puis <code>while n > 0: n = n - 3</code>. Que vaut n à la fin ?","o":["-2","1","0","-3"],"a":0,"ex":"10 → 7 → 4 → 1 → -2 : la condition est testée au début de chaque tour."},{"q":"On veut répéter un bloc sans savoir combien de fois à l’avance. On utilise :","o":["while","for","if","def"],"a":0,"ex":"while répète tant qu’une condition est vraie."},{"q":"Un accumulateur (total, compteur) s’initialise :","o":["avant la boucle","dans la boucle","après la boucle","dans le print"],"a":0,"ex":"Initialisé dans la boucle, il serait remis à zéro à chaque tour."},{"q":"La variable s’appelle <code>nom</code> et on écrit <code>print(Nom)</code>. Python affiche :","o":["une NameError","une TypeError","une SyntaxError","la valeur de nom"],"a":0,"ex":"Python distingue majuscules et minuscules : Nom n’existe pas."},{"q":"On oublie les deux-points après <code>if pv > 0</code>. Python affiche :","o":["une SyntaxError","une NameError","une ValueError","rien"],"a":0,"ex":"Le code est mal écrit : SyntaxError."},{"q":"Que provoque <code>\"16\" + 1</code> ?","o":["une TypeError","17","\"161\"","une ValueError"],"a":0,"ex":"On ne peut pas additionner une chaîne et un nombre."},{"q":"Une ligne non indentée placée après un bloc <code>if</code> est exécutée :","o":["dans tous les cas","seulement si la condition est vraie","jamais","seulement si la condition est fausse"],"a":0,"ex":"L’indentation définit le bloc : hors du bloc, la ligne est toujours exécutée."},{"q":"Pour réutiliser le résultat d’une fonction dans le programme, on utilise :","o":["return","print","input","break"],"a":0,"ex":"return renvoie la valeur au programme ; print ne fait que l’afficher."},{"q":"Que vaut <code>int(3.9)</code> ?","o":["3","4","3.9","une erreur"],"a":0,"ex":"int tronque : il garde la partie entière."},{"q":"Que fait <code>break</code> dans une boucle ?","o":["il sort immédiatement de la boucle","il recommence la boucle","il arrête l’ordinateur","il passe au tour suivant"],"a":0,"ex":"break interrompt la boucle ; le programme continue après elle."},{"q":"<code>s = 0</code> puis <code>for k in range(1, 4): s = s + k</code>. Que vaut s ?","o":["6","10","3","4"],"a":0,"ex":"k prend 1, 2, 3 : 1 + 2 + 3 = 6."}];
+let curQs=[],submitted=false,qSz=5;
+const getSz=()=>parseInt(document.querySelector('[name="qsz"]:checked')?.value||5);
+const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
+function newQCM(){submitted=false;qSz=getSz();curQs=shuffle(BANK).slice(0,qSz);const c=document.getElementById('qcm-questions');c.innerHTML='';
+curQs.forEach((q,qi)=>{const sh=shuffle(q.o.map((t,i)=>({t,i})));q._sh=sh;const opts=sh.map((o,si)=>'<label class="qcm-opt" id="opt-'+qi+'-'+si+'"><input type="radio" name="q'+qi+'" value="'+si+'"><span>'+o.t+'</span></label>').join('');
+c.innerHTML+='<div class="qcm-q" id="qb-'+qi+'"><div class="qcm-num">Question '+(qi+1)+' / '+qSz+'</div><div class="qcm-question">'+q.q+'</div><div class="qcm-opts">'+opts+'</div><div class="qcm-fb" id="fb-'+qi+'"></div></div>';});
+const r=document.getElementById('qcm-result');r.style.display='none';r.innerHTML='';const b=document.getElementById('btn-sub');b.disabled=false;b.style.opacity='1';onSzChange();}
+function submitQCM(){if(submitted)return;submitted=true;let score=0;
+curQs.forEach((q,qi)=>{const sel=document.querySelector('input[name="q'+qi+'"]:checked'),block=document.getElementById('qb-'+qi),fb=document.getElementById('fb-'+qi),corrSi=q._sh.findIndex(o=>o.i===q.a);
+document.querySelectorAll('input[name="q'+qi+'"]').forEach(r=>r.disabled=true);const cl=document.getElementById('opt-'+qi+'-'+corrSi);if(cl)cl.classList.add('opt-ok');
+if(sel){const ch=parseInt(sel.value);if(ch===corrSi){score++;block.classList.add('correct');fb.className='qcm-fb show ok';fb.innerHTML='Bonne réponse ! '+q.ex;}
+else{block.classList.add('wrong');document.getElementById('opt-'+qi+'-'+ch)?.classList.add('opt-ko');fb.className='qcm-fb show ko';fb.innerHTML='Mauvaise réponse. '+q.ex;}}
+else{block.classList.add('wrong');fb.className='qcm-fb show ko';fb.innerHTML='Pas de réponse. '+q.ex;}});
+const pct=(score/qSz)*100,ratio=score/qSz,col=ratio<0.3?'#dc2626':ratio<0.5?'#d97706':ratio<0.7?'#ca8a04':ratio<0.9?'#059669':'#0891b2';
+const msg=p=>p<30?'Relis le cours !':p<50?'Quelques révisions s’imposent.':p<70?'Pas mal, continue !':p<90?'Très bien !':'Parfait, maîtrise totale !';
+const r=document.getElementById('qcm-result');r.style.display='block';
+r.innerHTML='<div class="score-big" style="color:'+col+'">'+score+'<span style="font-size:26px;opacity:.5">/'+qSz+'</span></div><div class="score-sub">≈ <strong>'+Math.round(ratio*20)+'/20</strong></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%;background:'+col+'" id="sfill"></div></div><div class="score-msg" style="color:'+col+'">'+msg(pct)+'</div>';
+setTimeout(()=>{const f=document.getElementById('sfill');if(f)f.style.width=pct+'%';},80);r.scrollIntoView({behavior:'smooth',block:'center'});
+document.getElementById('btn-sub').disabled=true;document.getElementById('btn-sub').style.opacity='.5';}
+document.addEventListener('DOMContentLoaded',()=>{newQCM();onSzChange();});
+</script>
+</body>
+</html>
