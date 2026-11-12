@@ -2,254 +2,1180 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Bases de données — NSI Bac</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Inter:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../css/style.css">
+  <title>Bases de données · Terminale NSI</title>
+  <meta name="theme-color" content="#fdeef1">
+<link rel="stylesheet" href="../css/style.css">
+  <style>
+    /* ===== Compléments propres à ce chapitre (bac à sable SQL, schémas) ===== */
+    .sqlx-schema{font-family:'JetBrains Mono',monospace;font-size:.92rem;line-height:1.9;padding:.9rem 1.1rem;border-radius:10px;background:rgba(127,127,127,.08);border:1px solid rgba(127,127,127,.25);margin:1rem 0;overflow-x:auto}
+    .sqlx-schema b{font-weight:700}
+    .sqlx-schema u{text-decoration-thickness:2px;text-underline-offset:3px}
+    .sqlx-schema .fk{color:#e8913a;font-weight:700}
+    .sqlx-schema .theme{display:block;font-family:Inter,Arial,sans-serif;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;opacity:.7;margin-top:.4rem}
+    .sqlx-box{margin:1rem 0 1.4rem;border:1px solid rgba(127,127,127,.3);border-radius:12px;overflow:hidden;background:rgba(127,127,127,.05)}
+    .sqlx-box .sqlx-label{font-family:'JetBrains Mono',monospace;font-size:.75rem;padding:.35rem .8rem;background:rgba(79,124,255,.12);border-bottom:1px solid rgba(127,127,127,.25);display:flex;justify-content:space-between;gap:.5rem;flex-wrap:wrap}
+    .sqlx-box textarea{display:block;width:100%;box-sizing:border-box;min-height:5.2rem;resize:vertical;border:0;padding:.8rem 1rem;font-family:'JetBrains Mono',monospace;font-size:.9rem;line-height:1.5;background:transparent;color:inherit;outline:none;tab-size:2}
+    .sqlx-actions{display:flex;gap:.5rem;flex-wrap:wrap;padding:.5rem .8rem;border-top:1px solid rgba(127,127,127,.2)}
+    .sqlx-actions button{font-family:Inter,Arial,sans-serif;font-size:.82rem;font-weight:600;padding:.35rem .8rem;border-radius:8px;border:1px solid rgba(127,127,127,.4);background:rgba(127,127,127,.1);color:inherit;cursor:pointer}
+    .sqlx-actions button:hover{background:rgba(79,124,255,.18)}
+    .sqlx-actions .sqlx-run{background:rgba(79,124,255,.85);border-color:transparent;color:#fff}
+    .sqlx-actions .sqlx-check{background:rgba(46,170,100,.85);border-color:transparent;color:#fff}
+    .sqlx-out{padding:0 .8rem;max-height:340px;overflow:auto}
+    .sqlx-out:empty{display:none}
+    .sqlx-out table{margin:.6rem 0;font-size:.85rem}
+    .sqlx-out td.null{opacity:.55;font-style:italic}
+    .sqlx-msg{margin:.6rem 0;padding:.5rem .8rem;border-radius:8px;font-size:.88rem}
+    .sqlx-ok{background:rgba(46,170,100,.15);border-left:4px solid #2eaa64}
+    .sqlx-err{background:rgba(230,70,70,.13);border-left:4px solid #e64646}
+    .sqlx-info{background:rgba(79,124,255,.12);border-left:4px solid #4f7cff}
+    .sqlx-q{margin:1.2rem 0 .3rem;font-weight:600}
+    .sqlx-q .num{display:inline-block;min-width:2.2rem;font-family:'JetBrains Mono',monospace;color:#4f7cff}
+    .sqlx-status{font-size:.82rem;opacity:.8}
+    .sqlx-tools{display:flex;gap:.6rem;flex-wrap:wrap;margin:.8rem 0}
+    .exercise-level.level-moyen{background:rgba(232,145,58,.18);color:#e8913a}
+    .hp-tag{display:inline-block;font-size:.72rem;font-weight:700;padding:.1rem .45rem;border-radius:6px;background:rgba(155,89,182,.18);color:#9b59b6;vertical-align:middle;margin-left:.3rem}
+    details.sqlx-more{margin:1rem 0;border:1px dashed rgba(155,89,182,.5);border-radius:10px;padding:.6rem 1rem}
+    details.sqlx-more summary{cursor:pointer;font-weight:700}
+  </style>
+  <link rel="stylesheet" href="bases-de-donnees-pastel.css">
 </head>
-<body>
-<nav>
-  <a href="../index.html" class="nav-brand">NSI<span>.bac</span></a>
-  <div class="nav-links"><a href="../index.html">Accueil</a><a href="../quiz.html">QCM</a><a href="../methodes.html">Méthodes</a><a href="index.html">Chapitres</a></div>
-  <span class="nav-badge">Terminale — 2026</span><button class="burger">☰</button>
-</nav>
+<body class="database-page">
+<a class="skip" href="#contenu">Aller au contenu</a>
+<header><div class="wrap top"><a class="brand" href="../../../index.html"><img src="../../../assets/avatar-nsi-nuit-du-code.png" alt="" width="52" height="52"><span>Maths &amp; informatique<small>Spécialité NSI · Mme L.</small></span></a><nav aria-label="Navigation principale"><a href="../../../index.html">Accueil</a><a href="../../../Cours/index.html" >Cours &amp; TP</a><a href="../../../index.html#team">Projets des élèves</a><a href="../../../../maths-info/index.html">Mathématiques ↗</a></nav></div></header>
 <div class="chapter-layout">
   <aside class="toc">
     <h4>📋 Sommaire</h4>
     <ul>
       <li><a href="#intro">Introduction</a></li>
-      <li><a href="#modele">Modèle relationnel</a></li>
-      <li><a href="#sql-base">SQL de base</a></li>
+      <li><a href="#modele">Entité-association &amp; relationnel</a></li>
+      <li><a href="#integrite">Contraintes &amp; anomalies</a></li>
+      <li><a href="#sgbd">SGBD</a></li>
+      <li><a href="#base">Base d'entraînement</a></li>
+      <li><a href="#sql-select">SQL : interroger</a></li>
+      <li><a href="#agregats">Agrégats &amp; GROUP BY</a></li>
       <li><a href="#jointures">Jointures</a></li>
-      <li><a href="#agregats">Agrégats</a></li>
-      <li><a href="#contraintes">Contraintes</a></li>
+      <li><a href="#maj">SQL : mettre à jour</a></li>
+      <li><a href="#methode">Méthode bac</a></li>
       <li><a href="#pieges">Pièges</a></li>
       <li><a href="#exercices">Exercices</a></li>
+      <li><a href="#tp">TP Naheulbeuk</a></li>
       <li><a href="#synthese">Synthèse</a></li>
       <li><a href="#qcm">QCM</a></li>
     </ul>
   </aside>
-  <main class="chapter-content">
+  <main id="contenu" class="chapter-content">
+    <nav class="level-shortcuts" aria-label="Navigation du chapitre"><a href="index.html">← Tous les chapitres</a><a href="#base">Pratiquer SQL</a><a href="#exercices">Exercices</a><a href="#qcm">QCM</a></nav>
     <div class="chapter-header">
       <div class="chapter-icon">🗄️</div>
       <div>
-        <h1>S02 — Bases de données</h1>
-        <p style="color:var(--text2);margin:0">Modèle relationnel, SQL, jointures, normalisation</p>
+        <p class="eyebrow">Spécialité NSI · Terminale · S02</p>
+        <h1>Bases de données</h1>
+        <p style="color:var(--text2);margin:0">Modèle relationnel, contraintes d'intégrité, SGBD, langage SQL</p>
         <div class="chapter-meta" style="margin-top:.75rem">
           <span class="chapter-badge badge-blue">SQL</span>
           <span class="chapter-badge badge-green">Relationnel</span>
-          <span class="chapter-badge badge-orange">ACID</span>
+          <span class="chapter-badge badge-orange">SGBD</span>
         </div>
       </div>
+      <img class="avatar" src="bases-de-donnees-illustration.svg" width="240" height="240" alt="Base de données avec des tables reliées et une clé">
     </div>
 
+    <!-- ===================== INTRODUCTION ===================== -->
     <section id="intro">
       <h2>🎯 Introduction</h2>
-      <p>Une <strong>base de données relationnelle</strong> organise les données en <strong>tables</strong> (relations) composées de <strong>lignes</strong> (tuples) et de <strong>colonnes</strong> (attributs). SQL est le langage de requête standard.</p>
+      <p>Une <strong>base de données</strong> (BDD, <em>database</em>) est un ensemble organisé de données (nombres, textes, dates…) que l'on peut stocker, recouper et interroger par des moyens informatiques pour produire de l'information. Dans une <strong>base de données relationnelle</strong>, les données sont rangées dans des <strong>tables</strong> (relations) reliées entre elles par des <strong>clés</strong>. On les manipule avec le langage <strong>SQL</strong>, via un logiciel appelé <strong>SGBD</strong>.</p>
+
+      <div class="callout callout-info">
+        <span class="callout-icon">🤔</span>
+        <div class="callout-body"><h4>Activité d'accroche — la bibliothèque du village</h4>
+        <p>Une petite bibliothèque d'Ardèche gère ses prêts sur fiches papier et est débordée. Son seul outil : un tableur, sans Internet. Contraintes : un livre est emprunté puis rendu par un lecteur à une date précise, un lecteur doit être identifié à coup sûr, un livre peut avoir plusieurs auteurs et un auteur plusieurs livres.</p>
+        <p>① Propose une organisation du tableur pour enregistrer livres, auteurs, prêts et retours. Est-elle facile à utiliser ? ② Que se passe-t-il si un second bibliothécaire arrive, sur le <em>même</em> PC ? sur un <em>autre</em> PC ?</p>
+        <p style="margin-bottom:0">👉 On met en évidence les limites d'un tableur ou d'un fichier CSV : <strong>redondance</strong> (le nom d'un auteur recopié à chaque livre), <strong>incohérences</strong> (fautes de frappe, lecteurs homonymes), <strong>accès simultanés</strong> impossibles, pas de contrôle des saisies. C'est exactement ce que résolvent le modèle relationnel et les SGBD.</p></div>
+      </div>
+
       <div class="must-know">
-        <h3>✅ Ce qu'il faut savoir</h3>
+        <h3>✅ Ce qu'il faut savoir (programme officiel de Terminale)</h3>
         <ul>
-          <li>Modèle relationnel : table, attribut, tuple, schéma</li>
-          <li>Clé primaire (PK), clé étrangère (FK), contrainte d'intégrité référentielle</li>
-          <li>SELECT, FROM, WHERE, ORDER BY, LIMIT</li>
-          <li>Fonctions d'agrégat : COUNT, SUM, AVG, MIN, MAX avec GROUP BY et HAVING</li>
-          <li>Jointures : JOIN (INNER), LEFT JOIN</li>
-          <li>INSERT, UPDATE, DELETE</li>
+          <li><strong>Modèle entité-association</strong> (entités, associations, cardinalités) et sa traduction en <strong>modèle relationnel</strong></li>
+          <li><strong>Modèle relationnel</strong> : relation, attribut, domaine, clé primaire, clé étrangère, schéma relationnel</li>
+          <li>Distinguer la <strong>structure</strong> d'une base (les schémas) de son <strong>contenu</strong> (les lignes)</li>
+          <li><strong>Repérer des anomalies</strong> dans le schéma d'une base : redondance, anomalies d'insertion, de suppression, de mise à jour</li>
+          <li>Les <strong>services rendus par un SGBD</strong> : persistance, gestion des accès concurrents, efficacité des requêtes, sécurisation des accès</li>
+          <li>Identifier les composants d'une requête et écrire des requêtes avec <code>SELECT</code>, <code>FROM</code>, <code>WHERE</code>, <code>JOIN</code></li>
+          <li>Utiliser <code>DISTINCT</code>, <code>ORDER BY</code> et les fonctions d'agrégation <code>COUNT</code>, <code>SUM</code>, <code>AVG</code>, <code>MIN</code>, <code>MAX</code></li>
+          <li>Regrouper des lignes avec <code>GROUP BY</code> et filtrer les groupes avec <code>HAVING</code></li>
+          <li>Écrire des requêtes de mise à jour : <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code></li>
         </ul>
       </div>
-    </section>
-
-    <section id="modele">
-      <h2>📐 Modèle relationnel</h2>
-      <p>Exemple : une base de données de bibliothèque.</p>
-      <pre><code><span class="cm">-- Schéma relationnel</span>
-<span class="kw">CREATE TABLE</span> Auteur (
-    id_auteur   <span class="fn">INTEGER</span>  <span class="kw">PRIMARY KEY</span>,
-    nom         <span class="fn">TEXT</span>     <span class="kw">NOT NULL</span>,
-    nationalite <span class="fn">TEXT</span>
-);
-
-<span class="kw">CREATE TABLE</span> Livre (
-    isbn        <span class="fn">TEXT</span>     <span class="kw">PRIMARY KEY</span>,
-    titre       <span class="fn">TEXT</span>     <span class="kw">NOT NULL</span>,
-    annee       <span class="fn">INTEGER</span>,
-    id_auteur   <span class="fn">INTEGER</span>  <span class="kw">REFERENCES</span> Auteur(id_auteur)
-                          <span class="kw">ON DELETE CASCADE</span>
-);</code></pre>
+      <div class="callout callout-purple">
+        <span class="callout-icon">📏</span>
+        <div class="callout-body"><h4>Ce qu'on attend au bac</h4>
+        <p>Les sujets rappellent en général les mots-clés SQL autorisés dans l'énoncé. Pour les jointures, seul <code>JOIN … ON</code> est utilisé et exigible ; une même requête peut contenir <strong>plusieurs</strong> <code>JOIN</code>. Les autres types de jointure (<code>LEFT JOIN</code>, <code>RIGHT JOIN</code>, <code>FULL OUTER JOIN</code>) sont hors programme, mais on explique leur différence dans la partie Jointures.</p>
+        <p style="margin-bottom:0">On doit savoir <em>lire</em> un <code>CREATE TABLE</code> ; les sous-requêtes, signalées <span class="hp-tag">Pour aller plus loin</span>, ne sont pas exigibles.</p></div>
+      </div>
       <table>
-        <tr><th>Terme</th><th>Définition</th></tr>
-        <tr><td>Clé primaire (PK)</td><td>Attribut(s) qui identifient uniquement chaque ligne</td></tr>
-        <tr><td>Clé étrangère (FK)</td><td>Attribut qui référence la clé primaire d'une autre table</td></tr>
-        <tr><td>Cardinalité</td><td>Nombre de lignes satisfaisant une condition (lié à COUNT)</td></tr>
-        <tr><td>Domaine</td><td>Ensemble des valeurs possibles d'un attribut</td></tr>
-        <tr><td>Intégrité référentielle</td><td>Chaque FK doit référencer une PK existante</td></tr>
+        <tr><th>Date</th><th>Repère historique</th></tr>
+        <tr><td>1956</td><td>Premier disque dur commercial (IBM 350, environ 5 Mo) : on peut stocker des données en accès direct</td></tr>
+        <tr><td>1970</td><td>Edgar F. Codd (IBM) publie le <strong>modèle relationnel</strong></td></tr>
+        <tr><td>1974–1986</td><td>Naissance du langage SQL chez IBM, puis normalisation ANSI (1986) et ISO (1987)</td></tr>
+        <tr><td>Années 2000–2010</td><td>Cloud, Big Data, Open Data : les SGBD relationnels restent les plus utilisés</td></tr>
       </table>
     </section>
 
-    <section id="sql-base">
-      <h2>📝 SQL — Requêtes de base</h2>
-      <pre><code><span class="cm">-- Sélectionner toutes les colonnes</span>
-<span class="kw">SELECT</span> * <span class="kw">FROM</span> Livre;
+    <!-- ===================== MODÈLE RELATIONNEL ===================== -->
+    <section id="modele">
+      <h2>📐 Modèle entité-association et modèle relationnel</h2>
+      <p>Fil rouge : la base <strong>Bibliothèque</strong>. Une <strong>relation</strong> se représente par un tableau, qu'on appelle aussi <strong>table</strong>. Voici un extrait de la relation <code>Livre</code> :</p>
+      <table>
+        <tr><th>Isbn</th><th>Num_SS</th><th>Titre</th><th>Annee</th></tr>
+        <tr><td>9781533468406</td><td>260097511329671</td><td>Le gai savoir</td><td>1882</td></tr>
+        <tr><td>9782010019425</td><td><em>NULL</em></td><td>Oui-Oui et son grelot</td><td>1962</td></tr>
+        <tr><td>9782070293889</td><td>260097511329671</td><td>L'être et le néant</td><td>1943</td></tr>
+        <tr><td>9782876470194</td><td>195084529012355</td><td>La géométrie</td><td>1637</td></tr>
+      </table>
+      <table>
+        <tr><th>Terme</th><th>Définition</th><th>Dans l'exemple</th></tr>
+        <tr><td>Relation (table)</td><td>Ensemble de lignes ayant toutes les mêmes attributs</td><td><code>Livre</code></td></tr>
+        <tr><td>Attribut (colonne)</td><td>Propriété décrite par la relation, avec un nom et un domaine</td><td><code>Titre</code>, <code>Annee</code></td></tr>
+        <tr><td>Domaine</td><td>Ensemble des valeurs autorisées pour un attribut (type + éventuelles restrictions)</td><td><code>Annee</code> : entiers entre −2000 et 2100</td></tr>
+        <tr><td>Tuple (ligne, enregistrement)</td><td>Une ligne de la table : une valeur par attribut</td><td>(9782876470194, 195084529012355, 'La géométrie', 1637)</td></tr>
+        <tr><td>Clé primaire (PK)</td><td>Attribut (ou groupe d'attributs) dont la valeur identifie <strong>de façon unique</strong> chaque ligne ; jamais NULL</td><td><code>Isbn</code></td></tr>
+        <tr><td>Clé étrangère (FK)</td><td>Attribut qui <strong>fait référence</strong> à la clé primaire d'une autre relation</td><td><code>Num_SS</code> → <code>Lecteur(Num_SS)</code></td></tr>
+        <tr><td>Schéma relationnel</td><td>Nom de la relation + liste de ses attributs (avec domaines et clés)</td><td>voir ci-dessous</td></tr>
+      </table>
 
-<span class="cm">-- Sélection avec condition</span>
-<span class="kw">SELECT</span> titre, annee
-<span class="kw">FROM</span> Livre
-<span class="kw">WHERE</span> annee > <span class="num">2000</span>
-<span class="kw">ORDER BY</span> annee <span class="kw">DESC</span>;
+      <h3>Notation d'un schéma relationnel</h3>
+      <p>Le nom de la relation est en gras, la clé primaire est <u>soulignée</u>, une clé étrangère est précédée d'un dièse <span style="font-family:'JetBrains Mono',monospace">#</span>.</p>
+      <div class="sqlx-schema">
+        <b>Lecteur</b> (<u>Num_SS</u>, Nom_lecteur, Prenom_lecteur, Age)<br>
+        <b>Livre</b> (<u>Isbn</u>, <span class="fk">#Num_SS</span>, Titre, Annee, Prix)<br>
+        <b>Auteur</b> (<u>Id_auteur</u>, Nom_auteur, Prenom_auteur, Nationalite)<br>
+        <b>Ecrire</b> (<u><span class="fk">#Isbn</span>, <span class="fk">#Id_auteur</span></u>, Nb_chapitres)
+      </div>
+      <ul>
+        <li><code>Num_SS</code> (numéro de sécurité sociale) est unique pour chaque personne : c'est une bonne clé primaire pour <code>Lecteur</code>. Pour <code>Auteur</code>, on crée un identifiant artificiel <code>Id_auteur</code>.</li>
+        <li>Un livre est emprunté par <strong>au plus un</strong> lecteur à la fois : on ajoute la clé étrangère <code>Num_SS</code> dans <code>Livre</code> (NULL si le livre est disponible).</li>
+        <li>Un livre peut avoir plusieurs auteurs <strong>et</strong> un auteur plusieurs livres : on ne peut pas mettre une seule clé étrangère d'un côté sans créer de doublons. On crée donc une <strong>relation d'association</strong> <code>Ecrire</code>, dont la clé primaire est le <strong>couple</strong> (<code>Isbn</code>, <code>Id_auteur</code>).</li>
+      </ul>
 
-<span class="cm">-- Insérer des données</span>
-<span class="kw">INSERT INTO</span> Auteur (id_auteur, nom, nationalite)
-<span class="kw">VALUES</span> (<span class="num">1</span>, <span class="str">'Camus'</span>, <span class="str">'Française'</span>);
+      <div class="callout callout-info">
+        <span class="callout-icon">🧱</span>
+        <div class="callout-body"><h4>Structure ≠ contenu</h4>
+        <p style="margin-bottom:0">La <strong>structure</strong> d'une base, c'est l'ensemble de ses schémas relationnels (les noms de tables, d'attributs, les domaines, les clés) : elle change rarement. Le <strong>contenu</strong>, ce sont les lignes : il change à chaque emprunt. <code>CREATE TABLE</code> décrit la structure ; <code>INSERT</code>, <code>UPDATE</code>, <code>DELETE</code> modifient le contenu.</p></div>
+      </div>
 
-<span class="cm">-- Modifier des données</span>
-<span class="kw">UPDATE</span> Livre <span class="kw">SET</span> annee = <span class="num">1942</span>
-<span class="kw">WHERE</span> isbn = <span class="str">'978-X'</span>;
+      <h3>Le modèle entité-association</h3>
+      <p>Avant de créer les tables, on <strong>conçoit</strong> la base avec un schéma indépendant de toute considération informatique : le <strong>modèle entité-association</strong> (on parle aussi de modèle conceptuel des données, MCD).</p>
+      <table>
+        <tr><th>Notion</th><th>Définition</th><th>Exemple</th></tr>
+        <tr><td><strong>Entité</strong></td><td>Objet que l'on peut identifier distinctement (une personne, un livre, une réservation…), représenté par un rectangle</td><td>Lecteur, Livre, Auteur</td></tr>
+        <tr><td><strong>Attribut</strong></td><td>Propriété qui décrit une entité (ou une association)</td><td>Titre, Annee</td></tr>
+        <tr><td><strong>Identifiant</strong></td><td>Attribut(s) qui distinguent chaque entité des autres (souligné)</td><td>Isbn pour Livre</td></tr>
+        <tr><td><strong>Association</strong></td><td>Lien entre entités, représenté par une ellipse ; elle peut porter des attributs</td><td>Emprunter, Ecrire (avec Nb_chapitres)</td></tr>
+        <tr><td><strong>Cardinalité</strong></td><td>Couple (min, max) écrit côté entité : combien de fois au minimum et au maximum une entité participe à l'association</td><td>Un lecteur emprunte entre 0 et n livres → (0, n)</td></tr>
+      </table>
+      <div class="sqlx-schema" style="font-family:inherit;line-height:1.4"><svg viewBox="0 0 900 225" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="Modèle entité-association de la bibliothèque" font-family="Inter, 'Trebuchet MS', Arial, sans-serif" style="max-width:100%;height:auto"><line x1="175" y1="100" x2="192" y2="100" stroke="currentColor" stroke-width="1.6"/><line x1="348" y1="100" x2="365" y2="100" stroke="currentColor" stroke-width="1.6"/><line x1="535" y1="100" x2="552" y2="100" stroke="currentColor" stroke-width="1.6"/><line x1="708" y1="100" x2="725" y2="100" stroke="currentColor" stroke-width="1.6"/><rect x="5" y="40" width="170" height="138" rx="10" fill="rgba(79,124,255,.10)" stroke="currentColor" stroke-width="1.6"/><rect x="5" y="40" width="170" height="32" rx="10" fill="rgba(79,124,255,.22)" stroke="currentColor" stroke-width="1.6"/><text x="90" y="62" text-anchor="middle" font-weight="700" font-size="16" fill="currentColor">Lecteur</text><text x="19" y="96" font-size="14" fill="currentColor" text-decoration="underline">Num_SS</text><text x="19" y="120" font-size="14" fill="currentColor">Nom_lecteur</text><text x="19" y="144" font-size="14" fill="currentColor">Prenom_lecteur</text><text x="19" y="168" font-size="14" fill="currentColor">Age</text><ellipse cx="270" cy="100" rx="78" ry="26" fill="rgba(232,145,58,.14)" stroke="currentColor" stroke-width="1.6"/><text x="270" y="105" text-anchor="middle" font-weight="700" font-size="15" fill="currentColor">Emprunter</text><rect x="365" y="40" width="170" height="138" rx="10" fill="rgba(79,124,255,.10)" stroke="currentColor" stroke-width="1.6"/><rect x="365" y="40" width="170" height="32" rx="10" fill="rgba(79,124,255,.22)" stroke="currentColor" stroke-width="1.6"/><text x="450" y="62" text-anchor="middle" font-weight="700" font-size="16" fill="currentColor">Livre</text><text x="379" y="96" font-size="14" fill="currentColor" text-decoration="underline">Isbn</text><text x="379" y="120" font-size="14" fill="currentColor">Titre</text><text x="379" y="144" font-size="14" fill="currentColor">Annee</text><text x="379" y="168" font-size="14" fill="currentColor">Prix</text><ellipse cx="630" cy="100" rx="78" ry="34" fill="rgba(232,145,58,.14)" stroke="currentColor" stroke-width="1.6"/><text x="630" y="98" text-anchor="middle" font-weight="700" font-size="15" fill="currentColor">Ecrire</text><text x="630" y="118" text-anchor="middle" font-size="12.5" fill="currentColor">Nb_chapitres</text><rect x="725" y="40" width="170" height="138" rx="10" fill="rgba(79,124,255,.10)" stroke="currentColor" stroke-width="1.6"/><rect x="725" y="40" width="170" height="32" rx="10" fill="rgba(79,124,255,.22)" stroke="currentColor" stroke-width="1.6"/><text x="810" y="62" text-anchor="middle" font-weight="700" font-size="16" fill="currentColor">Auteur</text><text x="739" y="96" font-size="14" fill="currentColor" text-decoration="underline">Id_auteur</text><text x="739" y="120" font-size="14" fill="currentColor">Nom_auteur</text><text x="739" y="144" font-size="14" fill="currentColor">Prenom_auteur</text><text x="739" y="168" font-size="14" fill="currentColor">Nationalite</text><text x="182" y="82" text-anchor="start" font-size="14" font-weight="700" fill="#c0603a">0,n</text><text x="358" y="82" text-anchor="end" font-size="14" font-weight="700" fill="#c0603a">0,1</text><text x="542" y="82" text-anchor="start" font-size="14" font-weight="700" fill="#c0603a">1,n</text><text x="718" y="82" text-anchor="end" font-size="14" font-weight="700" fill="#c0603a">1,n</text><text x="450" y="213" text-anchor="middle" font-size="13" fill="currentColor" font-style="italic">Entités (rectangles, identifiant souligné) · associations (ellipses) · cardinalités (min, max)</text></svg></div>
+      <ul>
+        <li><strong>Emprunter</strong> : un lecteur emprunte de 0 à n livres → (0, n) ; un livre est emprunté par 0 ou 1 lecteur à la fois → (0, 1).</li>
+        <li><strong>Ecrire</strong> : un livre est écrit par 1 à n auteurs → (1, n) ; un auteur a écrit 1 à n livres → (1, n). L'association porte l'attribut <code>Nb_chapitres</code> (nombre de chapitres écrits par cet auteur dans ce livre).</li>
+      </ul>
+      <h3>Du modèle entité-association au modèle relationnel</h3>
+      <div class="callout callout-info">
+        <span class="callout-icon">🔁</span>
+        <div class="callout-body"><h4>Règles de passage</h4>
+        <ol style="margin-bottom:0">
+          <li>Chaque <strong>entité</strong> devient une <strong>relation</strong> ; son identifiant devient la <strong>clé primaire</strong>.</li>
+          <li>Association avec une cardinalité maximale <strong>1</strong> d'un côté (« un à plusieurs ») : on ajoute une <strong>clé étrangère</strong> dans la relation du côté du 1. Ici <code>Livre</code> reçoit <code>#Num_SS</code>.</li>
+          <li>Association avec des cardinalités maximales <strong>n</strong> des deux côtés (« plusieurs à plusieurs ») : elle devient une <strong>relation</strong> dont la clé primaire est le couple des deux clés étrangères, avec ses éventuels attributs. Ici <code>Ecrire(#Isbn, #Id_auteur, Nb_chapitres)</code>.</li>
+        </ol></div>
+      </div>
+      <table>
+        <tr><th></th><th>Modèle entité-association</th><th>Modèle relationnel</th></tr>
+        <tr><td>Rôle</td><td>Concevoir : décrire le monde réel</td><td>Implémenter : décrire les tables du SGBD</td></tr>
+        <tr><td>Représentation</td><td>Diagramme : rectangles, ellipses, cardinalités</td><td>Liste de schémas : <code>Livre(<u>Isbn</u>, #Num_SS, …)</code></td></tr>
+        <tr><td>Liens</td><td>Associations avec cardinalités</td><td>Clés étrangères (et relations d'association)</td></tr>
+        <tr><td>Au bac</td><td>Parfois fourni pour être lu ou traduit</td><td>Le plus souvent demandé : lire, compléter, corriger un schéma</td></tr>
+      </table>
+      <p>On distingue ainsi trois niveaux de conception : <strong>conceptuel</strong> (entité-association), <strong>logique</strong> (schéma relationnel) et <strong>physique</strong> (création des tables dans un SGBD avec <code>CREATE TABLE</code>).</p>
 
-<span class="cm">-- Supprimer des lignes</span>
-<span class="kw">DELETE FROM</span> Auteur
-<span class="kw">WHERE</span> id_auteur = <span class="num">5</span>;</code></pre>
     </section>
 
+    <!-- ===================== CONTRAINTES & ANOMALIES ===================== -->
+    <section id="integrite">
+      <h2>🔒 Contraintes d'intégrité et anomalies</h2>
+      <p>Une base relationnelle doit garantir la <strong>fiabilité</strong> de ses données. Le modèle relationnel permet d'exprimer des <strong>contraintes d'intégrité</strong>, que le SGBD vérifie à chaque modification : toute opération qui les violerait est <strong>refusée</strong>.</p>
+      <table>
+        <tr><th>Contrainte</th><th>Règle</th><th>Exemple</th></tr>
+        <tr><td><strong>Contrainte de relation</strong> (ou d'entité)</td><td>La clé primaire est unique et jamais NULL : deux lignes ne peuvent pas avoir la même clé</td><td>Impossible d'insérer deux livres avec le même <code>Isbn</code></td></tr>
+        <tr><td><strong>Contrainte de référence</strong> (intégrité référentielle)</td><td>Une clé étrangère doit correspondre à une clé primaire <strong>existante</strong> (ou être NULL)</td><td>Impossible d'attribuer un livre à un <code>Num_SS</code> absent de <code>Lecteur</code> ; impossible de supprimer un lecteur qui a encore un livre</td></tr>
+        <tr><td><strong>Contrainte de domaine</strong></td><td>Chaque valeur appartient au domaine de son attribut</td><td><code>Num_SS</code> : entier de 15 chiffres ; <code>'nicolaigogol'</code> est refusé</td></tr>
+        <tr><td><strong>Contrainte utilisateur</strong> (métier)</td><td>Règle propre à l'application</td><td>Un âge est compris entre 0 et 130 ; un prix est positif</td></tr>
+      </table>
+      <p>En SQL, ces contraintes s'écrivent dans la définition des tables. Il faut savoir les <strong>lire</strong> :</p>
+      <pre><code class="sql">CREATE TABLE Livre (
+  Isbn   INTEGER,
+  Num_SS INTEGER,
+  Titre  TEXT NOT NULL,                              -- valeur obligatoire
+  Annee  INTEGER,
+  Prix   REAL,
+  PRIMARY KEY (Isbn),                                -- contrainte de relation
+  FOREIGN KEY (Num_SS) REFERENCES Lecteur(Num_SS),   -- contrainte de référence
+  CHECK (LENGTH(Isbn) = 13),                         -- contrainte de domaine
+  CHECK (Annee BETWEEN -2000 AND 2100)
+);</code></pre>
+      <table>
+        <tr><th>Mot-clé SQL</th><th>Effet</th></tr>
+        <tr><td><code>PRIMARY KEY</code></td><td>Clé primaire : unique et non NULL</td></tr>
+        <tr><td><code>FOREIGN KEY … REFERENCES …</code></td><td>Clé étrangère vers la clé primaire d'une autre table</td></tr>
+        <tr><td><code>NOT NULL</code></td><td>La valeur ne peut pas être absente</td></tr>
+        <tr><td><code>UNIQUE</code></td><td>Deux lignes ne peuvent pas avoir la même valeur</td></tr>
+        <tr><td><code>CHECK (condition)</code></td><td>Chaque ligne doit vérifier la condition (domaine ou règle métier)</td></tr>
+        <tr><td>Types SQLite</td><td><code>INTEGER</code>, <code>REAL</code>, <code>TEXT</code> (les dates sont souvent stockées en texte <code>'AAAA-MM-JJ'</code>)</td></tr>
+      </table>
+
+      <h3>Repérer des anomalies dans un schéma</h3>
+      <p>Un schéma mal conçu stocke la même information à plusieurs endroits : c'est la <strong>redondance</strong>. Exemple d'une table unique « tout-en-un » :</p>
+      <table>
+        <tr><th>Isbn</th><th>Titre</th><th>Nom_auteur</th><th>Nationalite</th></tr>
+        <tr><td>9782070360024</td><td>L'étranger</td><td>Camus</td><td>Française</td></tr>
+        <tr><td>9782070360420</td><td>La peste</td><td>Camus</td><td>Française</td></tr>
+        <tr><td>9782876470194</td><td>La géométrie</td><td>Descartes</td><td>Francaise</td></tr>
+      </table>
+      <ul>
+        <li><strong>Anomalie de mise à jour</strong> : pour corriger la nationalité de Camus, il faut modifier <em>toutes</em> ses lignes ; en oublier une rend la base incohérente (et une faute de frappe comme « Francaise » passe inaperçue).</li>
+        <li><strong>Anomalie d'insertion</strong> : impossible d'enregistrer un auteur tant qu'on n'a aucun de ses livres (la clé <code>Isbn</code> serait vide).</li>
+        <li><strong>Anomalie de suppression</strong> : supprimer le seul livre de Descartes efface aussi toute trace de l'auteur.</li>
+      </ul>
+      <p>👉 Le remède : <strong>découper</strong> en plusieurs relations (<code>Livre</code>, <code>Auteur</code>, <code>Ecrire</code>) reliées par des clés étrangères, pour que chaque information ne soit stockée <strong>qu'une seule fois</strong>.</p>
+    </section>
+
+    <!-- ===================== SGBD ===================== -->
+    <section id="sgbd">
+      <h2>⚙️ Système de gestion de bases de données (SGBD)</h2>
+      <p>Un <strong>SGBD</strong> est le logiciel qui gère la base : il stocke les données, exécute les requêtes SQL et fait respecter les contraintes. Il cache la complexité du stockage (fichiers, disques) et offre une vue synthétique des données. Exemples de SGBD relationnels (SGBDR) : SQLite, MySQL/MariaDB, PostgreSQL, Oracle, Microsoft SQL Server. Aucun n'est à connaître en particulier.</p>
+      <table>
+        <tr><th>Service rendu</th><th>Ce que ça signifie</th><th>Exemple concret</th></tr>
+        <tr><td>💾 <strong>Persistance des données</strong></td><td>Les données survivent à l'arrêt du programme ou de la machine (stockage sur disque), et le système peut retrouver un état cohérent après une panne</td><td>Après une coupure de courant, les prêts enregistrés sont toujours là</td></tr>
+        <tr><td>👥 <strong>Gestion des accès concurrents</strong></td><td>Plusieurs utilisateurs peuvent lire et modifier la base en même temps sans la corrompre</td><td>Deux bibliothécaires ne peuvent pas prêter le même exemplaire au même instant</td></tr>
+        <tr><td>⚡ <strong>Efficacité de traitement des requêtes</strong></td><td>Le SGBD choisit lui-même la façon la plus rapide d'exécuter une requête (index, optimisation)</td><td>Retrouver un lecteur parmi des millions en quelques millisecondes</td></tr>
+        <tr><td>🔐 <strong>Sécurisation des accès</strong></td><td>Authentification et droits différents selon les utilisateurs (lecture seule, modification, administration)</td><td>Un lecteur consulte le catalogue mais ne peut pas modifier les prêts</td></tr>
+      </table>
+      <div class="callout callout-purple">
+        <span class="callout-icon">🔁</span>
+        <div class="callout-body"><h4>Transactions (culture générale)</h4>
+        <p style="margin-bottom:0">Une <strong>transaction</strong> est une suite d'opérations traitée comme un tout. Exemple : un virement bancaire, c'est <em>débiter</em> un compte <strong>et</strong> <em>créditer</em> l'autre. Le SGBD garantit les propriétés <strong>ACID</strong> : <strong>A</strong>tomicité (tout ou rien), <strong>C</strong>ohérence (les contraintes restent vérifiées), <strong>I</strong>solation (les transactions simultanées ne se gênent pas), <strong>D</strong>urabilité (une fois validée, la transaction n'est jamais perdue). Il n'est pas demandé d'expliquer <em>comment</em> le SGBD y parvient, mais de comprendre <em>pourquoi</em> c'est indispensable.</p></div>
+      </div>
+    </section>
+
+    <!-- ===================== BASE D'ENTRAÎNEMENT ===================== -->
+    <section id="base">
+      <h2>🧪 La base d'entraînement</h2>
+      <p>Tous les exemples et exercices de la page utilisent la même base SQLite, qui tourne <strong>directement dans ton navigateur</strong> : rien à installer. Tape une requête puis clique sur <strong>▶ Exécuter</strong> (ou <kbd>Ctrl</kbd>+<kbd>Entrée</kbd>). Si tu modifies ou supprimes des données, le bouton <strong>↺ Réinitialiser</strong> remet la base dans son état de départ.</p>
+      <div class="sqlx-schema">
+        <span class="theme">📚 Bibliothèque</span>
+        <b>Lecteur</b> (<u>Num_SS</u>, Nom_lecteur, Prenom_lecteur, Age)<br>
+        <b>Livre</b> (<u>Isbn</u>, <span class="fk">#Num_SS</span>, Titre, Annee, Prix)<br>
+        <b>Auteur</b> (<u>Id_auteur</u>, Nom_auteur, Prenom_auteur, Nationalite)<br>
+        <b>Ecrire</b> (<u><span class="fk">#Isbn</span>, <span class="fk">#Id_auteur</span></u>, Nb_chapitres)
+        <span class="theme">⛵ Port maritime</span>
+        <b>Marin</b> (<u>Mid</u>, Mnom, nbSorties, age)<br>
+        <b>Bateau</b> (<u>Bid</u>, Bnom, couleur)<br>
+        <b>Reservation</b> (<u><span class="fk">#Mid</span>, <span class="fk">#Bid</span>, jour</u>)
+        <span class="theme">🛒 Commerce</span>
+        <b>Client</b> (<u>IdCli</u>, NomCli, PrenomCli, Ville)<br>
+        <b>Produit</b> (<u>RefProd</u>, NomProd, Prix)<br>
+        <b>Commande</b> (<u>NumCom</u>, <span class="fk">#IdCli</span>, DateCom)<br>
+        <b>DetailCommande</b> (<u><span class="fk">#NumCom</span>, <span class="fk">#RefProd</span></u>, Quantite)
+      </div>
+      <div class="sqlx-box">
+        <div class="sqlx-label"><span>🧪 Bac à sable — requête libre</span><span class="sqlx-status">chargement de SQLite…</span></div>
+        <textarea spellcheck="false">SELECT * FROM Lecteur;</textarea>
+        <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-reset">↺ Réinitialiser la base</button></div>
+        <div class="sqlx-out"></div>
+      </div>
+      <div class="sqlx-tools">
+        <button class="btn btn-outline" id="sqlx-dl-sql">⬇ Script SQL de la base (.sql)</button>
+        <button class="btn btn-outline" id="sqlx-dl-db">⬇ Base SQLite (.db)</button>
+      </div>
+      <p style="color:var(--text2);font-size:.9rem">Pour travailler ailleurs : colle le script <code>.sql</code> dans <a href="https://sqliteonline.com/" target="_blank" rel="noopener">sqliteonline.com</a> puis exécute-le, ou ouvre le fichier <code>.db</code> avec <em>DB Browser for SQLite</em>.</p>
+    </section>
+
+    <!-- ===================== SQL INTERROGATION ===================== -->
+    <section id="sql-select">
+      <h2>🔎 SQL — Interroger une table</h2>
+      <p>Une requête d'interrogation renvoie toujours… une <strong>table</strong> (le résultat). Sa structure de base :</p>
+      <pre><code class="sql">SELECT attribut1, attribut2   -- quelles colonnes ? (* = toutes)
+FROM   Table                  -- dans quelle table ?
+WHERE  condition              -- quelles lignes ? (facultatif)
+ORDER BY attribut ASC;        -- dans quel ordre ? (facultatif, DESC = décroissant)</code></pre>
+      <p>Les mots-clés s'écrivent par convention en MAJUSCULES, les noms de tables et d'attributs sans espace ni accent. Les chaînes de caractères sont entre <strong>apostrophes</strong> : <code>'Camus'</code> (une apostrophe dans le texte se double : <code>'L''étranger'</code>).</p>
+      <pre><code class="sql">-- Toutes les colonnes de tous les livres
+SELECT * FROM Livre;
+
+-- Titre et année des livres parus après 1900, du plus récent au plus ancien
+SELECT Titre, Annee
+FROM Livre
+WHERE Annee > 1900
+ORDER BY Annee DESC;
+
+-- Livres qui ne sont pas empruntés (attention : IS NULL, jamais = NULL)
+SELECT Titre FROM Livre WHERE Num_SS IS NULL;
+
+-- Lectrices : le numéro de sécurité sociale commence par 2
+SELECT Nom_lecteur, Prenom_lecteur
+FROM Lecteur
+WHERE Num_SS LIKE '2%';
+
+-- Nationalités des auteurs, sans doublon
+SELECT DISTINCT Nationalite FROM Auteur;
+
+-- Renommer une colonne du résultat avec AS
+SELECT Titre AS Ouvrage, Annee AS Parution FROM Livre WHERE Annee < 1800;</code></pre>
+      <table>
+        <tr><th>Dans un WHERE</th><th>Signification</th><th>Exemple</th></tr>
+        <tr><td><code>=</code>, <code>&lt;&gt;</code> (ou <code>!=</code>), <code>&lt;</code>, <code>&lt;=</code>, <code>&gt;</code>, <code>&gt;=</code></td><td>Comparaisons</td><td><code>Annee &lt;&gt; 1962</code></td></tr>
+        <tr><td><code>AND</code>, <code>OR</code>, <code>NOT</code></td><td>Opérateurs booléens (parenthèses conseillées)</td><td><code>Age &gt;= 18 AND Age &lt; 30</code></td></tr>
+        <tr><td><code>BETWEEN a AND b</code></td><td>Entre a et b (bornes incluses)</td><td><code>Annee BETWEEN 1900 AND 1999</code></td></tr>
+        <tr><td><code>IN (…)</code></td><td>Appartient à une liste</td><td><code>couleur IN ('bleu', 'rouge')</code></td></tr>
+        <tr><td><code>LIKE</code></td><td>Motif de texte : <code>%</code> = n'importe quelle suite, <code>_</code> = un caractère</td><td><code>Titre LIKE 'Le%'</code></td></tr>
+        <tr><td><code>IS NULL</code>, <code>IS NOT NULL</code></td><td>Valeur absente / présente</td><td><code>Prix IS NOT NULL</code></td></tr>
+      </table>
+      <div class="sqlx-box">
+        <div class="sqlx-label"><span>✍️ À toi : les livres parus au XX<sup>e</sup> siècle, par ordre alphabétique</span><span class="sqlx-status"></span></div>
+        <textarea spellcheck="false">SELECT Titre, Annee
+FROM Livre
+WHERE Annee BETWEEN 1901 AND 2000
+ORDER BY Titre;</textarea>
+        <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-reset">↺ Réinitialiser la base</button></div>
+        <div class="sqlx-out"></div>
+      </div>
+      <p style="color:var(--text2);font-size:.9rem"><code>LIMIT n</code> (garder les <em>n</em> premières lignes) existe en SQLite et apparaît parfois dans les sujets, mais n'est pas exigible.</p>
+    </section>
+
+    <!-- ===================== AGRÉGATS ===================== -->
+    <section id="agregats">
+      <h2>📊 Fonctions d'agrégation et regroupements</h2>
+      <p>Une fonction d'agrégation <strong>résume plusieurs lignes en une seule valeur</strong>. Le résultat de la requête n'a alors qu'<strong>une seule ligne</strong>.</p>
+      <table>
+        <tr><th>Fonction</th><th>Renvoie</th></tr>
+        <tr><td><code>COUNT(*)</code></td><td>le nombre de lignes</td></tr>
+        <tr><td><code>COUNT(attribut)</code></td><td>le nombre de valeurs <strong>non NULL</strong> de l'attribut</td></tr>
+        <tr><td><code>COUNT(DISTINCT attribut)</code></td><td>le nombre de valeurs différentes</td></tr>
+        <tr><td><code>SUM(attribut)</code>, <code>AVG(attribut)</code></td><td>la somme, la moyenne (les NULL sont ignorés)</td></tr>
+        <tr><td><code>MIN(attribut)</code>, <code>MAX(attribut)</code></td><td>la plus petite, la plus grande valeur</td></tr>
+      </table>
+      <pre><code class="sql">-- Nombre de livres parus avant 1900
+SELECT COUNT(*) AS Nb_anciens FROM Livre WHERE Annee < 1900;
+
+-- Année du livre le plus récent et du plus ancien
+SELECT MAX(Annee) AS Plus_recent, MIN(Annee) AS Plus_ancien FROM Livre;
+
+-- Prix total des ouvrages payants (les livres gratuits ont un Prix NULL)
+SELECT SUM(Prix) AS Prix_total FROM Livre;
+
+-- Moyenne d'âge des lecteurs
+SELECT AVG(Age) AS Moyenne FROM Lecteur;
+
+-- Nombre de nationalités différentes parmi les auteurs
+SELECT COUNT(DISTINCT Nationalite) FROM Auteur;</code></pre>
+      <div class="sqlx-box">
+        <div class="sqlx-label"><span>✍️ Compare COUNT(*) et COUNT(Prix) : pourquoi ces deux nombres sont-ils différents ?</span><span class="sqlx-status"></span></div>
+        <textarea spellcheck="false">SELECT COUNT(*), COUNT(Prix), SUM(Prix), AVG(Prix) FROM Livre;</textarea>
+        <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-reset">↺ Réinitialiser la base</button></div>
+        <div class="sqlx-out"></div>
+      </div>
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body"><h4>Agrégats : trois règles</h4>
+        <ul style="margin-bottom:0">
+          <li>On ne met <strong>pas</strong> de fonction d'agrégation dans un <code>WHERE</code> : ❌ <code>WHERE COUNT(*) &gt; 3</code>. Le <code>WHERE</code> filtre les lignes <em>avant</em> le calcul.</li>
+          <li>Sans <code>GROUP BY</code>, on ne mélange pas un agrégat et une colonne « normale » dans le <code>SELECT</code> : ❌ <code>SELECT Titre, MAX(Annee)</code>.</li>
+          <li><code>COUNT(*)</code> compte toutes les lignes, <code>COUNT(attribut)</code> ignore les NULL.</li>
+        </ul></div>
+      </div>
+      <h3>Regrouper : GROUP BY et HAVING <span class="hp-tag">Pour aller plus loin</span></h3>
+      <p><code>GROUP BY attribut</code> range les lignes en <strong>groupes</strong> qui ont la même valeur pour cet attribut, puis la fonction d'agrégation est calculée <strong>pour chaque groupe</strong> : le résultat a une ligne par groupe.</p>
+      <pre><code class="sql">-- Nombre de livres écrits par des auteurs de chaque nationalité
+SELECT Auteur.Nationalite, COUNT(*) AS Nb
+FROM Ecrire
+JOIN Auteur ON Ecrire.Id_auteur = Auteur.Id_auteur
+GROUP BY Auteur.Nationalite;</code></pre>
+      <table>
+        <tr><th>Nationalite</th><th>Nb</th></tr>
+        <tr><td>Allemande</td><td>1</td></tr><tr><td>Américaine</td><td>2</td></tr><tr><td>Britannique</td><td>4</td></tr><tr><td>Française</td><td>12</td></tr>
+      </table>
+      <p><code>HAVING condition</code> filtre ensuite les <strong>groupes</strong>, alors que <code>WHERE</code> filtre les <strong>lignes</strong> avant le regroupement.</p>
+      <pre><code class="sql">-- Marins ayant réservé au moins 3 fois
+SELECT Marin.Mnom, COUNT(*) AS Nb_resa
+FROM Marin
+JOIN Reservation ON Marin.Mid = Reservation.Mid
+GROUP BY Marin.Mid, Marin.Mnom
+HAVING COUNT(*) >= 3;</code></pre>
+      <div class="callout callout-info">
+        <span class="callout-icon">⚙️</span>
+        <div class="callout-body"><h4>Ordre d'exécution d'une requête</h4>
+        <p style="margin-bottom:0"><code>FROM</code> / <code>JOIN</code> (on construit la table) → <code>WHERE</code> (on garde des lignes) → <code>GROUP BY</code> (on forme les groupes) → <code>HAVING</code> (on garde des groupes) → <code>SELECT</code> (on calcule les colonnes) → <code>ORDER BY</code> (on trie). C'est pour cela qu'un agrégat ne peut pas figurer dans le <code>WHERE</code>, mais peut figurer dans le <code>HAVING</code>.</p></div>
+      </div>
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body"><h4>GROUP BY : deux règles</h4>
+        <ul style="margin-bottom:0">
+          <li>Dans le <code>SELECT</code>, on ne met que des attributs présents dans le <code>GROUP BY</code> et des fonctions d'agrégation.</li>
+          <li>❌ <code>WHERE COUNT(*) &gt;= 3</code> → ✅ <code>HAVING COUNT(*) &gt;= 3</code>. Une condition sur une ligne (<code>Age &gt; 18</code>) va dans le <code>WHERE</code>.</li>
+        </ul></div>
+      </div>
+      <div class="sqlx-box">
+        <div class="sqlx-label"><span>✍️ À toi : le montant total de chaque commande (quantité × prix)</span><span class="sqlx-status"></span></div>
+        <textarea spellcheck="false">SELECT DetailCommande.NumCom, SUM(DetailCommande.Quantite * Produit.Prix) AS Total
+FROM DetailCommande
+JOIN Produit ON DetailCommande.RefProd = Produit.RefProd
+GROUP BY DetailCommande.NumCom;</textarea>
+        <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-reset">↺ Réinitialiser la base</button></div>
+        <div class="sqlx-out"></div>
+      </div>
+
+    </section>
+
+    <!-- ===================== JOINTURES ===================== -->
     <section id="jointures">
       <h2>🔗 Jointures</h2>
       <div class="callout callout-info">
         <span class="callout-icon">💡</span>
-        <div class="callout-body"><h4>Principe de la jointure</h4>
-        <p>Une jointure combine les lignes de deux tables selon une condition de correspondance. Le plus souvent : <code>table1.fk = table2.pk</code>.</p></div>
+        <div class="callout-body"><h4>Principe</h4>
+        <p style="margin-bottom:0">Quand l'information est répartie dans plusieurs tables, on les <strong>joint</strong> : chaque ligne de la première table est associée aux lignes de la seconde qui vérifient la condition <code>ON</code>. Presque toujours, cette condition relie une <strong>clé étrangère</strong> à la <strong>clé primaire</strong> qu'elle référence : <code>ON Table1.fk = Table2.pk</code>. Les lignes sans correspondance <strong>n'apparaissent pas</strong> dans le résultat.</p></div>
       </div>
-      <pre><code><span class="cm">-- INNER JOIN : seulement les lignes ayant une correspondance</span>
-<span class="kw">SELECT</span> Livre.titre, Auteur.nom
-<span class="kw">FROM</span> Livre
-<span class="kw">JOIN</span> Auteur <span class="kw">ON</span> Livre.id_auteur = Auteur.id_auteur;
+      <pre><code class="sql">-- Titre de chaque livre emprunté et nom de son emprunteur
+SELECT Livre.Titre, Lecteur.Nom_lecteur
+FROM Livre
+JOIN Lecteur ON Livre.Num_SS = Lecteur.Num_SS;
+-- Les livres non empruntés (Num_SS NULL) n'apparaissent pas.
 
-<span class="cm">-- LEFT JOIN : toutes les lignes de gauche + correspondances (NULL si absent)</span>
-<span class="kw">SELECT</span> Auteur.nom, Livre.titre
-<span class="kw">FROM</span> Auteur
-<span class="kw">LEFT JOIN</span> Livre <span class="kw">ON</span> Auteur.id_auteur = Livre.id_auteur;
-<span class="cm">-- → inclut les auteurs qui n'ont pas de livre (titre = NULL)</span>
+-- Même requête avec des alias (plus courte). JOIN et INNER JOIN sont synonymes.
+SELECT B.Titre, L.Nom_lecteur
+FROM Livre AS B
+JOIN Lecteur AS L ON B.Num_SS = L.Num_SS
+ORDER BY L.Nom_lecteur;
 
-<span class="cm">-- Jointure de 3 tables</span>
-<span class="kw">SELECT</span> E.nom, C.nom_cours, N.note
-<span class="kw">FROM</span> Etudiant E
-<span class="kw">JOIN</span> Note N <span class="kw">ON</span> E.id = N.id_etudiant
-<span class="kw">JOIN</span> Cours C <span class="kw">ON</span> N.id_cours = C.id
-<span class="kw">WHERE</span> N.note >= <span class="num">10</span>;</code></pre>
-    </section>
+-- Trois tables (donc deux JOIN) : les titres écrits par Camus
+SELECT Livre.Titre
+FROM Livre
+JOIN Ecrire ON Livre.Isbn = Ecrire.Isbn
+JOIN Auteur ON Ecrire.Id_auteur = Auteur.Id_auteur
+WHERE Auteur.Nom_auteur = 'Camus';
 
-    <section id="agregats">
-      <h2>📊 Fonctions d'agrégat</h2>
-      <pre><code><span class="cm">-- COUNT, SUM, AVG, MIN, MAX</span>
-<span class="kw">SELECT</span> <span class="fn">COUNT</span>(*) <span class="kw">AS</span> nb_livres        <span class="cm">-- nombre total</span>
-<span class="kw">FROM</span> Livre;
+-- Jointure + DISTINCT : les lecteurs ayant emprunté au moins un livre (chacun une seule fois)
+SELECT DISTINCT Lecteur.Prenom_lecteur, Lecteur.Nom_lecteur
+FROM Lecteur
+JOIN Livre ON Lecteur.Num_SS = Livre.Num_SS;
 
-<span class="cm">-- GROUP BY : grouper par auteur</span>
-<span class="kw">SELECT</span> id_auteur, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> nb_livres
-<span class="kw">FROM</span> Livre
-<span class="kw">GROUP BY</span> id_auteur;
-
-<span class="cm">-- HAVING : filtrer les groupes (après GROUP BY)</span>
-<span class="kw">SELECT</span> id_auteur, <span class="fn">COUNT</span>(*) <span class="kw">AS</span> nb
-<span class="kw">FROM</span> Livre
-<span class="kw">GROUP BY</span> id_auteur
-<span class="kw">HAVING</span> <span class="fn">COUNT</span>(*) >= <span class="num">3</span>;   <span class="cm">-- auteurs avec 3+ livres
-
--- Requête combinée avec jointure</span>
-<span class="kw">SELECT</span> Auteur.nom, <span class="fn">AVG</span>(Note.note) <span class="kw">AS</span> moyenne
-<span class="kw">FROM</span> Auteur
-<span class="kw">JOIN</span> Livre <span class="kw">ON</span> Auteur.id = Livre.id_auteur
-<span class="kw">GROUP BY</span> Auteur.nom
-<span class="kw">HAVING</span> <span class="fn">AVG</span>(Note.note) > <span class="num">4.0</span>
-<span class="kw">ORDER BY</span> moyenne <span class="kw">DESC</span>;</code></pre>
+-- Jointure + agrégat : nombre de livres actuellement empruntés par Germaine Michu
+SELECT COUNT(*)
+FROM Livre
+JOIN Lecteur ON Livre.Num_SS = Lecteur.Num_SS
+WHERE Lecteur.Nom_lecteur = 'Michu';</code></pre>
       <div class="callout callout-danger">
         <span class="callout-icon">🚨</span>
-        <div class="callout-body"><h4>WHERE vs HAVING</h4>
-        <p><strong>WHERE</strong> filtre les lignes <em>avant</em> le GROUP BY. <strong>HAVING</strong> filtre les groupes <em>après</em> le GROUP BY. On ne peut pas utiliser une fonction agrégat dans le WHERE !</p>
-        <p>❌ <code>WHERE COUNT(*) > 3</code> → erreur | ✅ <code>HAVING COUNT(*) > 3</code></p></div>
+        <div class="callout-body"><h4>Préfixer les attributs</h4>
+        <p style="margin-bottom:0">Si un attribut existe dans les deux tables (<code>Num_SS</code>, <code>Isbn</code>…), il faut écrire <code>Table.attribut</code>, sinon le SGBD signale une colonne <strong>ambiguë</strong>. Bonne habitude : préfixer <em>toujours</em> les attributs dès qu'il y a une jointure.</p></div>
       </div>
-    </section>
-
-    <section id="contraintes">
-      <h2>🔒 Contraintes et normalisation</h2>
+      <p>Tu rencontreras aussi l'<strong>ancienne syntaxe</strong>, sans <code>JOIN</code>, qu'il faut savoir lire : <code>SELECT A.Nom_lecteur, B.Titre FROM Lecteur A, Livre B WHERE A.Num_SS = B.Num_SS;</code> On privilégie <code>JOIN … ON</code>, plus lisible.</p>
+      <div class="sqlx-box">
+        <div class="sqlx-label"><span>✍️ À toi : les titres empruntés par des lecteurs de moins de 30 ans</span><span class="sqlx-status"></span></div>
+        <textarea spellcheck="false">SELECT Livre.Titre, Lecteur.Prenom_lecteur, Lecteur.Age
+FROM Livre
+JOIN Lecteur ON Livre.Num_SS = Lecteur.Num_SS
+WHERE Lecteur.Age < 30;</textarea>
+        <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-reset">↺ Réinitialiser la base</button></div>
+        <div class="sqlx-out"></div>
+      </div>
+      <h3>Les différents types de jointure <span class="hp-tag">Pour aller plus loin</span></h3>
+      <p>Au bac, <strong>seul <code>JOIN</code> est utilisé et exigible</strong> (avec éventuellement plusieurs <code>JOIN</code> dans la même requête). Il existe pourtant d'autres jointures, qu'on rencontre dans les SGBD et dans le supérieur. Exemple : on joint <code>Lecteur</code> (10 lecteurs) et <code>Livre</code> (17 livres, dont 9 empruntés par 7 lecteurs différents) sur <code>Num_SS</code>.</p>
       <table>
-        <tr><th>Contrainte</th><th>Effet</th></tr>
-        <tr><td>NOT NULL</td><td>La valeur ne peut pas être NULL</td></tr>
-        <tr><td>UNIQUE</td><td>Chaque valeur doit être unique dans la colonne</td></tr>
-        <tr><td>PRIMARY KEY</td><td>NOT NULL + UNIQUE — identifiant unique</td></tr>
-        <tr><td>FOREIGN KEY</td><td>Référence à une PK d'une autre table</td></tr>
-        <tr><td>CHECK</td><td>Vérifie une condition booléenne</td></tr>
+        <tr><th>Jointure</th><th>Lignes gardées</th><th>Nombre de lignes ici</th></tr>
+        <tr><td><code>JOIN</code> = <code>INNER JOIN</code></td><td>Seulement les couples qui se correspondent : les livres empruntés avec leur lecteur</td><td>9</td></tr>
+        <tr><td><code>LEFT JOIN</code> (<code>LEFT OUTER JOIN</code>)</td><td>Toutes les lignes de la table de <strong>gauche</strong> (Lecteur), même sans correspondance ; les colonnes de droite valent alors NULL</td><td>9 + 3 lecteurs sans livre = 12</td></tr>
+        <tr><td><code>RIGHT JOIN</code> (<code>RIGHT OUTER JOIN</code>)</td><td>Toutes les lignes de la table de <strong>droite</strong> (Livre), même sans correspondance</td><td>9 + 8 livres non empruntés = 17</td></tr>
+        <tr><td><code>FULL OUTER JOIN</code></td><td>Toutes les lignes des deux tables, avec des NULL là où il n'y a pas de correspondance</td><td>9 + 3 + 8 = 20</td></tr>
       </table>
+      <p><code>JOIN</code> tout court est donc un <code>INNER JOIN</code> : c'est la seule jointure à savoir écrire. Les mots <code>OUTER</code> (« externe ») désignent les jointures qui gardent aussi les lignes sans correspondance.</p>
+      <div class="sqlx-box">
+        <div class="sqlx-label"><span>🧪 Compare : remplace JOIN par LEFT JOIN, RIGHT JOIN puis FULL OUTER JOIN</span><span class="sqlx-status"></span></div>
+        <textarea spellcheck="false">SELECT Lecteur.Nom_lecteur, Livre.Titre
+FROM Lecteur
+JOIN Livre ON Lecteur.Num_SS = Livre.Num_SS;</textarea>
+        <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-reset">↺ Réinitialiser la base</button></div>
+        <div class="sqlx-out"></div>
+      </div>
+      <p style="color:var(--text2);font-size:.9rem">Question 6 de l'exercice « Port maritime » : les bateaux jamais réservés s'obtiennent avec un <code>LEFT JOIN</code> et la condition <code>WHERE Reservation.Bid IS NULL</code>.</p>
+
+    </section>
+
+    <!-- ===================== MISE À JOUR ===================== -->
+    <section id="maj">
+      <h2>✏️ SQL — Mettre à jour les données</h2>
+      <pre><code class="sql">-- INSERT : ajouter une ou plusieurs lignes
+INSERT INTO Lecteur (Num_SS, Nom_lecteur, Prenom_lecteur, Age)
+VALUES (206077512398765, 'Benali', 'Sofia', 20);
+
+-- UPDATE : modifier des valeurs ('Le gai savoir' est emprunté par Sofia Benali)
+UPDATE Livre
+SET Num_SS = 206077512398765
+WHERE Isbn = 9781533468406;        -- on cible de préférence par la clé primaire
+
+-- Retour du livre : il redevient disponible
+UPDATE Livre SET Num_SS = NULL WHERE Isbn = 9781533468406;
+
+-- DELETE : supprimer des lignes
+DELETE FROM Lecteur WHERE Num_SS = 189029231941483;</code></pre>
+      <div class="callout callout-danger">
+        <span class="callout-icon">🚨</span>
+        <div class="callout-body"><h4>Toujours un WHERE !</h4>
+        <p style="margin-bottom:0"><code>UPDATE Livre SET Annee = 2000;</code> modifie <strong>tous</strong> les livres, et <code>DELETE FROM Lecteur;</code> vide <strong>toute</strong> la table. Avant un <code>UPDATE</code> ou un <code>DELETE</code>, teste ton <code>WHERE</code> avec un <code>SELECT</code>.</p></div>
+      </div>
+      <p>Le SGBD <strong>refuse</strong> toute mise à jour qui violerait une contrainte d'intégrité. Essaie ces requêtes et lis le message d'erreur :</p>
+      <div class="sqlx-box">
+        <div class="sqlx-label"><span>🧪 Contraintes en action — exécute les lignes une par une</span><span class="sqlx-status"></span></div>
+        <textarea spellcheck="false" style="min-height:9rem">-- 1. Contrainte de référence : ce Num_SS n'existe pas dans Lecteur
+INSERT INTO Livre (Isbn, Num_SS, Titre, Annee) VALUES (9782070000001, 111111111111111, 'Test', 2000);
+
+-- 2. Contrainte de référence : Germaine Michu a encore des livres
+-- DELETE FROM Lecteur WHERE Num_SS = 260097511329671;
+
+-- 3. Contrainte de relation : le marin n°1 existe déjà
+-- INSERT INTO Marin VALUES (1, 'Doublon', 0, 30);
+
+-- 4. Contrainte de domaine : Num_SS doit avoir 15 chiffres
+-- INSERT INTO Lecteur VALUES (12345, 'Court', 'Num', 20);</textarea>
+        <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-reset">↺ Réinitialiser la base</button></div>
+        <div class="sqlx-out"></div>
+      </div>
+      <p style="color:var(--text2);font-size:.9rem">Astuce : enlève les <code>--</code> devant une ligne pour l'activer, et ajoute-les devant celle d'avant.</p>
+    </section>
+
+    <!-- ===================== MÉTHODE ===================== -->
+    <section id="methode">
+      <h2>🧭 Méthode bac</h2>
+      <div class="callout callout-info">
+        <span class="callout-icon">🪜</span>
+        <div class="callout-body"><h4>Écrire une requête en 6 questions</h4>
+        <ol style="margin-bottom:0">
+          <li><strong>Que dois-je afficher ?</strong> → les attributs du <code>SELECT</code> (ou un agrégat).</li>
+          <li><strong>Dans quelles tables se trouvent ces attributs et ceux des conditions ?</strong> → <code>FROM</code>.</li>
+          <li><strong>Plusieurs tables ?</strong> → je suis le chemin des clés étrangères sur le schéma : un <code>JOIN … ON fk = pk</code> par liaison (3 tables = 2 JOIN).</li>
+          <li><strong>Quelles lignes garder ?</strong> → <code>WHERE</code> (texte entre apostrophes, <code>IS NULL</code> pour l'absence).</li>
+          <li><strong>Un résultat « par » quelque chose ?</strong> → <code>GROUP BY</code> ; une condition sur un agrégat → <code>HAVING</code> (pour aller plus loin).</li>
+          <li><strong>Doublons ? Ordre ?</strong> → <code>DISTINCT</code>, <code>ORDER BY … ASC/DESC</code>.</li>
+        </ol></div>
+      </div>
       <div class="callout callout-purple">
-        <span class="callout-icon">📐</span>
-        <div class="callout-body"><h4>Propriétés ACID</h4>
-        <p><strong>A</strong>tomicité : tout ou rien | <strong>C</strong>ohérence : intégrité préservée | <strong>I</strong>solation : transactions indépendantes | <strong>D</strong>urabilité : données persistées</p></div>
+        <span class="callout-icon">✒️</span>
+        <div class="callout-body"><h4>Rédiger ses justifications</h4>
+        <p>À l'écrit du bac (à partir de la session 2027), 2 points sur 20 évaluent la maîtrise de la langue : orthographe, syntaxe et vocabulaire précis. Les questions « Justifier », « Expliquer » attendent des <strong>phrases complètes</strong> qui utilisent le vocabulaire du cours.</p>
+        <p style="margin-bottom:0">❌ « Num_SS c'est la clé car c'est unique. »<br>✅ « L'attribut <code>Num_SS</code> peut servir de clé primaire de la relation <code>Lecteur</code> car deux lecteurs distincts ne peuvent pas avoir le même numéro de sécurité sociale. Dans la relation <code>Livre</code>, <code>Num_SS</code> est une clé étrangère qui fait référence à la clé primaire de <code>Lecteur</code>. »</p></div>
       </div>
     </section>
 
+    <!-- ===================== PIÈGES ===================== -->
     <section id="pieges">
       <div class="callout callout-danger">
         <span class="callout-icon">🚨</span>
         <div class="callout-body"><h4>Pièges SQL au bac</h4>
         <ul>
-          <li><code>COUNT(*)</code> compte toutes les lignes, <code>COUNT(col)</code> ignore les NULL</li>
-          <li>Dans un SELECT avec GROUP BY, on ne peut mettre que des colonnes du GROUP BY ou des fonctions d'agrégat</li>
-          <li>La jointure INNER JOIN exclut les lignes sans correspondance (différent de LEFT JOIN)</li>
-          <li>SQL n'est pas sensible à la casse pour les mots clés (<code>SELECT = select</code>), mais peut l'être pour les données</li>
+          <li><code>= NULL</code> ne marche jamais : on écrit <code>IS NULL</code> / <code>IS NOT NULL</code></li>
+          <li>Texte entre <strong>apostrophes</strong> <code>'Paris'</code> ; nombres sans apostrophes</li>
+          <li><code>COUNT(*)</code> compte toutes les lignes, <code>COUNT(col)</code> ignore les NULL ; <code>SUM</code> et <code>AVG</code> ignorent aussi les NULL</li>
+          <li>Pas d'agrégat dans un <code>WHERE</code> : une condition sur un agrégat va dans le <code>HAVING</code></li>
+          <li>Avec <code>GROUP BY</code>, le <code>SELECT</code> ne contient que des attributs du <code>GROUP BY</code> et des agrégats</li>
+          <li>Une jointure ne garde que les lignes qui ont une correspondance : un livre non emprunté disparaît d'une jointure <code>Livre</code>–<code>Lecteur</code></li>
+          <li>Attribut présent dans deux tables → le préfixer (<code>Livre.Isbn</code>)</li>
+          <li>Après une jointure, penser à <code>DISTINCT</code> si une même personne peut apparaître plusieurs fois</li>
+          <li><code>UPDATE</code> / <code>DELETE</code> sans <code>WHERE</code> modifient toute la table</li>
+          <li>Ordre des clauses imposé : <code>SELECT</code> → <code>FROM</code> → <code>JOIN … ON</code> → <code>WHERE</code> → <code>GROUP BY</code> → <code>HAVING</code> → <code>ORDER BY</code></li>
+          <li>SQL ne distingue pas majuscules et minuscules pour les mots-clés (<code>SELECT</code> = <code>select</code>), mais <code>'Camus'</code> ≠ <code>'camus'</code> dans les données</li>
         </ul></div>
       </div>
     </section>
 
+    <!-- ===================== EXERCICES ===================== -->
     <section id="exercices">
       <h2>🏋️ Exercices</h2>
+      <p>Les exercices de requêtes ont un bouton <strong>✔ Vérifier</strong> qui compare ton résultat au résultat attendu. Conseil : écris d'abord ta requête <strong>sur papier</strong> (comme au bac), puis tape-la et vérifie.</p>
+
+      <h3>A. Modélisation et schémas</h3>
+
       <div class="exercise">
-        <div class="exercise-header"><span class="exercise-level level-facile">Facile</span><span class="exercise-title">Requête de sélection</span></div>
+        <div class="exercise-header"><span class="exercise-level level-facile">Facile</span><span class="exercise-title">Vocabulaire et lecture de schéma</span></div>
         <div class="exercise-body">
-          <p>Table <code>Eleve(id, nom, classe, note)</code>. Écrire une requête SQL pour obtenir les noms des élèves de la classe 'TG1' ayant une note supérieure à 15, triés par note décroissante.</p>
+          <p>On considère le schéma de la base <strong>Port maritime</strong> : <span style="font-family:'JetBrains Mono',monospace"><b>Marin</b>(<u>Mid</u>, Mnom, nbSorties, age), <b>Bateau</b>(<u>Bid</u>, Bnom, couleur), <b>Reservation</b>(<u>#Mid, #Bid, jour</u>)</span>.</p>
+          <ol>
+            <li>Combien d'attributs compte la relation <code>Reservation</code> ? Quelle est sa clé primaire ?</li>
+            <li>Identifier les clés étrangères et préciser les clés primaires qu'elles référencent.</li>
+            <li>Un même marin peut-il réserver deux fois le même bateau ? Justifier par une phrase.</li>
+            <li>Citer un élément de la <em>structure</em> et un élément du <em>contenu</em> de cette base.</li>
+          </ol>
           <button class="toggle-correction">▼ Voir la correction</button>
           <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
-          <pre><code><span class="kw">SELECT</span> nom
-<span class="kw">FROM</span> Eleve
-<span class="kw">WHERE</span> classe = <span class="str">'TG1'</span> <span class="kw">AND</span> note > <span class="num">15</span>
-<span class="kw">ORDER BY</span> note <span class="kw">DESC</span>;</code></pre>
+            <ol>
+              <li>Trois attributs : <code>Mid</code>, <code>Bid</code>, <code>jour</code>. La clé primaire est le triplet (<code>Mid</code>, <code>Bid</code>, <code>jour</code>).</li>
+              <li><code>Reservation.Mid</code> fait référence à <code>Marin.Mid</code> ; <code>Reservation.Bid</code> fait référence à <code>Bateau.Bid</code>.</li>
+              <li>Oui, à condition que ce soit à des jours différents : la clé primaire (<code>Mid</code>, <code>Bid</code>, <code>jour</code>) interdit seulement deux réservations identiques le même jour.</li>
+              <li>Structure : le schéma <code>Bateau(Bid, Bnom, couleur)</code>, le domaine de <code>age</code>… Contenu : la ligne (101, 'Pen Duick', 'bleu').</li>
+            </ol>
           </div></div>
         </div>
       </div>
+
       <div class="exercise">
-        <div class="exercise-header"><span class="exercise-level level-bac">Niveau bac</span><span class="exercise-title">Jointure et agrégat</span></div>
+        <div class="exercise-header"><span class="exercise-level level-bac">Niveau bac</span><span class="exercise-title">Chaîne hôtelière</span></div>
         <div class="exercise-body">
-          <p>Tables : <code>Client(id_client, nom, ville)</code> et <code>Commande(id_cmd, id_client, montant, date)</code>.<br>Trouver le nom et le montant total des commandes pour les clients de Paris ayant commandé pour plus de 500€ au total.</p>
+          <p>Une chaîne hôtelière gère les réservations de ses chambres. Le modèle comporte quatre entités et trois associations :</p>
+          <div class="sqlx-schema">
+            <b>Client</b> (Num_cli, Nom_cli, Prenom_cli) · <b>Reservation</b> (Num_res, Date_res) · <b>Chambre</b> (Num_ch, Prix_ch) · <b>Hotel</b> (Nom_hot, Ville_hot)<br>
+            Effectuer : une réservation est effectuée par <b>exactement 1</b> client (1,1) ; un client effectue <b>1 à n</b> réservations (1,n)<br>
+            Correspondre : une réservation porte sur <b>exactement 1</b> chambre (1,1) ; une chambre est réservée <b>0 à n</b> fois (0,n)<br>
+            Appartenir : une chambre appartient à <b>exactement 1</b> hôtel (1,1) ; un hôtel a <b>0 à n</b> chambres (0,n)
+          </div>
+          <ol>
+            <li>a. Peut-on avoir des clients homonymes ? b. Un client peut-il réserver plusieurs chambres à une date donnée ? c. Peut-on réserver une chambre sur plusieurs jours avec une seule réservation ? d. Peut-on savoir si une chambre est libre à une date donnée ?</li>
+            <li>Établir le schéma relationnel de la base.</li>
+            <li>Compléter pour chaque attribut : type, unicité (oui/non), domaine éventuel, NULL autorisé (oui/non), clé (CP / CE / ∅) — pour <code>Chambre.Nom_hot</code>, <code>Chambre.Prix_ch</code>, <code>Reservation.Date_res</code>, <code>Client.Num_cli</code>.</li>
+          </ol>
           <button class="toggle-correction">▼ Voir la correction</button>
           <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
-          <pre><code><span class="kw">SELECT</span> C.nom, <span class="fn">SUM</span>(Cmd.montant) <span class="kw">AS</span> total
-<span class="kw">FROM</span> Client C
-<span class="kw">JOIN</span> Commande Cmd <span class="kw">ON</span> C.id_client = Cmd.id_client
-<span class="kw">WHERE</span> C.ville = <span class="str">'Paris'</span>
-<span class="kw">GROUP BY</span> C.nom
-<span class="kw">HAVING</span> <span class="fn">SUM</span>(Cmd.montant) > <span class="num">500</span>;</code></pre>
-          <p>On filtre d'abord les clients de Paris (WHERE), puis on groupe et on filtre les groupes (HAVING).</p>
+            <ol>
+              <li>a. Oui : un client est identifié par <code>Num_cli</code>, pas par son nom. b. Oui : un client peut effectuer plusieurs réservations, chacune pour une chambre, éventuellement à la même date. c. Non : une réservation n'a qu'une date ; il faut une réservation par jour. d. Oui : on cherche s'il existe une réservation de cette chambre à cette date ; s'il n'y en a pas, elle est libre.</li>
+              <li><div class="sqlx-schema" style="margin:.4rem 0"><b>Hotel</b> (<u>Nom_hot</u>, Ville_hot)<br><b>Chambre</b> (<u>Num_ch</u>, <span class="fk">#Nom_hot</span>, Prix_ch)<br><b>Client</b> (<u>Num_cli</u>, Nom_cli, Prenom_cli)<br><b>Reservation</b> (<u>Num_res</u>, Date_res, <span class="fk">#Num_cli</span>, <span class="fk">#Num_ch</span>)</div>
+              Les trois associations sont de type « un à plusieurs » : on place la clé étrangère du côté (1,1).</li>
+              <li><table>
+                <tr><th>Attribut</th><th>Type</th><th>Unicité</th><th>Domaine</th><th>NULL ?</th><th>Clé</th></tr>
+                <tr><td>Chambre.Nom_hot</td><td>texte</td><td>non</td><td>noms d'hôtels existants</td><td>non</td><td>CE</td></tr>
+                <tr><td>Chambre.Prix_ch</td><td>réel</td><td>non</td><td>&gt; 0</td><td>non (de préférence)</td><td>∅</td></tr>
+                <tr><td>Reservation.Date_res</td><td>date (texte 'AAAA-MM-JJ' en SQLite)</td><td>non</td><td>dates valides</td><td>non</td><td>∅</td></tr>
+                <tr><td>Client.Num_cli</td><td>entier</td><td>oui</td><td>entiers positifs</td><td>non</td><td>CP</td></tr>
+              </table></li>
+            </ol>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-bac">Niveau bac</span><span class="exercise-title">Centre médical — repérer des anomalies</span></div>
+        <div class="exercise-body">
+          <p>Un centre médical gère ses consultations. Une consultation concerne <b>exactement 1</b> patient et est donnée par <b>exactement 1</b> médecin ; un patient peut avoir <b>1 à n</b> consultations, un médecin <b>0 à n</b>. Lors d'une consultation, on peut prescrire <b>0 à n</b> médicaments, avec une posologie ; un médicament peut être prescrit dans <b>0 à n</b> consultations.</p>
+          <div class="sqlx-schema"><b>Patient</b> (Num_SS, Nom_pat, Prenom_pat) · <b>Medecin</b> (Matricule_med, Nom_med) · <b>Medicament</b> (Code_medoc, Nom_medoc) · <b>Consultation</b> (Num_consult, Date_consult)</div>
+          <ol>
+            <li>a. Un patient peut-il effectuer plusieurs visites ? b. Un médecin peut-il recevoir plusieurs patients dans la même consultation ? c. Peut-on prescrire plusieurs médicaments lors d'une consultation ? d. Deux médecins différents peuvent-ils prescrire le même médicament ?</li>
+            <li>Établir le schéma relationnel (avec une relation <code>Prescrire</code>).</li>
+            <li>Ces lignes de la relation <code>Consultation</code> présentent-elles des anomalies ? Justifier.
+              <table>
+                <tr><th>Num_consult</th><th>Matricule_med</th><th>Num_SS</th><th>Date_consult</th></tr>
+                <tr><td>1</td><td>235</td><td>101027723456780</td><td>2020-09-20</td></tr>
+                <tr><td>1</td><td>235</td><td><em>NULL</em></td><td>2020-10-12</td></tr>
+                <tr><td>1</td><td>164</td><td>'nicolaigogol'</td><td><em>NULL</em></td></tr>
+              </table></li>
+            <li>Les tables <code>Patient</code>, <code>Medecin</code> et <code>Medicament</code> ont été créées ainsi :
+<pre><code class="sql">CREATE TABLE Patient (Num_SS INTEGER, Nom_pat TEXT, Prenom_pat TEXT,
+                      PRIMARY KEY (Num_SS), CHECK (LENGTH(Num_SS) = 15));
+CREATE TABLE Medecin (Matricule_med INTEGER, Nom_med TEXT, PRIMARY KEY (Matricule_med));
+CREATE TABLE Medicament (Code_medoc INTEGER, Nom_medoc TEXT, PRIMARY KEY (Code_medoc));</code></pre>
+            Écrire de même la création des tables <code>Consultation</code> et <code>Prescrire</code>.</li>
+          </ol>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+            <ol>
+              <li>a. Oui (1,n). b. Non : une consultation concerne exactement un patient. c. Oui (0,n). d. Oui : un médicament peut être prescrit dans plusieurs consultations, données par des médecins différents.</li>
+              <li><div class="sqlx-schema" style="margin:.4rem 0"><b>Patient</b> (<u>Num_SS</u>, Nom_pat, Prenom_pat)<br><b>Medecin</b> (<u>Matricule_med</u>, Nom_med)<br><b>Medicament</b> (<u>Code_medoc</u>, Nom_medoc)<br><b>Consultation</b> (<u>Num_consult</u>, <span class="fk">#Matricule_med</span>, <span class="fk">#Num_SS</span>, Date_consult)<br><b>Prescrire</b> (<u><span class="fk">#Num_consult</span>, <span class="fk">#Code_medoc</span></u>, Posologie)</div></li>
+              <li>Oui : <code>Num_consult</code> vaut 1 sur les trois lignes alors que c'est la clé primaire (contrainte de relation violée). Ligne 2 : <code>Num_SS</code> est NULL alors que toute consultation concerne un patient. Ligne 3 : <code>'nicolaigogol'</code> n'appartient pas au domaine de <code>Num_SS</code> (entier de 15 chiffres) et ne référence aucun patient (contrainte de domaine et de référence) ; la date est absente.</li>
+              <li>
+<pre><code class="sql">CREATE TABLE Consultation (
+  Num_consult   INTEGER,
+  Matricule_med INTEGER NOT NULL,
+  Num_SS        INTEGER NOT NULL,
+  Date_consult  TEXT NOT NULL,
+  PRIMARY KEY (Num_consult),
+  FOREIGN KEY (Matricule_med) REFERENCES Medecin(Matricule_med),
+  FOREIGN KEY (Num_SS) REFERENCES Patient(Num_SS)
+);
+CREATE TABLE Prescrire (
+  Num_consult INTEGER,
+  Code_medoc  INTEGER,
+  Posologie   TEXT,
+  PRIMARY KEY (Num_consult, Code_medoc),
+  FOREIGN KEY (Num_consult) REFERENCES Consultation(Num_consult),
+  FOREIGN KEY (Code_medoc) REFERENCES Medicament(Code_medoc)
+);</code></pre></li>
+            </ol>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-bac">Niveau bac</span><span class="exercise-title">Banque américaine — un schéma mal conçu</span></div>
+        <div class="exercise-body">
+          <p>Le test d'implémentation des relations <code>Account</code> et <code>Customer</code> d'une banque a produit ces lignes :</p>
+          <div style="display:flex;gap:1rem;flex-wrap:wrap">
+            <table><tr><th colspan="3">Account</th></tr><tr><th>AccNo</th><th>Type</th><th>Balance</th></tr>
+              <tr><td>12345</td><td>savings</td><td>12000</td></tr><tr><td>23456</td><td>checking</td><td>1000</td></tr><tr><td>34567</td><td>savings</td><td>25</td></tr></table>
+            <table><tr><th colspan="4">Customer</th></tr><tr><th>FirstName</th><th>LastName</th><th>IdNo</th><th>Account</th></tr>
+              <tr><td>Robbie</td><td>Banks</td><td>901-222</td><td>12345</td></tr><tr><td>Lena</td><td>Hand</td><td>805-333</td><td>12345</td></tr><tr><td>Lena</td><td>Hand</td><td>805-333</td><td>23456</td></tr></table>
+          </div>
+          <ol>
+            <li>Identifier les attributs de chaque relation, les clés primaires possibles et les clés étrangères.</li>
+            <li>Analyser les erreurs de conception (quelles anomalies peuvent se produire ?).</li>
+            <li>Proposer un nouveau schéma relationnel corrigé.</li>
+            <li>L'implémenter en SQL avec toutes les données de l'énoncé (tu peux tester dans le bac à sable).</li>
+          </ol>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+            <ol>
+              <li><code>Account(AccNo, Type, Balance)</code> : clé primaire <code>AccNo</code>. <code>Customer(FirstName, LastName, IdNo, Account)</code> : <code>IdNo</code> devrait identifier un client, mais il apparaît deux fois ; <code>Account</code> est une clé étrangère vers <code>Account.AccNo</code>.</li>
+              <li>Un client peut avoir plusieurs comptes (Lena Hand) et un compte peut être joint (12345 appartient à deux clients) : l'association est « plusieurs à plusieurs ». En mettant la clé étrangère dans <code>Customer</code>, on doit dupliquer le client : <strong>redondance</strong>, impossibilité d'utiliser <code>IdNo</code> comme clé primaire, <strong>anomalie de mise à jour</strong> (changer le nom de Lena à deux endroits), <strong>anomalie d'insertion</strong> (impossible d'enregistrer un client sans compte) et <strong>de suppression</strong> (fermer le compte 23456 risque d'effacer le client).</li>
+              <li><div class="sqlx-schema" style="margin:.4rem 0"><b>Customer</b> (<u>IdNo</u>, FirstName, LastName)<br><b>Account</b> (<u>AccNo</u>, Type, Balance)<br><b>Holds</b> (<u><span class="fk">#IdNo</span>, <span class="fk">#AccNo</span></u>)</div></li>
+              <li>
+<pre><code class="sql">CREATE TABLE Customer (IdNo TEXT, FirstName TEXT, LastName TEXT NOT NULL, PRIMARY KEY (IdNo));
+CREATE TABLE Account (AccNo INTEGER, Type TEXT, Balance REAL, PRIMARY KEY (AccNo));
+CREATE TABLE Holds (
+  IdNo TEXT, AccNo INTEGER,
+  PRIMARY KEY (IdNo, AccNo),
+  FOREIGN KEY (IdNo) REFERENCES Customer(IdNo),
+  FOREIGN KEY (AccNo) REFERENCES Account(AccNo)
+);
+INSERT INTO Customer VALUES ('901-222', 'Robbie', 'Banks'), ('805-333', 'Lena', 'Hand');
+INSERT INTO Account VALUES (12345, 'savings', 12000), (23456, 'checking', 1000), (34567, 'savings', 25);
+INSERT INTO Holds VALUES ('901-222', 12345), ('805-333', 12345), ('805-333', 23456);</code></pre></li>
+            </ol>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-moyen">Moyen</span><span class="exercise-title">NBA et enseigne de magasins — construire un schéma</span></div>
+        <div class="exercise-body">
+          <p><strong>1. NBA.</strong> Une franchise est décrite par son nom, sa ville, sa division et sa masse salariale. Un entraîneur (nom, prénom, fonction) est affecté à une et une seule franchise. Un joueur (nom, prénom, poste, taille, nationalité) est affecté à une et une seule franchise. Établir le schéma relationnel.</p>
+          <p><strong>2. Enseigne de magasins.</strong> Un vendeur (nom, ville du magasin) établit des factures ; un client (nom, rue, code postal, ville, courriel) reçoit des factures ; une facture a une date et contient des produits (nom, prix), chacun avec une quantité. Établir le schéma relationnel.</p>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction (une solution possible)</h5>
+            <div class="sqlx-schema"><span class="theme">NBA</span>
+              <b>Franchise</b> (<u>Id_franchise</u>, Nom, Ville, Division, Masse_salariale)<br>
+              <b>Entraineur</b> (<u>Id_entraineur</u>, Nom, Prenom, Fonction, <span class="fk">#Id_franchise</span>)<br>
+              <b>Joueur</b> (<u>Id_joueur</u>, Nom, Prenom, Poste, Taille, Nationalite, <span class="fk">#Id_franchise</span>)
+              <span class="theme">Enseigne</span>
+              <b>Vendeur</b> (<u>Id_vendeur</u>, Nom, Ville_magasin)<br>
+              <b>Client</b> (<u>Id_client</u>, Nom, Rue, Code_postal, Ville, Courriel)<br>
+              <b>Produit</b> (<u>Id_produit</u>, Nom, Prix)<br>
+              <b>Facture</b> (<u>Num_facture</u>, Date, <span class="fk">#Id_vendeur</span>, <span class="fk">#Id_client</span>)<br>
+              <b>Ligne_facture</b> (<u><span class="fk">#Num_facture</span>, <span class="fk">#Id_produit</span></u>, Quantite)
+            </div>
+            <p>On ajoute un identifiant artificiel quand aucun attribut n'est unique (deux joueurs peuvent porter le même nom). La quantité dépend à la fois de la facture et du produit : elle va dans la relation d'association.</p>
+          </div></div>
+        </div>
+      </div>
+
+      <h3>B. Requêtes SQL (avec vérification automatique)</h3>
+
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-facile">Facile</span><span class="exercise-title">Série A — Interroger une table (Bibliothèque)</span></div>
+        <div class="exercise-body">
+          <p class="sqlx-q"><span class="num">A1</span>Les titres des livres parus après 1900.</p>
+          <div class="sqlx-box" data-sol="SELECT Titre FROM Livre WHERE Annee > 1900;">
+            <div class="sqlx-label"><span>A1</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">A2</span>Le nom et le prénom des lecteurs, du plus âgé au plus jeune.</p>
+          <div class="sqlx-box" data-sol="SELECT Nom_lecteur, Prenom_lecteur FROM Lecteur ORDER BY Age DESC;">
+            <div class="sqlx-label"><span>A2</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">A3</span>Les titres des livres disponibles (non empruntés).</p>
+          <div class="sqlx-box" data-sol="SELECT Titre FROM Livre WHERE Num_SS IS NULL;">
+            <div class="sqlx-label"><span>A3</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">A4</span>Le nom des auteurs de nationalité britannique, par ordre alphabétique.</p>
+          <div class="sqlx-box" data-sol="SELECT Nom_auteur FROM Auteur WHERE Nationalite = 'Britannique' ORDER BY Nom_auteur;">
+            <div class="sqlx-label"><span>A4</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">A5</span>Les titres qui commencent par « Le » (ou « Les »).</p>
+          <div class="sqlx-box" data-sol="SELECT Titre FROM Livre WHERE Titre LIKE 'Le%';">
+            <div class="sqlx-label"><span>A5</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">A6</span>Le nombre de livres parus avant 1900.</p>
+          <div class="sqlx-box" data-sol="SELECT COUNT(*) FROM Livre WHERE Annee < 1900;">
+            <div class="sqlx-label"><span>A6</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">A7</span>Les différentes nationalités des auteurs, sans doublon.</p>
+          <div class="sqlx-box" data-sol="SELECT DISTINCT Nationalite FROM Auteur;">
+            <div class="sqlx-label"><span>A7</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">A8</span>L'âge moyen, l'âge minimal et l'âge maximal des lecteurs.</p>
+          <div class="sqlx-box" data-sol="SELECT AVG(Age), MIN(Age), MAX(Age) FROM Lecteur;">
+            <div class="sqlx-label"><span>A8</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+<pre><code class="sql">-- A1
+SELECT Titre FROM Livre WHERE Annee > 1900;
+-- A2
+SELECT Nom_lecteur, Prenom_lecteur FROM Lecteur ORDER BY Age DESC;
+-- A3
+SELECT Titre FROM Livre WHERE Num_SS IS NULL;
+-- A4
+SELECT Nom_auteur FROM Auteur WHERE Nationalite = 'Britannique' ORDER BY Nom_auteur;
+-- A5
+SELECT Titre FROM Livre WHERE Titre LIKE 'Le%';
+-- A6
+SELECT COUNT(*) FROM Livre WHERE Annee < 1900;
+-- A7
+SELECT DISTINCT Nationalite FROM Auteur;
+-- A8
+SELECT AVG(Age), MIN(Age), MAX(Age) FROM Lecteur;</code></pre>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-moyen">Moyen</span><span class="exercise-title">Série B — Jointures (Bibliothèque)</span></div>
+        <div class="exercise-body">
+          <p class="sqlx-q"><span class="num">B1</span>Le titre de chaque livre emprunté, avec le nom et le prénom de l'emprunteur.</p>
+          <div class="sqlx-box" data-sol="SELECT Livre.Titre, Lecteur.Nom_lecteur, Lecteur.Prenom_lecteur FROM Livre JOIN Lecteur ON Livre.Num_SS = Lecteur.Num_SS;">
+            <div class="sqlx-label"><span>B1</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">B2</span>Les titres des livres écrits par Descartes.</p>
+          <div class="sqlx-box" data-sol="SELECT Livre.Titre FROM Livre JOIN Ecrire ON Livre.Isbn = Ecrire.Isbn JOIN Auteur ON Ecrire.Id_auteur = Auteur.Id_auteur WHERE Auteur.Nom_auteur = 'Descartes';">
+            <div class="sqlx-label"><span>B2</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">B3</span>Le prénom et le nom des lecteurs ayant emprunté au moins un livre, sans doublon, par ordre alphabétique des noms.</p>
+          <div class="sqlx-box" data-sol="SELECT DISTINCT Lecteur.Prenom_lecteur, Lecteur.Nom_lecteur FROM Lecteur JOIN Livre ON Lecteur.Num_SS = Livre.Num_SS ORDER BY Lecteur.Nom_lecteur;">
+            <div class="sqlx-label"><span>B3</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">B4</span>Le nom des auteurs des livres parus après 1950, avec le titre et l'année.</p>
+          <div class="sqlx-box" data-sol="SELECT Auteur.Nom_auteur, Livre.Titre, Livre.Annee FROM Auteur JOIN Ecrire ON Auteur.Id_auteur = Ecrire.Id_auteur JOIN Livre ON Ecrire.Isbn = Livre.Isbn WHERE Livre.Annee > 1950;">
+            <div class="sqlx-label"><span>B4</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">B5</span>Le nom des lecteurs (sans doublon) qui ont emprunté un livre d'un auteur de nationalité française.</p>
+          <div class="sqlx-box" data-sol="SELECT DISTINCT Lecteur.Nom_lecteur FROM Lecteur JOIN Livre ON Lecteur.Num_SS = Livre.Num_SS JOIN Ecrire ON Livre.Isbn = Ecrire.Isbn JOIN Auteur ON Ecrire.Id_auteur = Auteur.Id_auteur WHERE Auteur.Nationalite = 'Française';">
+            <div class="sqlx-label"><span>B5</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">B6</span>Le nombre de livres actuellement empruntés par des lecteurs de plus de 40 ans.</p>
+          <div class="sqlx-box" data-sol="SELECT COUNT(*) FROM Livre JOIN Lecteur ON Livre.Num_SS = Lecteur.Num_SS WHERE Lecteur.Age > 40;">
+            <div class="sqlx-label"><span>B6</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+<pre><code class="sql">-- B1
+SELECT Livre.Titre, Lecteur.Nom_lecteur, Lecteur.Prenom_lecteur
+FROM Livre JOIN Lecteur ON Livre.Num_SS = Lecteur.Num_SS;
+-- B2 : Livre → Ecrire → Auteur
+SELECT Livre.Titre
+FROM Livre
+JOIN Ecrire ON Livre.Isbn = Ecrire.Isbn
+JOIN Auteur ON Ecrire.Id_auteur = Auteur.Id_auteur
+WHERE Auteur.Nom_auteur = 'Descartes';
+-- B3 : DISTINCT car un lecteur peut avoir plusieurs livres
+SELECT DISTINCT Lecteur.Prenom_lecteur, Lecteur.Nom_lecteur
+FROM Lecteur JOIN Livre ON Lecteur.Num_SS = Livre.Num_SS
+ORDER BY Lecteur.Nom_lecteur;
+-- B4
+SELECT Auteur.Nom_auteur, Livre.Titre, Livre.Annee
+FROM Auteur
+JOIN Ecrire ON Auteur.Id_auteur = Ecrire.Id_auteur
+JOIN Livre ON Ecrire.Isbn = Livre.Isbn
+WHERE Livre.Annee > 1950;
+-- B5 : 4 tables = 3 JOIN
+SELECT DISTINCT Lecteur.Nom_lecteur
+FROM Lecteur
+JOIN Livre ON Lecteur.Num_SS = Livre.Num_SS
+JOIN Ecrire ON Livre.Isbn = Ecrire.Isbn
+JOIN Auteur ON Ecrire.Id_auteur = Auteur.Id_auteur
+WHERE Auteur.Nationalite = 'Française';
+-- B6
+SELECT COUNT(*)
+FROM Livre JOIN Lecteur ON Livre.Num_SS = Lecteur.Num_SS
+WHERE Lecteur.Age > 40;</code></pre>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-moyen">Moyen</span><span class="exercise-title">Série D — GROUP BY et HAVING (pour aller plus loin)</span></div>
+        <div class="exercise-body">
+          <p class="sqlx-q"><span class="num">D1</span>Pour chaque nationalité d'auteur, le nombre de livres écrits (nationalité, nombre).</p>
+          <div class="sqlx-box" data-sol="SELECT Auteur.Nationalite, COUNT(*) FROM Ecrire JOIN Auteur ON Ecrire.Id_auteur = Auteur.Id_auteur GROUP BY Auteur.Nationalite;">
+            <div class="sqlx-label"><span>D1</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">D2</span>Le nom des marins ayant réservé au moins 3 fois.</p>
+          <div class="sqlx-box" data-sol="SELECT Marin.Mnom FROM Marin JOIN Reservation ON Marin.Mid = Reservation.Mid GROUP BY Marin.Mid, Marin.Mnom HAVING COUNT(*) &gt;= 3;">
+            <div class="sqlx-label"><span>D2</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+<pre><code class="sql">-- D1
+SELECT Auteur.Nationalite, COUNT(*)
+FROM Ecrire JOIN Auteur ON Ecrire.Id_auteur = Auteur.Id_auteur
+GROUP BY Auteur.Nationalite;
+-- D2 : condition sur un agrégat → HAVING (on groupe par la clé Mid)
+SELECT Marin.Mnom
+FROM Marin JOIN Reservation ON Marin.Mid = Reservation.Mid
+GROUP BY Marin.Mid, Marin.Mnom
+HAVING COUNT(*) >= 3;</code></pre>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-moyen">Moyen</span><span class="exercise-title">Série C — Mises à jour</span></div>
+        <div class="exercise-body">
+          <p>Écris chaque requête, exécute-la, puis contrôle l'effet avec un <code>SELECT</code>. Le bouton ↺ remet la base à zéro.</p>
+          <ol>
+            <li>Inscrire la lectrice Sofia Benali, 20 ans, numéro 206077512398765.</li>
+            <li>Elle emprunte « La peste » (Isbn 9782070360420).</li>
+            <li>Paul Nguyen rend « 1984 » (Isbn 9782070368228).</li>
+            <li>Ajouter le marin Gabart (Mid 11, 0 sortie, 43 ans), puis augmenter de 1 le nombre de sorties de tous les marins qui ont au moins 20 sorties.</li>
+            <li>Essayer de supprimer le lecteur Topor, puis la lectrice Rossi. Expliquer en une phrase la différence de comportement du SGBD.</li>
+          </ol>
+          <div class="sqlx-box">
+            <div class="sqlx-label"><span>Série C — éditeur</span><span class="sqlx-status"></span></div>
+            <textarea spellcheck="false" style="min-height:7rem">-- Écris tes requêtes ici, puis contrôle :
+SELECT * FROM Lecteur;</textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-reset">↺ Réinitialiser la base</button></div><div class="sqlx-out"></div></div>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+<pre><code class="sql">-- 1
+INSERT INTO Lecteur (Num_SS, Nom_lecteur, Prenom_lecteur, Age)
+VALUES (206077512398765, 'Benali', 'Sofia', 20);
+-- 2
+UPDATE Livre SET Num_SS = 206077512398765 WHERE Isbn = 9782070360420;
+-- 3
+UPDATE Livre SET Num_SS = NULL WHERE Isbn = 9782070368228;
+-- 4
+INSERT INTO Marin VALUES (11, 'Gabart', 0, 43);
+UPDATE Marin SET nbSorties = nbSorties + 1 WHERE nbSorties >= 20;
+-- 5
+DELETE FROM Lecteur WHERE Nom_lecteur = 'Topor';   -- accepté
+DELETE FROM Lecteur WHERE Nom_lecteur = 'Rossi';   -- refusé</code></pre>
+            <p>Roland Topor n'a aucun livre : sa suppression est acceptée. Giulia Rossi a emprunté « Le seigneur des anneaux » : son <code>Num_SS</code> est référencé par une clé étrangère de <code>Livre</code>, donc la supprimer violerait la contrainte de référence et le SGBD refuse.</p>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-moyen">Moyen</span><span class="exercise-title">Lire une requête — que renvoie-t-elle ?</span></div>
+        <div class="exercise-body">
+          <p>Sans l'exécuter, décrire <strong>en une phrase en français</strong> ce que renvoie chaque requête. Vérifier ensuite dans le bac à sable.</p>
+<pre><code class="sql">-- R1
+SELECT Bnom FROM Bateau WHERE couleur = 'rouge' OR couleur = 'bleu';
+-- R2
+SELECT COUNT(*) FROM Reservation WHERE jour BETWEEN '2026-06-01' AND '2026-06-30';
+-- R3
+SELECT DISTINCT Bateau.Bnom
+FROM Bateau JOIN Reservation ON Bateau.Bid = Reservation.Bid
+JOIN Marin ON Reservation.Mid = Marin.Mid
+WHERE Marin.age < 30;</code></pre>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+            <ul>
+              <li><strong>R1</strong> : le nom des bateaux rouges ou bleus (Pen Duick, Licorne, Marie-Galante, Goéland).</li>
+              <li><strong>R2</strong> : le nombre de réservations effectuées en juin 2026 (5). Les dates au format 'AAAA-MM-JJ' se comparent correctement comme du texte.</li>
+              <li><strong>R3</strong> : le nom des bateaux réservés au moins une fois par un marin de moins de 30 ans, chaque bateau n'apparaissant qu'une fois (Goéland, Sirène, Albatros).</li>
+            </ul>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-bac">Niveau bac</span><span class="exercise-title">Gestion d'un port maritime</span></div>
+        <div class="exercise-body">
+          <p>Schéma : <span style="font-family:'JetBrains Mono',monospace"><b>Marin</b>(<u>Mid</u>, Mnom, nbSorties, age), <b>Bateau</b>(<u>Bid</u>, Bnom, couleur), <b>Reservation</b>(<u>#Mid, #Bid, jour</u>)</span>. Écrire les requêtes SQL répondant aux questions.</p>
+          <p class="sqlx-q"><span class="num">1</span>Quels sont les marins (nom) qui ont effectué au moins 15 sorties ?</p>
+          <div class="sqlx-box" data-sol="SELECT Mnom FROM Marin WHERE nbSorties >= 15;">
+            <div class="sqlx-label"><span>Port — 1</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">2</span>Quelle est la moyenne d'âge des marins ?</p>
+          <div class="sqlx-box" data-sol="SELECT AVG(age) FROM Marin;">
+            <div class="sqlx-label"><span>Port — 2</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">3</span>Quels sont les marins (nom, sans doublon) qui ont réservé au moins une fois un bateau ?</p>
+          <div class="sqlx-box" data-sol="SELECT DISTINCT Marin.Mnom FROM Marin JOIN Reservation ON Marin.Mid = Reservation.Mid;">
+            <div class="sqlx-label"><span>Port — 3</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">4</span>Quels sont les marins (nom, sans doublon) qui ont réservé au moins une fois un bateau bleu ?</p>
+          <div class="sqlx-box" data-sol="SELECT DISTINCT Marin.Mnom FROM Marin JOIN Reservation ON Marin.Mid = Reservation.Mid JOIN Bateau ON Reservation.Bid = Bateau.Bid WHERE Bateau.couleur = 'bleu';">
+            <div class="sqlx-label"><span>Port — 4</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">5</span>Donner le nom et le nombre de sorties de chaque marin, par ordre décroissant du nombre de sorties.</p>
+          <div class="sqlx-box" data-sol="SELECT Mnom, nbSorties FROM Marin ORDER BY nbSorties DESC;">
+            <div class="sqlx-label"><span>Port — 5</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">6</span><span class="hp-tag">Pour aller plus loin</span> Quels sont les bateaux qui n'ont jamais été réservés ?</p>
+          <div class="sqlx-box" data-sol="SELECT Bnom FROM Bateau WHERE Bid NOT IN (SELECT Bid FROM Reservation);">
+            <div class="sqlx-label"><span>Port — 6</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+<pre><code class="sql">-- 1
+SELECT Mnom FROM Marin WHERE nbSorties >= 15;
+-- 2
+SELECT AVG(age) FROM Marin;
+-- 3
+SELECT DISTINCT Marin.Mnom
+FROM Marin JOIN Reservation ON Marin.Mid = Reservation.Mid;
+-- 4
+SELECT DISTINCT Marin.Mnom
+FROM Marin
+JOIN Reservation ON Marin.Mid = Reservation.Mid
+JOIN Bateau ON Reservation.Bid = Bateau.Bid
+WHERE Bateau.couleur = 'bleu';
+-- 5
+SELECT Mnom, nbSorties FROM Marin ORDER BY nbSorties DESC;
+-- 6 avec LEFT JOIN (hors programme) : bateaux sans réservation
+SELECT Bateau.Bnom FROM Bateau
+LEFT JOIN Reservation ON Bateau.Bid = Reservation.Bid
+WHERE Reservation.Bid IS NULL;
+-- 6 avec une sous-requête (pour aller plus loin)
+SELECT Bnom FROM Bateau
+WHERE Bid NOT IN (SELECT Bid FROM Reservation);</code></pre>
+            <p>Question 6 : une simple jointure ne peut pas répondre, car elle ne garde que les bateaux <em>qui ont</em> une réservation. Il faut une sous-requête (ou un <code>LEFT JOIN</code>), deux outils hors programme.</p>
+          </div></div>
+        </div>
+      </div>
+
+      <div class="exercise">
+        <div class="exercise-header"><span class="exercise-level level-bac">Niveau bac</span><span class="exercise-title">Gestion des ventes d'un commerce</span></div>
+        <div class="exercise-body">
+          <p>Un commerçant utilise une base dont le schéma est incomplet et dont les attributs sont dans le désordre :</p>
+          <div class="sqlx-schema">Client (PrenomCli, Ville, NomCli, IdCli)<br>Produit (NomProd, RefProd, Prix)<br>Commande (IdCli, NumCom, DateCom)<br>DetailCommande (RefProd, Quantite, NumCom)</div>
+          <ol>
+            <li>Quelles sont les clés primaires ? Y a-t-il des clés étrangères ? Si oui, les identifier.</li>
+            <li>Réécrire le schéma relationnel dans l'ordre, avec la notation du cours.</li>
+            <li>Écrire la création de la table <code>DetailCommande</code> en SQL.</li>
+            <li>Écrire les requêtes ci-dessous.</li>
+          </ol>
+          <p class="sqlx-q"><span class="num">4a</span>Le nom et le prix des produits valant plus de 2 euros.</p>
+          <div class="sqlx-box" data-sol="SELECT NomProd, Prix FROM Produit WHERE Prix > 2;">
+            <div class="sqlx-label"><span>Commerce — 4a</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">4b</span>Pour chaque commande : son numéro, sa date, puis le nom, le prénom et la ville du client.</p>
+          <div class="sqlx-box" data-sol="SELECT Commande.NumCom, Commande.DateCom, Client.NomCli, Client.PrenomCli, Client.Ville FROM Commande JOIN Client ON Commande.IdCli = Client.IdCli;">
+            <div class="sqlx-label"><span>Commerce — 4b</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">4c</span>Le détail (NumCom, RefProd, NomProd, Quantite, Prix) des commandes passées le 10 août 2020.</p>
+          <div class="sqlx-box" data-sol="SELECT DetailCommande.NumCom, DetailCommande.RefProd, Produit.NomProd, DetailCommande.Quantite, Produit.Prix FROM DetailCommande JOIN Commande ON DetailCommande.NumCom = Commande.NumCom JOIN Produit ON DetailCommande.RefProd = Produit.RefProd WHERE Commande.DateCom = '2020-08-10';">
+            <div class="sqlx-label"><span>Commerce — 4c</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">4d</span>Le nom des clients (sans doublon) ayant acheté du savon.</p>
+          <div class="sqlx-box" data-sol="SELECT DISTINCT Client.NomCli FROM Client JOIN Commande ON Client.IdCli = Commande.IdCli JOIN DetailCommande ON Commande.NumCom = DetailCommande.NumCom JOIN Produit ON DetailCommande.RefProd = Produit.RefProd WHERE Produit.NomProd = 'Savon';">
+            <div class="sqlx-label"><span>Commerce — 4d</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">4e</span>Le nom des produits (sans doublon) achetés par le client prénommé Paul.</p>
+          <div class="sqlx-box" data-sol="SELECT DISTINCT Produit.NomProd FROM Client JOIN Commande ON Client.IdCli = Commande.IdCli JOIN DetailCommande ON Commande.NumCom = DetailCommande.NumCom JOIN Produit ON DetailCommande.RefProd = Produit.RefProd WHERE Client.PrenomCli = 'Paul';">
+            <div class="sqlx-label"><span>Commerce — 4e</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">4f</span>Le nom des clients ayant acheté plus de deux brosses à dents dans une même commande.</p>
+          <div class="sqlx-box" data-sol="SELECT DISTINCT Client.NomCli FROM Client JOIN Commande ON Client.IdCli = Commande.IdCli JOIN DetailCommande ON Commande.NumCom = DetailCommande.NumCom JOIN Produit ON DetailCommande.RefProd = Produit.RefProd WHERE Produit.NomProd = 'Brosse à dents' AND DetailCommande.Quantite > 2;">
+            <div class="sqlx-label"><span>Commerce — 4f</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <p class="sqlx-q"><span class="num">4g</span>Les couples de clients (deux noms) habitant dans la même ville, chaque couple n'apparaissant qu'une fois.</p>
+          <div class="sqlx-box" data-sol="SELECT A.NomCli, B.NomCli FROM Client AS A JOIN Client AS B ON A.Ville = B.Ville WHERE A.IdCli < B.IdCli;">
+            <div class="sqlx-label"><span>Commerce — 4g</span><span class="sqlx-status"></span></div><textarea spellcheck="false"></textarea>
+            <div class="sqlx-actions"><button class="sqlx-run">▶ Exécuter</button><button class="sqlx-check">✔ Vérifier</button></div><div class="sqlx-out"></div></div>
+          <button class="toggle-correction">▼ Voir la correction</button>
+          <div class="correction"><div class="correction-box"><h5>✅ Correction</h5>
+            <ol>
+              <li>Clés primaires : <code>Client.IdCli</code>, <code>Produit.RefProd</code>, <code>Commande.NumCom</code>, et le couple (<code>NumCom</code>, <code>RefProd</code>) pour <code>DetailCommande</code>. Clés étrangères : <code>Commande.IdCli</code> → <code>Client</code> ; <code>DetailCommande.NumCom</code> → <code>Commande</code> ; <code>DetailCommande.RefProd</code> → <code>Produit</code>.</li>
+              <li><div class="sqlx-schema" style="margin:.4rem 0"><b>Client</b> (<u>IdCli</u>, NomCli, PrenomCli, Ville)<br><b>Produit</b> (<u>RefProd</u>, NomProd, Prix)<br><b>Commande</b> (<u>NumCom</u>, <span class="fk">#IdCli</span>, DateCom)<br><b>DetailCommande</b> (<u><span class="fk">#NumCom</span>, <span class="fk">#RefProd</span></u>, Quantite)</div></li>
+              <li>
+<pre><code class="sql">CREATE TABLE DetailCommande (
+  NumCom   INTEGER,
+  RefProd  TEXT,
+  Quantite INTEGER,
+  PRIMARY KEY (NumCom, RefProd),
+  FOREIGN KEY (NumCom) REFERENCES Commande(NumCom),
+  FOREIGN KEY (RefProd) REFERENCES Produit(RefProd),
+  CHECK (Quantite > 0)
+);</code></pre></li>
+              <li>
+<pre><code class="sql">-- 4a
+SELECT NomProd, Prix FROM Produit WHERE Prix > 2;
+-- 4b
+SELECT Commande.NumCom, Commande.DateCom, Client.NomCli, Client.PrenomCli, Client.Ville
+FROM Commande JOIN Client ON Commande.IdCli = Client.IdCli;
+-- 4c
+SELECT D.NumCom, D.RefProd, P.NomProd, D.Quantite, P.Prix
+FROM DetailCommande AS D
+JOIN Commande AS C ON D.NumCom = C.NumCom
+JOIN Produit AS P ON D.RefProd = P.RefProd
+WHERE C.DateCom = '2020-08-10';
+-- 4d : Client → Commande → DetailCommande → Produit
+SELECT DISTINCT Client.NomCli
+FROM Client
+JOIN Commande ON Client.IdCli = Commande.IdCli
+JOIN DetailCommande ON Commande.NumCom = DetailCommande.NumCom
+JOIN Produit ON DetailCommande.RefProd = Produit.RefProd
+WHERE Produit.NomProd = 'Savon';
+-- 4e : même chemin, autre condition
+SELECT DISTINCT Produit.NomProd
+FROM Client
+JOIN Commande ON Client.IdCli = Commande.IdCli
+JOIN DetailCommande ON Commande.NumCom = DetailCommande.NumCom
+JOIN Produit ON DetailCommande.RefProd = Produit.RefProd
+WHERE Client.PrenomCli = 'Paul';
+-- 4f
+SELECT DISTINCT Client.NomCli
+FROM Client
+JOIN Commande ON Client.IdCli = Commande.IdCli
+JOIN DetailCommande ON Commande.NumCom = DetailCommande.NumCom
+JOIN Produit ON DetailCommande.RefProd = Produit.RefProd
+WHERE Produit.NomProd = 'Brosse à dents' AND DetailCommande.Quantite > 2;
+-- 4g : jointure de la table Client avec elle-même (deux alias)
+SELECT A.NomCli, B.NomCli
+FROM Client AS A JOIN Client AS B ON A.Ville = B.Ville
+WHERE A.IdCli < B.IdCli;     -- évite (X, X) et les doublons (X, Y) / (Y, X)</code></pre></li>
+            </ol>
           </div></div>
         </div>
       </div>
     </section>
 
+    <!-- ===================== TP ===================== -->
+    <section id="tp">
+      <h2>🐉 TP — Le donjon de Naheulbeuk</h2>
+      <p>Le Maître du Donjon vous confie la gestion de ses salles. En binôme, vous concevez, créez et exploitez une base SQLite qui recense les <strong>salles</strong> (nom, taille, difficulté, type, état), les <strong>monstres</strong> (espèce, force, points de vie, salle), les <strong>pièges</strong> (type, dangerosité, salle), les <strong>trésors</strong> (valeur, type, emplacement) et les <strong>héros</strong> (nom, exploits, destin).</p>
+      <table>
+        <tr><th>Phase</th><th>Travail attendu</th><th>Livrable</th></tr>
+        <tr><td>1. Conception</td><td>Schéma relationnel avec la notation du cours (PK soulignées, FK avec #). Penser aux relations d'association : un héros visite plusieurs salles, une salle reçoit plusieurs héros → relation <code>Visite</code> (avec date et issue) ; idem pour les trésors pillés.</td><td>Schéma sur papier, validé par le professeur</td></tr>
+        <tr><td>2. Création</td><td><code>CREATE TABLE</code> avec clés primaires, clés étrangères et au moins deux <code>CHECK</code></td><td>Script <code>donjon.sql</code></td></tr>
+        <tr><td>3. Données</td><td>Au moins 5 lignes par table ; tester volontairement une insertion refusée et expliquer pourquoi</td><td>Suite du script</td></tr>
+        <tr><td>4. Rapport</td><td>État des salles, inventaire des monstres et pièges, trésors, profil des héros, recommandations. Chaque requête est accompagnée d'une phrase qui interprète le résultat.</td><td>Rapport rédigé + requêtes</td></tr>
+      </table>
+      <div class="callout callout-info">
+        <span class="callout-icon">💡</span>
+        <div class="callout-body"><h4>Conseil</h4>
+        <p style="margin-bottom:0">Pour les statistiques « par salle », compte salle par salle : <code>SELECT COUNT(*) FROM Visite WHERE id_salle = 3;</code>. Pour aller plus loin, <code>GROUP BY</code> donne toutes les salles d'un coup : <code>SELECT id_salle, COUNT(*) FROM Visite GROUP BY id_salle;</code>.</p></div>
+      </div>
+    </section>
+
+    <!-- ===================== SYNTHÈSE ===================== -->
     <section class="synthese" id="synthese">
       <h2>📌 Fiche synthèse</h2>
       <div class="synthese-grid">
-        <div class="synthese-card"><h4>STRUCTURE SQL</h4><ul>
-          <li>SELECT ... FROM ...</li><li>WHERE (filtre lignes)</li>
-          <li>GROUP BY + HAVING</li><li>ORDER BY ... ASC/DESC</li>
+        <div class="synthese-card"><h4>MODÈLE RELATIONNEL</h4><ul>
+          <li>Relation = table, attribut = colonne, tuple = ligne</li><li>Domaine = valeurs autorisées</li>
+          <li>PK unique et non NULL (soulignée)</li><li>FK → PK d'une autre table (#)</li>
+          <li>Structure (schémas) ≠ contenu (lignes)</li><li>Entité-association : entités, associations, cardinalités → relations</li>
         </ul></div>
-        <div class="synthese-card"><h4>JOINTURES</h4><ul>
-          <li>JOIN = INNER JOIN (intersection)</li><li>LEFT JOIN (tout à gauche)</li>
-          <li>ON table1.fk = table2.pk</li><li>3 tables = 2 JOIN</li>
+        <div class="synthese-card"><h4>INTÉGRITÉ &amp; SGBD</h4><ul>
+          <li>Contraintes de relation, de référence, de domaine</li><li>Redondance → anomalies d'insertion, de suppression, de mise à jour</li>
+          <li>SGBD : persistance, accès concurrents, efficacité, sécurité</li><li>Transaction : tout ou rien</li>
         </ul></div>
-        <div class="synthese-card"><h4>AGRÉGATS</h4><ul>
-          <li>COUNT(*) / COUNT(col)</li><li>SUM, AVG, MIN, MAX</li>
-          <li>WHERE ≠ HAVING</li><li>NULL ignoré par AVG, SUM</li>
+        <div class="synthese-card"><h4>INTERROGER</h4><ul>
+          <li>SELECT … FROM … WHERE … ORDER BY</li><li>DISTINCT, AS, LIKE, IN, BETWEEN, IS NULL</li>
+          <li>COUNT, SUM, AVG, MIN, MAX</li><li>Pour aller plus loin : GROUP BY + HAVING</li><li>JOIN … ON fk = pk (n tables = n−1 JOIN)</li>
+        </ul></div>
+        <div class="synthese-card"><h4>METTRE À JOUR</h4><ul>
+          <li>INSERT INTO T (a, b) VALUES (…)</li><li>UPDATE T SET a = … WHERE …</li>
+          <li>DELETE FROM T WHERE …</li><li>Le SGBD refuse ce qui viole une contrainte</li>
         </ul></div>
       </div>
     </section>
 
-        <section class="quiz-section" id="qcm">
+    <section class="quiz-section" id="qcm">
         <h2>🧠 QCM</h2>
         <p style="color:var(--text2);margin-bottom:1rem">Choisissez le nombre de questions et le niveau, puis lancez.</p>
         <div id="quiz-container-bases-de-donnees"></div>
@@ -260,7 +1186,7 @@
     </div>
   </main>
 </div>
-<footer><p>NSI Terminale — <a href="../index.html">Accueil</a> · <a href="../quiz.html">QCM global</a></p></footer>
+<footer><div class="wrap foot"><p>© 2026 Mme L. · Maths &amp; informatique</p><a href="../../../index.html#contact">Contact</a></div></footer>
 <script src="../js/questions.js"></script><script src="../js/quiz.js"></script><script src="../js/main.js"></script>
 
 <script>
@@ -277,5 +1203,440 @@
     });
   });
   initChapterQuiz('bdd', 'quiz-container-bases-de-donnees', 5);
+</script>
+
+<!-- ===================== Base d'entraînement (script SQL) ===================== -->
+<script type="text/plain" id="sqlx-init">
+-- ============================================================
+--  TNSI — S02 Bases de données — Base d'entraînement
+--  Compatible SQLite (sqliteonline.com, DB Browser for SQLite)
+--  3 thèmes : Bibliothèque · Port maritime · Commerce
+-- ============================================================
+PRAGMA foreign_keys = ON;
+
+-- ---------- BIBLIOTHÈQUE ----------
+CREATE TABLE Lecteur (
+  Num_SS         INTEGER,
+  Nom_lecteur    TEXT NOT NULL,
+  Prenom_lecteur TEXT,
+  Age            INTEGER,
+  PRIMARY KEY (Num_SS),
+  CHECK (LENGTH(Num_SS) = 15),
+  CHECK (Age BETWEEN 0 AND 130)
+);
+
+CREATE TABLE Auteur (
+  Id_auteur     INTEGER,
+  Nom_auteur    TEXT NOT NULL,
+  Prenom_auteur TEXT,
+  Nationalite   TEXT,
+  PRIMARY KEY (Id_auteur)
+);
+
+CREATE TABLE Livre (
+  Isbn   INTEGER,
+  Num_SS INTEGER,            -- lecteur qui a emprunté le livre (NULL si disponible)
+  Titre  TEXT NOT NULL,
+  Annee  INTEGER,
+  Prix   REAL,               -- prix de location (NULL si gratuit)
+  PRIMARY KEY (Isbn),
+  FOREIGN KEY (Num_SS) REFERENCES Lecteur(Num_SS),
+  CHECK (LENGTH(Isbn) = 13),
+  CHECK (Annee BETWEEN -2000 AND 2100)
+);
+
+CREATE TABLE Ecrire (
+  Isbn         INTEGER,
+  Id_auteur    INTEGER,
+  Nb_chapitres INTEGER,
+  PRIMARY KEY (Isbn, Id_auteur),
+  FOREIGN KEY (Isbn) REFERENCES Livre(Isbn),
+  FOREIGN KEY (Id_auteur) REFERENCES Auteur(Id_auteur)
+);
+
+INSERT INTO Lecteur (Num_SS, Nom_lecteur, Prenom_lecteur, Age) VALUES
+(260097511329671, 'Michu', 'Germaine', 66),
+(195084529012355, 'Bébert', 'Justin', 31),
+(189029231941483, 'De La Grandière', 'Jean-Eudes', 37),
+(138017511671223, 'Topor', 'Roland', 88),
+(205037511200145, 'Lambert', 'Chloé', 21),
+(199117512345678, 'Nguyen', 'Paul', 27),
+(278046900112233, 'Diallo', 'Aïssatou', 48),
+(101127700998877, 'Martin', 'Lucas', 25),
+(284109200445566, 'Rossi', 'Giulia', 42),
+(162055900776655, 'Moreau', 'Henri', 64);
+
+INSERT INTO Auteur (Id_auteur, Nom_auteur, Prenom_auteur, Nationalite) VALUES
+(1, 'Nietzsche', 'Friedrich', 'Allemande'),
+(2, 'Sartre', 'Jean-Paul', 'Française'),
+(3, 'Descartes', 'René', 'Française'),
+(4, 'Camus', 'Albert', 'Française'),
+(5, 'Hugo', 'Victor', 'Française'),
+(6, 'Blyton', 'Enid', 'Britannique'),
+(7, 'Orwell', 'George', 'Britannique'),
+(8, 'de Beauvoir', 'Simone', 'Française'),
+(9, 'Asimov', 'Isaac', 'Américaine'),
+(10, 'Le Guin', 'Ursula', 'Américaine'),
+(11, 'Goscinny', 'René', 'Française'),
+(12, 'Uderzo', 'Albert', 'Française'),
+(13, 'Potager', 'Jeanne', 'Française'),
+(14, 'Shelley', 'Mary', 'Britannique'),
+(15, 'Tolkien', 'John Ronald Reuel', 'Britannique');
+
+INSERT INTO Livre (Isbn, Num_SS, Titre, Annee, Prix) VALUES
+(9781533468406, 260097511329671, 'Le gai savoir', 1882, NULL),
+(9782010019425, NULL, 'Oui-Oui et son grelot', 1962, NULL),
+(9782070293889, 260097511329671, 'L''être et le néant', 1943, NULL),
+(9782845638556, NULL, 'Le vrai goût des tomates mûres', 2016, NULL),
+(9782876470194, 195084529012355, 'La géométrie', 1637, 12.5),
+(9782070360024, 205037511200145, 'L''étranger', 1942, NULL),
+(9782070360420, NULL, 'La peste', 1947, NULL),
+(9782253096344, 199117512345678, 'Les misérables', 1862, NULL),
+(9782070368228, 199117512345678, '1984', 1949, NULL),
+(9782070323517, NULL, 'Le deuxième sexe', 1949, NULL),
+(9782070415731, 278046900112233, 'Fondation', 1951, NULL),
+(9782253113881, NULL, 'Les dépossédés', 1974, NULL),
+(9782012101333, 101127700998877, 'Astérix le Gaulois', 1961, NULL),
+(9782012101340, NULL, 'La serpe d''or', 1962, NULL),
+(9782253004226, NULL, 'Frankenstein', 1818, 8.0),
+(9782266282369, 284109200445566, 'Le seigneur des anneaux', 1954, NULL),
+(9782070612888, NULL, 'Discours de la méthode', 1637, 15.0);
+
+INSERT INTO Ecrire (Isbn, Id_auteur, Nb_chapitres) VALUES
+(9781533468406, 1, 5),
+(9782010019425, 6, 8),
+(9782070293889, 2, 4),
+(9782845638556, 13, 12),
+(9782876470194, 3, 3),
+(9782070360024, 4, 11),
+(9782070360420, 4, 5),
+(9782253096344, 5, 48),
+(9782070368228, 7, 24),
+(9782070323517, 8, 9),
+(9782070415731, 9, 5),
+(9782253113881, 10, 13),
+(9782012101333, 11, 1),
+(9782012101333, 12, 1),
+(9782012101340, 11, 1),
+(9782012101340, 12, 1),
+(9782253004226, 14, 24),
+(9782266282369, 15, 62),
+(9782070612888, 3, 6);
+
+-- ---------- PORT MARITIME ----------
+CREATE TABLE Marin (
+  Mid       INTEGER,
+  Mnom      TEXT NOT NULL,
+  nbSorties INTEGER,
+  age       INTEGER,
+  PRIMARY KEY (Mid)
+);
+
+CREATE TABLE Bateau (
+  Bid     INTEGER,
+  Bnom    TEXT NOT NULL,
+  couleur TEXT,
+  PRIMARY KEY (Bid)
+);
+
+CREATE TABLE Reservation (
+  Mid  INTEGER,
+  Bid  INTEGER,
+  jour TEXT,                 -- date au format 'AAAA-MM-JJ'
+  PRIMARY KEY (Mid, Bid, jour),
+  FOREIGN KEY (Mid) REFERENCES Marin(Mid),
+  FOREIGN KEY (Bid) REFERENCES Bateau(Bid)
+);
+
+INSERT INTO Marin (Mid, Mnom, nbSorties, age) VALUES
+(1, 'Corto', 22, 45),
+(2, 'Haddock', 35, 52),
+(3, 'Surcouf', 8, 31),
+(4, 'Tabarly', 41, 38),
+(5, 'Riou', 15, 27),
+(6, 'Autissier', 12, 29),
+(7, 'Kersauson', 3, 24),
+(8, 'Peyron', 19, 33),
+(9, 'Moitessier', 0, 22),
+(10, 'Joyon', 27, 41);
+
+INSERT INTO Bateau (Bid, Bnom, couleur) VALUES
+(101, 'Pen Duick', 'bleu'),
+(102, 'Licorne', 'rouge'),
+(103, 'Sirène', 'vert'),
+(104, 'Marie-Galante', 'bleu'),
+(105, 'Albatros', 'blanc'),
+(106, 'Goéland', 'rouge'),
+(107, 'Nautilus', 'noir'),
+(108, 'Belle-Île', 'jaune');
+
+INSERT INTO Reservation (Mid, Bid, jour) VALUES
+(1, 101, '2026-05-02'),
+(1, 102, '2026-05-09'),
+(2, 102, '2026-05-02'),
+(2, 105, '2026-06-14'),
+(2, 106, '2026-06-21'),
+(3, 103, '2026-05-16'),
+(4, 101, '2026-05-23'),
+(4, 104, '2026-06-07'),
+(4, 101, '2026-07-04'),
+(5, 106, '2026-05-30'),
+(6, 103, '2026-06-07'),
+(6, 105, '2026-06-28'),
+(8, 104, '2026-07-11'),
+(8, 102, '2026-07-18'),
+(10, 105, '2026-05-09'),
+(10, 106, '2026-07-25'),
+(10, 103, '2026-08-01');
+
+-- ---------- COMMERCE ----------
+CREATE TABLE Client (
+  IdCli     INTEGER,
+  NomCli    TEXT NOT NULL,
+  PrenomCli TEXT,
+  Ville     TEXT,
+  PRIMARY KEY (IdCli)
+);
+
+CREATE TABLE Produit (
+  RefProd TEXT,
+  NomProd TEXT NOT NULL,
+  Prix    REAL,
+  PRIMARY KEY (RefProd),
+  CHECK (Prix > 0)
+);
+
+CREATE TABLE Commande (
+  NumCom  INTEGER,
+  IdCli   INTEGER NOT NULL,
+  DateCom TEXT,              -- date au format 'AAAA-MM-JJ'
+  PRIMARY KEY (NumCom),
+  FOREIGN KEY (IdCli) REFERENCES Client(IdCli)
+);
+
+CREATE TABLE DetailCommande (
+  NumCom   INTEGER,
+  RefProd  TEXT,
+  Quantite INTEGER,
+  PRIMARY KEY (NumCom, RefProd),
+  FOREIGN KEY (NumCom) REFERENCES Commande(NumCom),
+  FOREIGN KEY (RefProd) REFERENCES Produit(RefProd),
+  CHECK (Quantite > 0)
+);
+
+INSERT INTO Client (IdCli, NomCli, PrenomCli, Ville) VALUES
+(1, 'Durand', 'Paul', 'Lagny-sur-Marne'),
+(2, 'Petit', 'Léa', 'Meaux'),
+(3, 'Bernard', 'Hugo', 'Lagny-sur-Marne'),
+(4, 'Garcia', 'Inès', 'Torcy'),
+(5, 'Leroy', 'Noah', 'Meaux'),
+(6, 'Fontaine', 'Emma', 'Chessy'),
+(7, 'Roux', 'Adam', 'Torcy'),
+(8, 'Lefèvre', 'Jade', 'Bussy-Saint-Georges');
+
+INSERT INTO Produit (RefProd, NomProd, Prix) VALUES
+('P01', 'Savon', 1.80),
+('P02', 'Brosse à dents', 2.50),
+('P03', 'Dentifrice', 3.20),
+('P04', 'Shampoing', 4.90),
+('P05', 'Éponge', 0.90),
+('P06', 'Lessive', 7.50),
+('P07', 'Mouchoirs', 1.20),
+('P08', 'Gel douche', 3.60);
+
+INSERT INTO Commande (NumCom, IdCli, DateCom) VALUES
+(1001, 1, '2020-08-03'),
+(1002, 2, '2020-08-10'),
+(1003, 3, '2020-08-10'),
+(1004, 1, '2020-08-12'),
+(1005, 4, '2020-08-15'),
+(1006, 6, '2020-08-10'),
+(1007, 7, '2020-08-20'),
+(1008, 2, '2020-08-22'),
+(1009, 8, '2020-09-01');
+
+INSERT INTO DetailCommande (NumCom, RefProd, Quantite) VALUES
+(1001, 'P01', 2),
+(1001, 'P02', 2),
+(1001, 'P07', 3),
+(1002, 'P03', 1),
+(1002, 'P04', 1),
+(1003, 'P02', 3),
+(1003, 'P05', 4),
+(1004, 'P06', 1),
+(1004, 'P08', 2),
+(1005, 'P01', 5),
+(1005, 'P03', 2),
+(1006, 'P01', 1),
+(1006, 'P02', 1),
+(1006, 'P08', 1),
+(1007, 'P02', 4),
+(1007, 'P04', 2),
+(1008, 'P07', 6),
+(1009, 'P05', 2),
+(1009, 'P06', 1);
+</script>
+
+<!-- ===================== Coloration SQL + bac à sable (sql.js) ===================== -->
+<script>
+(function () {
+  /* ---------- 1. Coloration syntaxique des blocs <code class="sql"> ---------- */
+  const KW = new Set(('SELECT FROM WHERE AND OR NOT IN IS NULL LIKE BETWEEN JOIN INNER LEFT ON AS DISTINCT ' +
+    'ORDER BY ASC DESC LIMIT GROUP HAVING INSERT INTO VALUES UPDATE SET DELETE CREATE TABLE PRIMARY KEY ' +
+    'FOREIGN REFERENCES CHECK UNIQUE DEFAULT BEGIN COMMIT ROLLBACK TRANSACTION PRAGMA DATABASE USE').split(' '));
+  const FN = new Set('INTEGER TEXT REAL COUNT SUM AVG MIN MAX LENGTH UPPER LOWER'.split(' '));
+  const esc = s => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  function highlight(src) {
+    const re = /(--[^\n]*)|('(?:[^']|'')*')|(\b\d+(?:\.\d+)?\b)|([A-Za-z_][A-Za-z_0-9]*)|([\s\S])/g;
+    let out = '', m;
+    while ((m = re.exec(src))) {
+      if (m[1]) out += '<span class="cm">' + esc(m[1]) + '</span>';
+      else if (m[2]) out += '<span class="str">' + esc(m[2]) + '</span>';
+      else if (m[3]) out += '<span class="num">' + m[3] + '</span>';
+      else if (m[4]) {
+        const up = m[4].toUpperCase();
+        if (KW.has(up)) out += '<span class="kw">' + m[4] + '</span>';
+        else if (FN.has(up)) out += '<span class="fn">' + m[4] + '</span>';
+        else out += m[4];
+      } else out += esc(m[5]);
+    }
+    return out;
+  }
+  document.querySelectorAll('pre code.sql').forEach(c => { c.innerHTML = highlight(c.textContent); });
+
+  /* ---------- 2. Bac à sable SQLite (sql.js, WebAssembly) ---------- */
+  const SOURCES = ['https://cdn.jsdelivr.net/npm/sql.js@1.10.3/dist/', 'https://unpkg.com/sql.js@1.10.3/dist/'];
+  const INIT_SQL = document.getElementById('sqlx-init').textContent;
+  let SQL = null, db = null, loading = null;
+
+  function loadScript(src) {
+    return new Promise((ok, ko) => { const s = document.createElement('script'); s.src = src; s.onload = ok; s.onerror = ko; document.head.appendChild(s); });
+  }
+  function freshDb() { const d = new SQL.Database(); d.exec(INIT_SQL); return d; }
+  function setStatus(txt) { document.querySelectorAll('.sqlx-box .sqlx-status').forEach(s => { s.textContent = txt; }); }
+  function boot() {
+    if (loading) return loading;
+    loading = (async () => {
+      for (const base of SOURCES) {
+        try {
+          if (typeof initSqlJs === 'undefined') await loadScript(base + 'sql-wasm.js');
+          SQL = await initSqlJs({ locateFile: f => base + f });
+          break;
+        } catch (e) { SQL = null; }
+      }
+      if (!SQL) { setStatus('⚠️ SQLite indisponible (pas de connexion ?)'); throw new Error('sql.js'); }
+      db = freshDb();
+      setStatus('SQLite prêt ✓');
+    })();
+    return loading;
+  }
+
+  const ERRORS = [
+    [/no such table: (\S+)/i, (m) => `La table « ${m[1]} » n'existe pas. Vérifie son orthographe dans le schéma de la base.`],
+    [/no such column: (\S+)/i, (m) => `La colonne « ${m[1]} » n'existe pas (faute de frappe ? mauvaise table ? oubli de la jointure ?). Si c'est du texte, mets-le entre apostrophes.`],
+    [/ambiguous column name: (\S+)/i, (m) => `La colonne « ${m[1]} » existe dans plusieurs tables : préfixe-la avec le nom de la table (Table.${m[1]}).`],
+    [/near "([^"]*)": syntax error/i, (m) => `Erreur de syntaxe près de « ${m[1]} » : virgule manquante ou en trop, mot-clé mal écrit, ordre des clauses ?`],
+    [/incomplete input/i, () => `Requête incomplète : une apostrophe ou une parenthèse n'est pas fermée ?`],
+    [/FOREIGN KEY constraint failed/i, () => `Refusé : contrainte de référence (clé étrangère). La valeur référencée n'existe pas, ou la ligne que tu supprimes est encore référencée ailleurs.`],
+    [/UNIQUE constraint failed: (\S+)/i, (m) => `Refusé : contrainte de relation. La valeur de ${m[1]} existe déjà (clé primaire ou attribut UNIQUE).`],
+    [/NOT NULL constraint failed: (\S+)/i, (m) => `Refusé : ${m[1]} ne peut pas être NULL.`],
+    [/CHECK constraint failed: (.+)/i, (m) => `Refusé : contrainte de domaine ou métier non respectée (${m[1]}).`],
+    [/misuse of aggregate/i, () => `Fonction d'agrégation mal placée : pas de COUNT, SUM, AVG… dans un WHERE.`],
+    [/datatype mismatch/i, () => `Type incompatible avec l'attribut (contrainte de domaine).`]
+  ];
+  function explain(msg) {
+    for (const [re, f] of ERRORS) { const m = msg.match(re); if (m) return f(m); }
+    return '';
+  }
+  function message(out, cls, html) { const d = document.createElement('div'); d.className = 'sqlx-msg ' + cls; d.innerHTML = html; out.appendChild(d); }
+  function renderTable(out, res) {
+    const max = 200, t = document.createElement('table');
+    let h = '<tr>' + res.columns.map(c => '<th>' + esc(String(c)) + '</th>').join('') + '</tr>';
+    res.values.slice(0, max).forEach(row => {
+      h += '<tr>' + row.map(v => v === null ? '<td class="null">NULL</td>' : '<td>' + esc(String(v)) + '</td>').join('') + '</tr>';
+    });
+    t.innerHTML = h; out.appendChild(t);
+    const n = res.values.length;
+    message(out, 'sqlx-info', n + ' ligne' + (n > 1 ? 's' : '') + (n > max ? ' (200 premières affichées)' : ''));
+  }
+  function showError(out, e) {
+    const hint = explain(e.message);
+    message(out, 'sqlx-err', '❌ <code>' + esc(e.message) + '</code>' + (hint ? '<br>' + esc(hint) : ''));
+  }
+
+  async function run(box) {
+    const out = box.querySelector('.sqlx-out'); out.innerHTML = '';
+    const sql = box.querySelector('textarea').value;
+    if (!sql.trim()) { message(out, 'sqlx-info', 'Écris une requête puis clique sur Exécuter.'); return; }
+    try { await boot(); } catch (e) { message(out, 'sqlx-err', 'SQLite n\'a pas pu être chargé. Utilise sqliteonline.com avec le script de la base.'); return; }
+    try {
+      const before = db.exec('SELECT total_changes()')[0].values[0][0];
+      const results = db.exec(sql);
+      const after = db.exec('SELECT total_changes()')[0].values[0][0];
+      if (results.length === 0) {
+        const n = after - before;
+        message(out, 'sqlx-ok', '✅ Requête exécutée' + (n > 0 ? ' — ' + n + ' ligne' + (n > 1 ? 's' : '') + ' modifiée' + (n > 1 ? 's' : '') : '') + '.');
+      } else results.forEach(r => renderTable(out, r));
+    } catch (e) { showError(out, e); }
+  }
+
+  function norm(v) { return v === null ? '∅' : (typeof v === 'number' ? String(Math.round(v * 1e6) / 1e6) : String(v)); }
+  function rowsOf(d, sql) { const r = d.exec(sql); const last = r[r.length - 1]; return last ? last.values.map(row => row.map(norm).join('\u0001')) : []; }
+
+  async function check(box) {
+    const out = box.querySelector('.sqlx-out'); out.innerHTML = '';
+    const sql = box.querySelector('textarea').value, sol = box.dataset.sol;
+    if (!sql.trim()) { message(out, 'sqlx-info', 'Écris d\'abord ta requête.'); return; }
+    try { await boot(); } catch (e) { message(out, 'sqlx-err', 'SQLite n\'a pas pu être chargé.'); return; }
+    let mine, ref, mineRes;
+    const d1 = freshDb(), d2 = freshDb();
+    try { const r = d1.exec(sql); mineRes = r[r.length - 1]; mine = mineRes ? mineRes.values.map(row => row.map(norm).join('\u0001')) : []; }
+    catch (e) { d1.close(); d2.close(); showError(out, e); return; }
+    ref = rowsOf(d2, sol);
+    const refCols = d2.exec(sol).slice(-1)[0];
+    d1.close(); d2.close();
+    if (mineRes) renderTable(out, mineRes);
+    const nColsMine = mineRes ? mineRes.columns.length : 0, nColsRef = refCols ? refCols.columns.length : 0;
+    const ordered = /ORDER\s+BY/i.test(sol);
+    const same = (a, b) => a.length === b.length && a.every((x, i) => x === b[i]);
+    if (nColsMine !== nColsRef) {
+      message(out, 'sqlx-err', `❌ Pas encore : ton résultat a ${nColsMine} colonne(s), il en faut ${nColsRef}. Relis ce qu'il faut afficher.`); return;
+    }
+    if (mine.length !== ref.length) {
+      let tip = mine.length > ref.length ? ' Trop de lignes : une condition manque, ou il faut DISTINCT ?' : ' Pas assez de lignes : condition trop stricte, ou mauvaise jointure ?';
+      message(out, 'sqlx-err', `❌ Pas encore : ${mine.length} ligne(s) obtenue(s), ${ref.length} attendue(s).` + tip); return;
+    }
+    if (same([...mine].sort(), [...ref].sort())) {
+      if (ordered && !same(mine, ref)) { message(out, 'sqlx-err', '🟠 Les bonnes lignes, mais pas dans le bon ordre : vérifie ton ORDER BY (ASC / DESC, attribut).'); return; }
+      message(out, 'sqlx-ok', '✅ Bravo ! Ton résultat est identique au résultat attendu.'); return;
+    }
+    const cellSort = rows => rows.map(r => r.split('\u0001').sort().join('\u0001')).sort();
+    if (same(cellSort(mine), cellSort(ref))) { message(out, 'sqlx-err', '🟠 Les bonnes données, mais les colonnes ne sont pas dans l\'ordre demandé par l\'énoncé.'); return; }
+    message(out, 'sqlx-err', '❌ Le bon nombre de lignes, mais pas les bonnes valeurs : relis tes conditions et les colonnes affichées.');
+  }
+
+  document.addEventListener('click', e => {
+    const b = e.target.closest('button'); if (!b) return;
+    const box = b.closest('.sqlx-box');
+    if (b.classList.contains('sqlx-run')) run(box);
+    else if (b.classList.contains('sqlx-check')) check(box);
+    else if (b.classList.contains('sqlx-reset')) {
+      boot().then(() => { db.close(); db = freshDb(); const out = box.querySelector('.sqlx-out'); out.innerHTML = ''; message(out, 'sqlx-ok', '↺ Base réinitialisée.'); }).catch(() => {});
+    }
+  });
+  function fit(ta) { ta.style.height = 'auto'; ta.style.height = Math.max(ta.scrollHeight + 4, 80) + 'px'; }
+  document.querySelectorAll('.sqlx-box textarea').forEach(ta => { fit(ta); ta.addEventListener('input', () => fit(ta)); });
+  document.querySelectorAll('.sqlx-box textarea').forEach(ta => ta.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); const box = ta.closest('.sqlx-box'); (box.dataset.sol && e.shiftKey ? check : run)(box); }
+    if (e.key === 'Tab') { e.preventDefault(); const s = ta.selectionStart; ta.value = ta.value.slice(0, s) + '  ' + ta.value.slice(ta.selectionEnd); ta.selectionStart = ta.selectionEnd = s + 2; }
+  }));
+
+  function download(name, blob) { const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name; document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500); }
+  const dlSql = document.getElementById('sqlx-dl-sql'), dlDb = document.getElementById('sqlx-dl-db');
+  if (dlSql) dlSql.addEventListener('click', () => download('base_entrainement_nsi.sql', new Blob([INIT_SQL.trim() + '\n'], { type: 'text/plain;charset=utf-8' })));
+  if (dlDb) dlDb.addEventListener('click', () => boot().then(() => { const bytes = db.export(); db.exec('PRAGMA foreign_keys = ON;'); download('base_entrainement_nsi.db', new Blob([bytes], { type: 'application/x-sqlite3' })); }).catch(() => alert('SQLite indisponible.')));
+
+  boot().catch(() => {});
+})();
 </script>
 </body></html>

@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>La logique booléenne · Première NSI · Saint-Laurent</title>
+<meta name="theme-color" content="#fdeef1">
+<meta name="description" content="Cours de Première NSI : la logique booléenne, avec tables de vérité, lois de De Morgan, Python exécutable, exercices corrigés et QCM interactif.">
+<link rel="stylesheet" href="../../assets/nsi-pastel.css">
+<style>
+/* ==========================================================================
+   Page de cours NSI — composants propres au cours, dans la charte du site
+   (en-tête, bandeau, boutons et pied de page : ../../assets/nsi-pastel.css)
+   ========================================================================== */
+:root{
+  --accent:#94516f;  --accent-lt:#faedf2; --accent-dk:#67485f;
+  --green:#3f7a5c;   --green-lt:#edf5ef;
+  --orange:#a2602a;  --orange-lt:#fcf2e6;
+  --red:#b0465a;     --red-lt:#fcedef;
+  --purple:#705689;  --purple-lt:#f1ecf8;
+  --text:#47384c;    --text2:#5c4d5d;    --muted:#6d5d68;
+  --border:#eadfe5;  --surface:#fffefd;  --surface2:#f8f1f5;
+  --mono:ui-monospace,'Cascadia Code','SF Mono',Menlo,Consolas,'Liberation Mono',monospace;
+}
+:where(.container) *{margin:0;padding:0}
+strong{color:var(--text)}
+
+/* --- Raccourcis et sommaire collant --- */
+.level-shortcuts{display:flex;flex-wrap:wrap}
+.level-shortcuts a{text-decoration:none}
+.level-shortcuts a:hover{background:var(--accent-lt)}
+.toc{position:sticky;top:8px;z-index:100;display:flex;flex-wrap:wrap;justify-content:center;gap:2px;margin:0 0 8px;padding:7px 8px;overflow-x:auto;scrollbar-width:thin;border:1px solid var(--border);border-radius:16px;background:#fffaf8f2;backdrop-filter:blur(6px);box-shadow:0 6px 18px #966e7d10;font-size:13px;font-weight:600}
+.toc a{flex-shrink:0;white-space:nowrap;padding:5px 10px;border-radius:9px;border:1px solid transparent;color:var(--muted);text-decoration:none;transition:background .2s,color .2s}
+.toc a:hover{background:var(--accent-lt);border-color:#ecd3de;color:var(--accent);text-decoration:none}
+
+/* --- Mise en page des parties --- */
+.container{max-width:920px;margin:0 auto;font-size:16px;line-height:1.75}
+.section{padding:52px 0 36px;border-bottom:1px solid var(--border);scroll-margin-top:70px}
+.section:last-child{border-bottom:none}
+.section-num{font-size:11px;font-weight:750;letter-spacing:1.6px;text-transform:uppercase;color:#844360;margin-bottom:8px}
+.section-num::before{content:"";display:inline-block;width:8px;height:8px;margin-right:10px;border-radius:50%;background:#d98ba4;vertical-align:1px}
+.section h2{font-size:clamp(24px,3.4vw,34px);font-weight:750;letter-spacing:-.9px;line-height:1.2;margin-bottom:22px;color:var(--text)}
+.section h3{font-size:19px;font-weight:700;color:#a35478;margin:34px 0 12px}
+.section h4{font-size:12px;font-weight:750;letter-spacing:1px;text-transform:uppercase;color:var(--purple);margin:22px 0 8px}
+.section p{color:var(--text2);margin-bottom:12px}
+.section ul,.section ol{padding-left:22px;margin-bottom:12px}
+.section li{color:var(--text2);margin-bottom:5px}
+p code,li code,td code,th code,.container :not(pre)>code{font-family:var(--mono);font-size:.84em;color:var(--accent-dk);background:var(--accent-lt);padding:1px 6px;border-radius:5px}
+
+/* --- Blocs de code (sombres, teinte prune) --- */
+.code-block{background:#2e2533;border:1px solid #463a4c;border-radius:14px;margin:18px 0;overflow:hidden;box-shadow:0 8px 20px #4a2c4012}
+.code-header{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:8px 14px;background:#3a2f40;border-bottom:1px solid #4b3e51;font-family:var(--mono);font-size:11px;color:#bfaebf}
+.code-header-left{display:flex;align-items:center;gap:8px}
+.dot{width:10px;height:10px;border-radius:50%}
+.dr{background:#f2a7b8}.dy{background:#f3d48f}.dg{background:#a8d5b9}
+pre{padding:18px 20px;overflow-x:auto;font-family:var(--mono);font-size:13.5px;line-height:1.7;color:#f3eaf0}
+.kw{color:#d9b8ff}.fn{color:#9cc8f2}.st{color:#b5e2c2}.cm{color:#9d8ca0;font-style:italic}.nb{color:#f6c28f}.op{color:#cdbfd0}.df{color:#f5d98b}.bi{color:#f5a8c6}
+.run-btn-mini{padding:5px 13px;border:none;border-radius:7px;background:#f2a7c0;color:#3b2333;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;transition:background .2s}
+.run-btn-mini:hover{background:#f7c3d4}
+.run-btn-mini:disabled{opacity:.55;cursor:wait}
+.code-editor{display:block;width:100%;min-height:110px;padding:18px 20px;border:none;resize:vertical;background:transparent;color:#f3eaf0;font-family:var(--mono);font-size:13.5px;line-height:1.7}
+.code-editor:focus{outline:2px solid #f2a7c0;outline-offset:-2px}
+.code-output{margin:0;padding:12px 20px;border-top:1px solid #463a4c;background:#251d29;color:#b5e2c2;font-family:var(--mono);font-size:12.5px;line-height:1.6;white-space:pre-wrap}
+
+/* --- Encadrés --- */
+.box{margin:18px 0;padding:16px 20px;border:1px solid;border-left-width:4px;border-radius:14px;font-size:15px}
+.box-tip{background:var(--green-lt);border-color:#cfe3d6;border-left-color:var(--green)}
+.box-warn{background:var(--orange-lt);border-color:#f0dcc4;border-left-color:var(--orange)}
+.box-info{background:var(--accent-lt);border-color:#efd6e1;border-left-color:var(--accent)}
+.box-alert{background:var(--red-lt);border-color:#f3d0d7;border-left-color:var(--red)}
+.box-key{background:var(--purple-lt);border-color:#ddd3ea;border-left-color:var(--purple)}
+.box-title{margin-bottom:7px;font-size:11px;font-weight:750;letter-spacing:1.4px;text-transform:uppercase}
+.box-tip .box-title{color:var(--green)}.box-warn .box-title{color:var(--orange)}.box-info .box-title{color:var(--accent)}.box-alert .box-title{color:var(--red)}.box-key .box-title{color:var(--purple)}
+
+/* --- Tableaux --- */
+table{width:100%;margin:18px 0;border-collapse:separate;border-spacing:0;border:1px solid var(--border);border-radius:14px;overflow:hidden;font-size:15px;background:var(--surface)}
+th{padding:10px 14px;background:#f6e6ee;color:var(--accent-dk);font-size:11.5px;font-weight:750;letter-spacing:1px;text-transform:uppercase;text-align:left;border-bottom:1px solid var(--border)}
+td{padding:9px 14px;color:var(--text2);vertical-align:top;border-bottom:1px solid var(--border)}
+th+th,td+td{border-left:1px solid var(--border)}
+tr:last-child td{border-bottom:none}
+tr:nth-child(even) td{background:#fdf8fa}
+
+/* --- Comparaison for / while --- */
+.compare-title{margin:18px 0 0!important}
+.compare-loops{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:stretch}
+.compare-loops .code-block{margin:8px 0 18px}
+@media(max-width:640px){.compare-loops{grid-template-columns:1fr;gap:0}}
+
+/* --- Fiches de fonctions --- */
+.fn-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin:18px 0}
+.fn-card{overflow:hidden;border:1px solid var(--border);border-top:3px solid #c4b3de;border-radius:16px;background:var(--surface);transition:box-shadow .2s}
+.fn-card:hover{box-shadow:0 8px 22px #966e7d18}
+.fn-card-hdr{padding:9px 14px;background:var(--purple-lt);color:#4f3b66;font-family:var(--mono);font-size:14px;font-weight:700}
+.fn-card-hdr span{margin-left:8px;color:var(--muted);font-weight:400;font-size:12px}
+.fn-card-body{padding:11px 14px;font-size:14px;line-height:1.6;color:var(--text2)}
+.fn-card-body code{font-family:var(--mono);font-size:12px;color:var(--accent-dk);background:var(--accent-lt);padding:1px 5px;border-radius:5px}
+.fn-card-ex{padding:8px 14px;border-top:1px solid var(--border);background:var(--surface2);font-family:var(--mono);font-size:12px;color:var(--muted)}
+
+/* --- Exercices (niveau 1 vert, 2 pêche, 3 rose) --- */
+.exo-card{margin-bottom:22px;overflow:hidden;border:1px solid var(--border);border-radius:20px;background:var(--surface);box-shadow:0 6px 18px #966e7d0a}
+.exo-hdr{display:flex;align-items:center;gap:14px;padding:13px 22px;border-bottom:1px solid var(--border)}
+.exo-hdr.easy{background:linear-gradient(90deg,#e8f3ec,#f4f9f5)}
+.exo-hdr.medium{background:linear-gradient(90deg,#fbecd9,#fdf6ec)}
+.exo-hdr.hard{background:linear-gradient(90deg,#f8dde4,#fcf0f3)}
+.exo-level{font-size:11px;font-weight:750;letter-spacing:1.4px;text-transform:uppercase}
+.exo-hdr.easy .exo-level{color:var(--green)}.exo-hdr.medium .exo-level{color:var(--orange)}.exo-hdr.hard .exo-level{color:var(--red)}
+.exo-title{font-weight:700;font-size:16px;color:var(--text)}
+.exo-body{padding:20px 22px}
+.exo-body p{margin-bottom:10px;color:var(--text2)}
+.exo-body ol{padding-left:20px}
+.exo-body li{margin-bottom:7px;color:var(--text2)}
+.exo-body table td:last-child:empty{min-width:120px}
+.toggle-btn{font:inherit;display:inline-flex;align-items:center;gap:8px;margin-top:14px;padding:7px 15px;border-radius:9px;font-size:13px;font-weight:650;cursor:pointer;user-select:none;transition:background .2s}
+.btn-hint{background:var(--purple-lt);border:1px solid #ddd3ea;color:var(--purple)}
+.btn-hint:hover{background:#e7def3}
+.btn-corr{background:var(--accent-lt);border:1px solid #efd6e1;color:var(--accent)}
+.btn-corr:hover{background:#f4dce7}
+.toggle-icon{font-size:10px}
+.toggle-btn:focus-visible{outline:3px solid #94516f;outline-offset:2px}
+.hint-box,.corr-box{display:none;margin-top:14px}
+.hint-box.open,.corr-box.open{display:block}
+.hint-box{padding:14px 16px;border:1px solid #ddd3ea;border-radius:12px;background:var(--purple-lt);font-size:14px}
+.corr-box{padding:14px 16px;border:1px solid #cfe3d6;border-radius:12px;background:var(--green-lt)}
+.corr-box p{color:var(--text2)!important}
+td .hint-box.open{display:inline-block;margin:0 0 0 10px}
+
+/* --- Bilan / auto-évaluation --- */
+.dst-section{margin:36px 0;padding:34px;border:1px solid #efd6e1;border-top:3px solid #dfa6bd;border-radius:22px;background:linear-gradient(115deg,#fff4f7,#f7f1fb)}
+.dst-section h2{color:var(--text)!important}
+.dst-section .section-num{color:#844360!important}
+.checklist{list-style:none;padding:0}
+.checklist li{display:flex;align-items:flex-start;gap:12px;padding:8px 0;border-bottom:1px solid #efd6e1;color:var(--text2)}
+.checklist li:last-child{border-bottom:none}
+.checklist li::before{content:'□';flex-shrink:0;font-size:15px;color:var(--accent)}
+.selfassess{width:100%;margin:16px 0;font-size:13.5px}
+.selfassess th{text-align:left}
+.selfassess th:not(:first-child),.selfassess td:not(:first-child){text-align:center}
+.selfassess td{padding:9px 12px}
+.selfassess input[type="radio"]{width:18px;height:18px;accent-color:var(--accent);cursor:pointer}
+.selfassess tr.done td:first-child{color:var(--muted)}
+.checklist-reset{margin-top:10px;padding:7px 15px;border:1px solid #e7cdd9;border-radius:9px;background:#fff;color:var(--accent);font:inherit;font-size:13px;font-weight:650;cursor:pointer}
+.checklist-reset:hover{background:var(--accent-lt)}
+
+/* --- Mémo Python --- */
+.pymemo-toggle{display:inline-flex;align-items:center;gap:8px;margin:18px 0 4px;padding:9px 18px;border:1px solid #ddd3ea;border-radius:10px;background:var(--purple-lt);color:var(--purple);font-size:13px;font-weight:700;cursor:pointer;user-select:none;transition:background .2s}
+.pymemo-toggle:hover{background:#e7def3}
+.pymemo-box{display:none;margin:10px 0 22px}
+.pymemo-box.open{display:block}
+.pymemo-item{margin-bottom:12px;padding:14px 18px;border:1px solid #ddd3ea;border-left:4px solid var(--purple);border-radius:12px;background:var(--purple-lt);font-size:14.5px;color:var(--text2)}
+.pymemo-item strong{color:var(--text)}
+.pymemo-item .code-block{margin:8px 0 0}
+
+/* --- Convertisseur --- */
+.converter{margin:18px 0;padding:24px;border:1px solid var(--border);border-radius:20px;background:var(--surface2)}
+.conv-row{display:flex;flex-wrap:wrap;align-items:flex-end;gap:14px;margin-bottom:8px}
+.conv-field{flex:1;min-width:150px}
+.conv-field label{display:block;margin-bottom:6px;font-size:11px;font-weight:750;letter-spacing:1px;text-transform:uppercase;color:var(--accent)}
+.conv-field input{width:100%;padding:9px 12px;border:1px solid var(--border);border-radius:9px;background:#fff;font-family:var(--mono);font-size:14px}
+.conv-arrow{padding-bottom:9px;font-size:1.3rem;color:var(--accent)}
+.conv-note{margin-top:6px;font-size:12.5px;color:var(--muted)}
+
+/* --- Code dans les questions du QCM --- */
+.qcm-code{margin:0 0 14px;padding:12px 16px;border-radius:12px;background:#2e2533;border:1px solid #463a4c;color:#f3eaf0;font-family:var(--mono);font-size:13.5px;line-height:1.65;overflow-x:auto;white-space:pre;tab-size:4}
+.qcm-code code{font:inherit;color:inherit;background:none;padding:0;border-radius:0}
+
+/* --- QCM --- */
+.qcm-controls{display:flex;flex-wrap:wrap;align-items:center;gap:14px;margin-bottom:22px}
+.qcm-size-opt{display:flex;align-items:center;gap:8px;padding:8px 16px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--muted);font-size:14px;font-weight:600;cursor:pointer;user-select:none;transition:background .2s,border-color .2s}
+.qcm-size-opt:has(input:checked){border-color:var(--accent);background:var(--accent-lt);color:var(--accent)}
+.qcm-size-opt input{accent-color:var(--accent)}
+.qcm-q{margin-bottom:14px;padding:20px 22px;border:1px solid var(--border);border-radius:18px;background:var(--surface);box-shadow:0 4px 14px #966e7d08;transition:border-color .3s}
+.qcm-q.correct{border-color:#9fcbb0;background:var(--green-lt)}
+.qcm-q.wrong{border-color:#e6a9b6;background:var(--red-lt)}
+.qcm-num{margin-bottom:7px;font-size:11px;font-weight:750;letter-spacing:1.4px;text-transform:uppercase;color:#844360}
+.qcm-question{margin-bottom:13px;font-size:15px;font-weight:700;line-height:1.5;color:var(--text)}
+.qcm-question code{font-family:var(--mono);font-size:13px;color:var(--accent-dk);background:var(--accent-lt);padding:1px 5px;border-radius:5px}
+.qcm-opts{display:flex;flex-direction:column;gap:7px}
+.qcm-opt{display:flex;align-items:flex-start;gap:10px;padding:9px 13px;border:1px solid var(--border);border-radius:10px;background:#fff;color:var(--text2);font-size:14px;cursor:pointer;transition:background .15s,border-color .15s}
+.qcm-opt:hover{border-color:#d9a9be;background:#fdf4f8}
+.qcm-opt input{flex-shrink:0;width:14px;height:14px;margin-top:4px;accent-color:var(--accent)}
+.qcm-opt.opt-ok{border-color:var(--green)!important;background:var(--green-lt)!important;color:var(--green);font-weight:700}
+.qcm-opt.opt-ko{border-color:var(--red)!important;background:var(--red-lt)!important;color:var(--red)}
+.qcm-opt code{font-family:var(--mono);font-size:12px;background:var(--accent-lt);padding:1px 4px;border-radius:4px;color:inherit}
+.qcm-fb{display:none;margin-top:9px;padding:8px 12px;border-radius:9px;font-size:13.5px;line-height:1.55}
+.qcm-fb.show{display:block}
+.qcm-fb.ok{background:#e1efe6;color:var(--green)}
+.qcm-fb.ko{background:#f8e0e5;color:var(--red)}
+#qcm-result{display:none;margin-top:22px;padding:26px;border:1px solid var(--border);border-radius:22px;background:linear-gradient(115deg,#fff4f7,#f5f0fa);text-align:center}
+.score-big{margin-bottom:6px;font-size:58px;font-weight:750;line-height:1}
+.score-sub{margin-bottom:14px;color:var(--muted);font-size:14px}
+.score-bar-bg{height:10px;margin:14px 0;overflow:hidden;border-radius:99px;background:var(--border)}
+.score-bar-fill{height:100%;border-radius:99px;transition:width .8s cubic-bezier(.4,0,.2,1)}
+.score-msg{margin-top:10px;font-size:17px;font-weight:700}
+.qcm-btn{padding:11px 18px;border:none;border-radius:10px;font:inherit;font-size:14px;font-weight:650;cursor:pointer;transition:background .2s}
+.qcm-btn-primary{background:#86648f;color:#fff}
+.qcm-btn-primary:hover{background:#705078}
+.qcm-btn-secondary{background:#faedf2;color:#844360;border:1px solid #efd6e1}
+.qcm-btn-secondary:hover{background:#efdae5}
+
+/* --- Bandeau : boutons de téléchargement --- */
+.hero-cta{margin-top:10px}
+.hero-cta .button{margin-top:0}
+
+@media(max-width:900px){.toc{flex-wrap:nowrap;justify-content:flex-start}}
+@media(max-width:640px){
+  .toc{top:0;border-radius:0 0 14px 14px}
+  .section{padding:40px 0 28px}
+  pre,.code-editor{font-size:12.5px}
+  .fn-grid{grid-template-columns:1fr}
+  .exo-body,.exo-hdr{padding-left:16px;padding-right:16px}
+  .dst-section{padding:24px 18px}
+  table{display:block;overflow-x:auto}
+}
+@media(prefers-reduced-motion:reduce){.score-bar-fill{transition:none}}
+
+/* --- Bandeau de cours compact : fenêtre de code au lieu de l'avatar --- */
+.course-hero{grid-template-columns:1.5fr 1fr;margin:26px 0 30px;padding:32px 40px}
+.course-hero h1{font-size:clamp(32px,3.8vw,46px);margin-bottom:16px}
+.course-hero .intro{margin:0 0 6px}
+.hero-code{justify-self:center;width:100%;max-width:320px;border-radius:14px;overflow:hidden;background:#2e2533;border:1px solid #463a4c;box-shadow:0 14px 30px #4a2c4026;transform:rotate(1.5deg)}
+.hc-bar{display:flex;align-items:center;gap:6px;padding:8px 12px;background:#3a2f40;border-bottom:1px solid #4b3e51}
+.hc-bar span{width:9px;height:9px;border-radius:50%;background:#f2a7b8}.hc-bar span:nth-child(2){background:#f3d48f}.hc-bar span:nth-child(3){background:#a8d5b9}
+.hc-bar em{margin-left:auto;font-style:normal;font-family:var(--mono);font-size:11px;color:#bfaebf}
+.hero-code pre{margin:0;padding:16px 18px;font-family:var(--mono);font-size:14px;line-height:1.75;color:#f3eaf0;white-space:pre}
+.hero-code .p{color:#9d8ca0}.hero-code .st{color:#b5e2c2}.hero-code .nb{color:#f6c28f}.hero-code .fn{color:#9cc8f2}.hero-code .out{color:#f5a8c6}
+.hero-code .cur{display:inline-block;width:8px;height:15px;vertical-align:-2px;background:#f2a7c0;animation:blink 1.1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+@media(prefers-reduced-motion:reduce){.hero-code .cur{animation:none}}
+@media(max-width:900px){.course-hero{padding:28px 30px}}
+@media(max-width:600px){.course-hero{grid-template-columns:1fr;padding:24px 22px;margin-top:20px}.hero-code{display:none}}
+
+/* --- Tables de vérité --- */
+table.tv{width:auto;min-width:min(100%,360px);margin-left:auto;margin-right:auto}
+.tv th{text-transform:none;letter-spacing:0;white-space:nowrap;font-family:var(--mono);font-size:13px;text-align:center;padding:9px 16px}
+.tv td{text-align:center;font-family:var(--mono);font-size:14px;padding:7px 16px}
+</style>
+</head>
+<body>
+<a class="skip" href="#s1">Aller au contenu</a>
+<header><div class="wrap top"><a class="brand" href="../../index.html"><img src="../../assets/avatar-nsi-nuit-du-code.png" alt="" width="52" height="52"><span>Maths &amp; informatique<small>Spécialité NSI · Mme L.</small></span></a><nav aria-label="Navigation principale"><a href="../../index.html">Accueil</a><a href="../index.html" aria-current="page">Cours &amp; TP</a><a href="../../index.html#team">Projets des élèves</a><a href="../../../maths-info/index.html">Mathématiques ↗</a></nav></div></header>
+<main id="contenu" class="wrap">
+<section class="hero course-hero"><div><p class="eyebrow">Spécialité NSI · Première · Représentation des données</p><h1>La logique<br><em>booléenne.</em></h1><p class="intro">Tables de vérité, lois de De Morgan, évaluation paresseuse et fonctions booléennes, avec du Python exécutable dans le navigateur, des exercices corrigés et un QCM interactif.</p><div class="hero-cta"><a class="button" href="1NSI-S03-Logique-booleenne-fiche.pdf" download>📄 Fiche résumé (PDF)</a></div></div><div class="hero-code" aria-hidden="true"><div class="hc-bar"><span></span><span></span><span></span><em>python</em></div><pre><span class="p">&gt;&gt;&gt;</span> <span class="nb">7</span> &gt; <span class="nb">2</span> <span class="fn">and</span> <span class="nb">3</span> == <span class="nb">4</span>
+<span class="out">False</span>
+<span class="p">&gt;&gt;&gt;</span> <span class="fn">not</span> <span class="st">False</span> <span class="fn">or</span> <span class="st">False</span>
+<span class="out">True</span>
+<span class="p">&gt;&gt;&gt;</span> <span class="cur"></span></pre></div></section>
+<nav class="level-shortcuts" aria-label="Retour aux cours"><a href="index.html">← Cours de Première</a><a href="../index.html">Choisir un niveau</a></nav>
+<nav class="toc" aria-label="Sommaire du cours"><a href="#s1">1. Des booléens partout</a><a href="#s2">2. not, and, or</a><a href="#s3">3. Ou exclusif</a><a href="#s4">4. Tables de vérité</a><a href="#s5">5. De Morgan</a><a href="#s6">6. Évaluation paresseuse</a><a href="#s7">7. Fonctions booléennes</a><a href="#voc">📚 Vocabulaire</a><a href="#dst">⚠ Bilan</a><a href="#qcm">🎯 QCM</a></nav>
+<div class="container">
+<div class="section" id="s1"><div class="section-num">01 — Des booléens partout</div><h2>Des booléens partout</h2>
+
+<p>Depuis le début de l’année, tu écris des booléens sans le savoir.<br>Chaque condition d’un <code>if</code> ou d’un <code>while</code> en est un, comme chaque colonne « <code>x &lt; 20 ?</code> » d’un tableau de suivi.</p>
+<div class="box box-info"><div class="box-title">Définition</div><p>Un <strong>booléen</strong> est une valeur qui ne peut prendre que <strong>deux états</strong> : vrai ou faux.</p><p>En Python, ce sont <code>True</code> et <code>False</code>, de type <code>bool</code>. En logique et en électronique, on les note souvent <strong>1</strong> et <strong>0</strong>.</p></div>
+<p>Le mot vient de <strong>George Boole</strong> (1815–1864), mathématicien anglais qui a inventé un <em>calcul</em> sur le vrai et le faux, comme on calcule sur les nombres.<br>Un siècle plus tard, Claude Shannon a montré que ce calcul décrit exactement les circuits électroniques : c’est la base de tous les processeurs.</p>
+<h3>Les comparaisons produisent des booléens</h3>
+<table><tr><th>Opérateur</th><th>Signification</th><th>Exemple</th><th>Valeur</th></tr><tr><td><code>==</code></td><td>égal à</td><td><code>5 == 5.0</code></td><td><code>True</code></td></tr><tr><td><code>!=</code></td><td>différent de</td><td><code>3 != 3</code></td><td><code>False</code></td></tr><tr><td><code>&lt;</code></td><td>strictement inférieur</td><td><code>2 &lt; 7</code></td><td><code>True</code></td></tr><tr><td><code>&lt;=</code></td><td>inférieur ou égal</td><td><code>7 &lt;= 7</code></td><td><code>True</code></td></tr><tr><td><code>&gt;</code></td><td>strictement supérieur</td><td><code>4 &gt; 9</code></td><td><code>False</code></td></tr><tr><td><code>&gt;=</code></td><td>supérieur ou égal</td><td><code>10 &gt;= 12</code></td><td><code>False</code></td></tr></table>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="4">age = 16
+majeur = age &gt;= 18
+print(majeur)
+print(type(majeur))</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Une comparaison est une <strong>expression booléenne</strong> : on peut ranger sa valeur dans une variable.</p>
+<div class="box box-key"><div class="box-title">À retenir</div><p><code>if age &gt;= 18:</code> teste si l’expression <code>age &gt;= 18</code> vaut <code>True</code>.<br>Une condition n’est rien d’autre qu’une expression booléenne.</p></div>
+<div class="box box-warn"><div class="box-title">Attention</div><p><code>True</code> et <code>False</code> s’écrivent avec une majuscule et sans guillemets.<br><code>"True"</code> est une chaîne de caractères, pas un booléen.</p></div>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 1</div><div class="exo-title">Vrai ou faux ?</div></div></div><div class="exo-body"><p>Donne la valeur de chaque expression.</p><ol><li><code>7 &gt; 3</code></li><li><code>10 != 10</code></li><li><code>3 &gt;= 3</code></li><li><code>5 == 5.0</code></li><li><code>"NSI" == "nsi"</code></li><li><code>2 * 4 &lt; 9 - 2</code></li></ol><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex1" onclick="toggle('c-ex1')"><span class="toggle-icon" id="ic-ex1">▶</span> Voir la correction</button><div class="corr-box" id="c-ex1"><p>1. <code>True</code> ; 2. <code>False</code> ; 3. <code>True</code> ; 4. <code>True</code> ; 5. <code>False</code> ; 6. <code>False</code>.<br>Pour la 6 : <code>2 * 4</code> vaut 8 et <code>9 - 2</code> vaut 7, et 8 &lt; 7 est faux.<br>Pour la 5 : Python distingue les majuscules des minuscules.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 2</div><div class="exo-title">Qu’affiche ce programme ?</div></div></div><div class="exo-body"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>python</span></div><pre>x = <span class="nb">12</span>
+test = x % <span class="nb">2</span> == <span class="nb">0</span>
+<span class="fn">print</span>(test)
+<span class="fn">print</span>(<span class="fn">type</span>(test))</pre></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex2" onclick="toggle('c-ex2')"><span class="toggle-icon" id="ic-ex2">▶</span> Voir la correction</button><div class="corr-box" id="c-ex2"><p>Le programme affiche <code>True</code>, puis <code>&lt;class 'bool'&gt;</code>.<br><code>x % 2</code> vaut 0, donc <code>x % 2 == 0</code> est vrai : 12 est pair.<br>La variable <code>test</code> contient un booléen.</p></div></div></div>
+
+</div>
+<div class="section" id="s2"><div class="section-num">02 — Les opérateurs not, and, or</div><h2>Les opérateurs not, and, or</h2>
+
+<p>On combine des booléens avec trois opérateurs. Leur comportement se résume dans une <strong>table de vérité</strong> : une ligne par combinaison possible des entrées.</p>
+<div class="fn-grid">
+<div class="fn-card"><div class="fn-card-hdr">not a <span>la négation</span></div><div class="fn-card-body">vrai si a est <strong>faux</strong> : elle inverse la valeur.</div><div class="fn-card-ex">not True → False</div></div>
+<div class="fn-card"><div class="fn-card-hdr">a and b <span>le ET</span></div><div class="fn-card-body">vrai si a <strong>et</strong> b sont vrais <strong>tous les deux</strong>.</div><div class="fn-card-ex">True and False → False</div></div>
+<div class="fn-card"><div class="fn-card-hdr">a or b <span>le OU</span></div><div class="fn-card-body">vrai si <strong>au moins un</strong> des deux est vrai.</div><div class="fn-card-ex">True or False → True</div></div>
+</div>
+<table class="tv"><tr><th>a</th><th>b</th><th>not a</th><th>a and b</th><th>a or b</th></tr><tr><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td></tr></table>
+<p>On écrit souvent les tables avec <strong>0</strong> pour faux et <strong>1</strong> pour vrai. On range les lignes dans l’ordre de l’écriture binaire : 00, 01, 10, 11.</p>
+<div class="box box-info"><div class="box-title">Le OU logique est inclusif</div><p>Dans la langue courante, « fromage ou dessert » veut souvent dire « l’un ou l’autre, pas les deux ».<br>En logique, <strong>a or b</strong> est vrai aussi quand <strong>les deux</strong> sont vrais.</p></div>
+<h3>Les différentes notations</h3>
+<table><tr><th>Français</th><th>Python</th><th>Logique</th><th>Électronique</th></tr><tr><td>NON a</td><td><code>not a</code></td><td>¬a</td><td>a̅</td></tr><tr><td>a ET b</td><td><code>a and b</code></td><td>a ∧ b</td><td>a · b</td></tr><tr><td>a OU b</td><td><code>a or b</code></td><td>a ∨ b</td><td>a + b</td></tr></table>
+<h3>Priorités</h3>
+<p>Comme × passe avant + en calcul, <strong>not</strong> passe avant <strong>and</strong>, qui passe avant <strong>or</strong>.</p>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>python</span></div><pre><span class="fn">print</span>(<span class="kw">True</span> <span class="kw">or</span> <span class="kw">False</span> <span class="kw">and</span> <span class="kw">False</span>)    <span class="cm"># and d’abord : True or False → True</span>
+<span class="fn">print</span>((<span class="kw">True</span> <span class="kw">or</span> <span class="kw">False</span>) <span class="kw">and</span> <span class="kw">False</span>)  <span class="cm"># parenthèses : True and False → False</span></pre></div>
+<div class="box box-warn"><div class="box-title">Conseil</div><p>Dès qu’une expression mélange <strong>and</strong> et <strong>or</strong>, mets des parenthèses.<br>Ton programme sera plus lisible, même si elles ne sont pas obligatoires.</p></div>
+<h3>Faire afficher une table par Python</h3>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="3">for a in [False, True]:
+    for b in [False, True]:
+        print(a, b, a and b, a or b)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Deux boucles imbriquées parcourent les 4 combinaisons de a et b.</p>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 3</div><div class="exo-title">Évaluer des expressions</div></div></div><div class="exo-body"><p>On a <code>a = True</code>, <code>b = False</code> et <code>c = True</code>. Donne la valeur de chaque expression.</p><ol><li><code>not a</code></li><li><code>a and b</code></li><li><code>a or b</code></li><li><code>not (a and b)</code></li><li><code>a and not b</code></li><li><code>not a or c</code></li></ol><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex3" onclick="toggle('c-ex3')"><span class="toggle-icon" id="ic-ex3">▶</span> Voir la correction</button><div class="corr-box" id="c-ex3"><p>1. <code>False</code> ; 2. <code>False</code> ; 3. <code>True</code> ; 4. <code>True</code> ; 5. <code>True</code> ; 6. <code>True</code>.<br>Pour la 5 : <code>not b</code> vaut <code>True</code>, donc <code>a and not b</code> vaut <code>True and True</code>, c’est-à-dire <code>True</code>.<br>Pour la 6 : <code>not a</code> vaut <code>False</code>, mais <code>c</code> vaut <code>True</code>, donc le OU est vrai.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 4</div><div class="exo-title">Avec des comparaisons</div></div></div><div class="exo-body"><p>On a <code>x = 7</code>. Donne la valeur de chaque expression.</p><ol><li><code>x &gt; 5 and x &lt; 10</code></li><li><code>x &lt; 0 or x &gt; 5</code></li><li><code>not x == 7</code></li><li><code>x &gt; 5 and not x &gt; 6</code></li></ol><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex4" onclick="toggle('c-ex4')"><span class="toggle-icon" id="ic-ex4">▶</span> Voir la correction</button><div class="corr-box" id="c-ex4"><p>1. <code>True</code> : 7 est entre 5 et 10.<br>2. <code>True</code> : 7 &gt; 5 suffit.<br>3. <code>False</code> : <code>x == 7</code> est vrai, sa négation est fausse (la comparaison est faite avant le not).<br>4. <code>False</code> : <code>x &gt; 6</code> est vrai, donc <code>not x &gt; 6</code> est faux.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 5</div><div class="exo-title">Traduire en Python</div></div></div><div class="exo-body"><p>Écris une expression booléenne pour chaque phrase.</p><ol><li>n est compris entre 10 et 20 (bornes incluses).</li><li>L’âge est inférieur à 12 ou supérieur à 65.</li><li>La note est sur 20 : elle est entre 0 et 20 (bornes incluses).</li><li>Le jour n’est ni samedi, ni dimanche.</li></ol><button type="button" class="toggle-btn btn-hint" aria-expanded="false" aria-controls="h-ex5" onclick="toggle('h-ex5')"><span class="toggle-icon" id="ih-ex5">▶</span> Indice</button><div class="hint-box" id="h-ex5"><p>« ni A, ni B » veut dire « pas A <strong>et</strong> pas B ».</p></div> <button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex5" onclick="toggle('c-ex5')"><span class="toggle-icon" id="ic-ex5">▶</span> Voir la correction</button><div class="corr-box" id="c-ex5"><p>1. <code>n &gt;= 10 and n &lt;= 20</code>, que Python permet aussi d’écrire <code>10 &lt;= n &lt;= 20</code>.<br>2. <code>age &lt; 12 or age &gt; 65</code>.<br>3. <code>note &gt;= 0 and note &lt;= 20</code>.<br>4. <code>jour != "samedi" and jour != "dimanche"</code>.<br>Attention à la 4 : avec un <strong>or</strong>, l’expression serait toujours vraie (voir la partie 5).</p></div></div></div>
+
+</div>
+<div class="section" id="s3"><div class="section-num">03 — Le ou exclusif (xor)</div><h2>Le ou exclusif (xor)</h2>
+
+<div class="box box-info"><div class="box-title">Définition</div><p>Le <strong>ou exclusif</strong>, noté <strong>xor</strong> ou ⊕, est vrai si <strong>exactement un</strong> des deux est vrai.<br>C’est le « fromage ou dessert » du restaurant : l’un ou l’autre, mais pas les deux.</p></div>
+<table class="tv"><tr><th>a</th><th>b</th><th>a xor b</th></tr><tr><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td></tr></table>
+<p>Python n’a pas de mot-clé <code>xor</code>. Avec deux booléens, on écrit <code>a != b</code> : c’est vrai exactement quand a et b sont différents.<br>On peut aussi le construire avec les trois opérateurs : <code>(a or b) and not (a and b)</code>.</p>
+<h3>Une application : additionner deux bits</h3>
+<p>En binaire : 0 + 0 = 0, 0 + 1 = 1, 1 + 0 = 1 et 1 + 1 = 10 (on écrit 0 et on retient 1).</p>
+<table class="tv"><tr><th>a</th><th>b</th><th>retenue</th><th>somme</th></tr><tr><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>0</td><td>0</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td><td>0</td></tr></table>
+<div class="box box-key"><div class="box-title">À retenir</div><p>La colonne <strong>somme</strong> est exactement la table de <strong>a xor b</strong>.<br>La colonne <strong>retenue</strong> est exactement la table de <strong>a and b</strong>.<br>Ce petit circuit s’appelle un <strong>demi-additionneur</strong> : en l’enchaînant, un processeur additionne des nombres de 64 bits.</p></div>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="5">for a in [0, 1]:
+    for b in [0, 1]:
+        retenue = int(a == 1 and b == 1)   # ET
+        somme = int(a != b)                # OU EXCLUSIF
+        print(a, "+", b, "=", retenue, somme)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px"><code>int(True)</code> vaut 1 et <code>int(False)</code> vaut 0 : on retrouve l’écriture avec des bits.</p>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 6</div><div class="exo-title">Ou inclusif ou exclusif ?</div></div></div><div class="exo-body"><p>Pour chaque phrase, dis s’il s’agit d’un ou <strong>inclusif</strong> (or) ou d’un ou <strong>exclusif</strong> (xor).</p><ol><li>« Pour entrer, présente ta carte de lycéen ou ton carnet de correspondance. »</li><li>« Pile ou face ? »</li><li>« Le menu comprend une entrée ou un dessert. »</li><li>« Tu peux venir en bus ou à vélo. »</li></ol><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex6" onclick="toggle('c-ex6')"><span class="toggle-icon" id="ic-ex6">▶</span> Voir la correction</button><div class="corr-box" id="c-ex6"><p>1. Inclusif : avoir les deux documents ne pose pas de problème.<br>2. Exclusif : une pièce ne tombe jamais sur les deux faces à la fois.<br>3. Exclusif : c’est l’un ou l’autre, pas les deux.<br>4. Discutable : on ne prend pas les deux en même temps, mais on peut alterner selon les jours.<br>La langue courante est souvent ambiguë : c’est pour cela qu’on a besoin d’une logique précise.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 7</div><div class="exo-title">Vérifier une formule</div></div></div><div class="exo-body"><p>Complète le programme pour vérifier, sur les 4 combinaisons, que <code>(a or b) and not (a and b)</code> a la même valeur que <code>a != b</code>.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="5">for a in [False, True]:
+    for b in [False, True]:
+        e1 = ...
+        e2 = ...
+        print(a, b, e1, e2, e1 == e2)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex7" onclick="toggle('c-ex7')"><span class="toggle-icon" id="ic-ex7">▶</span> Voir la correction</button><div class="corr-box" id="c-ex7"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>python</span></div><pre><span class="kw">for</span> a <span class="kw">in</span> [<span class="kw">False</span>, <span class="kw">True</span>]:
+    <span class="kw">for</span> b <span class="kw">in</span> [<span class="kw">False</span>, <span class="kw">True</span>]:
+        e1 = (a <span class="kw">or</span> b) <span class="kw">and</span> <span class="kw">not</span> (a <span class="kw">and</span> b)
+        e2 = a != b
+        <span class="fn">print</span>(a, b, e1, e2, e1 == e2)</pre></div><p>La dernière colonne vaut <code>True</code> sur les 4 lignes : les deux expressions sont équivalentes.</p></div></div></div>
+
+</div>
+<div class="section" id="s4"><div class="section-num">04 — Table de vérité d’une expression</div><h2>Table de vérité d’une expression</h2>
+
+<p>Pour connaître une expression booléenne <strong>dans tous les cas</strong>, on dresse sa table de vérité.</p>
+<div class="box box-key"><div class="box-title">La méthode</div><ol><li>Avec <strong>n</strong> variables, il y a <strong>2<sup>n</sup></strong> lignes : 4 lignes pour 2 variables, 8 pour 3, 16 pour 4.</li><li>On écrit les combinaisons dans l’ordre du binaire : 000, 001, 010, … , 111.</li><li>On ajoute une colonne par <strong>sous-expression</strong>, en respectant les priorités.</li><li>La dernière colonne donne la valeur de l’expression.</li></ol></div>
+<h3>Exemple : E = (a and not b) or c</h3>
+<table class="tv"><tr><th>a</th><th>b</th><th>c</th><th>not b</th><th>a and not b</th><th>E</th></tr><tr><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td><strong>0</strong></td></tr><tr><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td><td><strong>1</strong></td></tr><tr><td>0</td><td>1</td><td>0</td><td>0</td><td>0</td><td><strong>0</strong></td></tr><tr><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td><td><strong>1</strong></td></tr><tr><td>1</td><td>0</td><td>0</td><td>1</td><td>1</td><td><strong>1</strong></td></tr><tr><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td><td><strong>1</strong></td></tr><tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td><strong>0</strong></td></tr><tr><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td><td><strong>1</strong></td></tr></table>
+<p>Python peut dresser cette table pour nous, avec trois boucles imbriquées.</p>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="5">for a in [False, True]:
+    for b in [False, True]:
+        for c in [False, True]:
+            E = (a and not b) or c
+            print(int(a), int(b), int(c), "|", int(E))</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div>
+<div class="box box-info"><div class="box-title">Expressions équivalentes</div><p>Deux expressions sont <strong>équivalentes</strong> si elles ont <strong>la même table de vérité</strong>.<br>On peut alors remplacer l’une par l’autre dans un programme, par exemple pour le rendre plus lisible.</p></div>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 8</div><div class="exo-title">Une table à deux variables</div></div></div><div class="exo-body"><p>Dresse la table de vérité de <code>not (a or b)</code>, avec une colonne pour <code>a or b</code>.</p><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex8" onclick="toggle('c-ex8')"><span class="toggle-icon" id="ic-ex8">▶</span> Voir la correction</button><div class="corr-box" id="c-ex8"><table class="tv"><tr><th>a</th><th>b</th><th>a or b</th><th>not (a or b)</th></tr><tr><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>1</td><td>1</td><td>1</td><td>0</td></tr></table><p>L’expression n’est vraie que sur la première ligne : quand a et b sont tous les deux faux.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 9</div><div class="exo-title">Une table à trois variables</div></div></div><div class="exo-body"><p>Dresse la table de vérité de <code>a and (b or c)</code>. Combien de lignes valent 1 ?</p><button type="button" class="toggle-btn btn-hint" aria-expanded="false" aria-controls="h-ex9" onclick="toggle('h-ex9')"><span class="toggle-icon" id="ih-ex9">▶</span> Indice</button><div class="hint-box" id="h-ex9"><p>Commence par la colonne <code>b or c</code>, puis fais le ET avec a.</p></div> <button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex9" onclick="toggle('c-ex9')"><span class="toggle-icon" id="ic-ex9">▶</span> Voir la correction</button><div class="corr-box" id="c-ex9"><table class="tv"><tr><th>a</th><th>b</th><th>c</th><th>b or c</th><th>a and (b or c)</th></tr><tr><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>0</td><td>0</td><td>1</td><td>1</td><td>0</td></tr><tr><td>0</td><td>1</td><td>0</td><td>1</td><td>0</td></tr><tr><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td></tr><tr><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr><tr><td>1</td><td>0</td><td>1</td><td>1</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>1</td><td>1</td><td>1</td><td>1</td></tr></table><p>Il y a 8 lignes, car 2³ = 8.<br>L’expression vaut 1 sur 3 lignes : a vaut 1 et au moins un des deux autres vaut 1.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 10</div><div class="exo-title">Retrouver l’expression</div></div></div><div class="exo-body"><p>Trouve une expression qui correspond à chaque table (colonne E).</p><table class="tv"><tr><th>a</th><th>b</th><th>E₁</th><th>E₂</th></tr><tr><td>0</td><td>0</td><td>0</td><td>1</td></tr><tr><td>0</td><td>1</td><td>0</td><td>1</td></tr><tr><td>1</td><td>0</td><td>1</td><td>1</td></tr><tr><td>1</td><td>1</td><td>0</td><td>0</td></tr></table><button type="button" class="toggle-btn btn-hint" aria-expanded="false" aria-controls="h-ex10" onclick="toggle('h-ex10')"><span class="toggle-icon" id="ih-ex10">▶</span> Indice</button><div class="hint-box" id="h-ex10"><p>Repère la ou les lignes qui sortent du lot (une seule ligne vraie, ou une seule ligne fausse).</p></div> <button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex10" onclick="toggle('c-ex10')"><span class="toggle-icon" id="ic-ex10">▶</span> Voir la correction</button><div class="corr-box" id="c-ex10"><p>E₁ n’est vraie que pour a = 1 et b = 0 : <code>a and not b</code>.<br>E₂ n’est fausse que pour a = 1 et b = 1 : c’est la négation du ET, <code>not (a and b)</code>.<br>On verra dans la partie 5 que E₂ s’écrit aussi <code>not a or not b</code>.</p></div></div></div>
+
+</div>
+<div class="section" id="s5"><div class="section-num">05 — Les lois de De Morgan</div><h2>Les lois de De Morgan</h2>
+
+<div class="box box-key"><div class="box-title">Les lois de De Morgan</div><p><code>not (a and b)</code> est équivalent à <code>(not a) or (not b)</code>.<br><code>not (a or b)</code> est équivalent à <code>(not a) and (not b)</code>.</p><p>En français : la négation d’un ET est le OU des négations, et la négation d’un OU est le ET des négations.</p></div>
+<p>Augustus De Morgan (1806–1871) était un contemporain et ami de George Boole.<br>On démontre ces lois en comparant les tables de vérité des deux côtés.</p>
+<table class="tv"><tr><th>a</th><th>b</th><th>not (a and b)</th><th>not a or not b</th><th>not (a or b)</th><th>not a and not b</th></tr><tr><td>0</td><td>0</td><td>1</td><td>1</td><td>1</td><td>1</td></tr><tr><td>0</td><td>1</td><td>1</td><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>0</td><td>1</td><td>1</td><td>0</td><td>0</td></tr><tr><td>1</td><td>1</td><td>0</td><td>0</td><td>0</td><td>0</td></tr></table>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="5">for a in [False, True]:
+    for b in [False, True]:
+        loi1 = (not (a and b)) == (not a or not b)
+        loi2 = (not (a or b)) == (not a and not b)
+        print(a, b, loi1, loi2)</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">On obtient <code>True</code> sur toutes les lignes : les deux lois sont vraies dans tous les cas.</p>
+<h3>À quoi ça sert ? Écrire le contraire d’une condition</h3>
+<table><tr><th>Condition</th><th>Son contraire (avec not)</th><th>Son contraire (sans not)</th></tr><tr><td><code>n &gt;= 10 and n &lt;= 20</code></td><td><code>not (n &gt;= 10 and n &lt;= 20)</code></td><td><code>n &lt; 10 or n &gt; 20</code></td></tr><tr><td><code>vitesse &lt; 100 and altitude &lt; 1000</code></td><td><code>not (vitesse &lt; 100 and altitude &lt; 1000)</code></td><td><code>vitesse &gt;= 100 or altitude &gt;= 1000</code></td></tr><tr><td><code>eau &lt; 2 or jours &gt; 5</code></td><td><code>not (eau &lt; 2 or jours &gt; 5)</code></td><td><code>eau &gt;= 2 and jours &lt;= 5</code></td></tr></table>
+<div class="box box-warn"><div class="box-title">Attention</div><p>Le contraire de <code>&lt;</code> est <code>&gt;=</code>, et non <code>&gt;</code>.<br>Le contraire de <code>==</code> est <code>!=</code>.</p></div>
+<h3>Le piège du « ni… ni… »</h3>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>python</span></div><pre>jour = <span class="st">"lundi"</span>
+<span class="kw">if</span> jour != <span class="st">"samedi"</span> <span class="kw">or</span> jour != <span class="st">"dimanche"</span>:   <span class="cm"># ✗ toujours vrai !</span>
+    <span class="fn">print</span>(<span class="st">"Jour de cours"</span>)
+<span class="kw">if</span> jour != <span class="st">"samedi"</span> <span class="kw">and</span> jour != <span class="st">"dimanche"</span>:  <span class="cm"># ✓</span>
+    <span class="fn">print</span>(<span class="st">"Jour de cours"</span>)</pre></div>
+<p>« C’est le week-end » s’écrit <code>jour == "samedi" or jour == "dimanche"</code>.<br>D’après De Morgan, son contraire est <code>jour != "samedi" and jour != "dimanche"</code>.<br>Avec un <strong>or</strong>, la condition est toujours vraie : un samedi, le jour est bien différent de dimanche !</p>
+<h3>Et dans une boucle while</h3>
+<p>On répète <strong>tant que</strong> la condition est vraie, donc on sort quand elle devient fausse.<br>Pour écrire la condition du while, on prend le <strong>contraire de la condition d’arrêt</strong>.</p>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>python</span></div><pre><span class="cm"># On s’arrête quand le code est bon OU quand il ne reste plus d’essai.</span>
+<span class="cm"># On continue donc tant que le code est faux ET qu’il reste des essais.</span>
+essais = <span class="nb">3</span>
+code = <span class="st">""</span>
+<span class="kw">while</span> code != <span class="st">"1234"</span> <span class="kw">and</span> essais &gt; <span class="nb">0</span>:
+    code = <span class="fn">input</span>(<span class="st">"Code ? "</span>)
+    essais = essais - <span class="nb">1</span></pre></div>
+<div class="box box-tip"><div class="box-title">Autres propriétés utiles</div><table><tr><th>Propriété</th><th>Exemple</th></tr><tr><td>double négation</td><td><code>not (not a)</code> vaut <code>a</code></td></tr><tr><td>commutativité</td><td><code>a and b</code> vaut <code>b and a</code></td></tr><tr><td>élément neutre</td><td><code>a and True</code> vaut <code>a</code> ; <code>a or False</code> vaut <code>a</code></td></tr><tr><td>élément absorbant</td><td><code>a and False</code> vaut <code>False</code> ; <code>a or True</code> vaut <code>True</code></td></tr></table></div>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 11</div><div class="exo-title">Écrire le contraire</div></div></div><div class="exo-body"><p>Écris le contraire de chaque condition <strong>sans utiliser not</strong>.</p><ol><li><code>x &gt; 0 and x &lt; 100</code></li><li><code>note &lt; 10 or absent == True</code></li><li><code>reponse == "oui" or reponse == "o"</code></li><li><code>pv &gt; 0 and ennemis &gt; 0</code></li></ol><button type="button" class="toggle-btn btn-hint" aria-expanded="false" aria-controls="h-ex11" onclick="toggle('h-ex11')"><span class="toggle-icon" id="ih-ex11">▶</span> Indice</button><div class="hint-box" id="h-ex11"><p>Change chaque comparaison en son contraire, puis remplace and par or (ou or par and).</p></div> <button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex11" onclick="toggle('c-ex11')"><span class="toggle-icon" id="ic-ex11">▶</span> Voir la correction</button><div class="corr-box" id="c-ex11"><p>1. <code>x &lt;= 0 or x &gt;= 100</code>.<br>2. <code>note &gt;= 10 and absent == False</code>, que l’on écrit plus simplement <code>note &gt;= 10 and not absent</code>.<br>3. <code>reponse != "oui" and reponse != "o"</code>.<br>4. <code>pv &lt;= 0 or ennemis &lt;= 0</code> : la partie s’arrête si le héros n’a plus de PV ou s’il n’y a plus d’ennemi.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 12</div><div class="exo-title">Trouve le bug</div></div></div><div class="exo-body"><p>Ce programme doit afficher « consonne » si la lettre n’est ni « a » ni « e ». Il affiche « consonne » même pour « a ». Corrige-le.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="5">lettre = "a"
+if lettre != "a" or lettre != "e":
+    print("consonne")
+else:
+    print("voyelle")</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex12" onclick="toggle('c-ex12')"><span class="toggle-icon" id="ic-ex12">▶</span> Voir la correction</button><div class="corr-box" id="c-ex12"><p>Avec <code>lettre = "a"</code>, <code>lettre != "e"</code> est vrai, donc le OU est vrai.<br>Il faut un ET : <code>lettre != "a" and lettre != "e"</code>.<br>C’est la loi de De Morgan appliquée à « la lettre est a ou e ».</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr hard"><div><div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 13</div><div class="exo-title">La condition du while</div></div></div><div class="exo-body"><p>Dans un jeu, le combat continue tant que le héros a encore des PV <strong>et</strong> que le monstre aussi.</p><ol><li>Écris la condition du while.</li><li>Quand on sort de la boucle, quelle condition est vraie ? Écris-la sans not.</li><li>Complète le programme pour qu’il affiche le vainqueur après la boucle.</li></ol><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="6">pv_heros = 30
+pv_monstre = 25
+while CONDITION:   # à remplacer
+    pv_monstre = pv_monstre - 8
+    pv_heros = pv_heros - 5
+# Afficher le vainqueur</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex13" onclick="toggle('c-ex13')"><span class="toggle-icon" id="ic-ex13">▶</span> Voir la correction</button><div class="corr-box" id="c-ex13"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>python</span></div><pre>pv_heros = <span class="nb">30</span>
+pv_monstre = <span class="nb">25</span>
+<span class="kw">while</span> pv_heros &gt; <span class="nb">0</span> <span class="kw">and</span> pv_monstre &gt; <span class="nb">0</span>:
+    pv_monstre = pv_monstre - <span class="nb">8</span>
+    pv_heros = pv_heros - <span class="nb">5</span>
+<span class="kw">if</span> pv_monstre &lt;= <span class="nb">0</span>:
+    <span class="fn">print</span>(<span class="st">"Le héros gagne !"</span>)
+<span class="kw">else</span>:
+    <span class="fn">print</span>(<span class="st">"Le monstre gagne..."</span>)</pre></div><p>1. <code>pv_heros &gt; 0 and pv_monstre &gt; 0</code>.<br>2. À la sortie, la condition est fausse : <code>pv_heros &lt;= 0 or pv_monstre &lt;= 0</code> (De Morgan).<br>3. Il faut tester qui est à 0 : ici, le monstre passe à 1 puis à -7 au 4e tour, et le programme affiche « Le héros gagne ! ».</p></div></div></div>
+
+</div>
+<div class="section" id="s6"><div class="section-num">06 — L’évaluation paresseuse</div><h2>L’évaluation paresseuse</h2>
+
+<p>Python évalue <code>and</code> et <code>or</code> <strong>de gauche à droite</strong> et <strong>s’arrête dès que le résultat est connu</strong>.</p>
+<table><tr><th>Expression</th><th>Si la partie gauche vaut…</th><th>Résultat</th><th>La partie droite est-elle évaluée ?</th></tr><tr><td><code>gauche and droite</code></td><td><code>False</code></td><td><code>False</code></td><td><strong>non</strong> : faux ET n’importe quoi donne faux</td></tr><tr><td><code>gauche and droite</code></td><td><code>True</code></td><td>la valeur de droite</td><td>oui</td></tr><tr><td><code>gauche or droite</code></td><td><code>True</code></td><td><code>True</code></td><td><strong>non</strong> : vrai OU n’importe quoi donne vrai</td></tr><tr><td><code>gauche or droite</code></td><td><code>False</code></td><td>la valeur de droite</td><td>oui</td></tr></table>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="6">def test(nom, valeur):
+    print("   j’évalue", nom)
+    return valeur
+
+print(test("A", False) and test("B", True))
+print(test("A", True) or test("B", False))</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">B n’est jamais évalué : le résultat est connu dès A.</p>
+<h3>À quoi ça sert ? Éviter des erreurs</h3>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="3">x = 0
+print(x != 0 and 10 / x &gt; 1)    # False, sans erreur
+print(10 / x &gt; 1 and x != 0)    # ZeroDivisionError</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><p style="font-size:14px;color:var(--muted);margin-top:-8px">Dans la première ligne, la division n’est jamais faite. Dans la seconde, elle est faite en premier.</p>
+<div class="box box-key"><div class="box-title">À retenir</div><p>L’ordre des conditions compte.<br>On place d’abord la condition « de sécurité », celle qui garantit que la suite peut être calculée sans erreur.</p></div>
+<div class="box box-info"><div class="box-title">Pour aller plus loin</div><p>Cette évaluation est dite <strong>paresseuse</strong> ou <strong>séquentielle</strong>.<br>Elle est très utile avec les listes : dans <code>i &lt; len(t) and t[i] == 0</code>, on vérifie que l’indice existe avant de lire la case.</p></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 14</div><div class="exo-title">Erreur ou pas ?</div></div></div><div class="exo-body"><p>On a <code>x = 0</code>. Pour chaque expression, donne sa valeur ou indique qu’elle provoque une erreur.</p><ol><li><code>x == 0 or 10 / x &gt; 2</code></li><li><code>10 / x &gt; 2 or x == 0</code></li><li><code>x != 0 and 10 / x &gt; 2</code></li><li><code>x == 0 and 10 / x &gt; 2</code></li></ol><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex14" onclick="toggle('c-ex14')"><span class="toggle-icon" id="ic-ex14">▶</span> Voir la correction</button><div class="corr-box" id="c-ex14"><p>1. <code>True</code> : la gauche est vraie, le OU s’arrête.<br>2. Erreur ZeroDivisionError : la division est évaluée en premier.<br>3. <code>False</code> : la gauche est fausse, le ET s’arrête.<br>4. Erreur : la gauche est vraie, donc le ET doit évaluer la droite, et 10 / 0 est impossible.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 15</div><div class="exo-title">Qu’affiche ce programme ?</div></div></div><div class="exo-body"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>python</span></div><pre><span class="kw">def</span> <span class="df">verif</span>(n):
+    <span class="fn">print</span>(<span class="st">"vérifie"</span>, n)
+    <span class="kw">return</span> n &gt; <span class="nb">5</span>
+
+r = verif(<span class="nb">3</span>) <span class="kw">or</span> verif(<span class="nb">8</span>) <span class="kw">or</span> verif(<span class="nb">10</span>)
+<span class="fn">print</span>(r)</pre></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex15" onclick="toggle('c-ex15')"><span class="toggle-icon" id="ic-ex15">▶</span> Voir la correction</button><div class="corr-box" id="c-ex15"><p>Le programme affiche « vérifie 3 », puis « vérifie 8 », puis True.<br><code>verif(3)</code> vaut <code>False</code>, donc Python évalue <code>verif(8)</code>, qui vaut <code>True</code>.<br>Le OU est alors vrai : verif(10) n’est jamais appelé.</p></div></div></div>
+
+</div>
+<div class="section" id="s7"><div class="section-num">07 — Les fonctions booléennes</div><h2>Les fonctions booléennes</h2>
+
+<p>Une fonction qui renvoie <code>True</code> ou <code>False</code> répond à une question par oui ou par non.<br>Par convention, son nom commence par <strong>est</strong> : <code>est_pair(n)</code>, <code>est_majeur(age)</code>, <code>est_bissextile(annee)</code>.</p>
+<h3>Renvoyer directement la condition</h3>
+<div class="compare-loops"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>correct, mais long</span></div><pre><span class="kw">def</span> <span class="df">est_pair</span>(n):
+    <span class="kw">if</span> n % <span class="nb">2</span> == <span class="nb">0</span>:
+        <span class="kw">return</span> <span class="kw">True</span>
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="kw">False</span></pre></div><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>mieux</span></div><pre><span class="kw">def</span> <span class="df">est_pair</span>(n):
+    <span class="kw">return</span> n % <span class="nb">2</span> == <span class="nb">0</span></pre></div></div>
+<div class="box box-key"><div class="box-title">À retenir</div><p><code>n % 2 == 0</code> est déjà un booléen : il suffit de le renvoyer.<br>De même, on écrit <code>if est_pair(n):</code> et non <code>if est_pair(n) == True:</code>.</p></div>
+<h3>Exemple : les années bissextiles</h3>
+<p>Une année est bissextile si elle est divisible par 4 mais pas par 100, <strong>ou</strong> si elle est divisible par 400.<br>Ainsi 2024 et 2000 sont bissextiles, mais pas 2026 ni 1900.</p>
+<div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="5">def est_bissextile(annee):
+    return (annee % 4 == 0 and annee % 100 != 0) or annee % 400 == 0
+
+for annee in [2024, 2026, 1900, 2000]:
+    print(annee, est_bissextile(annee))</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div>
+<div class="box box-tip"><div class="box-title">Tester une fonction booléenne</div><p>Choisis au moins un cas où elle doit renvoyer True, un cas où elle doit renvoyer False, et les <strong>cas limites</strong>.<br>Pour <code>est_bissextile</code>, 1900 et 2000 sont les cas qui piègent.</p></div>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 16</div><div class="exo-title">Est négatif</div></div></div><div class="exo-body"><p>Écris une fonction <code>est_negatif(x)</code> qui renvoie <code>True</code> si x est strictement négatif, <code>False</code> sinon.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="4">def est_negatif(x):
+    ...
+
+print(est_negatif(-3), est_negatif(0), est_negatif(5))   # True False False</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex16" onclick="toggle('c-ex16')"><span class="toggle-icon" id="ic-ex16">▶</span> Voir la correction</button><div class="corr-box" id="c-ex16"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>python</span></div><pre><span class="kw">def</span> <span class="df">est_negatif</span>(x):
+    <span class="kw">return</span> x &lt; <span class="nb">0</span></pre></div><p>0 n’est pas strictement négatif : <code>est_negatif(0)</code> renvoie <code>False</code>.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr easy"><div><div class="exo-level">⭐ Niveau 1 · Exercice 17</div><div class="exo-title">Note valide</div></div></div><div class="exo-body"><p>Écris une fonction <code>est_note_valide(note)</code> qui renvoie <code>True</code> si la note est comprise entre 0 et 20, bornes incluses.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="4">def est_note_valide(note):
+    ...
+
+print(est_note_valide(15), est_note_valide(20), est_note_valide(-1), est_note_valide(21))   # True True False False</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex17" onclick="toggle('c-ex17')"><span class="toggle-icon" id="ic-ex17">▶</span> Voir la correction</button><div class="corr-box" id="c-ex17"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>python</span></div><pre><span class="kw">def</span> <span class="df">est_note_valide</span>(note):
+    <span class="kw">return</span> note &gt;= <span class="nb">0</span> <span class="kw">and</span> note &lt;= <span class="nb">20</span></pre></div><p>On peut aussi écrire <code>return 0 &lt;= note &lt;= 20</code>.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr medium"><div><div class="exo-level">⭐⭐ Niveau 2 · Exercice 18</div><div class="exo-title">Est une voyelle</div></div></div><div class="exo-body"><p>Écris une fonction <code>est_voyelle(lettre)</code> qui renvoie <code>True</code> si la lettre (en minuscule) est a, e, i, o, u ou y.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="8">def est_voyelle(lettre):
+    ...
+
+nb = 0
+for lettre in "logique booleenne":
+    if est_voyelle(lettre):
+        nb = nb + 1
+print(nb)   # 9</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex18" onclick="toggle('c-ex18')"><span class="toggle-icon" id="ic-ex18">▶</span> Voir la correction</button><div class="corr-box" id="c-ex18"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>python</span></div><pre><span class="kw">def</span> <span class="df">est_voyelle</span>(lettre):
+    <span class="kw">return</span> lettre == <span class="st">"a"</span> <span class="kw">or</span> lettre == <span class="st">"e"</span> <span class="kw">or</span> lettre == <span class="st">"i"</span> <span class="kw">or</span> lettre == <span class="st">"o"</span> <span class="kw">or</span> lettre == <span class="st">"u"</span> <span class="kw">or</span> lettre == <span class="st">"y"</span></pre></div><p>Il y a 9 voyelles dans « logique booleenne ».<br>Avec <code>in</code>, on peut écrire plus court : <code>return lettre in "aeiouy"</code>.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr hard"><div><div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 19</div><div class="exo-title">Réécrire sans if</div></div></div><div class="exo-body"><p>Réécris cette fonction en une seule ligne, sans if.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>python</span></div><pre><span class="kw">def</span> <span class="df">est_tarif_reduit</span>(age):
+    <span class="kw">if</span> age &lt; <span class="nb">12</span>:
+        <span class="kw">return</span> <span class="kw">True</span>
+    <span class="kw">elif</span> age &gt;= <span class="nb">65</span>:
+        <span class="kw">return</span> <span class="kw">True</span>
+    <span class="kw">else</span>:
+        <span class="kw">return</span> <span class="kw">False</span></pre></div><button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex19" onclick="toggle('c-ex19')"><span class="toggle-icon" id="ic-ex19">▶</span> Voir la correction</button><div class="corr-box" id="c-ex19"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>python</span></div><pre><span class="kw">def</span> <span class="df">est_tarif_reduit</span>(age):
+    <span class="kw">return</span> age &lt; <span class="nb">12</span> <span class="kw">or</span> age &gt;= <span class="nb">65</span></pre></div><p>Les deux premières branches renvoient True : elles se regroupent avec un OU.<br>La branche else correspond au cas où les deux conditions sont fausses.</p></div></div></div>
+<div class="exo-card"><div class="exo-hdr hard"><div><div class="exo-level">⭐⭐⭐ Niveau 3 · Exercice 20</div><div class="exo-title">Triangle rectangle</div></div></div><div class="exo-body"><p>Écris une fonction <code>est_rectangle(a, b, c)</code> qui renvoie <code>True</code> si le triangle de côtés a, b, c est rectangle, en supposant que c est le plus grand côté.</p><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><button class="run-btn-mini" onclick="runPycode(this)">▶ Exécuter</button></div>
+<textarea class="code-editor" spellcheck="false" rows="4">def est_rectangle(a, b, c):
+    ...
+
+print(est_rectangle(3, 4, 5), est_rectangle(5, 12, 13), est_rectangle(4, 5, 6))   # True True False</textarea>
+<div class="code-output">Clique sur ▶ Exécuter pour lancer ton code.</div></div><button type="button" class="toggle-btn btn-hint" aria-expanded="false" aria-controls="h-ex20" onclick="toggle('h-ex20')"><span class="toggle-icon" id="ih-ex20">▶</span> Indice</button><div class="hint-box" id="h-ex20"><p>Pense au théorème de Pythagore.</p></div> <button type="button" class="toggle-btn btn-corr" aria-expanded="false" aria-controls="c-ex20" onclick="toggle('c-ex20')"><span class="toggle-icon" id="ic-ex20">▶</span> Voir la correction</button><div class="corr-box" id="c-ex20"><div class="code-block"><div class="code-header"><div class="code-header-left"><span class="dot dr"></span><span class="dot dy"></span><span class="dot dg"></span></div><span>python</span></div><pre><span class="kw">def</span> <span class="df">est_rectangle</span>(a, b, c):
+    <span class="kw">return</span> a * a + b * b == c * c</pre></div><p>C’est la réciproque du théorème de Pythagore.<br>Avec des nombres décimaux, l’égalité peut échouer à cause des arrondis : on se limite ici aux entiers.</p></div></div></div>
+
+</div>
+<div class="section" id="voc"><div class="section-num">08 — Vocabulaire</div><h2>Les mots à connaître</h2><div class="fn-grid"><div class="fn-card"><div class="fn-card-hdr">Booléen</div><div class="fn-card-body">valeur qui vaut vrai ou faux (True ou False, 1 ou 0)</div></div><div class="fn-card"><div class="fn-card-hdr">Expression booléenne</div><div class="fn-card-body">expression dont la valeur est un booléen, par exemple x &gt; 5 and x &lt; 10</div></div><div class="fn-card"><div class="fn-card-hdr">Table de vérité</div><div class="fn-card-body">tableau qui donne la valeur d’une expression pour toutes les combinaisons de ses variables</div></div><div class="fn-card"><div class="fn-card-hdr">Négation (NON)</div><div class="fn-card-body">not a : vrai si a est faux</div></div><div class="fn-card"><div class="fn-card-hdr">Conjonction (ET)</div><div class="fn-card-body">a and b : vrai si a et b sont vrais tous les deux</div></div><div class="fn-card"><div class="fn-card-hdr">Disjonction (OU)</div><div class="fn-card-body">a or b : vrai si au moins un des deux est vrai</div></div><div class="fn-card"><div class="fn-card-hdr">Ou exclusif (xor)</div><div class="fn-card-body">vrai si exactement un des deux est vrai ; en Python a != b</div></div><div class="fn-card"><div class="fn-card-hdr">Expressions équivalentes</div><div class="fn-card-body">expressions qui ont la même table de vérité</div></div><div class="fn-card"><div class="fn-card-hdr">Lois de De Morgan</div><div class="fn-card-body">not (a and b) = not a or not b ; not (a or b) = not a and not b</div></div><div class="fn-card"><div class="fn-card-hdr">Évaluation paresseuse</div><div class="fn-card-body">and et or s’arrêtent dès que le résultat est connu</div></div><div class="fn-card"><div class="fn-card-hdr">Fonction booléenne</div><div class="fn-card-body">fonction qui renvoie True ou False ; son nom commence par est</div></div></div></div>
+<div class="dst-section" id="dst"><div class="section-num">09 — Bilan</div><h2>Ce que tu dois maîtriser</h2>
+<p style="color:var(--text2);margin-bottom:20px;">Coche une case par ligne : ta progression est enregistrée sur cet appareil. Pour une notion « à revoir », relis la partie correspondante puis refais un exercice sans aide.</p>
+<table class="selfassess"><tr><th>Compétence</th><th>Seul</th><th>Avec aide</th><th>À revoir</th></tr>
+<tr><td>Reconnaître une valeur et une expression booléennes</td><td><input type="radio" name="c1" value="seul"></td><td><input type="radio" name="c1" value="aide"></td><td><input type="radio" name="c1" value="revoir"></td></tr>
+<tr><td>Donner la table de vérité de not, and, or et xor</td><td><input type="radio" name="c2" value="seul"></td><td><input type="radio" name="c2" value="aide"></td><td><input type="radio" name="c2" value="revoir"></td></tr>
+<tr><td>Évaluer une expression en respectant les priorités (not, puis and, puis or)</td><td><input type="radio" name="c3" value="seul"></td><td><input type="radio" name="c3" value="aide"></td><td><input type="radio" name="c3" value="revoir"></td></tr>
+<tr><td>Dresser la table de vérité d’une expression à 2 ou 3 variables</td><td><input type="radio" name="c4" value="seul"></td><td><input type="radio" name="c4" value="aide"></td><td><input type="radio" name="c4" value="revoir"></td></tr>
+<tr><td>Reconnaître deux expressions équivalentes</td><td><input type="radio" name="c5" value="seul"></td><td><input type="radio" name="c5" value="aide"></td><td><input type="radio" name="c5" value="revoir"></td></tr>
+<tr><td>Écrire le contraire d’une condition avec les lois de De Morgan</td><td><input type="radio" name="c6" value="seul"></td><td><input type="radio" name="c6" value="aide"></td><td><input type="radio" name="c6" value="revoir"></td></tr>
+<tr><td>Expliquer l’évaluation paresseuse et choisir l’ordre des conditions</td><td><input type="radio" name="c7" value="seul"></td><td><input type="radio" name="c7" value="aide"></td><td><input type="radio" name="c7" value="revoir"></td></tr>
+<tr><td>Écrire une fonction booléenne qui renvoie directement une condition</td><td><input type="radio" name="c8" value="seul"></td><td><input type="radio" name="c8" value="aide"></td><td><input type="radio" name="c8" value="revoir"></td></tr>
+</table><button class="checklist-reset" onclick="resetChecklist()">Effacer mes réponses</button></div>
+<div class="section" id="qcm"><div class="section-num">10 — QCM</div><h2>Quiz interactif — La logique booléenne</h2>
+<p style="color:var(--muted);margin-bottom:16px;">Banque de <strong style="color:var(--green)"><span id="qcm-total">64</span> questions</strong>. Choisis le nombre de questions et lance le tirage.</p>
+<div class="qcm-controls"><span style="font-family:var(--mono);font-size:12px;color:var(--muted)">Nombre de questions :</span>
+<label class="qcm-size-opt" id="lbl5"><input type="radio" name="qsz" value="5" checked onchange="onSzChange()"> 5 questions</label>
+<label class="qcm-size-opt" id="lbl10"><input type="radio" name="qsz" value="10" onchange="onSzChange()"> 10 questions</label>
+<button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button></div>
+<div id="qcm-questions"></div>
+<div style="display:flex;gap:12px;flex-wrap:wrap;margin-top:20px;"><button class="qcm-btn qcm-btn-primary" onclick="submitQCM()" id="btn-sub">✅ Valider mes réponses</button><button class="qcm-btn qcm-btn-secondary" onclick="newQCM()">🔀 Nouveau tirage</button></div>
+<div id="qcm-result"></div></div>
+</div>
+</main>
+<footer><div class="wrap foot"><p>© 2026 Mme L. · Maths &amp; informatique · La logique booléenne</p><a href="../../index.html#contact">Contact</a></div></footer>
+<script src="https://cdn.jsdelivr.net/pyodide/v0.26.4/full/pyodide.js"></script>
+<script>
+function toggle(id){const el=document.getElementById(id);const icon=document.getElementById('i'+id);const open=el.classList.toggle('open');if(icon)icon.textContent=open?'\u25bc':'\u25b6';document.querySelectorAll('[aria-controls="'+id+'"]').forEach(function(b){b.setAttribute('aria-expanded',open);});}
+function onSzChange(){const v5=document.querySelector('[name="qsz"][value="5"]').checked;document.getElementById('lbl5').style.borderColor=v5?'#94516f':'';document.getElementById('lbl10').style.borderColor=!v5?'#94516f':'';}
+let _pyodidePromise=null;
+function getPyodide(){ if(!_pyodidePromise){ _pyodidePromise=loadPyodide().then(async function(py){
+  await py.runPythonAsync(`
+import builtins, js, sys, time
+LIMITE = 5  # secondes de calcul autorisées avant d'arrêter le programme
+_garde = {'t0': 0.0}
+def _trace(frame, event, arg):
+    if time.time() - _garde['t0'] > LIMITE:
+        sys.settrace(None)
+        raise TimeoutError("programme arrêté au bout de " + str(LIMITE) + " s. Boucle infinie ? Vérifie que la condition du while finit par devenir fausse.")
+    return _trace
+def _garde_on():
+    _garde['t0'] = time.time()
+    sys.settrace(_trace)
+def _garde_off():
+    sys.settrace(None)
+def _saisie(message=''):
+    v = js.prompt(str(message))
+    _garde['t0'] = time.time()   # le temps passé à taper ne compte pas
+    if v is None:
+        raise KeyboardInterrupt("saisie annulée")
+    print(str(message) + v)
+    return v
+builtins.input = _saisie
+`); return py; }); } return _pyodidePromise; }
+async function runPycode(btn){
+  const box=btn.closest('.code-block'), ta=box.querySelector('.code-editor'), out=box.querySelector('.code-output');
+  const original=btn.textContent; btn.disabled=true; btn.textContent='...'; out.textContent='';
+  try{
+    const py=await getPyodide();
+    let lignes=0; const MAX_LIGNES=300;
+    const ecrire=function(t){ if(lignes<MAX_LIGNES){ out.textContent+=t+'\n'; } else if(lignes===MAX_LIGNES){ out.textContent+='… (affichage limité à '+MAX_LIGNES+' lignes)\n'; } lignes++; };
+    py.setStdout({batched:ecrire});
+    py.setStderr({batched:ecrire});
+    py.runPython('_garde_on()');
+    try{ await py.runPythonAsync(ta.value); } finally { py.runPython('_garde_off()'); }
+    if(!out.textContent.trim()) out.textContent='(aucune sortie : pense à utiliser print() pour afficher un résultat)';
+  }catch(err){
+    const msg=String(err.message||err).trim().split('\n'); out.textContent+='Erreur : '+msg[msg.length-1];
+  }
+  btn.disabled=false; btn.textContent=original;
+}
+(function(){const KEY='nsi-logique-booleenne-selfassess';let st={};try{st=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){st={};}
+document.querySelectorAll('.selfassess input[type="radio"]').forEach(function(r){if(st[r.name]===r.value){r.checked=true;r.closest('tr').classList.add('done');}
+r.addEventListener('change',function(){st[r.name]=r.value;r.closest('tr').classList.add('done');try{localStorage.setItem(KEY,JSON.stringify(st));}catch(e){}});});})();
+function resetChecklist(){document.querySelectorAll('.selfassess input[type="radio"]').forEach(function(r){r.checked=false;r.closest('tr').classList.remove('done');});try{localStorage.removeItem('nsi-logique-booleenne-selfassess');}catch(e){}}
+const BANK=[{"q":"Combien de valeurs différentes un booléen peut-il prendre ?","o":["2","1","10","une infinité"],"a":0,"ex":"Vrai ou faux : True ou False."},{"q":"Quel est le type de <code>7 &gt; 3</code> ?","o":["bool","int","str","float"],"a":0,"ex":"Une comparaison produit un booléen."},{"q":"Laquelle de ces valeurs est un booléen en Python ?","o":["True","\"True\"","true","VRAI"],"a":0,"ex":"True s’écrit avec une majuscule et sans guillemets."},{"q":"De qui le mot « booléen » vient-il ?","o":["George Boole","Alan Turing","Blaise Pascal","Ada Lovelace"],"a":0,"ex":"George Boole (1815–1864) a créé l’algèbre de la logique."},{"q":"Que vaut <code>not True</code> ?","o":["False","True","une erreur","None"],"a":0,"ex":"not inverse la valeur."},{"q":"Que vaut <code>True and False</code> ?","o":["False","True","une erreur","None"],"a":0,"ex":"and n’est vrai que si les deux sont vrais."},{"q":"Que vaut <code>True or False</code> ?","o":["True","False","une erreur","None"],"a":0,"ex":"or est vrai si au moins un des deux est vrai."},{"q":"Que vaut <code>False or False</code> ?","o":["False","True","une erreur","None"],"a":0,"ex":"Aucun des deux n’est vrai."},{"q":"<code>a and b</code> est vrai…","o":["seulement si a et b sont vrais","si au moins un des deux est vrai","si exactement un des deux est vrai","si a et b sont faux"],"a":0,"ex":"C’est le ET : il faut les deux."},{"q":"<code>a or b</code> est faux…","o":["seulement si a et b sont faux","si au moins un des deux est faux","si a et b sont vrais","jamais"],"a":0,"ex":"Le OU n’est faux que sur la ligne où les deux sont faux."},{"q":"Dans quel ordre Python évalue-t-il les opérateurs booléens ?","o":["not, puis and, puis or","and, puis or, puis not","or, puis and, puis not","de gauche à droite, sans priorité"],"a":0,"ex":"Comme × avant +, and passe avant or ; not passe avant les deux."},{"q":"Que vaut <code>True or False and False</code> ?","o":["True","False","une erreur","None"],"a":0,"ex":"and d’abord : False and False vaut False, puis True or False vaut True."},{"q":"Que vaut <code>not False and False</code> ?","o":["False","True","une erreur","None"],"a":0,"ex":"not d’abord : not False vaut True, puis True and False vaut False."},{"q":"Comment note-t-on « a ET b » en logique ?","o":["a ∧ b","a ∨ b","¬a","a ⊕ b"],"a":0,"ex":"∧ pour ET, ∨ pour OU, ¬ pour NON, ⊕ pour le ou exclusif."},{"q":"Le ou exclusif (xor) de a et b est vrai…","o":["si exactement un des deux est vrai","si au moins un des deux est vrai","si les deux sont vrais","si les deux sont faux"],"a":0,"ex":"C’est « l’un ou l’autre, mais pas les deux »."},{"q":"Avec deux booléens a et b, quelle expression Python donne le ou exclusif ?","o":["a != b","a == b","a or b","not a and not b"],"a":0,"ex":"a != b est vrai exactement quand a et b sont différents."},{"q":"Dans l’addition de deux bits a et b, la retenue est donnée par…","o":["a and b","a or b","a xor b","not a"],"a":0,"ex":"Il n’y a de retenue que pour 1 + 1."},{"q":"Dans l’addition de deux bits a et b, le bit de somme est donné par…","o":["a xor b","a and b","a or b","not (a or b)"],"a":0,"ex":"0+1 = 1, 1+0 = 1, 1+1 = 10 : le bit de droite vaut 1 si exactement un des deux vaut 1."},{"q":"Combien de lignes compte la table de vérité d’une expression à 3 variables ?","o":["8","6","3","9"],"a":0,"ex":"2³ = 8 combinaisons."},{"q":"Combien de lignes compte la table de vérité d’une expression à 4 variables ?","o":["16","8","12","4"],"a":0,"ex":"2⁴ = 16 combinaisons."},{"q":"Deux expressions booléennes sont équivalentes si…","o":["elles ont la même table de vérité","elles utilisent les mêmes variables","elles ont le même nombre d’opérateurs","elles valent True pour a = b = True"],"a":0,"ex":"Même valeur dans tous les cas."},{"q":"D’après De Morgan, <code>not (a and b)</code> est équivalent à…","o":["not a or not b","not a and not b","a or b","not a and b"],"a":0,"ex":"La négation d’un ET est le OU des négations."},{"q":"D’après De Morgan, <code>not (a or b)</code> est équivalent à…","o":["not a and not b","not a or not b","a and b","not a or b"],"a":0,"ex":"La négation d’un OU est le ET des négations."},{"q":"Quel est le contraire de <code>x &lt; 10</code> ?","o":["x &gt;= 10","x &gt; 10","x &lt;= 10","x != 10"],"a":0,"ex":"Le contraire de « strictement inférieur » est « supérieur ou égal »."},{"q":"Quel est le contraire de <code>x &gt; 0 and x &lt; 100</code> ?","o":["x &lt;= 0 or x &gt;= 100","x &lt;= 0 and x &gt;= 100","x &lt; 0 or x &gt; 100","x &gt; 0 or x &lt; 100"],"a":0,"ex":"De Morgan : on nie chaque comparaison et and devient or."},{"q":"« Le jour n’est ni samedi ni dimanche » s’écrit…","o":["jour != \"samedi\" and jour != \"dimanche\"","jour != \"samedi\" or jour != \"dimanche\"","not jour == \"samedi\" or \"dimanche\"","jour != (\"samedi\" or \"dimanche\")"],"a":0,"ex":"Ni A ni B : pas A ET pas B. Avec or, la condition est toujours vraie."},{"q":"Pour quelle valeur de lettre <code>lettre != \"a\" or lettre != \"e\"</code> est-elle fausse ?","o":["aucune","\"a\"","\"e\"","\"a\" et \"e\""],"a":0,"ex":"Une lettre ne peut pas être à la fois a et e : l’un des deux tests est toujours vrai."},{"q":"Un programme répète <code>while code != \"1234\" and essais &gt; 0:</code>. Quand sort-il de la boucle ?","o":["quand le code est bon ou quand il n’y a plus d’essai","quand le code est bon et qu’il n’y a plus d’essai","seulement quand le code est bon","seulement quand il n’y a plus d’essai"],"a":0,"ex":"On sort quand la condition devient fausse : not (A and B), c’est not A or not B."},{"q":"Que vaut <code>not (not True)</code> ?","o":["True","False","une erreur","None"],"a":0,"ex":"La double négation redonne la valeur de départ."},{"q":"Pour tout booléen a, que vaut <code>a or True</code> ?","o":["True","False","a","not a"],"a":0,"ex":"Vrai OU n’importe quoi donne vrai."},{"q":"Pour tout booléen a, que vaut <code>a and True</code> ?","o":["a","True","False","not a"],"a":0,"ex":"True est l’élément neutre du ET."},{"q":"Que veut dire « évaluation paresseuse » de <code>and</code> et <code>or</code> ?","o":["Python s’arrête dès que le résultat est connu","Python évalue toujours les deux côtés","Python évalue de droite à gauche","Python attend que l’utilisateur appuie sur Entrée"],"a":0,"ex":"False and … vaut False, True or … vaut True, sans regarder la suite."},{"q":"Avec <code>x = 0</code>, que vaut <code>x != 0 and 10 / x &gt; 1</code> ?","o":["False","True","une erreur ZeroDivisionError","None"],"a":0,"ex":"La gauche est fausse : la division n’est jamais faite."},{"q":"Avec <code>x = 0</code>, que provoque <code>10 / x &gt; 1 and x != 0</code> ?","o":["une erreur ZeroDivisionError","False","True","None"],"a":0,"ex":"La division est évaluée en premier, avant le test de sécurité."},{"q":"Quelle ligne faut-il écrire à la place des points de suspension ?","o":["return n % 2 == 0","print(n % 2 == 0)","return \"n % 2 == 0\"","return n % 2"],"a":0,"ex":"La condition est déjà un booléen : on la renvoie directement.","code":"def est_pair(n):\n    ..."},{"q":"Quelle écriture est à éviter ?","o":["if est_pair(n) == True:","if est_pair(n):","if not est_pair(n):","pair = est_pair(n)"],"a":0,"ex":"est_pair(n) est déjà un booléen : « == True » est inutile."},{"q":"Par convention, le nom d’une fonction qui renvoie un booléen commence par…","o":["est","get","calcul","bool"],"a":0,"ex":"est_pair, est_majeur, est_bissextile : la fonction répond à une question par oui ou non."},{"q":"Qu’affiche ce programme ?","o":["vérifie 8","vérifie 8\nvérifie 3","vérifie 3","rien"],"a":0,"ex":"verif(8) vaut True : le OU s’arrête, verif(3) n’est pas appelé.","code":"def verif(n):\n    print(\"vérifie\", n)\n    return n > 5\n\nr = verif(8) or verif(3)"}];
+function pyHL(src){const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const KW=/^(def|return|if|elif|else|for|while|in|and|or|not|import|break|True|False|None)$/,BI=/^(print|input|int|float|str|range|len|type)$/;
+return src.replace(/("[^"]*"|'[^']*')|(#.*)|\b(\d+(?:\.\d+)?)\b|\b([A-Za-z_]\w*)\b|([^"'#\w]+)/g,function(m,st,cm,nb,id,rest){
+ if(st)return '<span class="st">'+esc(st)+'</span>'; if(cm)return '<span class="cm">'+esc(cm)+'</span>'; if(nb)return '<span class="nb">'+nb+'</span>';
+ if(id)return KW.test(id)?'<span class="kw">'+id+'</span>':BI.test(id)?'<span class="fn">'+id+'</span>':id; return esc(rest);});}
+/* ---- Questions paramétrées : nouvelles valeurs à chaque tirage ----
+   Chaque générateur renvoie {q, code?, o:[bonne, piège, piège, piège], ex, chk}.
+   chk : petit programme Python qui affiche la bonne réponse (sert aux tests). */
+const R=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const pick=a=>a[Math.floor(Math.random()*a.length)];
+const PB=b=>b?'True':'False';
+const TFo=v=>[PB(v),PB(!v),'une erreur','None'];
+const esc=t=>t.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+function opts(good,traps){const o=[String(good)];for(const t of traps){const v=String(t);if(v!==''&&o.length<4&&!o.includes(v))o.push(v);}
+ let k=1;while(o.length<4){const v=String(Number(good)+k);if(!o.includes(v))o.push(v);k++;}return o;}
+/* expressions booléennes : texte Python + fonction JS équivalente */
+const EXPR3=[
+ ['a and b or c',(a,b,c)=>(a&&b)||c],['a or b and c',(a,b,c)=>a||(b&&c)],['not a and b',(a,b,c)=>(!a)&&b],
+ ['not (a and b)',(a,b,c)=>!(a&&b)],['not (a or c)',(a,b,c)=>!(a||c)],['(a or b) and not c',(a,b,c)=>(a||b)&&!c],
+ ['a and not (b or c)',(a,b,c)=>a&&!(b||c)],['not a or not b',(a,b,c)=>!a||!b],['(a and c) or not b',(a,b,c)=>(a&&c)||!b],
+ ['a != b',(a,b,c)=>a!==b],['not (a != c)',(a,b,c)=>!(a!==c)]];
+const vars3=e=>['a','b','c'].filter(v=>new RegExp('\\b'+v+'\\b').test(e));
+const GENS=[
+function(){const a=pick([true,false]),b=pick([true,false]),c=pick([true,false]),[e,f]=pick(EXPR3),v=f(a,b,c);
+ const used=vars3(e),vals={a,b,c};
+ return {q:'On a '+used.map(x=>'<code>'+x+' = '+PB(vals[x])+'</code>').join(', ')+'. Que vaut <code>'+esc(e)+'</code> ?',o:TFo(v),
+  ex:'Priorités : not, puis and, puis or. Les parenthèses passent avant tout.',chk:used.map(x=>x+' = '+PB(vals[x])).join('\n')+'\nprint('+e+')'};},
+function(){const x=R(0,30),k1=R(3,12),k2=k1+R(5,12);
+ const T=[['x > '+k1+' and x < '+k2,x>k1&&x<k2],['x < '+k1+' or x > '+k2,x<k1||x>k2],['not (x > '+k1+')',!(x>k1)],['x >= '+k1+' and not x > '+k2,x>=k1&&!(x>k2)]];
+ const [e,v]=pick(T);
+ return {q:'On a <code>x = '+x+'</code>. Que vaut <code>'+esc(e)+'</code> ?',o:TFo(v),ex:'Les comparaisons sont évaluées avant not, and et or.',chk:'x = '+x+'\nprint('+e+')'};},
+function(){const n=R(2,6),t=2**n;
+ return {q:'Combien de lignes compte la table de vérité d’une expression à '+n+' variables ?',o:opts(t,[2*n,n*n,t/2,t-1]),ex:'Chaque variable vaut 0 ou 1 : 2<sup>'+n+'</sup> = '+t+' combinaisons.',chk:'print(2 ** '+n+')'};},
+function(){const [e,f]=pick(EXPR3),used=vars3(e),n=used.length;let cnt=0;
+ for(let m=0;m<2**n;m++){const v={a:false,b:false,c:false};used.forEach((x,i)=>{v[x]=Boolean((m>>(n-1-i))&1);});if(f(v.a,v.b,v.c))cnt++;}
+ return {q:'Dans la table de vérité de <code>'+esc(e)+'</code>, sur combien de lignes l’expression vaut-elle True ?',o:opts(cnt,[2**n-cnt,cnt+1,cnt-1,2**n]),
+  ex:'La table a '+(2**n)+' lignes ('+n+' variables) ; l’expression est vraie sur '+cnt+' d’entre elles.',
+  chk:'from itertools import product\nprint(sum(1 for '+used.join(', ')+' in product([False, True], repeat='+n+') if '+e+'))'};},
+function(){const ops=[['<','>='],['<=','>'],['>','<='],['>=','<'],['==','!='],['!=','==']],[op,neg]=pick(ops),k=R(2,30);
+ const all=['<','<=','>','>=','==','!='].filter(x=>x!==op&&x!==neg);
+ return {q:'Quel est le contraire de <code>x '+esc(op)+' '+k+'</code> ?',o:[neg,...all.sort(()=>Math.random()-.5).slice(0,3)].map(o=>'x '+esc(o)+' '+k),
+  ex:'Le contraire de &lt; est &gt;=, celui de &lt;= est &gt;, celui de == est !=.',chk:'ok = all((not (x '+op+' '+k+')) == (x '+neg+' '+k+') for x in range(-50, 80))\nprint("x '+esc(neg)+' '+k+'" if ok else "faux")'};},
+function(){const a=R(2,20),b=a+R(5,30);
+ return {q:'Quel est le contraire de <code>x &gt;= '+a+' and x &lt;= '+b+'</code> ?',o:['x &lt; '+a+' or x &gt; '+b,'x &lt; '+a+' and x &gt; '+b,'x &lt;= '+a+' or x &gt;= '+b,'x &gt; '+a+' or x &lt; '+b],
+  ex:'De Morgan : on prend le contraire de chaque comparaison et and devient or.',chk:'ok = all((not (x >= '+a+' and x <= '+b+')) == (x < '+a+' or x > '+b+') for x in range(-50, 120))\nprint("x &lt; '+a+' or x &gt; '+b+'" if ok else "faux")'};},
+function(){const a=R(2,20),b=a+R(5,30);
+ return {q:'Quel est le contraire de <code>x &lt; '+a+' or x &gt; '+b+'</code> ?',o:['x &gt;= '+a+' and x &lt;= '+b,'x &gt;= '+a+' or x &lt;= '+b,'x &gt; '+a+' and x &lt; '+b,'x &lt; '+a+' and x &gt; '+b],
+  ex:'De Morgan : on prend le contraire de chaque comparaison et or devient and.',chk:'ok = all((not (x < '+a+' or x > '+b+')) == (x >= '+a+' and x <= '+b+') for x in range(-50, 120))\nprint("x &gt;= '+a+' and x &lt;= '+b+'" if ok else "faux")'};},
+function(){const x=pick([0,0,2,5]),k=pick([10,20,30]),m=R(1,4);
+ const T=[['x != 0 and '+k+' / x > '+m,x!==0?(k/x>m):false,false],['x == 0 or '+k+' / x > '+m,x===0?true:(k/x>m),false],['x == 0 and '+k+' / x > '+m,x===0?null:false,x===0],[k+' / x > '+m+' or x == 0',x===0?null:(k/x>m)||x===0,x===0]];
+ const [e,v,err]=pick(T),good=err?'une erreur':PB(v);
+ return {q:'On a <code>x = '+x+'</code>. Que donne <code>'+esc(e)+'</code> ?',o:[good,...['True','False','une erreur','None'].filter(t=>t!==good)],
+  ex:'and et or s’arrêtent dès que le résultat est connu : la partie droite n’est pas toujours évaluée.',
+  chk:'x = '+x+'\ntry:\n    print('+e+')\nexcept ZeroDivisionError:\n    print("une erreur")'};},
+function(){const an=pick([1900,2000,2024,2026,2100,2400,2023,2028,1996,1800,2032]),v=(an%4===0&&an%100!==0)||an%400===0;
+ return {q:'Que vaut <code>est_bissextile('+an+')</code> ?',code:'def est_bissextile(annee):\n    return (annee % 4 == 0 and annee % 100 != 0) or annee % 400 == 0',o:TFo(v),
+  ex:'Divisible par 4 mais pas par 100, ou divisible par 400.',chk:'def est_bissextile(annee):\n    return (annee % 4 == 0 and annee % 100 != 0) or annee % 400 == 0\nprint(est_bissextile('+an+'))'};},
+function(){const a=pick([true,false]),b=pick([true,false]);
+ return {q:'On a <code>a = '+PB(a)+'</code> et <code>b = '+PB(b)+'</code>. Que vaut <code>a != b</code> (le ou exclusif) ?',o:TFo(a!==b),ex:'Le ou exclusif est vrai si exactement un des deux est vrai.',chk:'a = '+PB(a)+'\nb = '+PB(b)+'\nprint(a != b)'};},
+function(){const a=R(0,1),b=R(0,1),r=a&b,s=a^b;
+ return {q:'On additionne les bits a = '+a+' et b = '+b+'. Que valent la retenue et la somme ?',o:opts('retenue '+r+', somme '+s,['retenue 0, somme 0','retenue 0, somme 1','retenue 1, somme 0','retenue 1, somme 1']),
+  ex:'La retenue est a and b, la somme est a xor b.',chk:'a, b = '+a+', '+b+'\nprint("retenue", int(a == 1 and b == 1), end=", ")\nprint("somme", int(a != b))'};},
+function(){const x=R(0,30),k=R(5,25),out=!(x>k)?'A':'B';
+ const code='x = '+x+'\nif not (x > '+k+'):\n    print("A")\nelse:\n    print("B")';
+ return {q:'Qu’affiche ce programme ?',code:code,o:[out,out==='A'?'B':'A','A puis B','rien'],ex:'not (x &gt; '+k+') est vrai quand x &lt;= '+k+'.',chk:code};},
+function(){const n=R(1,4),m=R(1,3),terms=[...Array(n).fill('True'),...Array(m).fill('False')].sort(()=>Math.random()-.5);
+ return {q:'Que vaut <code>'+terms.join(' + ')+'</code> ?',o:opts(n,[n+m,'True','une erreur']),ex:'Dans un calcul, True vaut 1 et False vaut 0.',chk:'print('+terms.join(' + ')+')'};},
+function(){const note=pick([-3,-1,0,7,12,20,21,25]),v=note>=0&&note<=20;
+ const code='def est_note_valide(note):\n    return note >= 0 and note <= 20';
+ return {q:'Que vaut <code>est_note_valide('+note+')</code> ?',code:code,o:TFo(v),ex:'Les deux conditions doivent être vraies : 0 et 20 sont acceptés.',chk:code+'\nprint(est_note_valide('+note+'))'};},
+function(){const p=pick([true,false]),q=pick([true,false]),r=pick([true,false]),v=p||(q&&r);
+ return {q:'On a <code>p = '+PB(p)+'</code>, <code>q = '+PB(q)+'</code>, <code>r = '+PB(r)+'</code>. Que vaut <code>p or q and r</code> ?',o:TFo(v),
+  ex:'and passe avant or : c’est p or (q and r).',chk:'p, q, r = '+PB(p)+', '+PB(q)+', '+PB(r)+'\nprint(p or q and r)'};},
+function(){const a=R(0,10),b=R(0,10),c=R(0,10);let n=1;if(!(a>5)){n=2;if(!(b>5))n=3;}
+ const code='def verif(n):\n    print("vérifie", n)\n    return n > 5\n\nr = verif('+a+') or verif('+b+') or verif('+c+')';
+ return {q:'Combien de lignes « vérifie » ce programme affiche-t-il ?',code:code,o:opts(n,[1,2,3,0]),ex:'Le OU s’arrête au premier appel qui renvoie True.',chk:'nb = 0\n'+code.replace('print("vérifie", n)','global nb\n    nb += 1')+'\nprint(nb)'};},
+];
+let curQs=[],submitted=false,qSz=5;
+const getSz=()=>parseInt(document.querySelector('[name="qsz"]:checked')?.value||5);
+const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
+function newQCM(){submitted=false;qSz=getSz();curQs=shuffle(BANK.concat(GENS)).slice(0,qSz).map(function(x){return typeof x==='function'?Object.assign(x(),{a:0}):x;});const c=document.getElementById('qcm-questions');c.innerHTML='';
+curQs.forEach((q,qi)=>{const sh=shuffle(q.o.map((t,i)=>({t,i})));q._sh=sh;const opts=sh.map((o,si)=>'<label class="qcm-opt" id="opt-'+qi+'-'+si+'"><input type="radio" name="q'+qi+'" value="'+si+'"><span>'+o.t+'</span></label>').join('');
+c.innerHTML+='<div class="qcm-q" id="qb-'+qi+'"><div class="qcm-num">Question '+(qi+1)+' / '+qSz+'</div><div class="qcm-question">'+q.q+'</div>'+(q.code?'<pre class="qcm-code"><code>'+pyHL(q.code)+'</code></pre>':'')+'<div class="qcm-opts">'+opts+'</div><div class="qcm-fb" id="fb-'+qi+'"></div></div>';});
+const r=document.getElementById('qcm-result');r.style.display='none';r.innerHTML='';const b=document.getElementById('btn-sub');b.disabled=false;b.style.opacity='1';onSzChange();}
+function submitQCM(){if(submitted)return;submitted=true;let score=0;
+curQs.forEach((q,qi)=>{const sel=document.querySelector('input[name="q'+qi+'"]:checked'),block=document.getElementById('qb-'+qi),fb=document.getElementById('fb-'+qi),corrSi=q._sh.findIndex(o=>o.i===q.a);
+document.querySelectorAll('input[name="q'+qi+'"]').forEach(r=>r.disabled=true);const cl=document.getElementById('opt-'+qi+'-'+corrSi);if(cl)cl.classList.add('opt-ok');
+if(sel){const ch=parseInt(sel.value);if(ch===corrSi){score++;block.classList.add('correct');fb.className='qcm-fb show ok';fb.innerHTML='Bonne réponse ! '+q.ex;}
+else{block.classList.add('wrong');document.getElementById('opt-'+qi+'-'+ch)?.classList.add('opt-ko');fb.className='qcm-fb show ko';fb.innerHTML='Mauvaise réponse. '+q.ex;}}
+else{block.classList.add('wrong');fb.className='qcm-fb show ko';fb.innerHTML='Pas de réponse. '+q.ex;}});
+const pct=(score/qSz)*100,ratio=score/qSz,col=ratio<0.3?'#b0465a':ratio<0.5?'#a2602a':ratio<0.7?'#8a7424':ratio<0.9?'#3f7a5c':'#705689';
+const msg=p=>p<30?'Relis le cours !':p<50?'Quelques révisions s’imposent.':p<70?'Pas mal, continue !':p<90?'Très bien !':'Parfait, maîtrise totale !';
+const r=document.getElementById('qcm-result');r.style.display='block';
+r.innerHTML='<div class="score-big" style="color:'+col+'">'+score+'<span style="font-size:26px;opacity:.5">/'+qSz+'</span></div><div class="score-sub">≈ <strong>'+Math.round(ratio*20)+'/20</strong></div><div class="score-bar-bg"><div class="score-bar-fill" style="width:0%;background:'+col+'" id="sfill"></div></div><div class="score-msg" style="color:'+col+'">'+msg(pct)+'</div>';
+setTimeout(()=>{const f=document.getElementById('sfill');if(f)f.style.width=pct+'%';},80);r.scrollIntoView({behavior:'smooth',block:'center'});
+document.getElementById('btn-sub').disabled=true;document.getElementById('btn-sub').style.opacity='.5';}
+document.addEventListener('DOMContentLoaded',()=>{document.getElementById('qcm-total').textContent=BANK.length+GENS.length;newQCM();onSzChange();});
+</script>
+</body>
+</html>

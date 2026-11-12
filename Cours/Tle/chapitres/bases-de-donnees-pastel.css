@@ -1,0 +1,75 @@
+/* Habillage local du chapitre : composants pédagogiques conservés. */
+@import url('../../../assets/nsi-pastel.css');
+:root{--bg:#fffaf8;--bg2:#fffefd;--bg3:#f4eaf1;--border:#eadfe5;--text:#47384c;--text2:#6d5d68;--accent:#94516f;--accent2:#705078;--green:#386d50;--red:#a33d50;--orange:#85551e;--purple:#705689;--pink:#94516f;--font-sans:system-ui,-apple-system,'Segoe UI',sans-serif;--font-title:var(--font-sans);--font-mono:ui-monospace,Consolas,monospace;--radius:16px;--nav-h:0px}
+html{scroll-padding-top:24px}
+body{font-family:var(--font-sans)}
+a{color:var(--accent)}
+header nav,.level-shortcuts{position:static;height:auto;z-index:auto;backdrop-filter:none;background:none;border:0;padding:0;align-items:center}
+header a,.level-shortcuts a{color:var(--ink)}
+.brand small{letter-spacing:normal;text-transform:none}
+.chapter-layout{max-width:1200px;grid-template-columns:220px minmax(0,1fr);gap:28px;padding:0 24px;margin:32px auto 48px}
+.toc{top:24px;max-height:calc(100vh - 48px);padding:20px;border-radius:20px;box-shadow:0 8px 24px #966e7d09}
+.toc h4{color:var(--rose);letter-spacing:1px}
+.toc a:hover,.toc a.active{background:#faedf2}
+.chapter-content>section{padding:28px;border:1px solid var(--line);border-radius:22px;background:#fffefd;margin:0 0 24px;scroll-margin-top:24px}
+.chapter-content>section>h2:first-child{margin-top:0}
+.chapter-content h2{font-size:26px;letter-spacing:-.6px}
+.chapter-content h3{color:var(--rose);font-size:20px;margin:24px 0 12px}
+.chapter-content h4{letter-spacing:.03em}
+.chapter-content ul,.chapter-content ol{padding-left:24px;margin-bottom:16px}
+.chapter-content .must-know ul,.chapter-content .synthese-card ul{padding-left:0}
+.chapter-content em{color:var(--rose);font-style:italic}
+.chapter-header{position:relative;gap:24px;padding:32px;border-radius:26px;background:linear-gradient(90deg,#fff9f5f2,#fff7f5c9),url('../../../assets/fond-sakura-maths.png') center/cover;border:1px solid #edd8df;box-shadow:0 14px 35px #966e7d12}
+.chapter-header h1{font-size:clamp(28px,3.2vw,40px);letter-spacing:-1px}
+.chapter-header .eyebrow{margin-bottom:12px}
+.chapter-header .avatar{width:130px;flex-shrink:0;margin-left:auto}
+.chapter-icon{display:none}
+.chapter-badge{font-family:var(--font-sans);border-radius:6px;font-weight:700}
+.badge-blue{background:#faedf2;border-color:#ead0dd;color:#844360}
+.badge-green{background:#eaf3ed;border-color:#d1e2d7;color:#386d50}
+.badge-orange{background:#faf0df;border-color:#eadac1;color:#85551e}
+code{color:#844360;background:#faedf2;border-color:#eadfe5;overflow-wrap:anywhere}
+pre{background:#f8f2f7;border-radius:14px}
+pre code{color:var(--ink);overflow-wrap:normal}
+.kw{color:#974168}.fn{color:#705689}.str{color:#386d50}.cm{color:#706473}.num{color:#85551e}
+.chapter-content table{display:block;max-width:100%;overflow-x:auto;background:#fffefd}
+th{background:#f3e9f1;color:var(--ink)}
+td{color:var(--ink)}
+tr:nth-child(odd) td{background:#fff9fc}
+.callout{border-radius:14px}
+.callout-info{background:#faf0f5}.callout-purple{background:#f3eef8}.callout-success{background:#eef5ef}.callout-warning{background:#fcf4e8}.callout-danger{background:#fcf0f1}
+.must-know{background:linear-gradient(120deg,#faf0f5,#f1eef8);border-color:#e6d7e6}
+.must-know h3{color:#705689}
+.exercise,.tabs,.quiz-section,.sqlx-box{background:#fffefd;border-color:var(--line);border-radius:16px}
+.exercise-header,.quiz-header,.tab-list{background:#f5ecf4}
+.exercise-header,.quiz-header{flex-wrap:wrap}
+.exercise-title{min-width:0}
+.btn-primary,.sqlx-actions .sqlx-run{background:#86648f;color:white;border-color:#86648f}
+.btn-primary:hover,.sqlx-actions .sqlx-run:hover{background:#705078;color:white}
+.btn-outline,.toggle-correction{background:#faedf2;color:#844360;border-color:#e6cfdc}
+.toggle-correction:hover{background:#efdae5;color:#703c56}
+.sqlx-actions .sqlx-check{background:#386d50;color:white}
+.sqlx-actions .sqlx-check:hover{background:#28553c}
+.sqlx-actions button{border-color:#d9c6d4;background:#faf2f7}
+.sqlx-actions button:hover{background:#efdae5}
+.sqlx-box .sqlx-label{background:#f3ecf8;border-color:var(--line);color:#705689}
+.sqlx-box textarea{background:#fffcfe;color:var(--ink);font-family:var(--font-mono);font-size:14px}
+.sqlx-box textarea:focus-visible{outline:3px solid var(--rose);outline-offset:-3px}
+.sqlx-schema{background:#f8f2f7;border-color:#e5d8e3;font-family:var(--font-mono)}
+.sqlx-schema .fk{color:#85551e}
+.sqlx-schema .theme,.sqlx-actions button{font-family:var(--font-sans)}
+.sqlx-q .num{color:var(--rose)}
+.sqlx-ok{background:#edf5ee;border-color:#386d50}.sqlx-err{background:#fcf0f1;border-color:#a33d50}.sqlx-info{background:#f3eef8;border-color:#705689}
+.hp-tag{background:#f1ecf8;color:#705689}
+.exercise-level.level-moyen{background:#faf0df;color:#85551e}
+.q-opt:hover{background:#faf0f5}
+.q-opt.correct{border-color:#386d50;background:#edf5ee}.q-opt.wrong{border-color:#a33d50;background:#fcf0f1}
+.q-explication{background:#f3eef8;border-color:#e1d5ed;color:var(--ink)}
+.copy-btn{position:absolute;top:8px;right:8px;padding:4px 9px;border:1px solid var(--line);border-radius:6px;color:var(--rose);background:#fffefd;cursor:pointer}
+pre:has(.copy-btn){padding-top:42px}
+button:focus-visible,summary:focus-visible,select:focus-visible{outline:3px solid var(--rose);outline-offset:3px}
+footer{padding:24px 0;margin-top:0;text-align:left}
+footer a{color:var(--muted)}
+@media(max-width:900px){.chapter-layout{grid-template-columns:minmax(0,1fr)}.toc{display:block;position:static;max-height:none}.toc ul{display:flex;flex-wrap:wrap;gap:4px 12px}.toc li a{font-size:13px}.chapter-header .avatar{width:110px}}
+@media(max-width:600px){.chapter-layout{padding:0 16px;gap:20px;margin-top:24px}.chapter-content>section{padding:20px}.chapter-header{padding:24px;text-align:left;align-items:flex-start}.chapter-header .avatar{display:none}.chapter-content h2{font-size:23px}.chapter-meta{gap:8px}.exercise-body,.quiz-body,.tab-panel{padding:16px}.callout{padding:14px}.sqlx-schema{font-size:13px}.sqlx-actions button{min-height:40px}.btn{white-space:normal}.synthese-grid{grid-template-columns:minmax(0,1fr)}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important}}
