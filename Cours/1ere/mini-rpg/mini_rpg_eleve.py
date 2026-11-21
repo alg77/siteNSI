@@ -36,7 +36,8 @@ if choix_partie == "2":
     # Reprendre ici les saisies et contrôles du TP1 ; garder la partie 1.
     # Scène seulement si le personnage est valide.
     # Dégâts : force + 3 ; soin : 10 + intelligence ; seuil : 20 - agilite.
-    # Surprise, puis un tour avec attaque, potion et riposte.
+    # La surprise de l’étape 1 peut rester avant les définitions.
+    # Un tour : attaque, potion, riposte.
     # Tester les trois scénarios imposés et noter attendu / observé.
     
     
@@ -85,14 +86,26 @@ if choix_partie == "4":
 # === DEBUT PARTIE 5 ===
 if choix_partie == "5":
     pass  # garde le fichier exécutable tant que la partie est vide
-    # PARTIE 5 — Listes
+    # PARTIE 5 — Listes : menu de courses puis trois combats
     import random
     
-    # TODO : menu de liste de courses.
-    # TODO : recopier puis faire évoluer le combat de la partie 4.
-    # Monstres : gobelin, araignee, troll. Ne pas réinitialiser le héros.
+    # 1. MENU DE COURSES a / r / l / q (dans les saisies, terminer par q)
+    
+    # 2. DÉFINITIONS : reprendre lancer_de, appliquer_degats, soigner, est_vivant
+    #    puis écrire est_attaque_passee(de_attaque, attaque, de_defense, defense) et ses 4 tests
+    
+    # 3. PERSONNAGE : reprendre les saisies et contrôles du TP1
+    #    attaque_hero = 7 + force ; defense_hero = 4 + agilite
+    
+    # 4. EXPLORATION si le personnage est valide
+    #    monstres = ["gobelin", "araignee", "troll"] ; pv_hero = 100 et fuite = False une seule fois
+    #    Monstres : 40 PV, attaque 9, défense 7 ; 20 dégâts par attaque qui passe
+    
+    # 5. ISSUE : Fuite, Victoire de la forêt ou Défaite (une seule fois)
+    
     # TEST 1 : entrées / attendu / observé
     # TEST 2 : entrées / attendu / observé
+    
 # === FIN PARTIE 5 ===
 
 # === DEBUT PARTIE 6 ===

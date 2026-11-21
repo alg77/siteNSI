@@ -1,8 +1,8 @@
 # Mini RPG Python — cours et missions détaillés
 
-Construis un mini RPG textuel en six étapes. Pour chaque étape : lis le cours, prédis l’exemple, expérimente, puis écris ta solution dans l’atelier à rendre. Conserve les six versions pour montrer ta progression.
+Construis le même mini RPG textuel en six versions successives dans le navigateur, puis donne-lui une interface graphique sur ordinateur (partie 7). Pour chaque partie : lis le cours, prédis l’exemple, expérimente, puis écris ta solution. Reprends le code utile des parties précédentes et conserve les six versions pour montrer ta progression.
 
-À rendre : un seul fichier NOM_Prenom_mini_rpg.py exporté depuis le navigateur. Il contient six versions du RPG sélectionnées au lancement par un menu fourni. Chaque version reprend le code utile des TP précédents et se lance seule ; les variables ne sont pas transmises automatiquement. Ne modifie pas les marqueurs de partie. Pour le TP2, écris 19 appels de test avec print et vérifie les trois scénarios de la scène. Pour les autres parties, écris au moins deux tests commentés (entrées, attendu, observé). En tête du fichier, indique les aides utilisées et une correction que tu sais expliquer. Sauvegarde à chaque séance ; une sauvegarde du navigateur ne remplace pas le fichier téléchargé.
+À rendre : un seul fichier NOM_Prenom_mini_rpg.py exporté depuis le navigateur. Il contient six versions du RPG sélectionnées au lancement par un menu fourni. Chacune se lance seule : reprends dans sa partie le code nécessaire des TP précédents, car leurs variables ne sont pas automatiquement disponibles. Ne modifie pas les marqueurs de partie. Dans chaque partie, suis les tests demandés et commente les résultats. Pour le TP2, écris 19 appels de test avec print et vérifie les trois scénarios de la scène ; pour les autres parties, conserve au moins deux tests commentés (entrées, attendu, observé). En tête du fichier, indique les aides utilisées et une correction que tu sais expliquer. Sauvegarde à chaque séance ; une sauvegarde du navigateur ne remplace pas le fichier téléchargé. La partie 7 (interface graphique) se fait sur ordinateur, dans un second fichier : NOM_Prenom_rpg_interface.py.
 
 Télécharge ton fichier .py en fin de séance. Le bouton de téléchargement ouvre une fenêtre avec un lien explicite et une copie du code en secours. Le bouton Reprendre un fichier .py permet de continuer à la séance suivante.
 
@@ -102,21 +102,25 @@ Action inconnue
 
 ### 6. Vérifier plusieurs contraintes
 
-and signifie que toutes les conditions reliées doivent être vraies. Pour valider le personnage, la somme doit être 15 ET chaque compétence doit être positive ou nulle.
+and signifie que toutes les conditions reliées doivent être vraies : il suffit qu’une seule soit fausse pour que le test complet soit faux. Dans l’exemple, le total est bon mais une valeur est négative. Pour valider ton personnage, même idée : la somme doit valoir 15 ET chaque compétence doit être positive ou nulle.
 
 ```python
-points = 7
-valide = points >= 0 and points <= 15
+pieces = 12
+cle = -2
+total = pieces + cle
+valide = total == 10 and cle >= 0
+print(total)
 print(valide)
 ```
 
 **À l’écran :**
 
 ```text
-True
+10
+False
 ```
 
-À surveiller : Une somme correcte ne suffit pas : -1 + 8 + 8 vaut 15, mais une compétence négative doit être refusée.
+À surveiller : Une somme correcte ne suffit pas : -1 + 8 + 8 vaut 15, mais une compétence négative doit être refusée. Vérifie la somme ET chacune des trois valeurs.
 
 ### Petites quêtes
 
@@ -167,9 +171,9 @@ Une création de personnage en console. On ne combat pas encore dans le programm
 
 - Lina, mage, 5, 4, 6 → total 15 et répartition valide.
 - 5, 5, 6 → total 16, invalide ; -1, 8, 8 → total 15 mais invalide.
-- Classe dragon → classe inconnue ; dormir dans l’exemple → PV inchangés.
+- Classe dragon → classe inconnue. Dans le bac à sable, l’exemple fourni avec la saisie dormir → « Action inconnue » et PV inchangés (50).
 
-### Barème sur 5
+### Critères de réussite · repères sur 5
 
 - Nom, classe et accueil cohérents : 1 point(s)
 - Conversions et calcul du total : 1 point(s)
@@ -178,7 +182,7 @@ Une création de personnage en console. On ne combat pas encore dans le programm
 
 ## Partie 2 — Hasard, bibliothèques et premières fonctions
 
-TP2 · séance de 2 h. Repères indicatifs : 15 min de cours ciblé, 10 min d’échauffement, 55 min pour définir et tester les fonctions, 25 min pour la scène, 15 min de vérification et de sauvegarde. Les six fonctions et leurs tests font partie du rendu. Écris toi-même chaque ligne def, ses paramètres, les deux-points et son corps. Les indices 3 sont réservés aux deux premières étapes de mission et aux deux premiers échauffements. Si tout est terminé et expliqué, commence le TP3.
+TP2 · séance de 2 h. Repères indicatifs : 25 min pour les notions 1 à 9 (fonctions, return, booléens), 10 min d’échauffement, 45 min pour définir et tester les fonctions en consultant les notions 10 à 19 (hasard et tests) au fil des étapes de mission, 25 min pour la scène, 15 min de vérification et de sauvegarde. Les six fonctions et leurs tests font partie du rendu. Écris toi-même chaque ligne def, ses paramètres, les deux-points et son corps. Si tout est terminé et expliqué, commence le TP3.
 
 ### 1. Une fonction : un petit programme que l’on peut appeler
 
@@ -247,9 +251,9 @@ print(points + 1)
 
 À surveiller : return s’écrit à l’intérieur d’une fonction. Il termine l’appel de cette fonction, pas tout le programme. Une instruction placée après un return exécuté dans le même bloc ne sera pas exécutée.
 
-### 4. Renvoyer avec return
+### 4. Afficher n’est pas renvoyer
 
-return transmet un résultat au code qui a appelé la fonction et termine cet appel. print montre du texte à l’écran. Si tu veux réutiliser une valeur dans un calcul ou un test, il faut la renvoyer.
+print montre une valeur à l’écran, mais le programme ne peut pas la réutiliser. return transmet la valeur au code qui a appelé la fonction : on peut la stocker dans une variable, puis s’en servir dans un calcul ou un test.
 
 ```python
 def bonus_affiche(force):
@@ -274,7 +278,7 @@ print(attaque + 1)
 
 ### 5. Un booléen : une valeur qui répond vrai ou faux
 
-Le type bool possède deux valeurs : True (vrai) et False (faux). Comme un bit possède deux états, on peut coder une information vrai/faux avec 1/0. Mais bool désigne ici une valeur logique ; la numération binaire sert à écrire des nombres avec les chiffres 0 et 1. Écris True et False avec une majuscule et sans guillemets.
+Le type bool possède deux valeurs : True (vrai) et False (faux). Un booléen répond à une question par oui ou par non : la porte est-elle ouverte ? l’attaque réussit-elle ? Écris True et False avec une majuscule et sans guillemets.
 
 ```python
 porte_ouverte = True
@@ -442,19 +446,20 @@ Une fonction peut ne recevoir aucune information. Les parenthèses restent oblig
 
 ```python
 import random
-def lancer_piece():
-    return random.choice(["pile", "face"])
+def lancer_d6():
+    return random.randint(1, 6)
 
-print(lancer_piece())
+print(lancer_d6())
+print(lancer_d6())
 ```
 
 **À l’écran :**
 
 ```text
-pile ou face
+Deux entiers de 1 à 6, souvent différents.
 ```
 
-À surveiller : Écrire print(lancer_piece) affiche une représentation de la fonction. Il faut les parenthèses pour l’appeler.
+À surveiller : Écrire print(lancer_d6) affiche une représentation de la fonction. Il faut les parenthèses pour l’appeler. La notion suivante rend le nombre de faces paramétrable.
 
 ### 13. Fabriquer un dé réutilisable
 
@@ -791,13 +796,13 @@ ___ lancer_de(nb_faces):
 
 **Indice 2** — Un soin nul, aucun dégât ou un autre seuil sont des pistes. Calcule l’attendu à la main, puis affiche la vraie réponse de la fonction à côté.
 
-9. Assembler la première scène de ton personnage (25 min). Le TP2 démarre seul : recopie ici ton code de saisie et de validation du TP1, sans son menu ni ses marqueurs, et conserve la partie 1. Après les définitions et les 19 tests, reprends les saisies et contrôles de ton TP1 : nom, classe, force, intelligence, agilite. Lance la scène seulement si le personnage est valide. Le héros commence à 70 PV, le monstre à 12 PV. Calcule seuil = 20 - agilite et soin = 10 + intelligence. Lance un dé avec lancer_de(20), puis appelle attaque_reussie avec ce dé et ton seuil. En cas de réussite, appelle calculer_degats avec la variable force et le bonus 3, puis mets à jour les PV du monstre avec appliquer_degats ; sinon, affiche « Raté ». Le héros boit ensuite une potion : appelle soigner avec ses PV et la variable soin. Si est_vivant indique que le monstre vit encore, celui-ci inflige 7 dégâts au héros avec appliquer_degats ; sinon, affiche « Victoire » sans riposte. Affiche nom, classe, dé, seuil et PV finaux. Vérifie la scène avec Lina, mage, 5/4/6 : dé fixé à 13 et monstre à 12 PV ; dé 14 et monstre à 12 PV ; dé 14 et monstre à 8 PV. Prévois et note les PV attendus et observés. Remets ensuite le hasard et les PV initiaux, puis essaie ton propre personnage.
+9. Assembler la première scène de ton personnage (25 min). La partie 2 démarre seule : après les définitions et les 19 tests, recopie les saisies et contrôles de ton TP1 (nom, classe, force, intelligence, agilite), sans le menu ni les marqueurs, et conserve la partie 1. Lance la scène seulement si le personnage est valide : classe reconnue ET répartition valide. Le héros commence à 70 PV, le monstre à 12 PV. Calcule seuil = 20 - agilite et soin = 10 + intelligence. Lance un dé avec lancer_de(20), puis appelle attaque_reussie avec ce dé et ton seuil. En cas de réussite, appelle calculer_degats avec la variable force et le bonus 3, puis mets à jour les PV du monstre avec appliquer_degats ; sinon, affiche « Raté ». Le héros boit ensuite une potion : appelle soigner avec ses PV et la variable soin. Si est_vivant indique que le monstre vit encore, celui-ci inflige 7 dégâts au héros avec appliquer_degats ; sinon, affiche « Victoire » sans riposte. Affiche nom, classe, dé, seuil et PV finaux. Vérifie la scène avec Lina, mage, 5/4/6 : dé fixé à 13 et monstre à 12 PV ; dé 14 et monstre à 12 PV ; dé 14 et monstre à 8 PV. Prévois et note les PV attendus et observés. Remets ensuite le hasard et les PV initiaux, puis essaie ton propre personnage.
 
 **Indice 1** — Reprends ton code de création du TP1 après les tests, puis utilise ses variables dans la scène.
 
 **Indice 2** — Calcule seuil et soin à partir d’agilite et d’intelligence. Passe force à calculer_degats. Récupère chaque valeur de PV renvoyée ; vérifie la vie du monstre avant la riposte.
 
-10. Vérifier et rendre (15 min). Garde trois zones : définitions, tests avec print, puis création du personnage et scène. Les anciennes parties restent dans leur onglet. Les constantes des tests de fonctions, comme (8, 3), restent utiles ; dans la scène, remplace-les par les caractéristiques réellement saisies au TP1. Compare aussi deux personnages valides avec le même dé fixé pour observer l’effet de leurs caractéristiques. Ajoute les explications définition/appel, paramètre/argument et print/return, ainsi qu’une erreur corrigée ou détectable par tes tests. Signale les aides utilisées. Prévois les attendus avant les essais, vérifie les saisies invalides, puis exporte les six versions.
+10. Vérifier et rendre (15 min). Garde trois zones : définitions, tests avec print, puis création du personnage et scène. Les anciennes parties restent dans leur onglet. Les constantes des tests de fonctions, comme (8, 3), restent utiles ; dans la scène, remplace-les par les caractéristiques réellement saisies au TP1. Compare aussi deux personnages valides avec le même dé fixé pour observer l’effet de leurs caractéristiques. Ajoute les explications définition/appel, paramètre/argument et print/return, ainsi qu’une erreur corrigée ou détectable par tes tests. Signale les aides utilisées. Prévois les attendus avant les essais, vérifie qu’un personnage invalide (classe dragon ou répartition 5/5/6) ne lance pas la scène, puis exporte ton fichier.
 
 **Indice 1** — Le dé fixé permet de comparer les personnages sans que le hasard explique la différence.
 
@@ -815,7 +820,7 @@ ___ lancer_de(nb_faces):
 - Scène avec Lina, mage, 5/4/6 : dégâts 8, soin 14, seuil 14. Dé 13 / monstre 12 → héros 77, monstre 12 ; dé 14 / monstre 12 → héros 77, monstre 4 ; dé 14 / monstre 8 → héros 84, monstre 0, victoire sans riposte. Avant chaque essai, héros à 70 PV. Calcule les attendus avant de consulter cette vérification.
 - Comparaison à dé fixé 13 : 5/4/6 → dégâts 8, soin 14, seuil 14, attaque ratée ; 3/5/7 → dégâts 6, soin 15, seuil 13, attaque réussie. Dans les deux cas, somme 15. Vérifie aussi classe dragon ou répartition 5/5/6 : aucun lancement de scène.
 
-### Barème sur 5
+### Critères de réussite · repères sur 5
 
 - Six définitions personnelles, paramètres et return corrects : 1.5 point(s)
 - Règles des fonctions : seuil, plancher zéro, plafond et booléens : 1 point(s)
@@ -825,7 +830,7 @@ ___ lancer_de(nb_faces):
 
 ## Partie 3 — Explorer avec une boucle for
 
-Après le DST : parcours court d’environ 50 à 55 min, à adapter au temps restant. 5 min de rappel sur def/return et les saisies, 10 min sur for/range, puis 30 min pour les étapes 1 à 5 et 5 à 10 min pour tester et sauvegarder. Le point d’arrêt est l’étape 5 : ton personnage rencontre dix ennemis et le programme affiche une seule fin d’exploration. Le compteur de gobelins est un prolongement pour les élèves qui ont terminé. Aucun combat complet à écrire dans cette séance.
+Parcours court d’environ 50 à 55 min, à adapter au temps restant. 5 min de rappel sur def/return et les saisies, 10 min sur for/range, puis 30 min pour les étapes 1 à 5 et 5 à 10 min pour tester et sauvegarder. Le point d’arrêt est l’étape 5 de la mission : ton personnage rencontre dix ennemis et le programme affiche une seule fin d’exploration. Le compteur de gobelins est un prolongement pour les élèves qui ont terminé. Aucun combat complet à écrire dans cette séance.
 
 ### Le même personnage, une nouvelle version du RPG
 
@@ -846,18 +851,18 @@ potions = 0
 if potions == 0:
     print("Repos")
 else:
-    print("Boire")
-print("Départ")
+    print("Boire une potion")
+print("Entrer dans la grotte")
 ```
 
 **À l’écran :**
 
 ```text
 Repos
-Départ
+Entrer dans la grotte
 ```
 
-À surveiller : Si Départ est indenté dans else, il ne s’affiche plus lorsque potions vaut 0.
+À surveiller : Si « Entrer dans la grotte » est indenté sous else, cette ligne ne s’affiche plus lorsque potions vaut 0 : elle n’est exécutée qu’après « Boire une potion ».
 
 ### 2. Répéter avec for et range
 
@@ -1045,21 +1050,13 @@ Objectif : 10 False
 
 ### Mission
 
-Une exploration menée par le personnage du TP1 : nom, classe et caractéristiques conservés par reprise du code, une fonction calculer_degats réutilisée du TP2, une nouvelle fonction choisir_ennemi écrite par toi et dix rencontres numérotées. Le rendu court se termine après les tests de l’étape 5. Le compteur est facultatif pour cette séance après le DST ; il pourra être repris ensuite. Les échauffements restent dans le bac à sable.
+Une exploration menée par le personnage du TP1 : nom, classe et caractéristiques conservés par reprise du code, une fonction calculer_degats réutilisée du TP2, une nouvelle fonction choisir_ennemi écrite par toi et dix rencontres numérotées. Le rendu court se termine après les tests de l’étape 5 de la mission. Le compteur est facultatif ; il pourra être repris ensuite. Les échauffements restent dans le bac à sable.
 
-1. Reprendre les acquis. Dans le bac à sable, fais la quête A « trois portes » et explique pourquoi Fin s’affiche une seule fois. Observe l’exemple des potions : déplace « Entrer dans la grotte » pour que cette ligne soit exécutée seulement après « Boire une potion ». Ne recopie pas cet échauffement dans le jeu à rendre.
+1. Reprendre les acquis. Dans le bac à sable (bouton « Exemple · bac à sable »), fais la quête A « trois portes ». Puis reprends l’exemple des potions (notion 1) : indente « Entrer dans la grotte » sous else, prévois puis vérifie l’affichage avec potions = 0, puis avec potions = 2. Dans ton fichier à rendre, écris seulement en commentaire tes deux explications : pourquoi Fin s’affiche une seule fois, et ce que change l’indentation de « Entrer dans la grotte ». Ce commentaire est évalué ; le code des échauffements reste dans le bac à sable.
 
 **Indice 1** — Repère ce qui doit se répéter et ce qui doit apparaître à la fin.
 
-**Indice 2** — Une ligne indentée dans for est répétée ; une ligne revenue à gauche ne l’est pas.
-
-**Indice 3** — Complète les bornes pour obtenir trois portes.
-
-```python
-for numero in range(___, ___):
-    print("Porte", numero)
-print("Fin")
-```
+**Indice 2** — Une ligne indentée sous for ou sous else n’est exécutée que dans ce bloc ; une ligne revenue à gauche est exécutée après, dans tous les cas.
 
 2. Retrouver ton personnage. Dans Mon travail, reprends les saisies et contrôles du TP1 ainsi que la définition de calculer_degats du TP2. Garde les anciennes parties. Affiche le nom, la classe, force, intelligence, agilite, puis les dégâts obtenus en appelant calculer_degats avec force et le bonus 3, le soin 10 + intelligence et le seuil 20 - agilite. Pour un personnage invalide, affiche un message sans commencer l’exploration. Les fonctions sont définies avant leurs appels ; le personnage est saisi une seule fois avant la boucle.
 
@@ -1108,12 +1105,12 @@ print("Seuil :", ...)
 - Classe dragon ou répartition 5/5/6 → message de personnage invalide et aucune rencontre.
 - Prolongement compteur uniquement : total entre 0 et 10 ; tirage fixe 0.2 → 10, tirage fixe 0.6 → 0. Un seul bilan après la boucle.
 
-### Barème sur 5
+### Critères de réussite · repères sur 5
 
 - Personnage du TP1 repris, contrôlé et relié à calculer_degats du TP2 : 1 point(s)
 - Fonction choisir_ennemi définie et trois intervalles corrects : 1 point(s)
 - Dix rencontres numérotées, nouveau tirage et appel à chaque tour : 1 point(s)
-- Indentation expliquée et fin affichée une seule fois : 1 point(s)
+- Indentation expliquée en commentaire et fin affichée une seule fois : 1 point(s)
 - Tests avec print, frontières et essais commentés : 1 point(s)
 
 ## Partie 4 — Faire durer le combat avec while
@@ -1155,7 +1152,7 @@ while vie > 0:
 
 ### 2. Deux survivants sont nécessaires au combat
 
-and exige deux conditions vraies à la fois. Le combat doit continuer si le héros ET le monstre sont vivants. or suffirait si un seul était vivant : ce n’est pas la bonne règle.
+and exige deux conditions vraies à la fois. Le combat continue si le héros ET le monstre sont vivants. Avec or, le test serait vrai dès qu’un seul combattant est vivant : le combat continuerait contre un monstre déjà vaincu. Ce n’est pas la règle voulue.
 
 ```python
 pv_hero = 0
@@ -1173,23 +1170,29 @@ False
 
 ### 3. Sortir volontairement avec break
 
-break quitte immédiatement la boucle en cours. On peut s’en servir pour la fuite. Une variable booléenne peut mémoriser cette décision pour choisir le message final. not inverse un booléen.
+break quitte immédiatement la boucle en cours, même si sa condition est encore vraie. On s’en sert pour la fuite. Une variable booléenne mémorise pourquoi on est sorti, pour choisir ensuite le bon message final. not inverse un booléen : not fuite vaut True tant que le héros n’a pas fui.
 
 ```python
 fuite = False
-while not fuite:
-    fuite = True
-    break
-print("Sortie")
+tour = 0
+while tour < 5:
+    tour = tour + 1
+    print("Tour", tour)
+    if tour == 2:
+        fuite = True
+        break
+print("Fuite :", fuite)
 ```
 
 **À l’écran :**
 
 ```text
-Sortie
+Tour 1
+Tour 2
+Fuite : True
 ```
 
-À surveiller : break quitte uniquement la boucle qui le contient, pas toutes les boucles imbriquées.
+À surveiller : La boucle prévue pour 5 tours s’arrête au 2e. break quitte uniquement la boucle qui le contient, pas toutes les boucles imbriquées.
 
 ### 4. Limiter les points de vie
 
@@ -1288,23 +1291,28 @@ Un combat utilisant le personnage du TP1, les six fonctions du TP2 et choisir_en
 
 **Indice 2** — Combine les deux appels à est_vivant avec and. La fuite se mémorise avant break ; une saisie inconnue ne doit pas entrer dans le bloc de riposte.
 
-4. Action du héros. attaquer appelle lancer_de(20), puis attaque_reussie avec le seuil calculé à partir de son agilité ; en cas de réussite, mets à jour les PV du monstre avec appliquer_degats et les dégâts du héros. defendre utilise soigner avec le soin calculé à partir de son intelligence. rien ne change pas directement les PV. Contrairement à la scène guidée du TP2, le soin n’est plus automatique : il correspond maintenant à l’action defendre.
+4. Action du héros. attaquer : tire de_hero = lancer_de(20), puis appelle attaque_reussie(de_hero, seuil) avec le seuil calculé à partir de son agilité ; en cas de réussite, retire au monstre les dégâts du héros avec pv_monstre = appliquer_degats(pv_monstre, degats). defendre : le héros se met à l’abri et reprend son souffle ; il récupère son soin, calculé à partir de son intelligence, avec soigner. rien ne change pas directement les PV. Contrairement à la scène guidée du TP2, le soin n’est plus automatique : il correspond maintenant à l’action defendre.
 
 **Indice 1** — Sépare les actions avec if / elif.
 
-**Indice 2** — Réutilise le résultat des fonctions : une valeur de PV renvoyée doit être réaffectée. Le soin intervient seulement pour defendre.
+**Indice 2** — Stocke le dé dans de_hero avant de le passer à attaque_reussie. Réutilise le résultat des fonctions : une valeur de PV renvoyée doit être réaffectée. Le soin intervient seulement pour defendre.
 
-5. Riposte. Après une action valide attaquer, defendre ou rien, vérifie est_vivant(pv_monstre). Si le monstre vit, appelle lancer_de(20) et attaque_reussie avec son seuil fixe 11 ; une réussite lui permet d’infliger 7 dégâts au héros avec appliquer_degats. Pas de riposte après la fuite, une saisie inconnue ou la mort du monstre. Cette fois, sa riposte dépend aussi d’un dé, contrairement à celle du TP2.
+5. Riposte. Après une action valide attaquer, defendre ou rien, vérifie est_vivant(pv_monstre). Si le monstre vit, tire de_monstre = lancer_de(20) et appelle attaque_reussie(de_monstre, 11) avec son seuil fixe 11 ; une réussite lui permet d’infliger 7 dégâts au héros avec appliquer_degats. Pas de riposte après la fuite, une saisie inconnue ou la mort du monstre. Cette fois, sa riposte dépend aussi d’un dé, contrairement à celle du TP2.
 
 **Indice 1** — La riposte dépend de deux conditions : action valide et monstre encore vivant.
 
 **Indice 2** — Place le test de survie après l’action du héros. Utilise le seuil 11 pour le monstre et le seuil calculé pour le héros.
 
-6. Terminer et tester. Affiche les deux PV après chaque tour puis une seule issue : Fuite si fuite est vraie, sinon Victoire si le monstre est mort, sinon Défaite. Vérifie les tests proposés avec des dés fixés temporairement et des PV proches de zéro, puis restaure lancer_de et les PV initiaux. Ajoute des commentaires attendu/observé, vérifie avec deux répartitions valides différentes et exporte en conservant les parties 1 à 3.
+6. Terminer et tester. Affiche les deux PV après chaque tour puis une seule issue : Fuite si fuite est vraie, sinon Victoire si le monstre est mort, sinon Défaite. Vérifie les tests proposés avec des dés fixés temporairement : remplace par exemple de_hero = lancer_de(20) par de_hero = 14 et de_monstre = lancer_de(20) par de_monstre = 11. Les deux variables permettent de fixer séparément le dé du héros et celui du monstre. Utilise aussi des PV proches de zéro, puis restaure les tirages et les PV initiaux. Ajoute des commentaires attendu/observé, vérifie avec deux répartitions valides différentes et exporte en conservant les parties 1 à 3.
 
 **Indice 1** — Teste séparément victoire, défaite, fuite et action inconnue.
 
-**Indice 2** — Avec les mêmes dés fixés, change le personnage pour vérifier les paramètres. Restaure ensuite les valeurs normales.
+**Indice 2** — Un dé fixé par variable : de_hero pour le héros, de_monstre pour le monstre. Avec les mêmes dés fixés, change le personnage pour vérifier les paramètres, puis restaure les tirages.
+
+```python
+de_hero = 14      # temporaire, au lieu de lancer_de(20)
+de_monstre = 11   # temporaire, au lieu de lancer_de(20)
+```
 
 ### Tests
 
@@ -1315,7 +1323,7 @@ Un combat utilisant le personnage du TP1, les six fonctions du TP2 et choisir_en
 - fuir → Fuite sans riposte ; xyz → message puis nouvelle demande, PV inchangés et aucun lancer de dé. Personnage invalide → aucune demande d’action.
 - Autre personnage valide 3/5/7 : dégâts 6, soin 15, seuil 13. Avec dé héros 13 et dé monstre 10, une attaque depuis 100/30 donne 100/24. Pour chaque essai, affiche ou commente attendu et observé.
 
-### Barème sur 5
+### Critères de réussite · repères sur 5
 
 - Personnage du TP1 et fonctions des TP2–TP3 réutilisés : 1 point(s)
 - Boucle, PV conservés entre tours et trois issues : 1 point(s)
@@ -1324,6 +1332,20 @@ Un combat utilisant le personnage du TP1, les six fonctions du TP2 et choisir_en
 - Tests, fuite et saisie invalide sans effet : 1 point(s)
 
 ## Partie 5 — Gérer les monstres avec une liste
+
+TP5 · environ deux séances. Séance 1 : notions 1 à 3, échauffements, étape 1 (menu de courses), étapes 2 et 3 (personnage et nouvelle règle, avec ses tests). Séance 2 : notions 4 et 5, étapes 4 à 7 (les trois combats), tests et sauvegarde. Le menu de courses et le combat sont dans le même fichier à rendre : dans les saisies, termine le menu par q avant le nom du personnage.
+
+### Le même personnage, une nouvelle règle de combat
+
+Chaque lancement de l’atelier repart de zéro. Choisir la partie 5 du fichier exporté n’exécute pas les parties précédentes. Recopie dans la partie 5 le code utile, sans effacer la partie 4 : les saisies et contrôles du TP1, puis les définitions de lancer_de, appliquer_degats, soigner et est_vivant. Ne recopie ni le menu fourni, ni les marqueurs de partie, ni les anciens tests et scènes.
+
+La règle de combat change, mais les caractéristiques du TP1 gardent un rôle : attaque du héros = 7 + force ; défense du héros = 4 + agilite. Les monstres ont 40 PV, une attaque de 9 et une défense de 7. Chaque attaque qui passe retire 20 PV. La potion rend random.randint(10, 20) PV, plafonnés à 100 grâce à soigner. L’intelligence servira au prolongement (stock de potions).
+
+attaque_reussie et choisir_ennemi ne servent plus dans ce combat : la nouvelle fonction est_attaque_passee applique la règle attaque/défense, et random.choice choisit parmi les monstres restants. Garde ces anciennes fonctions dans les parties 2 à 4.
+
+Garde les règles du TP1 : classe guerrier, mage ou archer ; force, intelligence et agilite entières, positives ou nulles, de somme 15. Pour un personnage invalide, affiche « Personnage invalide : relance avec des valeurs correctes » et ne lance pas l’exploration. Le menu de courses, placé avant, fonctionne dans tous les cas.
+
+Exemple de vérification : Lina, mage, 5/4/6 → attaque 12, défense 10. Autre personnage 3/5/7 → attaque 10, défense 11. Dans le jeu, utilise les valeurs saisies, pas ces nombres écrits en dur.
 
 ### 1. Créer une liste et lire un élément
 
@@ -1366,7 +1388,7 @@ print(sac)
 
 ### 3. Choisir sans tirer dans une liste vide
 
-random.choice choisit un élément parmi les positions de la liste. Une liste vide vaut faux dans un test ; if monstres protège donc l’appel à choice.
+random.choice(liste) renvoie un élément de la liste, choisi au hasard. Sur une liste vide, il provoque une erreur. Une liste vide vaut faux dans un test : if monstres: protège donc l’appel à choice.
 
 ```python
 import random
@@ -1385,46 +1407,58 @@ Forêt libérée !
 
 À surveiller : Après la défaite du dernier monstre, il faut tester la liste avant de choisir un nouvel adversaire.
 
-### 4. Nouvelle règle de combat
+### 4. Une nouvelle règle : attaque contre défense
 
-À partir de cette partie, on remplace le test > 10. L’attaque touche si son dé est <= attaque. Le défenseur bloque si son dé est <= defense. Les dégâts arrivent seulement si l’attaque touche ET si la défense ne bloque pas.
+Jusqu’au TP4, une attaque réussissait si le dé atteignait un seuil (de >= seuil) : un dé haut était bon. À partir de cette partie, la règle change de sens. À chaque attaque, on lance deux dés à 20 faces : l’attaquant touche si son dé est inférieur ou égal à son attaque ; le défenseur bloque si son dé est inférieur ou égal à sa défense. Les 20 dégâts passent si l’attaque touche ET si la défense ne bloque pas.
 
 ```python
 attaque = 12
 defense = 7
 de_attaque = 12
 de_defense = 8
-print(de_attaque <= attaque and de_defense > defense)
+touche = de_attaque <= attaque
+bloque = de_defense <= defense
+print(touche, bloque)
+print(touche and not bloque)
 ```
 
 **À l’écran :**
 
 ```text
-True : cette attaque inflige 20 dégâts.
+True False
+True
 ```
 
-À surveiller : Avec un dé de défense égal à 7, il n’y a pas de dégâts. La valeur limite compte comme une défense réussie.
+À surveiller : Avec un dé de défense égal à 7, bloque vaut True : pas de dégâts. La valeur limite compte comme une défense réussie. Ici, plus l’attaque est grande, plus il est facile de toucher.
 
-### 5. Garder l’état entre les combats
+### 5. Deux boucles : l’exploration et le combat
 
-Initialise les PV du héros avant la boucle des monstres. Initialise les PV du nouveau monstre à l’intérieur. Le héros conserve ainsi sa fatigue, tandis que chaque nouveau monstre arrive avec tous ses PV.
+La grande boucle enchaîne les combats tant qu’il reste des monstres ; la petite boucle fait durer un combat. Les PV du héros sont initialisés avant la grande boucle : il garde sa fatigue d’un combat à l’autre. Les PV du monstre sont initialisés dans la grande boucle, juste avant la petite : chaque nouveau monstre arrive avec tous ses PV.
 
 ```python
-pv_hero = 80
 monstres = ["gobelin", "troll"]
-monstres.remove("gobelin")
-print(pv_hero)
-print(monstres)
+pv_hero = 100
+fuite = False
+while monstres and pv_hero > 0 and not fuite:
+    monstre = monstres[0]
+    pv_monstre = 40
+    print("Combat contre", monstre)
+    while pv_monstre > 0:
+        pv_monstre = pv_monstre - 20
+    monstres.remove(monstre)
+    pv_hero = pv_hero - 10
+print(pv_hero, monstres)
 ```
 
 **À l’écran :**
 
 ```text
-80
-['troll']
+Combat contre gobelin
+Combat contre troll
+80 []
 ```
 
-À surveiller : Ne recrée pas la liste complète au début de chaque tour : les ennemis vaincus reviendraient.
+À surveiller : break ne quitte que la petite boucle. Pour qu’une fuite arrête toute l’exploration, mémorise fuite = True avant break : la condition de la grande boucle contient not fuite. Ne recrée pas la liste dans la boucle : les monstres vaincus reviendraient.
 
 ### Petites quêtes
 
@@ -1441,7 +1475,19 @@ print(sac)
 
 Objectif : ['potion']
 
-Indice : Utilise append, puis if ... in ... et remove.
+**Indice 1** — Il faut ajouter un élément, puis en retirer un autre seulement s’il est présent.
+
+**Indice 2** — append ajoute à la fin ; in teste la présence ; remove retire la valeur.
+
+**Indice 3** — Complète les trois trous.
+
+```python
+sac = ["cle"]
+sac.___("potion")
+if "cle" ___ sac:
+    sac.___("cle")
+print(sac)
+```
 
 #### Échauffement B · dernier ennemi
 
@@ -1455,44 +1501,106 @@ monstres = ["troll"]
 
 Objectif : Victoire
 
-Indice : not monstres est vrai si la liste est vide ; len(monstres) == 0 fonctionne aussi.
+**Indice 1** — Retire d’abord le troll, puis teste si la liste est vide.
+
+**Indice 2** — Une liste vide vaut faux : not monstres est vrai si elle est vide ; len(monstres) == 0 fonctionne aussi.
 
 ### Mission
 
-Le menu de courses, puis une exploration de trois combats. Quitte les courses avec q avant de préparer les actions de combat dans les saisies.
+Dans la partie 5 : le menu de courses, puis une exploration de trois combats avec ton personnage du TP1. Un fichier qui se lance seul, une fonction est_attaque_passee testée, des PV du héros conservés d’un combat à l’autre et une seule issue finale. Dans les saisies : le menu se termine par q, puis viennent le personnage et une action par ligne.
 
-1. Échauffement : crée une liste de courses vide et un menu a / r / l / q. a demande un article et l’ajoute ; r demande un article et le retire si présent ; l affiche ; q quitte cet échauffement.
+1. Le menu de courses (dans le fichier à rendre). Au début de la partie 5, crée une liste de courses vide et un menu a / r / l / q dans une boucle while. a demande un article et l’ajoute ; r demande un article et le retire s’il est présent, sinon affiche « Article absent » ; l affiche la liste ; q quitte le menu. Le combat vient ensuite, dans le même fichier.
 
-2. Dans la partie 5, recopie le combat de la partie 4 sans effacer la partie 4. Crée monstres = ["gobelin", "araignee", "troll"]. Initialise le héros une seule fois à 100 PV.
+**Indice 1** — Le menu se répète jusqu’à ce que l’utilisateur tape q.
 
-3. Tant qu’il reste des monstres et que le héros vit, choisis un ennemi avec random.choice et donne-lui 100 PV. Le héros garde les PV du combat précédent.
+**Indice 2** — Utilise while avec une variable choix, ou while True avec break sur q. Pour r, teste la présence avec in avant remove.
 
-4. Remplace la règle du seuil calculé à partir de l’agilité par attaque/défense : héros (12,10), monstre (9,7). Une attaque qui touche et n’est pas bloquée retire 20 PV. Applique cette règle aux deux côtés.
+```python
+courses = []
+choix = ""
+while choix != "q":
+    choix = input("a / r / l / q ? ")
+    if choix == "a":
+        ___
+    elif choix == "r":
+        ___
+    elif choix == "l":
+        print(courses)
+```
 
-5. Remplace defendre par potion : gain aléatoire de 10 à 20, plafond 100, puis riposte du monstre vivant. Les potions sont illimitées ici. Garde attaquer, rien et fuir ; une saisie inconnue ne consomme pas de tour.
+2. Reprendre ton personnage. Recopie les définitions de lancer_de, appliquer_degats, soigner et est_vivant, puis les saisies et contrôles du TP1, sans effacer la partie 4. Pour le personnage valide, calcule attaque_hero = 7 + force et defense_hero = 4 + agilite, et affiche-les avec le nom et la classe. Pour un personnage invalide, affiche un message et ne lance pas l’exploration.
 
-6. Retire le monstre uniquement après sa défaite. Choisis ensuite un autre ennemi seulement s’il en reste. La liste vide donne « Victoire de la forêt ». Une fuite ou une défaite termine toute l’exploration.
+**Indice 1** — Reprends ton code, pas seulement les valeurs que tu avais saisies.
 
-7. Teste la dernière victoire, les seuils de défense et la conservation des PV, puis exporte.
+**Indice 2** — Les variables du TP1 n’existent pas automatiquement ici. Calcule attaque_hero et defense_hero après les contrôles, à partir de force et d’agilite.
+
+3. Écrire la règle attaque/défense. Définis est_attaque_passee(de_attaque, attaque, de_defense, defense) : elle renvoie True si l’attaque touche (de_attaque <= attaque) et n’est pas bloquée (de_defense > defense), False sinon. Écris quatre tests avec print : (12, 12, 8, 7), (13, 12, 8, 7), (12, 12, 7, 7) et (9, 9, 10, 9). Prévois les résultats et indique en commentaire ce que vérifie chaque test.
+
+**Indice 1** — La fonction répond à une question : les dégâts passent-ils ?
+
+**Indice 2** — Deux conditions reliées par and : l’attaque touche ET la défense ne bloque pas. La version if / else avec return True et return False est acceptée.
+
+**Indice 3** — Complète les comparaisons.
+
+```python
+def est_attaque_passee(de_attaque, attaque, de_defense, defense):
+    if de_attaque ___ attaque and de_defense ___ defense:
+        return True
+    else:
+        return False
+```
+
+4. Enchaîner les combats. Crée monstres = ["gobelin", "araignee", "troll"]. Avant toute boucle, initialise pv_hero à 100 et fuite à False. Tant qu’il reste des monstres, que le héros est vivant et qu’il n’a pas fui, choisis un ennemi avec random.choice(monstres), donne-lui pv_monstre = 40 et annonce le combat. Le héros garde les PV du combat précédent.
+
+**Indice 1** — Deux boucles imbriquées : l’exploration (les monstres) contient le combat (les tours).
+
+**Indice 2** — Initialise pv_hero et fuite avant la grande boucle, pv_monstre dans la grande boucle. La condition de la grande boucle combine trois tests avec and.
+
+```python
+while monstres and est_vivant(pv_hero) and not fuite:
+    monstre = random.choice(monstres)
+    pv_monstre = 40
+    # combat contre monstre
+```
+
+5. Un tour de combat. Tant que les deux combattants sont vivants, demande attaquer, potion, rien ou fuir. attaquer : tire de_attaque et de_defense avec lancer_de(20) ; si est_attaque_passee(de_attaque, attaque_hero, de_defense, 7), retire 20 PV au monstre avec appliquer_degats. potion : pv_hero = soigner(pv_hero, random.randint(10, 20)), potions illimitées. rien : aucun effet. fuir : fuite = True, puis break. Une saisie inconnue affiche un message, sans action ni riposte.
+
+**Indice 1** — Sépare les actions avec if / elif / else.
+
+**Indice 2** — La condition de la petite boucle reprend est_vivant pour les deux combattants. La fuite se mémorise avant break ; une saisie inconnue ne doit pas atteindre la riposte.
+
+6. Riposte et fin d’un combat. Après attaquer, potion ou rien, si le monstre vit encore, il riposte : deux nouveaux dés, attaque 9 contre defense_hero, et 20 dégâts au héros avec appliquer_degats si l’attaque passe. Affiche les deux PV après chaque tour. Quand le monstre est vaincu, et seulement à ce moment, retire son nom de la liste. Après la grande boucle, affiche une seule issue : « Fuite » si fuite est vraie, sinon « Victoire de la forêt » si la liste est vide, sinon « Défaite ».
+
+**Indice 1** — La riposte dépend de deux conditions : action valide et monstre encore vivant.
+
+**Indice 2** — Pour le monstre, attaque 9 contre la défense du héros. Le remove se place après la petite boucle, si le monstre est mort. L’issue se choisit après la grande boucle, avec if / elif / else.
+
+7. Tester et rendre. Fixe temporairement les dés (par exemple de_attaque = 12 et de_defense = 8) et des PV proches de zéro pour vérifier : la dernière victoire sans choice sur une liste vide, les frontières des dés, la conservation des PV du héros entre deux monstres, la fuite qui arrête tout et une saisie inconnue sans effet. Restaure les tirages, écris au moins deux commentaires attendu / observé et exporte. Un combat complet demande environ 15 actions : dans les saisies, mets une action par ligne.
+
+**Indice 1** — Un dé fixé permet de prévoir chaque tour.
+
+**Indice 2** — Remplace temporairement de_attaque = lancer_de(20) par de_attaque = 12, puis restaure. Pour tester vite, mets temporairement pv_monstre = 20 : une seule attaque qui passe suffit.
 
 ### Tests
 
-- Retirer un article absent → message, pas d’erreur.
-- Attaque 12, dé 12 → touche ; dé 13 → rate. Défense 7, dé 7 → bloque ; dé 8 → dégâts.
-- Dernier monstre vaincu → liste vide et victoire, aucun choice([]).
-- Potion à 95 PV avec gain 20 → 100 avant la riposte ; héros non réinitialisé entre deux monstres.
+- Menu : a puis pain, l → ['pain'] ; r puis sel → « Article absent », pas d’erreur ; q → fin du menu et début du personnage.
+- Lina, mage, 5/4/6 → attaque 12, défense 10. Personnage 3/5/7 → attaque 10, défense 11. Classe dragon ou 5/5/6 → personnage invalide, aucune exploration.
+- est_attaque_passee : (12, 12, 8, 7) → True ; (13, 12, 8, 7) → False (l’attaque rate) ; (12, 12, 7, 7) → False (défense limite) ; (9, 9, 10, 9) → True (autres paramètres).
+- Riposte contre Lina (défense 10) : dés (9, 11) → 20 dégâts ; (10, 11) → raté ; (9, 10) → bloqué.
+- Potion à 95 PV avec gain fixé à 20 → 100 avant la riposte. Héros à 60 PV après le premier combat → il commence le suivant à 60.
+- Dernier monstre vaincu → liste vide, « Victoire de la forêt », aucun choice([]). fuir pendant le 2e combat → « Fuite » et plus aucun combat. xyz → message, PV inchangés, aucun dé.
 
-### Barème sur 5
+### Critères de réussite · repères sur 5
 
 - Menu de liste avec ajout et retrait sûr : 1 point(s)
-- Choix sûr et retrait après défaite seulement : 1 point(s)
-- Victoire finale et continuité des PV : 1 point(s)
-- Attaque, défense et potion conformes : 1 point(s)
-- Tests des seuils et de la liste vide : 1 point(s)
+- Personnage repris, attaque et défense calculées, est_attaque_passee testée : 1 point(s)
+- Choix sûr, retrait après défaite seulement, PV du héros conservés : 1 point(s)
+- Tour complet : potion plafonnée, riposte conditionnelle, saisie inconnue sans effet : 1 point(s)
+- Trois issues (fuite, victoire, défaite) et tests commentés : 1 point(s)
 
 ## Partie 6 — Construire le bestiaire avec des dictionnaires
 
-Séance avant les vacances : découvre les dictionnaires directement sur ordinateur, à ton rythme. Lis une notion, prévois les affichages, exécute puis modifie un exemple. Les échauffements se font dans le bac à sable. Pour le rendu, vise les étapes 1 à 5 : ton personnage, ses informations et un exemple de copie compris. Sauvegarde même si tu n’as pas tout terminé. Le bestiaire imbriqué et le combat sont des prolongements ; nous reprendrons les notions ensemble après les vacances.
+Découvre les dictionnaires directement sur ordinateur, à ton rythme. Lis une notion, prévois les affichages, exécute puis modifie un exemple. Les échauffements se font dans le bac à sable. Pour le rendu, vise les étapes 1 à 5 : ton personnage, ses informations et un exemple de copie compris. Sauvegarde même si tu n’as pas tout terminé. Le bestiaire imbriqué et le combat sont des prolongements ; nous reprendrons les notions ensemble à la séance suivante.
 
 ### 1. Regrouper les informations du personnage
 
@@ -1805,19 +1913,19 @@ Pour cette séance : ton personnage du TP1 rangé dans un dictionnaire, quelques
 
 **Indice 2** — Crée monstre avec .copy(), puis modifie seulement ses PV. Le deuxième gobelin doit être copié depuis le modèle intact, pas depuis le premier blessé.
 
-5. Point de sauvegarde de la séance. Ton rendu de base peut s’arrêter ici. Prévois puis vérifie les tests proposés avec print ; écris deux commentaires attendu / observé, dont un sur .copy(). En une phrase, distingue une clé et une valeur ; en une autre, explique pourquoi monstre = modele_gobelin ne suffit pas à protéger le modèle. Signale les aides utilisées et exporte. Si tu as du temps, poursuis ; sinon, nous reprendrons après les vacances.
+5. Point de sauvegarde de la séance. Ton rendu de base peut s’arrêter ici. Prévois puis vérifie les tests proposés avec print ; écris deux commentaires attendu / observé, dont un sur .copy(). En une phrase, distingue une clé et une valeur ; en une autre, explique pourquoi monstre = modele_gobelin ne suffit pas à protéger le modèle. Signale les aides utilisées et exporte. Si tu as du temps, poursuis ; sinon, nous reprendrons ensemble à la séance suivante.
 
 **Indice 1** — Compare ce que tu avais prévu à ce que Python affiche.
 
 **Indice 2** — Écris pourquoi les deux valeurs 40 et 60 sont différentes avec la copie. Télécharge ton fichier, même si le prolongement n’est pas fait.
 
-6. Prolongement A · le bestiaire. Crée un dictionnaire bestiaire contenant les fiches gobelin (PV 60, attaque 9, défense 7), araignee (40, 11, 5) et troll (100, 8, 9), avec les clés "pv", "attaque", "defense" et "description" dans chaque fiche. Commence par choisir "gobelin" sans hasard. Copie sa fiche, retire 20 PV au combattant, puis affiche ses PV et ceux du modèle du bestiaire. Essaie ensuite un autre monstre.
+6. Prolongement A · le bestiaire. Crée un dictionnaire bestiaire contenant les fiches gobelin (PV 60, attaque 9, défense 7), araignee (40, 11, 5) et troll (100, 8, 9), avec les clés "pv", "attaque", "defense" et "description" dans chaque fiche. Descriptions : "petit et rusé", "rapide et venimeuse", "lent mais solide". Commence par choisir "gobelin" sans hasard. Copie sa fiche, retire 20 PV au combattant, puis affiche ses PV et ceux du modèle du bestiaire. Essaie ensuite un autre monstre.
 
 **Indice 1** — Lis les deux crochets dans l’ordre : nom du monstre, puis caractéristique.
 
 **Indice 2** — La copie doit porter sur la fiche choisie, pas seulement sur le dictionnaire extérieur bestiaire.
 
-7. Prolongement B · adapter ton combat. Reprends uniquement le code utile du TP5 dans cette partie, après les définitions nécessaires et la création du personnage. Les essais de manipulation des étapes 3 et 4 restent des tests séparés : au début du jeu, réinitialise une seule fois hero["pv"] à 100. Ajoute dans hero les clés "attaque" et "defense" avec les valeurs de ton combat du TP5 (12 et 10 dans la version de base). Garde nom, classe, force, intelligence et agilite : cette étape change le rangement des données, pas les règles de combat du TP5. Utilise hero["pv"], hero["attaque"] et hero["defense"] à la place des variables correspondantes. Les monstres restants sont list(bestiaire). Choisis un nom, puis copie bestiaire[choix] au début de chaque nouveau combat. Ne recopie pas le modèle à chaque tour. Retire le nom seulement après la victoire et conserve les PV du héros entre les combats. Teste avec un ennemi fixé avant de remettre le hasard ; conserve la fuite, les seuils <= attaque et <= defense, les dégâts de 20 et le soin aléatoire du TP5.
+7. Prolongement B · adapter ton combat. Reprends uniquement le code utile du TP5 dans cette partie, après les définitions nécessaires et la création du personnage. Les essais de manipulation des étapes 3 et 4 de la mission restent des tests séparés : au début du jeu, réinitialise une seule fois hero["pv"] à 100. Ajoute dans hero les clés "attaque" et "defense", calculées comme au TP5 : 7 + force et 4 + agilite (12 et 10 pour Lina). Pour chaque monstre, utilise les PV, l’attaque et la défense de sa fiche du bestiaire. Garde nom, classe, force, intelligence et agilite : ce prolongement change le rangement des données, pas les règles de combat du TP5. Utilise hero["pv"], hero["attaque"] et hero["defense"] à la place des variables correspondantes. Les monstres restants sont list(bestiaire). Choisis un nom, puis copie bestiaire[choix] au début de chaque nouveau combat. Ne recopie pas le modèle à chaque tour. Retire le nom seulement après la victoire et conserve les PV du héros entre les combats. Teste avec un ennemi fixé avant de remettre le hasard ; conserve la fuite, les seuils <= attaque et <= defense, les dégâts de 20 et le soin aléatoire du TP5.
 
 **Indice 1** — Commence par un seul adversaire, avec un choix fixé.
 
@@ -1831,7 +1939,7 @@ Pour cette séance : ton personnage du TP1 rangé dans un dictionnaire, quelques
 - Base · Avec .copy() : premier gobelin 40 PV, modèle 60 PV, nouveau gobelin 60 PV. Sans copie dans l’échauffement C : combattant et modèle affichent tous les deux 40.
 - Prolongement uniquement · Gobelin du bestiaire : combattant 40 après les dégâts, modèle toujours 60. Entre deux tours, les dégâts restent appliqués ; entre deux combats, les PV du héros sont conservés. Aucun choice sur une liste vide.
 
-### Barème du rendu de base sur 5
+### Critères de réussite du rendu de base · repères sur 5
 
 - Personnage personnel regroupé dans hero avec ses clés et valeurs : 1 point(s)
 - Lectures correctes et récapitulatif utilisant le dictionnaire : 1 point(s)
@@ -1839,16 +1947,580 @@ Pour cette séance : ton personnage du TP1 rangé dans un dictionnaire, quelques
 - Copie du monstre, modèle intact et explication de .copy() : 1 point(s)
 - Tests avec print et deux commentaires attendu / observé : 1 point(s)
 
-## Atelier Tkinter facultatif
+## Partie 7 — Une interface graphique pour ton RPG
 
-Cet atelier reprend les interfaces des parties 2, 3, 4 et 6 originales. Il s’exécute dans Python sur ordinateur avec Tkinter disponible, pas dans l’atelier Python du navigateur. Commencer après les fonctions ; réaliser le combat graphique après le parcours principal. Le fichier atelier_tkinter.py fournit une base exécutable.
+Créer le personnage dans une fenêtre, puis jouer les trois combats avec des boutons.
 
-Tk() crée la fenêtre ; Label affiche un texte ; Entry reçoit une saisie ; get() lit le champ ; config(text=...) met à jour un label ; pack() place le widget. mainloop() attend les événements. command=afficher transmet une fonction à appeler au clic ; command=afficher() l’appellerait tout de suite.
+Partie 7 · sur ordinateur, environ trois séances. Séance 1 : notions 1 à 7, puis étapes 1 et 2 de la mission (fenêtre d’accueil et formulaire). Séance 2 : notions 8 à 10, étapes 3 et 4 (validation du personnage, écran de combat). Séance 3 : notions 11 et 12, étapes 5 à 7 (les combats, la fin de partie, les tests). Tkinter ne fonctionne pas dans le navigateur : écris et lance ce programme dans Thonny, IDLE ou VS Code.
 
-Mission G1 : compléter la base avec des champs classe, force, intelligence, agilite et un bouton de validation du budget de 15. Vérifier les entiers non négatifs ; signaler les conversions invalides avec un message adapté. Tester 5/4/6 et 5/5/6.
+### Avant de commencer
 
-Mission G2 : ajouter Nouvelle rencontre, choisir un ennemi et afficher son nom. Si les PNG sont fournis, utiliser tk.PhotoImage(file=chemin) et conserver la référence dans label.image. Pour redimensionner avec Pillow, utiliser Image.open, resize puis ImageTk.PhotoImage ; cette extension nécessite Pillow. Le texte doit rester utilisable si les images manquent.
+Tkinter est fourni avec Python : rien à installer. Crée un dossier de travail, enregistre-y le squelette interface_rpg_eleve.py et l’image fond_foret.png, puis ouvre le squelette dans Thonny (ou IDLE). Lance-le avec la flèche verte (F5).
 
-Mission G3 : transformer un tour de combat en fonction appelée par un bouton Attaquer, Potion ou Rien. Ne pas lancer de while bloquant dans le rappel d’un bouton : la boucle d’événements attend le clic suivant. Mettre les PV à jour après chaque tour ; désactiver les actions quand le combat se termine ; réactiver pour un nouveau monstre.
+Chaque exemple ci-dessous est un programme complet. Copie-le dans un nouveau fichier enregistré dans le même dossier, lance-le, observe la fenêtre, puis modifie une valeur pour voir ce qui change. N’appelle jamais ton fichier tkinter.py : Python importerait ton fichier à la place de la vraie bibliothèque.
 
-Mission G4 : ajouter la sélection du héros avec Précédent, Suivant et Choisir ce héros. Parcourir une liste des clés de heros ; afficher description, attaque, défense et image si disponible. Copier le héros choisi pour commencer. Tester le passage du premier au dernier héros et le retour au premier.
+À rendre : NOM_Prenom_rpg_interface.py (et l’image de fond si tu en utilises une autre que fond_foret.png).
+
+### Ce qui change avec une interface
+
+Jusqu’ici, ton programme posait des questions avec input() et répétait les tours avec while : c’est lui qui menait le jeu.
+
+Avec une interface, on décrit d’abord la fenêtre (textes, zones de saisie, boutons), puis mainloop() attend les actions du joueur. Chaque bouton est relié à une fonction : un clic = un appel de cette fonction. C’est la programmation événementielle.
+
+Conséquence pour le combat : pas de while. Un clic sur « Attaquer » joue un tour, puis la fenêtre attend le clic suivant. C’est mainloop() qui joue le rôle de la boucle.
+
+Les fonctions de tes parties 2 et 5 (lancer_de, appliquer_degats, soigner, est_vivant, est_attaque_passee) se réutilisent telles quelles. Seule la façon de saisir et d’afficher change.
+
+### 1. Ouvrir une fenêtre
+
+On importe tkinter sous le nom court tk. tk.Tk() crée la fenêtre principale ; title change le texte de la barre de titre ; geometry fixe la taille en pixels (largeur x hauteur, avec la lettre x). mainloop() affiche la fenêtre et attend les actions du joueur.
+
+```python
+import tkinter as tk
+
+fenetre = tk.Tk()
+fenetre.title("La forêt interdite")
+fenetre.geometry("600x400")
+
+fenetre.mainloop()
+```
+
+**Résultat attendu :** Une fenêtre vide de 600 × 400 pixels, intitulée « La forêt interdite ». Le programme se termine quand on la ferme.
+
+À surveiller : mainloop() se place toujours à la fin : les lignes écrites après ne s’exécutent qu’à la fermeture de la fenêtre. Sans mainloop(), la fenêtre peut s’ouvrir et se refermer aussitôt.
+
+### 2. Afficher un texte de bienvenue
+
+Un Label est une étiquette qui affiche un texte. Le premier argument indique où le placer (ici, dans fenetre). font choisit la police, la taille et le style ; fg (foreground) la couleur du texte. pack() place le widget sous le précédent ; pady ajoute de l’espace au-dessus et en dessous. Une instruction trop longue peut continuer à la ligne suivante tant qu’une parenthèse est ouverte : on aligne alors la suite sous le premier argument.
+
+```python
+import tkinter as tk
+
+fenetre = tk.Tk()
+fenetre.title("La forêt interdite")
+fenetre.geometry("600x400")
+
+titre = tk.Label(fenetre, text="Bienvenue dans la forêt interdite !",
+                 font=("Arial", 20, "bold"), fg="darkgreen")
+titre.pack(pady=20)
+
+consigne = tk.Label(fenetre, text="Crée ton personnage pour commencer l'aventure.",
+                    font=("Arial", 12))
+consigne.pack()
+
+fenetre.mainloop()
+```
+
+![Ce que tu dois voir](assets/tk/s02.png)
+
+**Résultat attendu :** Le titre en vert et en gras en haut de la fenêtre, la consigne en dessous.
+
+À surveiller : Créer un Label ne suffit pas : sans pack(), il n’apparaît pas. Un widget est un élément de l’interface : étiquette, bouton, zone de saisie…
+
+### 3. Une couleur de fond
+
+configure(bg=...) change la couleur de fond (background) de la fenêtre. Une couleur s’écrit par son nom anglais ("white", "darkgreen") ou par son code hexadécimal ("#1f3d2b"). Ranger la couleur dans une constante FOND évite de la recopier partout et permet de la changer en une seule ligne.
+
+```python
+import tkinter as tk
+
+FOND = "#1f3d2b"
+
+fenetre = tk.Tk()
+fenetre.title("La forêt interdite")
+fenetre.geometry("600x400")
+fenetre.configure(bg=FOND)
+
+titre = tk.Label(fenetre, text="Bienvenue dans la forêt interdite !",
+                 font=("Arial", 20, "bold"), fg="white", bg=FOND)
+titre.pack(pady=20)
+
+consigne = tk.Label(fenetre, text="Crée ton personnage pour commencer l'aventure.",
+                    font=("Arial", 12), fg="lightgreen", bg=FOND)
+consigne.pack()
+
+fenetre.mainloop()
+```
+
+![Ce que tu dois voir](assets/tk/s03.png)
+
+**Résultat attendu :** Une fenêtre vert forêt, avec le titre en blanc et la consigne en vert clair.
+
+À surveiller : Chaque Label a son propre fond, gris par défaut. Donne-lui aussi bg=FOND, sinon il apparaît comme un rectangle gris sur le fond vert.
+
+### 4. Une image de fond
+
+tk.PhotoImage lit une image PNG ou GIF. On l’affiche dans un Label, placé avec place(x=0, y=0, relwidth=1, relheight=1) : il occupe toute la fenêtre. Les widgets créés ensuite s’affichent par-dessus. L’image fournie fond_foret.png mesure 800 × 500 pixels, comme la fenêtre.
+
+```python
+import tkinter as tk
+
+FOND = "#1f3d2b"
+
+fenetre = tk.Tk()
+fenetre.title("La forêt interdite")
+fenetre.geometry("800x500")
+
+fond = tk.PhotoImage(file="fond_foret.png")
+image_fond = tk.Label(fenetre, image=fond)
+image_fond.place(x=0, y=0, relwidth=1, relheight=1)
+
+titre = tk.Label(fenetre, text="Bienvenue dans la forêt interdite !",
+                 font=("Arial", 22, "bold"), fg="white", bg=FOND)
+titre.pack(pady=20)
+
+fenetre.mainloop()
+```
+
+![Ce que tu dois voir](assets/tk/s04.png)
+
+**Résultat attendu :** L’illustration de la forêt remplit la fenêtre ; le titre s’affiche par-dessus, sur un bandeau vert.
+
+À surveiller : Le fichier image doit être dans le même dossier que ton programme, sinon tu obtiens l’erreur « couldn't open "fond_foret.png" ». Garde l’image dans une variable (fond) : si elle disparaît, l’image ne s’affiche plus. Les fichiers JPG ne sont pas acceptés par PhotoImage.
+
+### 5. Une zone de saisie et un bouton : le nom
+
+Entry est une zone de saisie d’une ligne ; get() renvoie le texte tapé, comme input(). Un Button exécute la fonction donnée dans command à chaque clic. config(text=...) modifie un Label déjà affiché : c’est ainsi qu’on écrit un message dans la fenêtre.
+
+```python
+import tkinter as tk
+
+def valider_nom():
+    nom = saisie_nom.get()
+    if nom == "":
+        message.config(text="Entre un nom.", fg="firebrick")
+    else:
+        message.config(text="Bienvenue, " + nom + " !", fg="darkgreen")
+
+fenetre = tk.Tk()
+fenetre.title("La forêt interdite")
+fenetre.geometry("600x400")
+
+tk.Label(fenetre, text="Nom du personnage :", font=("Arial", 12)).pack(pady=10)
+saisie_nom = tk.Entry(fenetre, width=25)
+saisie_nom.pack()
+tk.Button(fenetre, text="Valider", command=valider_nom).pack(pady=10)
+message = tk.Label(fenetre, text="", font=("Arial", 12))
+message.pack()
+
+fenetre.mainloop()
+```
+
+![Ce que tu dois voir](assets/tk/s05.png)
+
+**Résultat attendu :** Après avoir tapé Lina et cliqué sur Valider : « Bienvenue, Lina ! » en vert. Sans nom : « Entre un nom. » en rouge.
+
+À surveiller : Écris command=valider_nom sans parenthèses : on donne la fonction au bouton, qui l’appellera au clic. Avec valider_nom(), elle serait appelée une seule fois, au lancement. La fonction est définie avant les widgets qu’elle utilise : ce n’est pas un problème, car elle ne s’exécute qu’au clic, quand ils existent.
+
+### 6. Choisir la classe avec des boutons radio
+
+Des boutons radio permettent de choisir une seule option parmi plusieurs. Ils partagent une variable Tkinter : tk.StringVar(value="guerrier") crée cette variable et choisit la valeur de départ. Chaque bouton indique la valeur qu’il donne à la variable (value=classe). get() lit le choix. La boucle for crée les trois boutons sans recopier trois fois la même ligne.
+
+```python
+import tkinter as tk
+
+def afficher_classe():
+    message.config(text="Classe choisie : " + classe_choisie.get())
+
+fenetre = tk.Tk()
+fenetre.title("La forêt interdite")
+fenetre.geometry("600x400")
+
+tk.Label(fenetre, text="Choisis ta classe :", font=("Arial", 12)).pack(pady=10)
+classe_choisie = tk.StringVar(value="guerrier")
+for classe in ["guerrier", "mage", "archer"]:
+    tk.Radiobutton(fenetre, text=classe, value=classe, variable=classe_choisie).pack()
+
+tk.Button(fenetre, text="Valider", command=afficher_classe).pack(pady=10)
+message = tk.Label(fenetre, text="", font=("Arial", 12))
+message.pack()
+
+fenetre.mainloop()
+```
+
+![Ce que tu dois voir](assets/tk/s06.png)
+
+**Résultat attendu :** Trois boutons guerrier, mage, archer ; un seul peut être coché. Valider affiche « Classe choisie : mage ».
+
+À surveiller : Tous les boutons doivent partager la même variable, sinon plusieurs peuvent être cochés en même temps. Avec des boutons radio, une classe inconnue comme « dragon » devient impossible : l’interface empêche certaines erreurs de saisie.
+
+### 7. Les compétences : Spinbox et rangement en grille
+
+Un Spinbox est une zone de nombre avec deux flèches : from_ et to fixent les bornes (0 à 15). state="readonly" empêche de taper au clavier : seules les flèches changent la valeur. command appelle une fonction à chaque clic sur une flèche : ici, elle recalcule les points restants. Une Frame est un cadre qui regroupe des widgets ; à l’intérieur, grid(row=..., column=...) les range en lignes et en colonnes, comme un tableau.
+
+```python
+import tkinter as tk
+
+def mettre_a_jour_total():
+    total = int(choix_force.get()) + int(choix_intel.get()) + int(choix_agilite.get())
+    restants.config(text="Points restants : " + str(15 - total))
+
+fenetre = tk.Tk()
+fenetre.title("La forêt interdite")
+fenetre.geometry("600x400")
+
+formulaire = tk.Frame(fenetre, padx=20, pady=20)
+formulaire.pack(pady=20)
+
+tk.Label(formulaire, text="Force :").grid(row=0, column=0, sticky="e")
+choix_force = tk.Spinbox(formulaire, from_=0, to=15, width=4, state="readonly",
+                         command=mettre_a_jour_total)
+choix_force.grid(row=0, column=1, pady=3)
+
+tk.Label(formulaire, text="Intelligence :").grid(row=1, column=0, sticky="e")
+choix_intel = tk.Spinbox(formulaire, from_=0, to=15, width=4, state="readonly",
+                         command=mettre_a_jour_total)
+choix_intel.grid(row=1, column=1, pady=3)
+
+tk.Label(formulaire, text="Agilité :").grid(row=2, column=0, sticky="e")
+choix_agilite = tk.Spinbox(formulaire, from_=0, to=15, width=4, state="readonly",
+                           command=mettre_a_jour_total)
+choix_agilite.grid(row=2, column=1, pady=3)
+
+restants = tk.Label(formulaire, text="Points restants : 15", font=("Arial", 11, "bold"))
+restants.grid(row=3, column=0, columnspan=2, pady=10)
+
+fenetre.mainloop()
+```
+
+![Ce que tu dois voir](assets/tk/s07.png)
+
+**Résultat attendu :** Un formulaire aligné. Avec force 5 et intelligence 4 : « Points restants : 6 ».
+
+À surveiller : get() renvoie du texte, même pour un Spinbox : il faut int() avant de calculer. Dans un même cadre, utilise soit pack, soit grid, jamais les deux : Tkinter se bloquerait. Ici, la Frame est placée avec pack dans la fenêtre, et ses widgets avec grid dans la Frame.
+
+### 8. Valider le personnage et le ranger dans un dictionnaire
+
+Au clic sur « Créer mon personnage », la fonction lit les valeurs, reprend les contrôles du TP1 puis range le personnage dans le dictionnaire hero (partie 6) et calcule l’attaque et la défense du TP5. Une fonction peut modifier le contenu d’un dictionnaire créé en dehors d’elle : hero["nom"] = nom le remplit, et les autres fonctions pourront le lire plus tard.
+
+```python
+import tkinter as tk
+
+hero = {}
+
+def creer_personnage():
+    nom = saisie_nom.get()
+    force = int(choix_force.get())
+    intelligence = int(choix_intel.get())
+    agilite = int(choix_agilite.get())
+    total = force + intelligence + agilite
+    if nom == "":
+        message.config(text="Entre un nom.", fg="firebrick")
+    elif total != 15:
+        texte = "La somme doit valoir 15 (actuellement " + str(total) + ")."
+        message.config(text=texte, fg="firebrick")
+    else:
+        hero["nom"] = nom
+        hero["force"] = force
+        hero["intelligence"] = intelligence
+        hero["agilite"] = agilite
+        hero["attaque"] = 7 + force
+        hero["defense"] = 4 + agilite
+        texte = nom + " est prêt : attaque " + str(hero["attaque"])
+        texte = texte + ", défense " + str(hero["defense"]) + "."
+        message.config(text=texte, fg="darkgreen")
+
+fenetre = tk.Tk()
+fenetre.title("La forêt interdite")
+fenetre.geometry("600x400")
+
+tk.Label(fenetre, text="Nom :").pack()
+saisie_nom = tk.Entry(fenetre)
+saisie_nom.pack()
+tk.Label(fenetre, text="Force, intelligence, agilité :").pack(pady=5)
+choix_force = tk.Spinbox(fenetre, from_=0, to=15, width=4, state="readonly")
+choix_force.pack()
+choix_intel = tk.Spinbox(fenetre, from_=0, to=15, width=4, state="readonly")
+choix_intel.pack()
+choix_agilite = tk.Spinbox(fenetre, from_=0, to=15, width=4, state="readonly")
+choix_agilite.pack()
+tk.Button(fenetre, text="Créer mon personnage", command=creer_personnage).pack(pady=10)
+message = tk.Label(fenetre, text="")
+message.pack()
+
+fenetre.mainloop()
+```
+
+![Ce que tu dois voir](assets/tk/s08.png)
+
+**Résultat attendu :** Lina, 5 / 4 / 6 : « Lina est prêt : attaque 12, défense 10. » Avec 5 / 5 / 6 : « La somme doit valoir 15 (actuellement 16). »
+
+À surveiller : Écrire nom = ... dans la fonction crée une variable qui disparaît à la fin de l’appel. Pour conserver le personnage, range-le dans le dictionnaire hero. Les Spinbox commencent à 0 : les compétences négatives sont impossibles, il reste à contrôler la somme.
+
+### 9. Passer de la création au combat : deux écrans
+
+Chaque écran est une Frame. On crée les deux au lancement, mais on n’affiche (pack) que le premier. Pour changer d’écran, pack_forget() cache la Frame affichée, puis pack() montre l’autre. Les widgets de l’écran caché ne sont pas détruits : on pourra les réutiliser.
+
+```python
+import tkinter as tk
+
+def lancer_aventure():
+    ecran_creation.pack_forget()
+    ecran_combat.pack(pady=40)
+
+fenetre = tk.Tk()
+fenetre.title("La forêt interdite")
+fenetre.geometry("600x400")
+
+ecran_creation = tk.Frame(fenetre, bg="#f4efe1", padx=30, pady=30)
+ecran_creation.pack(pady=40)
+tk.Label(ecran_creation, text="Écran 1 : création du personnage", bg="#f4efe1").pack()
+tk.Button(ecran_creation, text="Entrer dans la forêt", command=lancer_aventure).pack(pady=10)
+
+ecran_combat = tk.Frame(fenetre, bg="#fbe0e6", padx=30, pady=30)
+tk.Label(ecran_combat, text="Écran 2 : le combat commence !", bg="#fbe0e6").pack()
+
+fenetre.mainloop()
+```
+
+![Ce que tu dois voir](assets/tk/s09.png)
+
+**Résultat attendu :** Au clic sur « Entrer dans la forêt », le cadre de création disparaît et le cadre rose du combat apparaît.
+
+À surveiller : Un widget doit être créé dans sa Frame (tk.Label(ecran_combat, ...)) et non dans fenetre, sinon il reste affiché quand on change d’écran.
+
+### 10. Afficher les PV : textes, barres de vie et journal
+
+Un Canvas est une zone de dessin. create_rectangle(x1, y1, x2, y2, fill=...) y dessine un rectangle et renvoie son numéro ; coords(rectangle, ...) change ensuite ses coordonnées. La barre fait 200 pixels de large à PV pleins : pour 70 PV sur 100, elle mesure 200 × 70 / 100 = 140 pixels. Un widget Text affiche plusieurs lignes : insert("end", ...) ajoute du texte à la fin, see("end") fait défiler jusqu’à la dernière ligne.
+
+```python
+import tkinter as tk
+
+def ecrire(texte):
+    journal.insert("end", texte + "\n")
+    journal.see("end")
+
+def dessiner_barre(canevas, rectangle, pv, pv_max):
+    largeur = int(200 * pv / pv_max)
+    canevas.coords(rectangle, 0, 0, largeur, 18)
+
+fenetre = tk.Tk()
+fenetre.title("La forêt interdite")
+fenetre.geometry("600x400")
+
+infos_hero = tk.Label(fenetre, text="Lina : 70 PV", font=("Arial", 12, "bold"))
+infos_hero.pack(pady=10)
+
+barre_hero = tk.Canvas(fenetre, width=200, height=18, bg="white")
+barre_hero.pack()
+rect_hero = barre_hero.create_rectangle(0, 0, 200, 18, fill="seagreen", width=0)
+dessiner_barre(barre_hero, rect_hero, 70, 100)
+
+journal = tk.Text(fenetre, width=50, height=8)
+journal.pack(pady=15)
+ecrire("Attention : le gobelin surgit des fourrés !")
+ecrire("Riposte : le gobelin te frappe, -20 PV.")
+
+fenetre.mainloop()
+```
+
+![Ce que tu dois voir](assets/tk/s10.png)
+
+**Résultat attendu :** « Lina : 70 PV », une barre verte remplie aux 7/10, et un journal de deux lignes.
+
+À surveiller : Après chaque tour, il faut mettre à jour tous les affichages (textes et barres) : les widgets ne se recalculent pas tout seuls quand une variable change. Regroupe ces mises à jour dans une fonction afficher_etat().
+
+### 11. Un clic = un tour de combat
+
+La fonction du bouton Attaquer joue exactement un tour : attaque du héros, riposte si le monstre vit encore, puis mise à jour de l’affichage. L’état du combat (les PV) est rangé dans le dictionnaire jeu pour être conservé d’un clic à l’autre. config(state="disabled") grise un bouton quand le combat est fini.
+
+```python
+import tkinter as tk
+import random
+
+def lancer_de(nb_faces):
+    return random.randint(1, nb_faces)
+
+def appliquer_degats(pv, degats):
+    reste = pv - degats
+    if reste < 0:
+        return 0
+    return reste
+
+def est_attaque_passee(de_attaque, attaque, de_defense, defense):
+    return de_attaque <= attaque and de_defense > defense
+
+hero = {"nom": "Lina", "attaque": 12, "defense": 10}
+jeu = {"pv_hero": 100, "pv_monstre": 40}
+
+def afficher_etat():
+    texte = hero["nom"] + " : " + str(jeu["pv_hero"]) + " PV"
+    texte = texte + "   |   gobelin : " + str(jeu["pv_monstre"]) + " PV"
+    infos.config(text=texte)
+
+def clic_attaquer():
+    de_attaque = lancer_de(20)
+    de_defense = lancer_de(20)
+    if est_attaque_passee(de_attaque, hero["attaque"], de_defense, 7):
+        jeu["pv_monstre"] = appliquer_degats(jeu["pv_monstre"], 20)
+        message.config(text="Tu touches le gobelin : -20 PV.")
+    else:
+        message.config(text="Ton attaque échoue.")
+    if jeu["pv_monstre"] > 0:
+        if est_attaque_passee(lancer_de(20), 9, lancer_de(20), hero["defense"]):
+            jeu["pv_hero"] = appliquer_degats(jeu["pv_hero"], 20)
+    else:
+        message.config(text="Le gobelin est vaincu !")
+        bouton_attaquer.config(state="disabled")
+    afficher_etat()
+
+fenetre = tk.Tk()
+fenetre.title("La forêt interdite")
+fenetre.geometry("600x400")
+
+infos = tk.Label(fenetre, text="", font=("Arial", 13, "bold"))
+infos.pack(pady=30)
+message = tk.Label(fenetre, text="Un gobelin te barre la route.")
+message.pack()
+bouton_attaquer = tk.Button(fenetre, text="Attaquer", command=clic_attaquer)
+bouton_attaquer.pack(pady=20)
+afficher_etat()
+
+fenetre.mainloop()
+```
+
+![Ce que tu dois voir](assets/tk/s11.png)
+
+**Résultat attendu :** Chaque clic affiche le résultat du tour. Quand le gobelin tombe à 0 PV : « Le gobelin est vaincu ! » et le bouton est grisé.
+
+À surveiller : N’écris pas de boucle while dans la fonction d’un bouton : la fenêtre resterait figée jusqu’à la fin de la boucle et le joueur ne pourrait plus cliquer. Un bouton ne peut pas passer d’argument à command : pour attaquer et boire une potion, écris deux fonctions clic_attaquer() et clic_potion(), qui peuvent appeler une même fonction jouer_tour(action).
+
+### 12. Enchaîner les combats et finir la partie
+
+La liste jeu["monstres"] contient les adversaires restants. nouveau_combat() en choisit un avec random.choice et lui redonne ses PV. Quand un monstre est vaincu, on le retire de la liste ; si elle est vide, c’est la victoire, sinon on lance le combat suivant. nouvelle_partie() remet tout à zéro : c’est elle que le bouton Rejouer appelle.
+
+```python
+import tkinter as tk
+import random
+
+jeu = {"monstres": [], "monstre": "", "pv_monstre": 0}
+
+def nouvelle_partie():
+    jeu["monstres"] = ["le gobelin", "l'araignée", "le troll"]
+    bouton_attaquer.config(state="normal")
+    nouveau_combat()
+
+def nouveau_combat():
+    jeu["monstre"] = random.choice(jeu["monstres"])
+    jeu["pv_monstre"] = 40
+    message.config(text="Attention : " + jeu["monstre"] + " surgit !")
+
+def clic_attaquer():
+    jeu["pv_monstre"] = jeu["pv_monstre"] - 20
+    if jeu["pv_monstre"] > 0:
+        message.config(text=jeu["monstre"] + " : " + str(jeu["pv_monstre"]) + " PV")
+    else:
+        jeu["monstres"].remove(jeu["monstre"])
+        if len(jeu["monstres"]) == 0:
+            message.config(text="Victoire ! La forêt est libérée.")
+            bouton_attaquer.config(state="disabled")
+        else:
+            nouveau_combat()
+
+fenetre = tk.Tk()
+fenetre.title("La forêt interdite")
+fenetre.geometry("600x400")
+
+message = tk.Label(fenetre, text="", font=("Arial", 13))
+message.pack(pady=40)
+bouton_attaquer = tk.Button(fenetre, text="Attaquer", command=clic_attaquer)
+bouton_attaquer.pack()
+tk.Button(fenetre, text="Rejouer", command=nouvelle_partie).pack(pady=10)
+nouvelle_partie()
+
+fenetre.mainloop()
+```
+
+![Ce que tu dois voir](assets/tk/s12.png)
+
+**Résultat attendu :** Après deux attaques, le premier monstre disparaît et le suivant surgit ; après les trois monstres, « Victoire ! » et le bouton Attaquer est grisé. Rejouer relance une partie.
+
+À surveiller : Ne recrée pas la liste des monstres dans nouveau_combat() : les monstres vaincus reviendraient. Pense à réactiver les boutons (state="normal") quand on rejoue.
+
+### Mission
+
+Un fichier NOM_Prenom_rpg_interface.py qui se lance seul sur ordinateur : un écran d’accueil avec un fond, un formulaire de création qui vérifie le personnage et le range dans hero, puis un écran de combat qui enchaîne les trois monstres du TP5 (un clic = un tour), avec les PV affichés en texte et en barres, un journal, et une fin de partie claire.
+
+![Exemple d’écran de création](assets/tk/final-creation.png)
+
+![Exemple d’écran de combat](assets/tk/final-combat.png)
+
+1. Fenêtre d’accueil. Crée une fenêtre de 800 × 500 intitulée « La forêt interdite », avec un fond (couleur ou image fond_foret.png) et un titre de bienvenue lisible sur ce fond.
+
+**Indice 1** — Reprends les notions 1 à 4 : fenêtre, titre, couleur ou image.
+
+**Indice 2** — Si tu utilises l’image, crée le Label de fond en premier : les widgets créés après s’affichent par-dessus. Donne un bg au titre pour qu’il reste lisible.
+
+2. Formulaire de création. Dans une Frame ecran_creation rangée en grille : une zone de saisie pour le nom, trois boutons radio pour la classe (guerrier, mage, archer), trois Spinbox de 0 à 15 pour force, intelligence et agilite, et un texte « Points restants » mis à jour à chaque clic sur une flèche.
+
+**Indice 1** — Range chaque ligne du formulaire dans une ligne de la grille : le texte en colonne 0, le widget en colonne 1.
+
+**Indice 2** — La même fonction mettre_a_jour_total sert aux trois Spinbox : elle relit les trois valeurs à chaque appel.
+
+```python
+def mettre_a_jour_total():
+    total = int(choix_force.get()) + ___ + ___
+    restants.config(text="Points restants : " + str(___))
+```
+
+3. Valider le personnage. Le bouton « Créer mon personnage » vérifie qu’un nom est saisi et que la somme vaut 15, et affiche un message d’erreur précis sinon. Si tout est correct, il remplit le dictionnaire hero (nom, classe, force, intelligence, agilite, attaque = 7 + force, defense = 4 + agilite), affiche un récapitulatif et active le bouton « Entrer dans la forêt », grisé au départ.
+
+**Indice 1** — Reprends l’ordre des contrôles du TP1, avec if / elif / else.
+
+**Indice 2** — Le bouton « Entrer dans la forêt » est créé avec state="disabled" ; creer_personnage le rend cliquable avec config(state="normal") quand le personnage est valide.
+
+4. Écran de combat. « Entrer dans la forêt » cache le formulaire et affiche une Frame ecran_combat avec : le nombre de monstres restants, les PV du héros et du monstre en texte et en barres de vie (Canvas), un journal (Text) et trois boutons Attaquer, Potion et Fuir.
+
+**Indice 1** — Crée tout l’écran de combat dès le lancement, mais sans faire pack sur ecran_combat.
+
+**Indice 2** — Pour chaque barre : un Canvas de 200 × 18, un rectangle créé une fois, puis dessiner_barre qui change ses coordonnées. Le maximum vaut 100 pour le héros et 40 pour un monstre.
+
+5. Un tour par clic. Range l’état dans un dictionnaire jeu (PV du héros et du monstre, monstre actuel, liste des monstres). Attaquer et Potion jouent un tour avec les règles du TP5 : deux dés à 20 faces, est_attaque_passee, 20 dégâts, potion de 10 à 20 PV plafonnée à 100, riposte du monstre (attaque 9 contre la défense du héros) s’il est encore vivant. Chaque tour écrit une ligne dans le journal, puis met à jour tous les affichages.
+
+**Indice 1** — Écris d’abord jouer_tour("attaquer") seul, testé avec un seul monstre, puis ajoute la potion et la riposte.
+
+**Indice 2** — Deux petites fonctions relient les boutons à jouer_tour.
+
+```python
+def clic_attaquer():
+    jouer_tour("attaquer")
+
+def clic_potion():
+    jouer_tour(___)
+```
+
+6. Trois combats et la fin. Commence avec ["le gobelin", "l'araignée", "le troll"], 100 PV pour le héros et 40 PV par monstre. Un monstre vaincu est retiré de la liste et le suivant surgit, le héros garde ses PV. À la victoire, à la défaite ou à la fuite : un message final dans le journal, les trois boutons grisés et un bouton Rejouer qui relance une partie avec le même personnage.
+
+**Indice 1** — Après chaque tour, une fonction verifier_fin choisit entre défaite, victoire, combat suivant ou rien.
+
+**Indice 2** — Le bouton Rejouer est créé au lancement mais affiché seulement à la fin (pack), puis caché à nouveau (pack_forget) dans nouvelle_partie.
+
+7. Tester et rendre. Vérifie les tests ci-dessous, en fixant temporairement les dés si besoin (par exemple, remplace de_attaque = lancer_de(20) par de_attaque = 1 et de_defense = lancer_de(20) par de_defense = 20 : l’attaque du héros passe toujours). Écris en commentaires en haut du fichier deux tests attendu / observé et les aides utilisées, puis rends ton fichier.
+
+**Indice 1** — Un dé fixé rend chaque tour prévisible.
+
+**Indice 2** — Pour tester la défaite vite, mets temporairement jeu["pv_hero"] = 20 au début de la partie ; pour la victoire, des monstres à 20 PV.
+
+### Tests
+
+- Sans nom → « Entre un nom. » ; Lina 5 / 5 / 6 → message d’erreur avec la somme 16 ; le bouton « Entrer dans la forêt » reste grisé.
+- Lina, mage, 5 / 4 / 6 → « Points restants : 0 », attaque 12, défense 10, bouton « Entrer dans la forêt » actif.
+- Écran de combat : 3 monstres restants, 100 PV et barre verte pleine pour le héros, 40 PV et barre rouge pleine pour le monstre.
+- Attaque qui passe (de_attaque fixé à 1, de_defense fixé à 20) → monstre à 20 PV, barre à moitié, une ligne dans le journal.
+- Potion à 95 PV avec un gain de 20 → 100 PV, pas plus.
+- Dernier monstre vaincu → « Victoire » dans le journal, boutons grisés, bouton Rejouer visible ; Rejouer → 100 PV, 3 monstres, boutons actifs. Fuir → message de fuite et boutons grisés.
+
+### Critères de réussite · repères sur 5
+
+- Fenêtre d’accueil avec fond et texte lisible : 1 point(s)
+- Formulaire complet (nom, classe, 3 compétences, points restants) : 1 point(s)
+- Validation du personnage et dictionnaire hero rempli : 1 point(s)
+- Écran de combat : un clic = un tour, affichages mis à jour, règles du TP5 : 1 point(s)
+- Enchaînement des trois combats, fin de partie et Rejouer, tests commentés : 1 point(s)
+
+### Pour aller plus loin
+
+- Une image par monstre : un dictionnaire images = {"le gobelin": tk.PhotoImage(file="gobelin.png"), ...} et un Label dont on change l’image avec config(image=...).
+- Limiter les potions au nombre de points d’intelligence, avec un texte « Potions : 3 » et le bouton Potion grisé quand il n’en reste plus.
+- Afficher l’image de la classe choisie (guerrier, mage, archer) dans le récapitulatif du personnage.
+- Faire clignoter la barre du monstre touché : fenetre.after(300, fonction) appelle une fonction 300 millisecondes plus tard, sans bloquer la fenêtre.
