@@ -5,12 +5,17 @@
    - facile  = questions 0-19  du chapitre
    - moyen   = questions 20-34
    - difficile = questions 35-49
+   Si toutes les questions d'un chapitre ont un champ niv
+   ('facile' | 'moyen' | 'difficile'), c'est lui qui sert.
    ============================================================ */
 
 function getQuestionsByLevel(chapter, level, nb) {
   const pool = (typeof QUESTIONS !== "undefined" && QUESTIONS[chapter]) ? QUESTIONS[chapter] : [];
   let slice;
-  if      (level === 'facile')    slice = pool.slice(0, 20);
+  if (pool.length && pool.every(x => x.niv)) {            // questions étiquetées par niveau
+    slice = (level === 'tous') ? pool : pool.filter(x => x.niv === level);
+  }
+  else if (level === 'facile')    slice = pool.slice(0, 20);
   else if (level === 'moyen')     slice = pool.slice(20, 35);
   else if (level === 'difficile') slice = pool.slice(35, 50);
   else                            slice = pool;          // 'tous'
