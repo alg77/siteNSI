@@ -36,6 +36,32 @@
     .hp-tag{display:inline-block;font-size:.72rem;font-weight:700;padding:.1rem .45rem;border-radius:6px;background:rgba(155,89,182,.18);color:#9b59b6;vertical-align:middle;margin-left:.3rem}
     details.sqlx-more{margin:1rem 0;border:1px dashed rgba(155,89,182,.5);border-radius:10px;padding:.6rem 1rem}
     details.sqlx-more summary{cursor:pointer;font-weight:700}
+
+    /* ===== QCM du chapitre (banque intégrée) ===== */
+    .bq-controls{display:flex;flex-wrap:wrap;gap:.6rem 1.2rem;align-items:center;margin:0 0 1.2rem}
+    .bq-group{display:flex;flex-wrap:wrap;gap:.35rem;align-items:center}
+    .bq-group>span{font-size:.82rem;font-weight:700;color:var(--text2,#6d5d68);margin-right:.2rem}
+    .bq-chip{font:inherit;font-size:.85rem;font-weight:600;padding:.32rem .8rem;border-radius:999px;border:1px solid #e6cfdc;background:#fffefd;color:#844360;cursor:pointer}
+    .bq-chip[aria-pressed="true"]{background:#86648f;border-color:#86648f;color:#fff}
+    .bq-q{margin:0 0 1rem;padding:1rem 1.1rem;border:1px solid var(--border,#eadfe5);border-radius:14px;background:#fffefd}
+    .bq-q.ok{border-color:#9fcbb0;background:#f3f9f4}.bq-q.ko{border-color:#e6a9b6;background:#fdf3f5}
+    .bq-num{font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;color:#844360;margin-bottom:.3rem}
+    .bq-num em{font-style:normal;font-weight:600;color:var(--text2,#6d5d68);letter-spacing:normal;text-transform:none;margin-left:.4rem}
+    .bq-text{font-weight:650;margin:0 0 .6rem;line-height:1.5}
+    .bq-q pre{margin:0 0 .7rem;padding:.7rem .9rem;font-size:.86rem;white-space:pre-wrap}
+    .bq-opts{display:flex;flex-direction:column;gap:.4rem}
+    .bq-opts label{display:flex;gap:.6rem;align-items:flex-start;padding:.5rem .75rem;border:1px solid var(--border,#eadfe5);border-radius:10px;background:#fff;cursor:pointer;line-height:1.45}
+    .bq-opts label:hover{background:#faf0f5}
+    .bq-opts input{margin-top:.25rem;accent-color:#94516f;flex-shrink:0}
+    .bq-opts label.correct{border-color:#386d50;background:#edf5ee;font-weight:650}
+    .bq-opts label.wrong{border-color:#a33d50;background:#fcf0f1}
+    .bq-fb{display:none;margin-top:.6rem;padding:.55rem .8rem;border-radius:10px;font-size:.9rem;background:#f3eef8;border:1px solid #e1d5ed}
+    .bq-fb.show{display:block}
+    .bq-actions{display:flex;flex-wrap:wrap;gap:.6rem;margin-top:1rem}
+    .bq-score{display:none;margin-top:1.2rem;padding:1.2rem;border:1px solid var(--border,#eadfe5);border-radius:16px;background:linear-gradient(115deg,#fff4f7,#f5f0fa);text-align:center}
+    .bq-score b{display:block;font-size:2.4rem;line-height:1.1;color:#705689}
+    .fiche-link{display:flex;flex-wrap:wrap;gap:.8rem;align-items:center;justify-content:space-between;margin:1.2rem 0 0;padding:1rem 1.2rem;border:1px solid #e6d7e6;border-radius:16px;background:linear-gradient(120deg,#faf0f5,#f1eef8)}
+    .fiche-link p{margin:0}
   </style>
   <link rel="stylesheet" href="bases-de-donnees-pastel.css">
 </head>
@@ -61,10 +87,11 @@
       <li><a href="#tp">TP Naheulbeuk</a></li>
       <li><a href="#synthese">Synthèse</a></li>
       <li><a href="#qcm">QCM</a></li>
+      <li><a href="TNSI-S02-BDD-Fiche-resume.pdf" target="_blank" rel="noopener">📄 Fiche résumé</a></li>
     </ul>
   </aside>
   <main id="contenu" class="chapter-content">
-    <nav class="level-shortcuts" aria-label="Navigation du chapitre"><a href="index.html">← Tous les chapitres</a><a href="#base">Pratiquer SQL</a><a href="#exercices">Exercices</a><a href="#qcm">QCM</a></nav>
+    <nav class="level-shortcuts" aria-label="Navigation du chapitre"><a href="index.html">← Tous les chapitres</a><a href="#base">Pratiquer SQL</a><a href="#exercices">Exercices</a><a href="#qcm">QCM</a><a href="TNSI-S02-BDD-Fiche-resume.pdf" target="_blank" rel="noopener">📄 Fiche résumé (PDF)</a></nav>
     <div class="chapter-header">
       <div class="chapter-icon">🗄️</div>
       <div>
@@ -1173,12 +1200,20 @@ WHERE A.IdCli < B.IdCli;     -- évite (X, X) et les doublons (X, Y) / (Y, X)</c
           <li>DELETE FROM T WHERE …</li><li>Le SGBD refuse ce qui viole une contrainte</li>
         </ul></div>
       </div>
+      <div class="fiche-link"><p><strong>📄 Fiche résumé à imprimer</strong> · deux pages : tout le cours, les requêtes types, les formulations du bac et les erreurs fréquentes.</p><a class="btn btn-primary" href="TNSI-S02-BDD-Fiche-resume.pdf" target="_blank" rel="noopener">Ouvrir la fiche (PDF)</a></div>
     </section>
 
     <section class="quiz-section" id="qcm">
         <h2>🧠 QCM</h2>
-        <p style="color:var(--text2);margin-bottom:1rem">Choisissez le nombre de questions et le niveau, puis lancez.</p>
-        <div id="quiz-container-bases-de-donnees"></div>
+        <p style="color:var(--text2);margin-bottom:1rem">Banque de <strong id="bq-total"></strong> questions sur tout le chapitre. Choisis le nombre de questions et le niveau, puis lance un tirage. Les requêtes portent sur la base d'entraînement de la partie « Pratiquer SQL ».</p>
+        <div class="bq-controls">
+          <div class="bq-group" id="bq-nb"><span>Questions :</span><button type="button" class="bq-chip" data-v="5">5</button><button type="button" class="bq-chip" data-v="10" aria-pressed="true">10</button><button type="button" class="bq-chip" data-v="20">20</button><button type="button" class="bq-chip" data-v="all">Toutes</button></div>
+          <div class="bq-group" id="bq-lvl"><span>Niveau :</span><button type="button" class="bq-chip" data-v="0" aria-pressed="true">Tous</button><button type="button" class="bq-chip" data-v="1">⭐ Bases</button><button type="button" class="bq-chip" data-v="2">⭐⭐ Entraînement</button><button type="button" class="bq-chip" data-v="3">⭐⭐⭐ Type bac</button></div>
+          <button type="button" class="btn btn-outline" id="bq-new">🔀 Nouveau tirage</button>
+        </div>
+        <div id="bq-questions"></div>
+        <div class="bq-actions"><button type="button" class="btn btn-primary" id="bq-submit">✅ Valider mes réponses</button><button type="button" class="btn btn-outline" id="bq-new2">🔀 Nouveau tirage</button></div>
+        <div class="bq-score" id="bq-score" aria-live="polite"></div>
     </section>
     <div style="text-align:center;margin:2rem 0;display:flex;gap:1rem;justify-content:center;flex-wrap:wrap">
       <a href="structures2.html" class="btn btn-outline">← S01 — Structures de données</a>
@@ -1202,7 +1237,138 @@ WHERE A.IdCli < B.IdCli;     -- évite (X, X) et les doublons (X, Y) / (Y, X)</c
       btn.classList.add('active-qlvl');
     });
   });
-  initChapterQuiz('bdd', 'quiz-container-bases-de-donnees', 5);
+</script>
+
+<!-- ===================== QCM du chapitre ===================== -->
+<script>
+// Banque du QCM « Bases de données » (Terminale NSI).
+// n : niveau (1 facile, 2 moyen, 3 type bac) ; o[0] = bonne réponse (mélangée à l'affichage) ;
+// code : requête affichée (texte brut) ; chk : requête de contrôle sur la base d'entraînement (tests).
+const BDD_QCM = [
+// ---------- Modèle relationnel ----------
+{n:1,t:'Modèle',q:"Dans une relation, une clé primaire :",o:["identifie chaque ligne de façon unique et n’est jamais NULL","peut prendre deux fois la même valeur","est toujours le premier attribut","fait référence à une autre relation"],ex:"Deux lignes ne peuvent pas avoir la même clé primaire : c’est la contrainte de relation."},
+{n:1,t:'Modèle',q:"Une clé étrangère :",o:["fait référence à la clé primaire d’une autre relation","est unique dans sa relation","identifie chaque ligne de sa relation","est toujours un nombre entier"],ex:"Exemple : <code>Livre.Num_SS</code> fait référence à <code>Lecteur.Num_SS</code>."},
+{n:1,t:'Modèle',q:"Le domaine d’un attribut est :",o:["l’ensemble des valeurs qu’il peut prendre","le nom de sa relation","le nombre de lignes de la relation","sa position dans le schéma"],ex:"Par exemple : entiers de 15 chiffres pour un numéro de sécurité sociale."},
+{n:1,t:'Modèle',q:"Dans <code>Livre (<u>Isbn</u>, #Num_SS, Titre, Annee, Prix)</code>, <code>#Num_SS</code> est :",o:["une clé étrangère","la clé primaire","un attribut obligatoire","un domaine"],ex:"Le dièse signale une clé étrangère ; la clé primaire est soulignée."},
+{n:1,t:'Modèle',q:"Un tuple (ou enregistrement) est :",o:["une ligne d’une relation","une colonne d’une relation","une table","une clé"],ex:"Tuple = ligne = enregistrement ; attribut = colonne."},
+{n:1,t:'Modèle',q:"La structure d’une base de données, c’est :",o:["l’ensemble de ses schémas relationnels","l’ensemble de ses lignes","le résultat d’une requête","le fichier stocké sur le disque"],ex:"La structure (schémas) change rarement ; le contenu (lignes) change à chaque mise à jour."},
+{n:1,t:'Modèle',q:"Un schéma relationnel indique :",o:["le nom de la relation, ses attributs, leurs domaines et les clés","toutes les lignes de la relation","les requêtes autorisées sur la relation","le SGBD utilisé"],ex:"Le schéma décrit la structure, pas le contenu."},
+{n:1,t:'Modèle',q:"Combien d’attributs compte la relation <code>Reservation (<u>#Mid, #Bid, jour</u>)</code> ?",o:["3","2","1","4"],ex:"<code>Mid</code>, <code>Bid</code> et <code>jour</code> : trois attributs, qui forment ensemble la clé primaire."},
+{n:2,t:'Modèle',q:"La clé primaire de <code>Reservation (<u>#Mid, #Bid, jour</u>)</code> est :",o:["le triplet (Mid, Bid, jour)","Mid seul","le couple (Mid, Bid)","jour seul"],ex:"Tous les attributs soulignés forment la clé : un marin peut réserver le même bateau plusieurs fois, à des jours différents."},
+{n:2,t:'Modèle',q:"La clé primaire de <code>Ecrire (<u>#Isbn, #Id_auteur</u>, Nb_chapitres)</code> est :",o:["le couple (Isbn, Id_auteur)","Isbn seul","Id_auteur seul","il n’y en a pas"],ex:"Un livre ou un auteur peut apparaître plusieurs fois, mais pas le même couple."},
+{n:2,t:'Modèle',q:"Un livre a plusieurs auteurs et un auteur écrit plusieurs livres. Pour le modéliser, on :",o:["crée une relation d’association avec deux clés étrangères","ajoute une clé étrangère dans Livre","ajoute une clé étrangère dans Auteur","fusionne Livre et Auteur"],ex:"C’est la relation <code>Ecrire(#Isbn, #Id_auteur, …)</code>."},
+{n:2,t:'Modèle',q:"Un livre est emprunté par au plus un lecteur à la fois. Où place-t-on la clé étrangère ?",o:["dans Livre : #Num_SS","dans Lecteur : #Isbn","dans une nouvelle relation Emprunt obligatoirement","nulle part"],ex:"Chaque livre « pointe » vers son emprunteur ; <code>Num_SS</code> vaut NULL si le livre est disponible."},
+{n:2,t:'Modèle',q:"Une clé étrangère peut-elle valoir NULL ?",o:["oui, si l’attribut n’est pas déclaré NOT NULL","non, jamais","seulement si elle fait partie de la clé primaire","seulement dans SQLite"],ex:"Dans la base d’entraînement, un livre disponible a <code>Num_SS</code> NULL."},
+{n:1,t:'Modèle',q:"Pour la relation <code>Auteur</code>, on crée un identifiant artificiel <code>Id_auteur</code> car :",o:["aucun attribut n’est unique : deux auteurs peuvent porter le même nom","les noms sont trop longs","SQL interdit les clés primaires textuelles","la nationalité peut être NULL"],ex:"Une clé primaire doit être unique pour chaque ligne."},
+// ---------- Intégrité, redondance ----------
+{n:1,t:'Intégrité',q:"Insérer un livre dont le <code>Num_SS</code> n’existe pas dans <code>Lecteur</code> viole la contrainte :",o:["de référence","de relation","de domaine","utilisateur"],ex:"Une clé étrangère doit référencer une clé primaire existante."},
+{n:1,t:'Intégrité',q:"Insérer deux lignes avec la même clé primaire viole la contrainte :",o:["de relation","de référence","de domaine","aucune contrainte"],ex:"La clé primaire doit être unique."},
+{n:1,t:'Intégrité',q:"Saisir <code>'Paul'</code> comme <code>Num_SS</code> (entier de 15 chiffres) viole la contrainte :",o:["de domaine","de relation","de référence","aucune contrainte"],ex:"La valeur n’appartient pas au domaine de l’attribut."},
+{n:2,t:'Intégrité',q:"Pourquoi le SGBD refuse-t-il <code>DELETE FROM Lecteur WHERE Nom_lecteur = 'Rossi';</code> ?",o:["Giulia Rossi a un livre : son Num_SS est encore référencé dans Livre","il manque une clé primaire","Rossi n’existe pas","DELETE est interdit sur Lecteur"],ex:"Supprimer une ligne encore référencée par une clé étrangère viole la contrainte de référence."},
+{n:3,t:'Intégrité',q:"Quelle contrainte d’intégrité n’est pas respectée par <code>INSERT INTO Marin VALUES (1, 'Doublon', 0, 30);</code> ?",code:"Marin (Mid, Mnom, nbSorties, age)\n-- le marin n° 1 (Corto) existe déjà",o:["la contrainte de relation : Mid = 1 est déjà utilisé","la contrainte de référence","la contrainte de domaine : l’âge est trop petit","aucune, l’insertion est acceptée"],ex:"Une clé primaire déjà utilisée provoque un refus."},
+{n:1,t:'Intégrité',q:"Dans un <code>CREATE TABLE</code>, <code>NOT NULL</code> signifie :",o:["la valeur ne peut pas être absente","la valeur doit être unique","la valeur vaut 0 par défaut","l’attribut est une clé étrangère"],ex:"<code>Titre TEXT NOT NULL</code> : tout livre a un titre."},
+{n:2,t:'Intégrité',q:"Quelle ligne d’un <code>CREATE TABLE</code> déclare une clé étrangère ?",o:["<code>FOREIGN KEY (Num_SS) REFERENCES Lecteur(Num_SS)</code>","<code>PRIMARY KEY (Num_SS)</code>","<code>CHECK (LENGTH(Num_SS) = 15)</code>","<code>Num_SS INTEGER NOT NULL</code>"],ex:"On doit savoir <em>lire</em> un CREATE TABLE au bac."},
+{n:1,t:'Intégrité',q:"Recopier le nom de l’auteur sur chaque ligne de <code>Livre</code> provoque surtout :",o:["de la redondance","une meilleure cohérence","des accès concurrents","une clé étrangère"],ex:"La même information est stockée plusieurs fois : risque d’anomalies."},
+{n:2,t:'Intégrité',q:"Supprimer le seul livre d’un auteur efface toute trace de cet auteur. C’est une anomalie de :",o:["suppression","insertion","mise à jour","jointure"],ex:"Remède : une relation <code>Auteur</code> séparée."},
+{n:2,t:'Intégrité',q:"Dans une table « tout-en-un », on ne peut pas enregistrer un auteur tant qu’on n’a aucun de ses livres. C’est une anomalie :",o:["d’insertion","de suppression","de mise à jour","de domaine"],ex:"On découpe en plusieurs relations reliées par des clés étrangères."},
+{n:2,t:'Intégrité',q:"Pour corriger la nationalité de Camus dans une table « tout-en-un », il faut modifier toutes ses lignes. C’est une anomalie de :",o:["mise à jour","suppression","insertion","référence"],ex:"En oublier une rend la base incohérente."},
+// ---------- SGBD ----------
+{n:1,t:'SGBD',q:"Que signifie SGBD ?",o:["Système de gestion de bases de données","Serveur général de bases distribuées","Script de gestion des bases de données","Système global de bases dynamiques"],ex:"Exemples : SQLite, MySQL, PostgreSQL."},
+{n:1,t:'SGBD',q:"Quel service du SGBD permet à deux bibliothécaires de modifier la base en même temps sans la corrompre ?",o:["la gestion des accès concurrents","la persistance","la sécurisation des accès","l’efficacité des requêtes"],ex:"Le SGBD organise les accès simultanés."},
+{n:1,t:'SGBD',q:"La persistance des données signifie que :",o:["les données survivent à l’arrêt du programme ou de la machine","les données sont chiffrées","les requêtes sont rapides","les données ne changent jamais"],ex:"Les données sont stockées sur disque."},
+{n:2,t:'SGBD',q:"Un lecteur peut consulter le catalogue mais pas modifier les prêts. Quel service du SGBD est en jeu ?",o:["la sécurisation (droits des utilisateurs)","la persistance","les accès concurrents","l’efficacité"],ex:"Authentification et droits différents selon les utilisateurs."},
+{n:2,t:'SGBD',q:"Une transaction respecte l’atomicité lorsqu’elle :",o:["est exécutée entièrement ou pas du tout","ne concerne qu’une seule ligne","est exécutée par un seul utilisateur","ne peut jamais échouer"],ex:"Un virement débite ET crédite, ou ne fait rien."},
+// ---------- Interroger ----------
+{n:1,t:'SELECT',q:"Pour sélectionner les livres non empruntés, on écrit :",o:["<code>WHERE Num_SS IS NULL</code>","<code>WHERE Num_SS = NULL</code>","<code>WHERE Num_SS == NULL</code>","<code>WHERE NULL(Num_SS)</code>"],ex:"Avec NULL, on écrit toujours <code>IS NULL</code> ou <code>IS NOT NULL</code>."},
+{n:1,t:'SELECT',q:"Quel mot-clé supprime les doublons du résultat ?",o:["<code>DISTINCT</code>","<code>UNIQUE</code>","<code>ORDER BY</code>","<code>DELETE</code>"],ex:"<code>SELECT DISTINCT Nationalite FROM Auteur;</code>"},
+{n:1,t:'SELECT',q:"<code>ORDER BY Annee DESC</code> trie :",o:["de la plus grande année à la plus petite","de la plus petite année à la plus grande","par ordre alphabétique des titres","au hasard"],ex:"DESC = décroissant ; ASC (par défaut) = croissant."},
+{n:1,t:'SELECT',q:"<code>Titre LIKE 'Le%'</code> sélectionne les titres :",o:["qui commencent par « Le »","qui finissent par « Le »","égaux à « Le% »","de exactement 3 caractères"],ex:"<code>%</code> remplace n’importe quelle suite de caractères, <code>_</code> un seul caractère."},
+{n:1,t:'SELECT',q:"<code>Annee BETWEEN 1900 AND 1950</code> :",o:["inclut 1900 et 1950","exclut 1900 et 1950","inclut 1900 mais pas 1950","n’existe pas en SQL"],ex:"Les bornes de BETWEEN sont incluses."},
+{n:1,t:'SELECT',q:"En SQL, une chaîne de caractères s’écrit :",o:["entre apostrophes : <code>'Camus'</code>","sans délimiteur : <code>Camus</code>","entre crochets : <code>[Camus]</code>","entre dièses : <code>#Camus#</code>"],ex:"Sans apostrophes, Camus serait pris pour un nom de colonne."},
+{n:1,t:'SELECT',q:"Quel ordre des clauses est correct ?",o:["SELECT … FROM … JOIN … ON … WHERE … ORDER BY …","SELECT … WHERE … FROM … ORDER BY …","FROM … SELECT … WHERE …","SELECT … FROM … ORDER BY … WHERE …"],ex:"L’ordre des clauses est imposé."},
+{n:1,t:'SELECT',q:"Le résultat d’une requête SELECT est :",o:["une table","toujours une seule valeur","une base de données","une clé"],ex:"Même un <code>COUNT(*)</code> renvoie une table d’une ligne et une colonne."},
+{n:2,t:'SELECT',q:"Combien de lignes renvoie cette requête sur la base d’entraînement ?",code:"SELECT Titre FROM Livre WHERE Annee < 1900;",o:["5","4","6","17"],ex:"Le gai savoir, La géométrie, Les misérables, Frankenstein, Discours de la méthode.",chk:"SELECT COUNT(*) FROM Livre WHERE Annee < 1900;"},
+{n:2,t:'SELECT',q:"Combien de lignes renvoie cette requête ?",code:"SELECT Bnom FROM Bateau WHERE couleur = 'rouge' OR couleur = 'bleu';",o:["4","2","0","8"],ex:"Pen Duick, Licorne, Marie-Galante, Goéland. Avec AND, aucun bateau ne serait à la fois rouge et bleu.",chk:"SELECT COUNT(*) FROM Bateau WHERE couleur = 'rouge' OR couleur = 'bleu';"},
+{n:2,t:'SELECT',q:"Combien de lignes renvoie cette requête ?",code:"SELECT DISTINCT Nationalite FROM Auteur;",o:["4","15","3","1"],ex:"Allemande, Française, Britannique, Américaine : chaque nationalité une seule fois.",chk:"SELECT COUNT(*) FROM (SELECT DISTINCT Nationalite FROM Auteur);"},
+{n:2,t:'SELECT',q:"Quelle requête donne le nom des marins qui ont effectué <strong>au moins</strong> 15 sorties ?",o:["<code>SELECT Mnom FROM Marin WHERE nbSorties &gt;= 15;</code>","<code>SELECT Mnom FROM Marin WHERE nbSorties &gt; 15;</code>","<code>SELECT nbSorties FROM Marin WHERE Mnom &gt;= 15;</code>","<code>SELECT Mnom FROM Marin ORDER BY 15;</code>"],ex:"« Au moins 15 » : 15 compris, donc <code>&gt;=</code>."},
+{n:2,t:'SELECT',q:"Que renvoie cette requête ?",code:"SELECT Mnom FROM Marin WHERE age < 30 ORDER BY age;",o:["les marins de moins de 30 ans, du plus jeune au plus âgé","les marins de moins de 30 ans, du plus âgé au plus jeune","le nombre de marins de moins de 30 ans","les marins de 30 ans et plus"],ex:"ORDER BY sans précision trie par ordre croissant (ASC)."},
+// ---------- Agrégats ----------
+{n:1,t:'Agrégats',q:"<code>COUNT(Prix)</code> compte :",o:["les lignes où Prix n’est pas NULL","toutes les lignes","les valeurs différentes de Prix","la somme des prix"],ex:"<code>COUNT(*)</code> compte toutes les lignes, <code>COUNT(attribut)</code> ignore les NULL."},
+{n:1,t:'Agrégats',q:"<code>COUNT(DISTINCT Ville)</code> compte :",o:["le nombre de villes différentes","le nombre de lignes","le nombre de villes non NULL, doublons compris","la ville la plus fréquente"],ex:"DISTINCT dans COUNT : chaque valeur n’est comptée qu’une fois."},
+{n:2,t:'Agrégats',q:"Que renvoie cette requête ?",code:"SELECT COUNT(*), COUNT(Prix) FROM Livre;",o:["17 et 3","17 et 17","3 et 3","3 et 17"],ex:"17 livres, dont 3 seulement ont un prix renseigné (les autres sont gratuits : Prix NULL).",chk:"SELECT COUNT(*) || ' et ' || COUNT(Prix) FROM Livre;"},
+{n:2,t:'Agrégats',q:"Que renvoie cette requête ?",code:"SELECT COUNT(DISTINCT Ville) FROM Client;",o:["5","8","4","1"],ex:"Lagny-sur-Marne, Meaux, Torcy, Chessy, Bussy-Saint-Georges.",chk:"SELECT COUNT(DISTINCT Ville) FROM Client;"},
+{n:2,t:'Agrégats',q:"Que renvoie cette requête ?",code:"SELECT AVG(Age) FROM Lecteur;",o:["44.9","449","10","88"],ex:"La somme des âges vaut 449 pour 10 lecteurs.",chk:"SELECT AVG(Age) FROM Lecteur;"},
+{n:2,t:'Agrégats',q:"Que renvoie cette requête ?",code:"SELECT MAX(nbSorties) FROM Marin;",o:["41","52","10","Tabarly"],ex:"MAX renvoie la plus grande valeur, pas le nom du marin.",chk:"SELECT MAX(nbSorties) FROM Marin;"},
+{n:3,t:'Agrégats',q:"Que renvoie cette requête (arrondie au centième) ?",code:"SELECT AVG(Prix) FROM Livre;\n-- 3 livres ont un prix : 12.5 ; 8.0 ; 15.0 (les autres : NULL)",o:["11.83","2.09","35.5","NULL"],ex:"AVG ignore les NULL : 35,5 / 3 ≈ 11,83. Compter les NULL comme 0 donnerait 35,5 / 17.",chk:"SELECT ROUND(AVG(Prix), 2) FROM Livre;"},
+{n:2,t:'Agrégats',q:"Que renvoie cette requête ?",code:"SELECT COUNT(*) FROM Marin WHERE age < 30;",o:["4","10","6","3"],ex:"Le WHERE garde d’abord les marins de moins de 30 ans (Riou, Autissier, Kersauson, Moitessier), puis COUNT les compte.",chk:"SELECT COUNT(*) FROM Marin WHERE age < 30;"},
+{n:1,t:'Agrégats',q:"Quelle requête est incorrecte ?",o:["<code>SELECT Titre FROM Livre WHERE COUNT(*) &gt; 3;</code>","<code>SELECT COUNT(*) FROM Livre;</code>","<code>SELECT MAX(Annee) FROM Livre;</code>","<code>SELECT AVG(Age) FROM Lecteur WHERE Age &gt; 18;</code>"],ex:"On ne met pas de fonction d’agrégation dans un WHERE."},
+{n:2,t:'Agrégats',q:"Pourquoi <code>SELECT Titre, MAX(Annee) FROM Livre;</code> n’est-elle pas acceptée au bac ?",o:["elle mélange un attribut simple et un agrégat sans GROUP BY","MAX ne s’applique pas aux années","il manque un WHERE","Titre n’existe pas"],ex:"Sans regroupement, le résultat d’un agrégat tient sur une ligne : on ne peut pas y associer « le » titre."},
+{n:3,t:'Agrégats',q:"Quelle requête donne le nombre d’auteurs différents qui ont écrit au moins un livre ?",o:["<code>SELECT COUNT(DISTINCT Id_auteur) FROM Ecrire;</code>","<code>SELECT COUNT(*) FROM Ecrire;</code>","<code>SELECT COUNT(Id_auteur) FROM Ecrire;</code>","<code>SELECT DISTINCT COUNT(*) FROM Auteur;</code>"],ex:"Goscinny et Uderzo apparaissent plusieurs fois dans Ecrire : sans DISTINCT, on les compterait plusieurs fois."},
+{n:2,t:'Agrégats',q:"Au bac, <code>GROUP BY</code> et <code>HAVING</code> :",o:["ne sont pas exigibles (pour aller plus loin)","sont obligatoires dès qu’il y a un agrégat","remplacent le WHERE","servent à trier le résultat"],ex:"Sans GROUP BY, un agrégat donne une seule ligne pour toute la sélection."},
+// ---------- Jointures ----------
+{n:1,t:'Jointures',q:"Dans une jointure, la condition <code>ON</code> relie le plus souvent :",o:["une clé étrangère à la clé primaire qu’elle référence","deux clés primaires quelconques","deux attributs de même nom, quels qu’ils soient","un attribut et une valeur"],ex:"<code>ON Table1.fk = Table2.pk</code>."},
+{n:1,t:'Jointures',q:"Le message « ambiguous column name: Num_SS » signifie :",o:["Num_SS existe dans plusieurs tables de la requête : il faut le préfixer","Num_SS n’existe pas","Num_SS vaut NULL","la jointure est impossible"],ex:"On écrit <code>Livre.Num_SS</code> ou <code>Lecteur.Num_SS</code>."},
+{n:1,t:'Jointures',q:"Dans <code>Livre JOIN Lecteur ON Livre.Num_SS = Lecteur.Num_SS</code>, un livre non emprunté :",o:["n’apparaît pas dans le résultat","apparaît avec un lecteur NULL","provoque une erreur","apparaît deux fois"],ex:"Une jointure ne garde que les lignes qui ont une correspondance."},
+{n:1,t:'Jointures',q:"Pour relier 4 tables en chaîne, il faut :",o:["3 JOIN","4 JOIN","2 JOIN","1 seul JOIN"],ex:"n tables = n − 1 jointures."},
+{n:2,t:'Jointures',q:"Combien de lignes renvoie cette jointure ?",code:"SELECT Livre.Titre, Lecteur.Nom_lecteur\nFROM Livre\nJOIN Lecteur ON Livre.Num_SS = Lecteur.Num_SS;\n-- 17 livres, dont 8 non empruntés",o:["9","17","10","8"],ex:"Seuls les 9 livres empruntés ont un lecteur correspondant.",chk:"SELECT COUNT(*) FROM Livre JOIN Lecteur ON Livre.Num_SS = Lecteur.Num_SS;"},
+{n:2,t:'Jointures',q:"Combien de lignes renvoie cette requête ?",code:"SELECT Livre.Titre\nFROM Livre\nJOIN Ecrire ON Livre.Isbn = Ecrire.Isbn\nJOIN Auteur ON Ecrire.Id_auteur = Auteur.Id_auteur\nWHERE Auteur.Nom_auteur = 'Camus';",o:["2","1","0","3"],ex:"L’étranger et La peste : trois tables, donc deux JOIN.",chk:"SELECT COUNT(*) FROM Livre JOIN Ecrire ON Livre.Isbn = Ecrire.Isbn JOIN Auteur ON Ecrire.Id_auteur = Auteur.Id_auteur WHERE Auteur.Nom_auteur = 'Camus';"},
+{n:3,t:'Jointures',q:"Quelle requête donne les titres des livres écrits par Descartes ?",o:["<code>SELECT Livre.Titre FROM Livre JOIN Ecrire ON Livre.Isbn = Ecrire.Isbn JOIN Auteur ON Ecrire.Id_auteur = Auteur.Id_auteur WHERE Auteur.Nom_auteur = 'Descartes';</code>","<code>SELECT Livre.Titre FROM Livre JOIN Auteur ON Livre.Isbn = Auteur.Id_auteur WHERE Auteur.Nom_auteur = 'Descartes';</code>","<code>SELECT Titre FROM Livre WHERE Nom_auteur = 'Descartes';</code>","<code>SELECT Livre.Titre FROM Livre JOIN Ecrire JOIN Auteur WHERE Nom_auteur = Descartes;</code>"],ex:"Livre et Auteur ne sont reliés que par Ecrire : chemin Livre → Ecrire → Auteur, une condition par lien."},
+{n:3,t:'Jointures',q:"Combien de lignes renvoie cette requête ?",code:"SELECT DISTINCT Lecteur.Nom_lecteur\nFROM Lecteur\nJOIN Livre ON Lecteur.Num_SS = Livre.Num_SS;",o:["7","9","10","5"],ex:"9 livres empruntés, mais Michu et Nguyen en ont deux chacun : DISTINCT garde 7 noms.",chk:"SELECT COUNT(*) FROM (SELECT DISTINCT Lecteur.Nom_lecteur FROM Lecteur JOIN Livre ON Lecteur.Num_SS = Livre.Num_SS);"},
+{n:2,t:'Jointures',q:"Pour obtenir le nom des marins qui ont réservé un bateau bleu, quelles tables faut-il relier ?",o:["Marin, Reservation et Bateau (2 JOIN)","Marin et Bateau (1 JOIN)","Reservation seule","Marin seule"],ex:"Le nom est dans Marin, la couleur dans Bateau : Reservation fait le lien."},
+{n:2,t:'Jointures',q:"Une jointure écrite sans condition de jointure :",o:["associe chaque ligne de la première table à toutes les lignes de la seconde","renvoie une erreur","renvoie une table vide","supprime les doublons"],ex:"On obtient toutes les combinaisons : le résultat n’a pas de sens."},
+{n:3,t:'Jointures',q:"Que renvoie cette requête ?",code:"SELECT COUNT(*)\nFROM Livre\nJOIN Lecteur ON Livre.Num_SS = Lecteur.Num_SS\nWHERE Lecteur.Age > 40;",o:["4","3","5","9"],ex:"Michu (66 ans) a 2 livres, Diallo (48 ans) et Rossi (42 ans) un chacun ; Topor et Moreau n’en ont aucun.",chk:"SELECT COUNT(*) FROM Livre JOIN Lecteur ON Livre.Num_SS = Lecteur.Num_SS WHERE Lecteur.Age > 40;"},
+{n:3,t:'Jointures',q:"Cette requête s’exécute, mais son résultat est faux. Pourquoi ?",code:"SELECT DISTINCT Marin.Mnom\nFROM Marin\nJOIN Reservation ON Marin.Mid = Reservation.Mid\nJOIN Bateau ON Reservation.Mid = Bateau.Bid\nWHERE Bateau.couleur = 'bleu';",o:["la 2e condition relie Reservation.Mid à Bateau.Bid, des attributs sans rapport","il faut écrire deux DISTINCT","on ne peut pas écrire deux JOIN","couleur doit être préfixé par Marin"],ex:"Il faut <code>Reservation.Bid = Bateau.Bid</code> : clé étrangère = clé primaire qu’elle référence."},
+// ---------- Mettre à jour ----------
+{n:1,t:'Mises à jour',q:"Quelle requête modifie l’année d’un seul livre ?",o:["<code>UPDATE Livre SET Annee = 1943 WHERE Isbn = 9782070293889;</code>","<code>UPDATE Livre SET Annee = 1943;</code>","<code>UPDATE Annee = 1943 FROM Livre;</code>","<code>INSERT INTO Livre (Annee) VALUES (1943);</code>"],ex:"Sans WHERE, tous les livres seraient modifiés."},
+{n:1,t:'Mises à jour',q:"<code>DELETE FROM Lecteur;</code> (sans WHERE) :",o:["supprime toutes les lignes de Lecteur","supprime la table et sa structure","ne fait rien","provoque une erreur de syntaxe"],ex:"La table reste, vide. Tester son WHERE avec un SELECT avant."},
+{n:1,t:'Mises à jour',q:"Quelle requête ajoute une ligne ?",o:["<code>INSERT INTO Marin VALUES (12, 'Riou', 3, 30);</code>","<code>ADD INTO Marin VALUES (12, 'Riou', 3, 30);</code>","<code>UPDATE Marin ADD (12, 'Riou', 3, 30);</code>","<code>SELECT INTO Marin (12, 'Riou', 3, 30);</code>"],ex:"INSERT INTO … VALUES …"},
+{n:2,t:'Mises à jour',q:"Paul Nguyen rend « 1984 » (Isbn 9782070368228). Quelle requête l’enregistre ?",o:["<code>UPDATE Livre SET Num_SS = NULL WHERE Isbn = 9782070368228;</code>","<code>DELETE FROM Livre WHERE Isbn = 9782070368228;</code>","<code>UPDATE Livre SET Num_SS = NULL;</code>","<code>DELETE FROM Lecteur WHERE Nom_lecteur = 'Nguyen';</code>"],ex:"Le livre reste dans la base ; il redevient disponible."},
+{n:2,t:'Mises à jour',q:"Combien de lignes cette requête modifie-t-elle ?",code:"UPDATE Marin SET nbSorties = nbSorties + 1\nWHERE nbSorties >= 20;",o:["4","10","3","1"],ex:"Corto (22), Haddock (35), Tabarly (41) et Joyon (27).",chk:"SELECT COUNT(*) FROM Marin WHERE nbSorties >= 20;"},
+{n:3,t:'Mises à jour',q:"Pour supprimer l’auteur Camus (Id_auteur 4) sans violer de contrainte, il faut d’abord :",o:["supprimer ses lignes dans Ecrire","supprimer ses livres dans Lecteur","modifier sa clé primaire","rien, la suppression est directe"],ex:"On supprime d’abord les lignes qui font référence à l’auteur ; à l’inverse, on insère d’abord la ligne référencée."},
+// ---------- Méthode, rédaction ----------
+{n:3,t:'Rédaction',q:"« Justifier que <code>Num_SS</code> peut servir de clé primaire de <code>Lecteur</code>. » Quelle réponse est complète ?",o:["Deux lecteurs distincts ne peuvent pas avoir le même numéro de sécurité sociale, et ce numéro est toujours renseigné.","Num_SS c’est la clé car c’est unique.","Parce que c’est un nombre.","Parce qu’il est en premier dans la table."],ex:"Phrase complète, vocabulaire du cours : unicité et absence de NULL."},
+{n:3,t:'Rédaction',q:"« Expliquer pourquoi Roland Topor n’apparaît pas dans le résultat de <code>Livre JOIN Lecteur ON Livre.Num_SS = Lecteur.Num_SS</code>. »",o:["Aucun livre ne fait référence à son Num_SS : il n’a pas de correspondance dans la jointure.","Il a plus de 80 ans.","Son nom contient une majuscule.","La jointure garde seulement la première ligne."],ex:"Une jointure ne garde que les lignes qui ont une correspondance."}
+];
+
+(function(){
+  const LV={1:'⭐ Bases',2:'⭐⭐ Entraînement',3:'⭐⭐⭐ Type bac'};
+  const esc=s=>String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  const shuffle=a=>{const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;};
+  const pressed=id=>document.querySelector('#'+id+' [aria-pressed="true"]').dataset.v;
+  let cur=[],done=false;
+  document.getElementById('bq-total').textContent=BDD_QCM.length;
+  ['bq-nb','bq-lvl'].forEach(function(id){document.querySelectorAll('#'+id+' .bq-chip').forEach(function(b){b.addEventListener('click',function(){
+    document.querySelectorAll('#'+id+' .bq-chip').forEach(x=>x.setAttribute('aria-pressed','false'));b.setAttribute('aria-pressed','true');draw();});});});
+  function draw(){
+    done=false;const lvl=+pressed('bq-lvl'),nb=pressed('bq-nb');
+    let pool=BDD_QCM.filter(q=>!lvl||q.n===lvl);pool=shuffle(pool);if(nb!=='all')pool=pool.slice(0,+nb);
+    cur=pool.map(q=>Object.assign({},q,{ord:shuffle(q.o.map((t,i)=>({t,i})))}));
+    const box=document.getElementById('bq-questions');
+    box.innerHTML=cur.map(function(q,k){return '<div class="bq-q" id="bq-'+k+'"><div class="bq-num">Question '+(k+1)+' / '+cur.length+'<em>'+LV[q.n]+' · '+q.t+'</em></div><p class="bq-text">'+q.q+'</p>'+
+      (q.code?'<pre><code>'+esc(q.code)+'</code></pre>':'')+'<div class="bq-opts">'+q.ord.map(function(o,j){return '<label id="bq-'+k+'-'+j+'"><input type="radio" name="bq'+k+'" value="'+j+'"><span>'+o.t+'</span></label>';}).join('')+
+      '</div><div class="bq-fb" id="bq-fb-'+k+'"></div></div>';}).join('');
+    const sc=document.getElementById('bq-score');sc.style.display='none';sc.innerHTML='';
+    const sub=document.getElementById('bq-submit');sub.disabled=false;sub.style.opacity='1';
+  }
+  function submit(){
+    if(done)return;done=true;let score=0;
+    cur.forEach(function(q,k){
+      const good=q.ord.findIndex(o=>o.i===0),sel=document.querySelector('input[name="bq'+k+'"]:checked'),fb=document.getElementById('bq-fb-'+k);
+      document.querySelectorAll('input[name="bq'+k+'"]').forEach(r=>r.disabled=true);
+      document.getElementById('bq-'+k+'-'+good).classList.add('correct');
+      const ok=sel&&+sel.value===good;if(ok)score++;else if(sel)document.getElementById('bq-'+k+'-'+sel.value).classList.add('wrong');
+      document.getElementById('bq-'+k).classList.add(ok?'ok':'ko');
+      fb.innerHTML=(ok?'✅ Bonne réponse. ':sel?'❌ Mauvaise réponse. ':'⏳ Pas de réponse. ')+q.ex;fb.classList.add('show');
+    });
+    const n=cur.length,r=score/n,msg=r<.3?'Relis le cours et la fiche résumé.':r<.5?'Quelques révisions s’imposent.':r<.7?'Pas mal, continue !':r<.9?'Très bien !':'Parfait !';
+    const sc=document.getElementById('bq-score');sc.innerHTML='<b>'+score+' / '+n+'</b>≈ '+Math.round(r*20)+' / 20 · '+msg;sc.style.display='block';
+    sc.scrollIntoView({behavior:'smooth',block:'center'});
+    const sub=document.getElementById('bq-submit');sub.disabled=true;sub.style.opacity='.5';
+  }
+  document.getElementById('bq-new').addEventListener('click',draw);document.getElementById('bq-new2').addEventListener('click',draw);
+  document.getElementById('bq-submit').addEventListener('click',submit);
+  draw();
+})();
 </script>
 
 <!-- ===================== Base d'entraînement (script SQL) ===================== -->
