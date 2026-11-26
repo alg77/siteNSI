@@ -1544,23 +1544,91 @@
   ],
   "interface": {
     "title": "Une interface graphique pour ton RPG",
-    "goal": "Créer le personnage dans une fenêtre, puis jouer les trois combats avec des boutons.",
-    "session": "Partie 7 · sur ordinateur, environ trois séances. Séance 1 : notions 1 à 7, puis étapes 1 et 2 de la mission (fenêtre d’accueil et formulaire). Séance 2 : notions 8 à 10, étapes 3 et 4 (validation du personnage, écran de combat). Séance 3 : notions 11 et 12, étapes 5 à 7 (les combats, la fin de partie, les tests). Tkinter ne fonctionne pas dans le navigateur : écris et lance ce programme dans Thonny, IDLE ou VS Code.",
+    "goal": "Jouer à ton RPG dans une vraie fenêtre : on crée le personnage en remplissant des cases, puis on combat en cliquant sur des boutons.",
+    "session": "Partie 7 · sur ordinateur, environ trois séances.\nSéance 1 : notions 1 à 7, puis étapes 1 et 2 de la mission (la fenêtre d’accueil et les questions de création).\nSéance 2 : notions 8 à 10, puis étapes 3 et 4 (vérifier le personnage, préparer l’écran de combat).\nSéance 3 : notions 11 à 13, puis étapes 5 à 8 (les combats, la fin de partie, les images des monstres, les tests). Tu peux générer l’image de ton monstre à la maison.\nAttention : cette partie ne fonctionne pas dans le navigateur. Écris et lance ton programme dans Thonny (ou IDLE, ou VS Code).",
     "setup": {
       "title": "Avant de commencer",
       "paragraphs": [
-        "Tkinter est fourni avec Python : rien à installer. Crée un dossier de travail, enregistre-y le squelette interface_rpg_eleve.py et l’image fond_foret.png, puis ouvre le squelette dans Thonny (ou IDLE). Lance-le avec la flèche verte (F5).",
-        "Chaque exemple ci-dessous est un programme complet. Copie-le dans un nouveau fichier enregistré dans le même dossier, lance-le, observe la fenêtre, puis modifie une valeur pour voir ce qui change. N’appelle jamais ton fichier tkinter.py : Python importerait ton fichier à la place de la vraie bibliothèque.",
-        "À rendre : NOM_Prenom_rpg_interface.py (et l’image de fond si tu en utilises une autre que fond_foret.png)."
+        "La bibliothèque qui dessine les fenêtres s’appelle tkinter. Elle est déjà installée avec Python : il n’y a rien à télécharger en plus.",
+        "Crée un dossier de travail. Enregistre dedans le squelette interface_rpg_eleve.py, l’image fond_foret.png et les trois images de monstres gobelin.png, araignee.png et troll.png (à télécharger sur la page de la partie 7 du site). Ouvre le squelette dans Thonny et lance-le avec la flèche verte (touche F5).",
+        "Chaque exemple de cette page est un petit programme complet. Copie-le dans un nouveau fichier, enregistré dans le même dossier, lance-le et compare avec la capture d’écran. Puis change une valeur (une couleur, un texte, une taille) pour voir ce qui change.",
+        "Ne donne jamais à ton fichier le nom tkinter.py : Python chargerait ton fichier à la place de la vraie bibliothèque, et plus rien ne marcherait.",
+        "À rendre : le fichier NOM_Prenom_rpg_interface.py et l’image du monstre que tu as généré (et ton image de fond si tu en as choisi une autre)."
       ]
     },
     "principle": {
       "title": "Ce qui change avec une interface",
       "paragraphs": [
-        "Jusqu’ici, ton programme posait des questions avec input() et répétait les tours avec while : c’est lui qui menait le jeu.",
-        "Avec une interface, on décrit d’abord la fenêtre (textes, zones de saisie, boutons), puis mainloop() attend les actions du joueur. Chaque bouton est relié à une fonction : un clic = un appel de cette fonction. C’est la programmation événementielle.",
-        "Conséquence pour le combat : pas de while. Un clic sur « Attaquer » joue un tour, puis la fenêtre attend le clic suivant. C’est mainloop() qui joue le rôle de la boucle.",
-        "Les fonctions de tes parties 2 et 5 (lancer_de, appliquer_degats, soigner, est_vivant, est_attaque_passee) se réutilisent telles quelles. Seule la façon de saisir et d’afficher change."
+        "Jusqu’ici, ton programme posait des questions avec input() et faisait durer le combat avec while : c’est le programme qui décidait quand le joueur parlait.",
+        "Avec une interface, c’est l’inverse. On commence par dessiner la fenêtre : des textes, des cases à remplir, des boutons. Puis le programme attend. Quand le joueur clique sur un bouton, Python exécute la fonction que tu as reliée à ce bouton. Un clic = un appel de fonction.",
+        "Conséquence pour le combat : plus de while. Un clic sur « Attaquer » joue un seul tour, puis la fenêtre attend le clic suivant.",
+        "Bonne nouvelle : tes fonctions des parties 2 et 5 (lancer_de, appliquer_degats, soigner, est_vivant, est_attaque_passee) se réutilisent sans changement. Seule la façon de poser les questions et d’afficher les résultats change."
+      ]
+    },
+    "lexique": {
+      "title": "Les mots de l’interface",
+      "intro": "Les éléments qu’on pose dans une fenêtre ont un nom en anglais dans tkinter. Garde ce tableau sous les yeux : les consignes donnent toujours le mot français, puis le nom tkinter entre parenthèses.",
+      "rows": [
+        [
+          "la fenêtre",
+          "Tk",
+          "le cadre de l’application, avec son titre en haut"
+        ],
+        [
+          "une étiquette",
+          "Label",
+          "un texte (ou une image) affiché dans la fenêtre"
+        ],
+        [
+          "une case de saisie",
+          "Entry",
+          "une case où le joueur tape une ligne de texte, comme un nom"
+        ],
+        [
+          "un bouton",
+          "Button",
+          "on clique dessus, il lance une fonction"
+        ],
+        [
+          "des boutons ronds",
+          "Radiobutton",
+          "plusieurs choix, un seul coché à la fois (comme un QCM)"
+        ],
+        [
+          "un compteur à flèches",
+          "Spinbox",
+          "un nombre qu’on augmente ou diminue avec deux petites flèches"
+        ],
+        [
+          "un cadre",
+          "Frame",
+          "un rectangle qui regroupe plusieurs éléments, comme une page"
+        ],
+        [
+          "une zone de dessin",
+          "Canvas",
+          "on peut y dessiner des rectangles (nos barres de vie)"
+        ],
+        [
+          "une zone de texte",
+          "Text",
+          "une grande case de plusieurs lignes (notre journal de combat)"
+        ],
+        [
+          "poser un élément",
+          "pack, grid, place",
+          "pack les empile de haut en bas ; grid les range en tableau (ligne, colonne) ; place les met à une position précise"
+        ],
+        [
+          "modifier un élément",
+          "config",
+          "changer après coup son texte, sa couleur, ou griser un bouton"
+        ],
+        [
+          "lire une case",
+          "get",
+          "récupérer ce que le joueur a tapé ou choisi"
+        ]
       ]
     },
     "concepts": [
@@ -1568,153 +1636,162 @@
         "title": "1. Ouvrir une fenêtre",
         "code": "import tkinter as tk\n\nfenetre = tk.Tk()\nfenetre.title(\"La forêt interdite\")\nfenetre.geometry(\"600x400\")\n\nfenetre.mainloop()",
         "image": "",
-        "text": "On importe tkinter sous le nom court tk. tk.Tk() crée la fenêtre principale ; title change le texte de la barre de titre ; geometry fixe la taille en pixels (largeur x hauteur, avec la lettre x). mainloop() affiche la fenêtre et attend les actions du joueur.",
-        "result": "Une fenêtre vide de 600 × 400 pixels, intitulée « La forêt interdite ». Le programme se termine quand on la ferme.",
-        "trap": "mainloop() se place toujours à la fin : les lignes écrites après ne s’exécutent qu’à la fermeture de la fenêtre. Sans mainloop(), la fenêtre peut s’ouvrir et se refermer aussitôt."
+        "text": "La première ligne charge la bibliothèque tkinter et lui donne le surnom tk, plus court à écrire. tk.Tk() crée la fenêtre. title() écrit le titre dans la barre tout en haut. geometry(\"600x400\") règle la taille : 600 pixels de large et 400 de haut (un pixel est un point de l’écran ; on écrit la lettre x entre les deux nombres). mainloop() affiche la fenêtre et attend que le joueur fasse quelque chose.",
+        "result": "Une fenêtre vide de 600 × 400 pixels, avec « La forêt interdite » écrit dans la barre de titre. Le programme s’arrête quand on ferme la fenêtre.",
+        "trap": "mainloop() est toujours la dernière ligne. Ce qui est écrit après ne s’exécute qu’une fois la fenêtre fermée."
       },
       {
         "title": "2. Afficher un texte de bienvenue",
         "code": "import tkinter as tk\n\nfenetre = tk.Tk()\nfenetre.title(\"La forêt interdite\")\nfenetre.geometry(\"600x400\")\n\ntitre = tk.Label(fenetre, text=\"Bienvenue dans la forêt interdite !\",\n                 font=(\"Arial\", 20, \"bold\"), fg=\"darkgreen\")\ntitre.pack(pady=20)\n\nconsigne = tk.Label(fenetre, text=\"Crée ton personnage pour commencer l'aventure.\",\n                    font=(\"Arial\", 12))\nconsigne.pack()\n\nfenetre.mainloop()",
         "image": "s02.png",
-        "text": "Un Label est une étiquette qui affiche un texte. Le premier argument indique où le placer (ici, dans fenetre). font choisit la police, la taille et le style ; fg (foreground) la couleur du texte. pack() place le widget sous le précédent ; pady ajoute de l’espace au-dessus et en dessous. Une instruction trop longue peut continuer à la ligne suivante tant qu’une parenthèse est ouverte : on aligne alors la suite sous le premier argument.",
-        "result": "Le titre en vert et en gras en haut de la fenêtre, la consigne en dessous.",
-        "trap": "Créer un Label ne suffit pas : sans pack(), il n’apparaît pas. Un widget est un élément de l’interface : étiquette, bouton, zone de saisie…"
+        "text": "Pour écrire un texte dans la fenêtre, on crée une étiquette (Label). Entre les parenthèses, on indique : dans quelle fenêtre la mettre, le texte, la police (nom, taille, gras) et la couleur des lettres avec fg. Créer l’étiquette ne suffit pas : il faut ensuite la poser dans la fenêtre avec pack(). pack() empile les éléments de haut en bas, dans l’ordre où on les pose. pady=20 laisse 20 pixels de vide au-dessus et en dessous. Quand une ligne est trop longue, on peut aller à la ligne tant qu’une parenthèse est ouverte.",
+        "result": "Le titre en vert et en gras en haut de la fenêtre, la phrase de consigne juste en dessous.",
+        "trap": "Une étiquette sans pack() n’apparaît pas : c’est l’oubli le plus fréquent."
       },
       {
         "title": "3. Une couleur de fond",
         "code": "import tkinter as tk\n\nFOND = \"#1f3d2b\"\n\nfenetre = tk.Tk()\nfenetre.title(\"La forêt interdite\")\nfenetre.geometry(\"600x400\")\nfenetre.configure(bg=FOND)\n\ntitre = tk.Label(fenetre, text=\"Bienvenue dans la forêt interdite !\",\n                 font=(\"Arial\", 20, \"bold\"), fg=\"white\", bg=FOND)\ntitre.pack(pady=20)\n\nconsigne = tk.Label(fenetre, text=\"Crée ton personnage pour commencer l'aventure.\",\n                    font=(\"Arial\", 12), fg=\"lightgreen\", bg=FOND)\nconsigne.pack()\n\nfenetre.mainloop()",
         "image": "s03.png",
-        "text": "configure(bg=...) change la couleur de fond (background) de la fenêtre. Une couleur s’écrit par son nom anglais (\"white\", \"darkgreen\") ou par son code hexadécimal (\"#1f3d2b\"). Ranger la couleur dans une constante FOND évite de la recopier partout et permet de la changer en une seule ligne.",
-        "result": "Une fenêtre vert forêt, avec le titre en blanc et la consigne en vert clair.",
-        "trap": "Chaque Label a son propre fond, gris par défaut. Donne-lui aussi bg=FOND, sinon il apparaît comme un rectangle gris sur le fond vert."
+        "text": "configure(bg=...) change la couleur du fond de la fenêtre (bg veut dire background, l’arrière-plan). Une couleur s’écrit avec son nom anglais (\"white\", \"darkgreen\") ou avec un code comme \"#1f3d2b\", qu’on trouve avec un sélecteur de couleur sur internet. On range la couleur dans une variable FOND : si on veut la changer, on ne modifie qu’une ligne.",
+        "result": "Une fenêtre vert foncé, avec le titre en blanc et la consigne en vert clair.",
+        "trap": "Chaque étiquette a son propre fond, gris par défaut. Donne-lui aussi bg=FOND, sinon un rectangle gris apparaît autour du texte."
       },
       {
         "title": "4. Une image de fond",
         "code": "import tkinter as tk\n\nFOND = \"#1f3d2b\"\n\nfenetre = tk.Tk()\nfenetre.title(\"La forêt interdite\")\nfenetre.geometry(\"800x500\")\n\nfond = tk.PhotoImage(file=\"fond_foret.png\")\nimage_fond = tk.Label(fenetre, image=fond)\nimage_fond.place(x=0, y=0, relwidth=1, relheight=1)\n\ntitre = tk.Label(fenetre, text=\"Bienvenue dans la forêt interdite !\",\n                 font=(\"Arial\", 22, \"bold\"), fg=\"white\", bg=FOND)\ntitre.pack(pady=20)\n\nfenetre.mainloop()",
         "image": "s04.png",
-        "text": "tk.PhotoImage lit une image PNG ou GIF. On l’affiche dans un Label, placé avec place(x=0, y=0, relwidth=1, relheight=1) : il occupe toute la fenêtre. Les widgets créés ensuite s’affichent par-dessus. L’image fournie fond_foret.png mesure 800 × 500 pixels, comme la fenêtre.",
-        "result": "L’illustration de la forêt remplit la fenêtre ; le titre s’affiche par-dessus, sur un bandeau vert.",
-        "trap": "Le fichier image doit être dans le même dossier que ton programme, sinon tu obtiens l’erreur « couldn't open \"fond_foret.png\" ». Garde l’image dans une variable (fond) : si elle disparaît, l’image ne s’affiche plus. Les fichiers JPG ne sont pas acceptés par PhotoImage."
+        "text": "tk.PhotoImage(file=\"fond_foret.png\") charge une image. On la met dans une étiquette, puis on pose cette étiquette avec place(x=0, y=0, relwidth=1, relheight=1) : elle part du coin en haut à gauche et occupe toute la largeur et toute la hauteur. Tout ce qu’on pose ensuite s’affiche par-dessus l’image. L’image fond_foret.png fait 800 × 500 pixels, la même taille que la fenêtre.",
+        "result": "L’illustration de la forêt remplit la fenêtre, le titre s’affiche par-dessus sur un bandeau vert.",
+        "trap": "L’image doit être dans le même dossier que ton programme, sinon Python affiche l’erreur « couldn't open \"fond_foret.png\" ». Utilise une image PNG ou GIF : les JPG ne marchent pas ici."
       },
       {
-        "title": "5. Une zone de saisie et un bouton : le nom",
+        "title": "5. Une case de saisie et un bouton : le nom",
         "code": "import tkinter as tk\n\ndef valider_nom():\n    nom = saisie_nom.get()\n    if nom == \"\":\n        message.config(text=\"Entre un nom.\", fg=\"firebrick\")\n    else:\n        message.config(text=\"Bienvenue, \" + nom + \" !\", fg=\"darkgreen\")\n\nfenetre = tk.Tk()\nfenetre.title(\"La forêt interdite\")\nfenetre.geometry(\"600x400\")\n\ntk.Label(fenetre, text=\"Nom du personnage :\", font=(\"Arial\", 12)).pack(pady=10)\nsaisie_nom = tk.Entry(fenetre, width=25)\nsaisie_nom.pack()\ntk.Button(fenetre, text=\"Valider\", command=valider_nom).pack(pady=10)\nmessage = tk.Label(fenetre, text=\"\", font=(\"Arial\", 12))\nmessage.pack()\n\nfenetre.mainloop()",
         "image": "s05.png",
-        "text": "Entry est une zone de saisie d’une ligne ; get() renvoie le texte tapé, comme input(). Un Button exécute la fonction donnée dans command à chaque clic. config(text=...) modifie un Label déjà affiché : c’est ainsi qu’on écrit un message dans la fenêtre.",
-        "result": "Après avoir tapé Lina et cliqué sur Valider : « Bienvenue, Lina ! » en vert. Sans nom : « Entre un nom. » en rouge.",
-        "trap": "Écris command=valider_nom sans parenthèses : on donne la fonction au bouton, qui l’appellera au clic. Avec valider_nom(), elle serait appelée une seule fois, au lancement. La fonction est définie avant les widgets qu’elle utilise : ce n’est pas un problème, car elle ne s’exécute qu’au clic, quand ils existent."
+        "text": "Une case de saisie (Entry) permet au joueur de taper un texte. saisie_nom.get() récupère ce qui a été tapé : c’est l’équivalent de input(). Un bouton (Button) lance une fonction à chaque clic : on écrit le nom de cette fonction après command=. Pour afficher un message, on modifie une étiquette déjà posée avec config(text=...).",
+        "result": "On tape Lina puis on clique sur Valider : « Bienvenue, Lina ! » s’affiche en vert. Si la case est vide : « Entre un nom. » en rouge.",
+        "trap": "Écris command=valider_nom, sans parenthèses. Avec des parenthèses, la fonction serait lancée une seule fois au démarrage, et plus jamais au clic."
       },
       {
-        "title": "6. Choisir la classe avec des boutons radio",
+        "title": "6. Choisir la classe avec des boutons ronds",
         "code": "import tkinter as tk\n\ndef afficher_classe():\n    message.config(text=\"Classe choisie : \" + classe_choisie.get())\n\nfenetre = tk.Tk()\nfenetre.title(\"La forêt interdite\")\nfenetre.geometry(\"600x400\")\n\ntk.Label(fenetre, text=\"Choisis ta classe :\", font=(\"Arial\", 12)).pack(pady=10)\nclasse_choisie = tk.StringVar(value=\"guerrier\")\nfor classe in [\"guerrier\", \"mage\", \"archer\"]:\n    tk.Radiobutton(fenetre, text=classe, value=classe, variable=classe_choisie).pack()\n\ntk.Button(fenetre, text=\"Valider\", command=afficher_classe).pack(pady=10)\nmessage = tk.Label(fenetre, text=\"\", font=(\"Arial\", 12))\nmessage.pack()\n\nfenetre.mainloop()",
         "image": "s06.png",
-        "text": "Des boutons radio permettent de choisir une seule option parmi plusieurs. Ils partagent une variable Tkinter : tk.StringVar(value=\"guerrier\") crée cette variable et choisit la valeur de départ. Chaque bouton indique la valeur qu’il donne à la variable (value=classe). get() lit le choix. La boucle for crée les trois boutons sans recopier trois fois la même ligne.",
-        "result": "Trois boutons guerrier, mage, archer ; un seul peut être coché. Valider affiche « Classe choisie : mage ».",
-        "trap": "Tous les boutons doivent partager la même variable, sinon plusieurs peuvent être cochés en même temps. Avec des boutons radio, une classe inconnue comme « dragon » devient impossible : l’interface empêche certaines erreurs de saisie."
+        "text": "Les boutons ronds (Radiobutton) proposent plusieurs choix dont un seul peut être coché, comme dans un QCM. Ils partagent une même variable spéciale, créée avec tk.StringVar(value=\"guerrier\") : value donne le choix coché au départ. Chaque bouton indique la valeur qu’il met dans la variable quand on le coche. classe_choisie.get() donne le choix du joueur. La boucle for crée les trois boutons sans écrire trois fois la même ligne.",
+        "result": "Trois boutons guerrier, mage et archer, un seul coché à la fois. Valider affiche « Classe choisie : mage ».",
+        "trap": "Plus besoin de vérifier si la classe existe : le joueur ne peut pas taper « dragon ». Une bonne interface évite des erreurs de saisie."
       },
       {
-        "title": "7. Les compétences : Spinbox et rangement en grille",
+        "title": "7. Les compétences : compteurs à flèches et rangement en tableau",
         "code": "import tkinter as tk\n\ndef mettre_a_jour_total():\n    total = int(choix_force.get()) + int(choix_intel.get()) + int(choix_agilite.get())\n    restants.config(text=\"Points restants : \" + str(15 - total))\n\nfenetre = tk.Tk()\nfenetre.title(\"La forêt interdite\")\nfenetre.geometry(\"600x400\")\n\nformulaire = tk.Frame(fenetre, padx=20, pady=20)\nformulaire.pack(pady=20)\n\ntk.Label(formulaire, text=\"Force :\").grid(row=0, column=0, sticky=\"e\")\nchoix_force = tk.Spinbox(formulaire, from_=0, to=15, width=4, state=\"readonly\",\n                         command=mettre_a_jour_total)\nchoix_force.grid(row=0, column=1, pady=3)\n\ntk.Label(formulaire, text=\"Intelligence :\").grid(row=1, column=0, sticky=\"e\")\nchoix_intel = tk.Spinbox(formulaire, from_=0, to=15, width=4, state=\"readonly\",\n                         command=mettre_a_jour_total)\nchoix_intel.grid(row=1, column=1, pady=3)\n\ntk.Label(formulaire, text=\"Agilité :\").grid(row=2, column=0, sticky=\"e\")\nchoix_agilite = tk.Spinbox(formulaire, from_=0, to=15, width=4, state=\"readonly\",\n                           command=mettre_a_jour_total)\nchoix_agilite.grid(row=2, column=1, pady=3)\n\nrestants = tk.Label(formulaire, text=\"Points restants : 15\", font=(\"Arial\", 11, \"bold\"))\nrestants.grid(row=3, column=0, columnspan=2, pady=10)\n\nfenetre.mainloop()",
         "image": "s07.png",
-        "text": "Un Spinbox est une zone de nombre avec deux flèches : from_ et to fixent les bornes (0 à 15). state=\"readonly\" empêche de taper au clavier : seules les flèches changent la valeur. command appelle une fonction à chaque clic sur une flèche : ici, elle recalcule les points restants. Une Frame est un cadre qui regroupe des widgets ; à l’intérieur, grid(row=..., column=...) les range en lignes et en colonnes, comme un tableau.",
-        "result": "Un formulaire aligné. Avec force 5 et intelligence 4 : « Points restants : 6 ».",
-        "trap": "get() renvoie du texte, même pour un Spinbox : il faut int() avant de calculer. Dans un même cadre, utilise soit pack, soit grid, jamais les deux : Tkinter se bloquerait. Ici, la Frame est placée avec pack dans la fenêtre, et ses widgets avec grid dans la Frame."
+        "text": "Un compteur à flèches (Spinbox) affiche un nombre que l’on change avec deux petites flèches. from_=0 et to=15 sont le minimum et le maximum. state=\"readonly\" interdit de taper au clavier : seules les flèches marchent. command=mettre_a_jour_total lance cette fonction à chaque clic sur une flèche : elle recalcule les points restants.\nPour aligner proprement les questions, on les regroupe dans un cadre (Frame) et on les range comme dans un tableau avec grid(row=..., column=...) : row est le numéro de ligne, column le numéro de colonne, en commençant à 0.",
+        "result": "Un petit formulaire bien aligné. Avec force 5 et intelligence 4 : « Points restants : 6 ».",
+        "trap": "get() renvoie toujours du texte, même pour un nombre : écris int(choix_force.get()) avant de calculer. Dans un même cadre, choisis une seule façon de poser les éléments : soit pack, soit grid, jamais les deux (la fenêtre se bloquerait)."
       },
       {
-        "title": "8. Valider le personnage et le ranger dans un dictionnaire",
+        "title": "8. Vérifier le personnage et le ranger dans un dictionnaire",
         "code": "import tkinter as tk\n\nhero = {}\n\ndef creer_personnage():\n    nom = saisie_nom.get()\n    force = int(choix_force.get())\n    intelligence = int(choix_intel.get())\n    agilite = int(choix_agilite.get())\n    total = force + intelligence + agilite\n    if nom == \"\":\n        message.config(text=\"Entre un nom.\", fg=\"firebrick\")\n    elif total != 15:\n        texte = \"La somme doit valoir 15 (actuellement \" + str(total) + \").\"\n        message.config(text=texte, fg=\"firebrick\")\n    else:\n        hero[\"nom\"] = nom\n        hero[\"force\"] = force\n        hero[\"intelligence\"] = intelligence\n        hero[\"agilite\"] = agilite\n        hero[\"attaque\"] = 7 + force\n        hero[\"defense\"] = 4 + agilite\n        texte = nom + \" est prêt : attaque \" + str(hero[\"attaque\"])\n        texte = texte + \", défense \" + str(hero[\"defense\"]) + \".\"\n        message.config(text=texte, fg=\"darkgreen\")\n\nfenetre = tk.Tk()\nfenetre.title(\"La forêt interdite\")\nfenetre.geometry(\"600x400\")\n\ntk.Label(fenetre, text=\"Nom :\").pack()\nsaisie_nom = tk.Entry(fenetre)\nsaisie_nom.pack()\ntk.Label(fenetre, text=\"Force, intelligence, agilité :\").pack(pady=5)\nchoix_force = tk.Spinbox(fenetre, from_=0, to=15, width=4, state=\"readonly\")\nchoix_force.pack()\nchoix_intel = tk.Spinbox(fenetre, from_=0, to=15, width=4, state=\"readonly\")\nchoix_intel.pack()\nchoix_agilite = tk.Spinbox(fenetre, from_=0, to=15, width=4, state=\"readonly\")\nchoix_agilite.pack()\ntk.Button(fenetre, text=\"Créer mon personnage\", command=creer_personnage).pack(pady=10)\nmessage = tk.Label(fenetre, text=\"\")\nmessage.pack()\n\nfenetre.mainloop()",
         "image": "s08.png",
-        "text": "Au clic sur « Créer mon personnage », la fonction lit les valeurs, reprend les contrôles du TP1 puis range le personnage dans le dictionnaire hero (partie 6) et calcule l’attaque et la défense du TP5. Une fonction peut modifier le contenu d’un dictionnaire créé en dehors d’elle : hero[\"nom\"] = nom le remplit, et les autres fonctions pourront le lire plus tard.",
-        "result": "Lina, 5 / 4 / 6 : « Lina est prêt : attaque 12, défense 10. » Avec 5 / 5 / 6 : « La somme doit valoir 15 (actuellement 16). »",
-        "trap": "Écrire nom = ... dans la fonction crée une variable qui disparaît à la fin de l’appel. Pour conserver le personnage, range-le dans le dictionnaire hero. Les Spinbox commencent à 0 : les compétences négatives sont impossibles, il reste à contrôler la somme."
+        "text": "Quand on clique sur « Créer mon personnage », la fonction lit toutes les cases, fait les vérifications du TP1 (un nom, une somme de 15), puis range le personnage dans le dictionnaire hero de la partie 6, avec l’attaque et la défense du TP5. Le dictionnaire hero est créé au début du programme, en dehors de la fonction : la fonction peut le remplir, et les autres fonctions pourront le lire plus tard.",
+        "result": "Lina avec 5 / 4 / 6 : « Lina est prêt : attaque 12, défense 10. » Avec 5 / 5 / 6 : « La somme doit valoir 15 (actuellement 16). »",
+        "trap": "Une variable créée dans une fonction (nom = ...) disparaît dès que la fonction est finie. Pour garder le personnage, range-le dans hero. Les compteurs commencent à 0, donc une compétence négative est impossible : il reste seulement à vérifier la somme."
       },
       {
-        "title": "9. Passer de la création au combat : deux écrans",
+        "title": "9. Passer d’un écran à l’autre",
         "code": "import tkinter as tk\n\ndef lancer_aventure():\n    ecran_creation.pack_forget()\n    ecran_combat.pack(pady=40)\n\nfenetre = tk.Tk()\nfenetre.title(\"La forêt interdite\")\nfenetre.geometry(\"600x400\")\n\necran_creation = tk.Frame(fenetre, bg=\"#f4efe1\", padx=30, pady=30)\necran_creation.pack(pady=40)\ntk.Label(ecran_creation, text=\"Écran 1 : création du personnage\", bg=\"#f4efe1\").pack()\ntk.Button(ecran_creation, text=\"Entrer dans la forêt\", command=lancer_aventure).pack(pady=10)\n\necran_combat = tk.Frame(fenetre, bg=\"#fbe0e6\", padx=30, pady=30)\ntk.Label(ecran_combat, text=\"Écran 2 : le combat commence !\", bg=\"#fbe0e6\").pack()\n\nfenetre.mainloop()",
         "image": "s09.png",
-        "text": "Chaque écran est une Frame. On crée les deux au lancement, mais on n’affiche (pack) que le premier. Pour changer d’écran, pack_forget() cache la Frame affichée, puis pack() montre l’autre. Les widgets de l’écran caché ne sont pas détruits : on pourra les réutiliser.",
+        "text": "Chaque écran du jeu est un cadre (Frame) : un pour la création du personnage, un pour le combat. On prépare les deux dès le début, mais on ne pose que le premier. Pour changer d’écran, ecran_creation.pack_forget() retire le premier cadre de la fenêtre, puis ecran_combat.pack() pose le second. Le cadre retiré n’est pas effacé : il est juste caché.",
         "result": "Au clic sur « Entrer dans la forêt », le cadre de création disparaît et le cadre rose du combat apparaît.",
-        "trap": "Un widget doit être créé dans sa Frame (tk.Label(ecran_combat, ...)) et non dans fenetre, sinon il reste affiché quand on change d’écran."
+        "trap": "Chaque élément doit être créé dans son cadre : tk.Label(ecran_combat, ...) et non tk.Label(fenetre, ...). Sinon il reste affiché quand on change d’écran."
       },
       {
-        "title": "10. Afficher les PV : textes, barres de vie et journal",
+        "title": "10. Afficher les PV : texte, barre de vie et journal",
         "code": "import tkinter as tk\n\ndef ecrire(texte):\n    journal.insert(\"end\", texte + \"\\n\")\n    journal.see(\"end\")\n\ndef dessiner_barre(canevas, rectangle, pv, pv_max):\n    largeur = int(200 * pv / pv_max)\n    canevas.coords(rectangle, 0, 0, largeur, 18)\n\nfenetre = tk.Tk()\nfenetre.title(\"La forêt interdite\")\nfenetre.geometry(\"600x400\")\n\ninfos_hero = tk.Label(fenetre, text=\"Lina : 70 PV\", font=(\"Arial\", 12, \"bold\"))\ninfos_hero.pack(pady=10)\n\nbarre_hero = tk.Canvas(fenetre, width=200, height=18, bg=\"white\")\nbarre_hero.pack()\nrect_hero = barre_hero.create_rectangle(0, 0, 200, 18, fill=\"seagreen\", width=0)\ndessiner_barre(barre_hero, rect_hero, 70, 100)\n\njournal = tk.Text(fenetre, width=50, height=8)\njournal.pack(pady=15)\necrire(\"Attention : le gobelin surgit des fourrés !\")\necrire(\"Riposte : le gobelin te frappe, -20 PV.\")\n\nfenetre.mainloop()",
         "image": "s10.png",
-        "text": "Un Canvas est une zone de dessin. create_rectangle(x1, y1, x2, y2, fill=...) y dessine un rectangle et renvoie son numéro ; coords(rectangle, ...) change ensuite ses coordonnées. La barre fait 200 pixels de large à PV pleins : pour 70 PV sur 100, elle mesure 200 × 70 / 100 = 140 pixels. Un widget Text affiche plusieurs lignes : insert(\"end\", ...) ajoute du texte à la fin, see(\"end\") fait défiler jusqu’à la dernière ligne.",
-        "result": "« Lina : 70 PV », une barre verte remplie aux 7/10, et un journal de deux lignes.",
-        "trap": "Après chaque tour, il faut mettre à jour tous les affichages (textes et barres) : les widgets ne se recalculent pas tout seuls quand une variable change. Regroupe ces mises à jour dans une fonction afficher_etat()."
+        "text": "Une zone de dessin (Canvas) sert à dessiner. create_rectangle(0, 0, 200, 18, fill=\"seagreen\") y dessine un rectangle vert de 200 pixels de long et 18 de haut. Pour faire baisser la barre, on change sa longueur avec coords. Le calcul : 200 pixels quand les PV sont pleins, donc 200 × 70 / 100 = 140 pixels pour 70 PV sur 100.\nLe journal est une zone de texte (Text) de plusieurs lignes. insert(\"end\", ...) écrit une ligne à la fin, see(\"end\") fait défiler jusqu’à la dernière ligne.",
+        "result": "« Lina : 70 PV », une barre verte remplie aux 7/10 et un journal de deux lignes.",
+        "trap": "Changer la valeur d’une variable ne change pas ce qui est affiché : après chaque tour, il faut remettre à jour tous les textes et toutes les barres. Regroupe ces mises à jour dans une fonction afficher_etat()."
       },
       {
         "title": "11. Un clic = un tour de combat",
         "code": "import tkinter as tk\nimport random\n\ndef lancer_de(nb_faces):\n    return random.randint(1, nb_faces)\n\ndef appliquer_degats(pv, degats):\n    reste = pv - degats\n    if reste < 0:\n        return 0\n    return reste\n\ndef est_attaque_passee(de_attaque, attaque, de_defense, defense):\n    return de_attaque <= attaque and de_defense > defense\n\nhero = {\"nom\": \"Lina\", \"attaque\": 12, \"defense\": 10}\njeu = {\"pv_hero\": 100, \"pv_monstre\": 40}\n\ndef afficher_etat():\n    texte = hero[\"nom\"] + \" : \" + str(jeu[\"pv_hero\"]) + \" PV\"\n    texte = texte + \"   |   gobelin : \" + str(jeu[\"pv_monstre\"]) + \" PV\"\n    infos.config(text=texte)\n\ndef clic_attaquer():\n    de_attaque = lancer_de(20)\n    de_defense = lancer_de(20)\n    if est_attaque_passee(de_attaque, hero[\"attaque\"], de_defense, 7):\n        jeu[\"pv_monstre\"] = appliquer_degats(jeu[\"pv_monstre\"], 20)\n        message.config(text=\"Tu touches le gobelin : -20 PV.\")\n    else:\n        message.config(text=\"Ton attaque échoue.\")\n    if jeu[\"pv_monstre\"] > 0:\n        if est_attaque_passee(lancer_de(20), 9, lancer_de(20), hero[\"defense\"]):\n            jeu[\"pv_hero\"] = appliquer_degats(jeu[\"pv_hero\"], 20)\n    else:\n        message.config(text=\"Le gobelin est vaincu !\")\n        bouton_attaquer.config(state=\"disabled\")\n    afficher_etat()\n\nfenetre = tk.Tk()\nfenetre.title(\"La forêt interdite\")\nfenetre.geometry(\"600x400\")\n\ninfos = tk.Label(fenetre, text=\"\", font=(\"Arial\", 13, \"bold\"))\ninfos.pack(pady=30)\nmessage = tk.Label(fenetre, text=\"Un gobelin te barre la route.\")\nmessage.pack()\nbouton_attaquer = tk.Button(fenetre, text=\"Attaquer\", command=clic_attaquer)\nbouton_attaquer.pack(pady=20)\nafficher_etat()\n\nfenetre.mainloop()",
         "image": "s11.png",
-        "text": "La fonction du bouton Attaquer joue exactement un tour : attaque du héros, riposte si le monstre vit encore, puis mise à jour de l’affichage. L’état du combat (les PV) est rangé dans le dictionnaire jeu pour être conservé d’un clic à l’autre. config(state=\"disabled\") grise un bouton quand le combat est fini.",
-        "result": "Chaque clic affiche le résultat du tour. Quand le gobelin tombe à 0 PV : « Le gobelin est vaincu ! » et le bouton est grisé.",
-        "trap": "N’écris pas de boucle while dans la fonction d’un bouton : la fenêtre resterait figée jusqu’à la fin de la boucle et le joueur ne pourrait plus cliquer. Un bouton ne peut pas passer d’argument à command : pour attaquer et boire une potion, écris deux fonctions clic_attaquer() et clic_potion(), qui peuvent appeler une même fonction jouer_tour(action)."
+        "text": "La fonction du bouton Attaquer joue un seul tour : l’attaque du héros, la riposte du monstre s’il vit encore, puis la mise à jour de l’affichage. Les PV sont rangés dans le dictionnaire jeu pour être gardés d’un clic à l’autre. Quand le combat est fini, config(state=\"disabled\") grise le bouton : on ne peut plus cliquer dessus.",
+        "result": "Chaque clic affiche le résultat du tour. Quand le gobelin tombe à 0 PV : « Le gobelin est vaincu ! » et le bouton devient gris.",
+        "trap": "Pas de boucle while dans la fonction d’un bouton : la fenêtre resterait bloquée jusqu’à la fin de la boucle. Un bouton ne peut pas donner d’information à sa fonction : pour Attaquer et Potion, écris deux petites fonctions clic_attaquer() et clic_potion(), qui appellent toutes les deux jouer_tour(\"attaquer\") ou jouer_tour(\"potion\")."
       },
       {
         "title": "12. Enchaîner les combats et finir la partie",
         "code": "import tkinter as tk\nimport random\n\njeu = {\"monstres\": [], \"monstre\": \"\", \"pv_monstre\": 0}\n\ndef nouvelle_partie():\n    jeu[\"monstres\"] = [\"le gobelin\", \"l'araignée\", \"le troll\"]\n    bouton_attaquer.config(state=\"normal\")\n    nouveau_combat()\n\ndef nouveau_combat():\n    jeu[\"monstre\"] = random.choice(jeu[\"monstres\"])\n    jeu[\"pv_monstre\"] = 40\n    message.config(text=\"Attention : \" + jeu[\"monstre\"] + \" surgit !\")\n\ndef clic_attaquer():\n    jeu[\"pv_monstre\"] = jeu[\"pv_monstre\"] - 20\n    if jeu[\"pv_monstre\"] > 0:\n        message.config(text=jeu[\"monstre\"] + \" : \" + str(jeu[\"pv_monstre\"]) + \" PV\")\n    else:\n        jeu[\"monstres\"].remove(jeu[\"monstre\"])\n        if len(jeu[\"monstres\"]) == 0:\n            message.config(text=\"Victoire ! La forêt est libérée.\")\n            bouton_attaquer.config(state=\"disabled\")\n        else:\n            nouveau_combat()\n\nfenetre = tk.Tk()\nfenetre.title(\"La forêt interdite\")\nfenetre.geometry(\"600x400\")\n\nmessage = tk.Label(fenetre, text=\"\", font=(\"Arial\", 13))\nmessage.pack(pady=40)\nbouton_attaquer = tk.Button(fenetre, text=\"Attaquer\", command=clic_attaquer)\nbouton_attaquer.pack()\ntk.Button(fenetre, text=\"Rejouer\", command=nouvelle_partie).pack(pady=10)\nnouvelle_partie()\n\nfenetre.mainloop()",
         "image": "s12.png",
-        "text": "La liste jeu[\"monstres\"] contient les adversaires restants. nouveau_combat() en choisit un avec random.choice et lui redonne ses PV. Quand un monstre est vaincu, on le retire de la liste ; si elle est vide, c’est la victoire, sinon on lance le combat suivant. nouvelle_partie() remet tout à zéro : c’est elle que le bouton Rejouer appelle.",
-        "result": "Après deux attaques, le premier monstre disparaît et le suivant surgit ; après les trois monstres, « Victoire ! » et le bouton Attaquer est grisé. Rejouer relance une partie.",
-        "trap": "Ne recrée pas la liste des monstres dans nouveau_combat() : les monstres vaincus reviendraient. Pense à réactiver les boutons (state=\"normal\") quand on rejoue."
+        "text": "La liste jeu[\"monstres\"] contient les monstres qu’il reste à battre, comme au TP5. nouveau_combat() en tire un au hasard avec random.choice et lui redonne ses PV. Quand un monstre est vaincu, on l’enlève de la liste : si la liste est vide, c’est la victoire ; sinon, le combat suivant commence. nouvelle_partie() remet tout au départ : c’est la fonction du bouton Rejouer.",
+        "result": "Le premier monstre tombe et le suivant surgit. Après les trois : « Victoire ! » et le bouton Attaquer est grisé. Rejouer relance une partie.",
+        "trap": "Ne remets pas la liste des monstres à zéro dans nouveau_combat() : les monstres déjà vaincus reviendraient. Quand on rejoue, pense à rendre les boutons à nouveau cliquables avec config(state=\"normal\")."
+      },
+      {
+        "title": "13. Une image par monstre",
+        "code": "import tkinter as tk\nimport random\n\nfenetre = tk.Tk()\nfenetre.title(\"La forêt interdite\")\nfenetre.geometry(\"600x400\")\n\nimages = {}\nimages[\"le gobelin\"] = tk.PhotoImage(file=\"gobelin.png\")\nimages[\"l'araignée\"] = tk.PhotoImage(file=\"araignee.png\")\nimages[\"le troll\"] = tk.PhotoImage(file=\"troll.png\")\n\ndef nouveau_monstre():\n    monstre = random.choice(list(images))\n    message.config(text=\"Attention : \" + monstre + \" surgit !\")\n    image_monstre.config(image=images[monstre])\n\nmessage = tk.Label(fenetre, text=\"\", font=(\"Arial\", 13))\nmessage.pack(pady=15)\nimage_monstre = tk.Label(fenetre)\nimage_monstre.pack()\ntk.Button(fenetre, text=\"Monstre suivant\", command=nouveau_monstre).pack(pady=15)\nnouveau_monstre()\n\nfenetre.mainloop()",
+        "image": "s13b.png",
+        "text": "On charge toutes les images une seule fois, dans un dictionnaire : la clé est le nom du monstre, la valeur est son image. images[monstre] donne alors l’image du monstre tiré au sort, et list(images) donne la liste des noms. Pour changer l’image affichée dans une étiquette, on utilise config(image=...), comme on change un texte avec config(text=...).",
+        "result": "Une image de monstre au centre de la fenêtre. Chaque clic sur « Monstre suivant » tire un monstre au hasard et change le texte et l’image.",
+        "trap": "Les images se chargent après fenetre = tk.Tk() : avant, Python affiche l’erreur « Too early to create image ». Ne charge pas une image à l’intérieur d’une fonction : rangée dans une variable de la fonction, elle disparaît à la fin de l’appel et l’étiquette reste vide. Le dictionnaire images, créé en dehors des fonctions, les garde."
       }
     ],
-    "deliverable": "Un fichier NOM_Prenom_rpg_interface.py qui se lance seul sur ordinateur : un écran d’accueil avec un fond, un formulaire de création qui vérifie le personnage et le range dans hero, puis un écran de combat qui enchaîne les trois monstres du TP5 (un clic = un tour), avec les PV affichés en texte et en barres, un journal, et une fin de partie claire.",
+    "deliverable": "Un fichier NOM_Prenom_rpg_interface.py qui se lance seul dans Thonny. Le joueur voit d’abord un écran d’accueil avec un fond et un titre. Il crée son personnage en remplissant des cases, et le programme refuse un personnage incorrect. Puis il affronte les monstres du TP5, plus au moins un monstre que tu as généré dans le même style, en cliquant sur des boutons. L’image du monstre en cours s’affiche : chaque clic joue un tour, les PV s’affichent en chiffres et en barres de vie, un journal raconte le combat, et la partie se termine par un message clair.",
     "steps": [
-      "Fenêtre d’accueil. Crée une fenêtre de 800 × 500 intitulée « La forêt interdite », avec un fond (couleur ou image fond_foret.png) et un titre de bienvenue lisible sur ce fond.",
-      "Formulaire de création. Dans une Frame ecran_creation rangée en grille : une zone de saisie pour le nom, trois boutons radio pour la classe (guerrier, mage, archer), trois Spinbox de 0 à 15 pour force, intelligence et agilite, et un texte « Points restants » mis à jour à chaque clic sur une flèche.",
-      "Valider le personnage. Le bouton « Créer mon personnage » vérifie qu’un nom est saisi et que la somme vaut 15, et affiche un message d’erreur précis sinon. Si tout est correct, il remplit le dictionnaire hero (nom, classe, force, intelligence, agilite, attaque = 7 + force, defense = 4 + agilite), affiche un récapitulatif et active le bouton « Entrer dans la forêt », grisé au départ.",
-      "Écran de combat. « Entrer dans la forêt » cache le formulaire et affiche une Frame ecran_combat avec : le nombre de monstres restants, les PV du héros et du monstre en texte et en barres de vie (Canvas), un journal (Text) et trois boutons Attaquer, Potion et Fuir.",
-      "Un tour par clic. Range l’état dans un dictionnaire jeu (PV du héros et du monstre, monstre actuel, liste des monstres). Attaquer et Potion jouent un tour avec les règles du TP5 : deux dés à 20 faces, est_attaque_passee, 20 dégâts, potion de 10 à 20 PV plafonnée à 100, riposte du monstre (attaque 9 contre la défense du héros) s’il est encore vivant. Chaque tour écrit une ligne dans le journal, puis met à jour tous les affichages.",
-      "Trois combats et la fin. Commence avec [\"le gobelin\", \"l'araignée\", \"le troll\"], 100 PV pour le héros et 40 PV par monstre. Un monstre vaincu est retiré de la liste et le suivant surgit, le héros garde ses PV. À la victoire, à la défaite ou à la fuite : un message final dans le journal, les trois boutons grisés et un bouton Rejouer qui relance une partie avec le même personnage.",
-      "Tester et rendre. Vérifie les tests ci-dessous, en fixant temporairement les dés si besoin (par exemple, remplace de_attaque = lancer_de(20) par de_attaque = 1 et de_defense = lancer_de(20) par de_defense = 20 : l’attaque du héros passe toujours). Écris en commentaires en haut du fichier deux tests attendu / observé et les aides utilisées, puis rends ton fichier."
+      "La fenêtre d’accueil (notions 1 à 4).\n– Ouvre une fenêtre de 800 × 500 pixels, avec le titre « La forêt interdite ».\n– Mets un fond : une couleur, ou l’image fond_foret.png.\n– Écris un message de bienvenue bien lisible sur ce fond.",
+      "Les questions de création du personnage (notions 5 à 7).\n– Crée un cadre (Frame) appelé ecran_creation : c’est la « page » qui regroupe toutes les questions. Range ce qu’il contient comme dans un tableau, avec grid.\n– Ligne 0 : le texte « Nom : » et une case de saisie (Entry) pour taper le nom.\n– Ligne 1 : le texte « Classe : » et trois boutons ronds (Radiobutton) guerrier, mage, archer.\n– Lignes 2 à 4 : force, intelligence et agilité, chacune avec un compteur à flèches (Spinbox) qui va de 0 à 15.\n– À côté des compteurs : une étiquette « Points restants : 15 » qui se met à jour dès qu’on clique sur une flèche.",
+      "Vérifier le personnage (notion 8).\n– Ajoute un bouton « Créer mon personnage ».\n– Quand on clique dessus : si le nom est vide ou si la somme ne fait pas 15, affiche un message d’erreur qui explique le problème.\n– Si tout est correct, remplis le dictionnaire hero (nom, classe, force, intelligence, agilite, attaque = 7 + force, defense = 4 + agilite) et affiche un résumé du personnage.\n– Ajoute un bouton « Entrer dans la forêt », grisé au départ : il ne devient cliquable que lorsque le personnage est correct.",
+      "Préparer l’écran de combat (notions 9 et 10).\n– Crée un deuxième cadre appelé ecran_combat. Le bouton « Entrer dans la forêt » cache le cadre de création et affiche celui-ci.\n– Dans ce cadre, affiche : le nombre de monstres restants ; les PV du héros et du monstre en chiffres ; une barre de vie pour chacun (dessinée dans une zone de dessin, Canvas) ; un journal (zone de texte, Text) ; trois boutons Attaquer, Potion et Fuir.",
+      "Un clic = un tour de combat (notion 11).\n– Range les informations du combat dans le dictionnaire jeu : PV du héros, PV du monstre, monstre actuel, liste des monstres.\n– Attaquer : deux dés à 20 faces et est_attaque_passee, comme au TP5 ; si l’attaque passe, le monstre perd 20 PV.\n– Potion : le héros récupère entre 10 et 20 PV, sans dépasser 100 (fonction soigner).\n– Si le monstre est encore vivant, il riposte : attaque 9 contre la défense du héros.\n– À chaque tour : écris une phrase dans le journal, puis remets à jour les chiffres et les barres.",
+      "Les trois combats et la fin de la partie (notion 12).\n– Au départ : le héros a 100 PV et la liste contient \"le gobelin\", \"l'araignée\", \"le troll\" (et ton monstre, à l’étape 7), chacun avec 40 PV.\n– Un monstre vaincu est enlevé de la liste et le suivant arrive ; le héros garde ses PV.\n– Victoire, défaite ou fuite : écris un message final dans le journal, grise les trois boutons et fais apparaître un bouton Rejouer, qui relance une partie avec le même personnage.",
+      "Les images des monstres (notion 13).\n– Range dans ton dossier les trois images fournies : gobelin.png, araignee.png et troll.png. Elles montrent le style graphique à respecter.\n– Génère au moins un nouveau monstre avec un générateur d’images, en complétant le modèle de consigne ci-dessous. Tu peux en créer d’autres si tu le souhaites, toujours dans le même style.\n– Ajoute chaque nouveau monstre à la liste des monstres et au dictionnaire images.\n– Dans l’écran de combat, affiche l’image du monstre en cours à droite : elle doit changer à chaque nouveau monstre.\n– Dans l’en-tête de ton fichier, indique l’outil utilisé et la consigne que tu lui as donnée.",
+      "Tester et rendre.\n– Vérifie les tests ci-dessous. Pour obtenir un résultat prévisible, remplace un moment de_attaque = lancer_de(20) par de_attaque = 1 et de_defense = lancer_de(20) par de_defense = 20 : l’attaque du héros passe à chaque fois. Remets ensuite les dés.\n– En haut du fichier, écris en commentaire deux tests (ce que tu as fait, ce que tu attendais, ce que tu as obtenu) et les aides utilisées. Puis rends ton fichier et l’image de ton monstre."
     ],
     "stepHints": [
       [
         {
-          "text": "Reprends les notions 1 à 4 : fenêtre, titre, couleur ou image.",
+          "text": "Relis les notions 1 à 4 : fenêtre, texte, couleur ou image.",
           "code": ""
         },
         {
-          "text": "Si tu utilises l’image, crée le Label de fond en premier : les widgets créés après s’affichent par-dessus. Donne un bg au titre pour qu’il reste lisible.",
+          "text": "Si tu utilises l’image, pose-la en premier : tout ce que tu poses ensuite s’affiche par-dessus. Donne une couleur de fond (bg) au titre pour qu’il reste lisible.",
           "code": ""
         }
       ],
       [
         {
-          "text": "Range chaque ligne du formulaire dans une ligne de la grille : le texte en colonne 0, le widget en colonne 1.",
+          "text": "Pour chaque ligne du tableau : le texte en colonne 0, la case ou le compteur en colonne 1.",
           "code": ""
         },
         {
-          "text": "La même fonction mettre_a_jour_total sert aux trois Spinbox : elle relit les trois valeurs à chaque appel.",
+          "text": "Une seule fonction mettre_a_jour_total suffit pour les trois compteurs : elle relit les trois valeurs à chaque clic.",
           "code": "def mettre_a_jour_total():\n    total = int(choix_force.get()) + ___ + ___\n    restants.config(text=\"Points restants : \" + str(___))"
         }
       ],
       [
         {
-          "text": "Reprends l’ordre des contrôles du TP1, avec if / elif / else.",
+          "text": "Reprends les vérifications du TP1, dans le même ordre, avec if / elif / else.",
           "code": ""
         },
         {
-          "text": "Le bouton « Entrer dans la forêt » est créé avec state=\"disabled\" ; creer_personnage le rend cliquable avec config(state=\"normal\") quand le personnage est valide.",
+          "text": "Crée le bouton « Entrer dans la forêt » avec state=\"disabled\" (grisé). Quand le personnage est correct, rends-le cliquable avec bouton_partir.config(state=\"normal\").",
           "code": ""
         }
       ],
       [
         {
-          "text": "Crée tout l’écran de combat dès le lancement, mais sans faire pack sur ecran_combat.",
+          "text": "Prépare tout l’écran de combat dès le début, mais sans le poser (pas de ecran_combat.pack() au départ).",
           "code": ""
         },
         {
-          "text": "Pour chaque barre : un Canvas de 200 × 18, un rectangle créé une fois, puis dessiner_barre qui change ses coordonnées. Le maximum vaut 100 pour le héros et 40 pour un monstre.",
+          "text": "Pour chaque barre de vie : une zone de dessin de 200 × 18, un rectangle dessiné une seule fois, puis la fonction dessiner_barre qui change sa longueur. Le maximum vaut 100 PV pour le héros et 40 PV pour un monstre.",
           "code": ""
         }
       ],
       [
         {
-          "text": "Écris d’abord jouer_tour(\"attaquer\") seul, testé avec un seul monstre, puis ajoute la potion et la riposte.",
+          "text": "Commence par jouer_tour(\"attaquer\") seul, avec un seul monstre. Ajoute ensuite la potion et la riposte.",
           "code": ""
         },
         {
@@ -1724,60 +1801,89 @@
       ],
       [
         {
-          "text": "Après chaque tour, une fonction verifier_fin choisit entre défaite, victoire, combat suivant ou rien.",
+          "text": "Après chaque tour, une fonction verifier_fin choisit : défaite, victoire, monstre suivant, ou rien de spécial.",
           "code": ""
         },
         {
-          "text": "Le bouton Rejouer est créé au lancement mais affiché seulement à la fin (pack), puis caché à nouveau (pack_forget) dans nouvelle_partie.",
+          "text": "Le bouton Rejouer est créé au début mais posé seulement à la fin (pack), puis caché de nouveau (pack_forget) quand une nouvelle partie commence.",
           "code": ""
         }
       ],
       [
         {
-          "text": "Un dé fixé rend chaque tour prévisible.",
+          "text": "Commence avec les trois images fournies. Ajoute ton monstre seulement quand l’affichage fonctionne.",
           "code": ""
         },
         {
-          "text": "Pour tester la défaite vite, mets temporairement jeu[\"pv_hero\"] = 20 au début de la partie ; pour la victoire, des monstres à 20 PV.",
+          "text": "L’image change au même moment que le nom du monstre : dans nouveau_combat(). Une étiquette vide est créée une fois dans l’écran de combat, puis on change son image.",
+          "code": "image_monstre = tk.Label(ecran_combat, bg=PANNEAU)\nimage_monstre.grid(row=0, column=2, rowspan=5)\n\n# dans nouveau_combat() :\nimage_monstre.config(image=___)"
+        }
+      ],
+      [
+        {
+          "text": "Des dés fixés rendent chaque tour prévisible : tu sais à l’avance ce qui doit s’afficher.",
+          "code": ""
+        },
+        {
+          "text": "Pour tester vite la défaite, mets un moment jeu[\"pv_hero\"] = 20 au début de la partie. Pour la victoire, des monstres à 20 PV.",
           "code": ""
         }
       ]
     ],
     "tests": [
-      "Sans nom → « Entre un nom. » ; Lina 5 / 5 / 6 → message d’erreur avec la somme 16 ; le bouton « Entrer dans la forêt » reste grisé.",
-      "Lina, mage, 5 / 4 / 6 → « Points restants : 0 », attaque 12, défense 10, bouton « Entrer dans la forêt » actif.",
-      "Écran de combat : 3 monstres restants, 100 PV et barre verte pleine pour le héros, 40 PV et barre rouge pleine pour le monstre.",
-      "Attaque qui passe (de_attaque fixé à 1, de_defense fixé à 20) → monstre à 20 PV, barre à moitié, une ligne dans le journal.",
+      "Case du nom vide → « Entre un nom. ». Lina avec 5 / 5 / 6 → un message d’erreur qui donne la somme 16. Dans les deux cas, « Entrer dans la forêt » reste grisé.",
+      "Lina, mage, 5 / 4 / 6 → « Points restants : 0 », attaque 12, défense 10, et le bouton « Entrer dans la forêt » devient cliquable.",
+      "Écran de combat → 3 monstres restants ; héros à 100 PV avec une barre verte pleine ; monstre à 40 PV avec une barre rouge pleine.",
+      "Attaque qui passe (de_attaque = 1, de_defense = 20) → le monstre passe à 20 PV, sa barre est à moitié, une phrase s’ajoute au journal.",
       "Potion à 95 PV avec un gain de 20 → 100 PV, pas plus.",
-      "Dernier monstre vaincu → « Victoire » dans le journal, boutons grisés, bouton Rejouer visible ; Rejouer → 100 PV, 3 monstres, boutons actifs. Fuir → message de fuite et boutons grisés."
+      "Nouveau monstre → son image s’affiche à droite de l’écran de combat. Au fil des parties, ton monstre généré apparaît aussi, avec son image.",
+      "Dernier monstre vaincu → « Victoire » dans le journal, boutons grisés, bouton Rejouer visible. Rejouer → 100 PV, 3 monstres, boutons cliquables. Fuir → message de fuite et boutons grisés."
     ],
     "criteria": [
       [
-        "Fenêtre d’accueil avec fond et texte lisible",
+        "Fenêtre d’accueil avec un fond et un titre lisible",
         1
       ],
       [
-        "Formulaire complet (nom, classe, 3 compétences, points restants)",
+        "Création complète (nom, classe, compétences, points restants), personnage vérifié et rangé dans hero",
         1
       ],
       [
-        "Validation du personnage et dictionnaire hero rempli",
+        "Combat : un clic joue un tour, les affichages se mettent à jour, règles du TP5 respectées",
         1
       ],
       [
-        "Écran de combat : un clic = un tour, affichages mis à jour, règles du TP5",
+        "Images : monstre généré dans le même style, image du monstre qui change à chaque combat",
         1
       ],
       [
-        "Enchaînement des trois combats, fin de partie et Rejouer, tests commentés",
+        "Combats enchaînés, fin de partie et Rejouer, tests en commentaire",
         1
       ]
     ],
     "extensions": [
-      "Une image par monstre : un dictionnaire images = {\"le gobelin\": tk.PhotoImage(file=\"gobelin.png\"), ...} et un Label dont on change l’image avec config(image=...).",
-      "Limiter les potions au nombre de points d’intelligence, avec un texte « Potions : 3 » et le bouton Potion grisé quand il n’en reste plus.",
-      "Afficher l’image de la classe choisie (guerrier, mage, archer) dans le récapitulatif du personnage.",
-      "Faire clignoter la barre du monstre touché : fenetre.after(300, fonction) appelle une fonction 300 millisecondes plus tard, sans bloquer la fenêtre."
-    ]
+      "Donner à chaque monstre ses propres caractéristiques (PV, attaque, défense) avec un dictionnaire de fiches, comme le bestiaire de la partie 6.",
+      "Limiter les potions au nombre de points d’intelligence, avec une étiquette « Potions : 3 » et le bouton Potion grisé quand il n’en reste plus.",
+      "Afficher l’image de la classe choisie (guerrier, mage, archer) à côté du résumé du personnage.",
+      "Faire clignoter la barre du monstre quand il est touché : fenetre.after(300, une_fonction) lance une fonction 300 millisecondes plus tard, sans bloquer la fenêtre."
+    ],
+    "imagegen": {
+      "title": "Générer ton monstre",
+      "intro": "Le générateur d’images fait ce qu’on lui décrit, rien de plus : c’est à toi de choisir et de décrire ton monstre. Recopie ce modèle, remplace chaque ___ par tes propres choix, puis compare le résultat aux trois exemples. Si le style ne correspond pas, modifie ta consigne et recommence.",
+      "template": "Dessine ___ (ton monstre : son espèce, ses couleurs, un ou deux détails qui le rendent unique), en pixel art ___ (quel style ? observe les trois exemples), vu ___, dans une attitude ___. Le personnage est entier et centré, sur un fond ___, sans décor, sans texte et sans signature. Image carrée.",
+      "constraints": [
+        "Format PNG (les JPG ne s’affichent pas avec PhotoImage).",
+        "Image carrée de 128 × 128 pixels. Si ton image fait 1024 × 1024, réduis-la avec Paint (Redimensionner, en pixels), ou dans le code : tk.PhotoImage(file=\"dragon.png\").subsample(8) la divise par 8.",
+        "Fond uni et clair (ou transparent), comme les exemples.",
+        "Nom de fichier en minuscules, sans accent ni espace : par exemple dragon.png. Range-le dans le même dossier que ton programme.",
+        "Un monstre inventé : pas un personnage existant de jeu vidéo, de film ou de manga.",
+        "Même style que les trois exemples : pixel art rétro, vu de face, personnage entier, couleurs franches."
+      ],
+      "examples": [
+        "gobelin.png",
+        "araignee.png",
+        "troll.png"
+      ]
+    }
   }
 }

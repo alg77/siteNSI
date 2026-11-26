@@ -1,6 +1,7 @@
 # Mini RPG — Partie 7 : interface graphique
 # Élève : NOM Prenom
 # Aides utilisées : À compléter
+# Image générée : outil utilisé, consigne donnée, nom du fichier (ex. dragon.png)
 # TEST 1 : entrées / attendu / observé
 # TEST 2 : entrées / attendu / observé
 #
@@ -30,6 +31,8 @@ jeu = {"pv_hero": 100, "pv_monstre": 40, "monstre": "", "monstres": []}
 fenetre = tk.Tk()
 fenetre.title("La forêt interdite")
 fenetre.geometry("800x500")
+
+# Les images des monstres (étape 7) : dictionnaire images, créé APRÈS tk.Tk()
 
 
 # 5. ÉCRAN DE CRÉATION : Frame ecran_creation rangée avec grid (étapes 2 et 3)
